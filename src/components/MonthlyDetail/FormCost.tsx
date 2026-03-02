@@ -1,0 +1,114 @@
+"use client";
+import { Form, useFormik, FormikProvider } from "formik";
+import * as Yup from "yup";
+import { Label } from "../ui/label";
+import AutoCompleteField from "../common/CustomFields/AutoCompleteField";
+import { CustomInputProps } from "@/interface/Field";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { financeAPI } from "@/endpoint/financeAPI";
+import { useParams } from "next/navigation";
+import { CreateMonthlyExpenseRequest } from "@/interface/financeAPI";
+import { RESPONSE_CODES } from "@/constant/codes";
+import { toast } from "@/hook/use-toast";
+
+const initialValues: CreateMonthlyExpenseRequest = {
+  name: "",
+  amount: "",
+};
+
+const validationSchema = Yup.object({
+  name: Yup.string().required("Vui lòng nhập mô tả"),
+  amount: Yup.string().required("Vui lòng nhập số tiền"),
+});
+
+export default function AddCostForm({ reload }: { reload: () => void }) {
+  const params = useParams();
+
+  const id = Number(params.id);
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (value, action) => {
+      action.setSubmitting(true);
+      const res = await financeAPI.putMonthlyDetailData(id, {
+        ...value,
+        amount: Number(value.amount),
+      });
+
+      if (res.code === RESPONSE_CODES.success) {
+        action.resetForm();
+        reload();
+      } else {
+        toast({
+          title: "Tạo chi phí thất bại",
+          className: "bg-red-1 text-white text-sm font-medium w-fit",
+          duration: 3000,
+        });
+      }
+
+      action.setSubmitting(false);
+    },
+  });
+
+  const { isSubmitting } = formik;
+
+  return (
+    <FormikProvider value={formik}>
+      <Form className="w-full rounded-2xl border border-gray-200 p-6 space-y-4 bg-white shadow-sm">
+        {/* Mô tả chi phí */}
+        <div className="flex flex-col gap-2 w-full">
+          <Label
+            variant="secondary"
+            className="text-green-1! text-11px font-bold"
+          >
+            Mô tả chi phí
+          </Label>
+          <AutoCompleteField<CustomInputProps>
+            component={Input}
+            version="field"
+            placeholder="Ví dụ: Văn phòng phẩm"
+            name="name"
+            variant="default"
+            className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+          />
+        </div>
+
+        {/* Số tiền */}
+        <div>
+          <div className="flex flex-col gap-2 w-full">
+            <Label
+              variant="secondary"
+              className="text-green-1! text-11px font-bold"
+            >
+              Số tiền (VNĐ)
+            </Label>
+            <div className="flex w-full items-start gap-3">
+              <div className="flex flex-col w-full">
+                <AutoCompleteField<CustomInputProps>
+                  component={Input}
+                  version="field"
+                  placeholder="0"
+                  name="amount"
+                  variant="default"
+                  className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+                  pattern="^\d+(\.\d*)?$"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="shadow-sm! h-14! w-30! flex items-center gap-2 rounded-xl bg-green-9 text-base text-white font-bold"
+              >
+                + Thêm
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Form>
+    </FormikProvider>
+  );
+}

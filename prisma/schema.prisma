@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model DailyFinance {
+  id Int @id @default(autoincrement())
+
+  date DateTime @unique
+
+  /// Relation
+  monthlyFinanceId Int
+  monthlyFinance   MonthlyFinance @relation(fields: [monthlyFinanceId], references: [id], onDelete: Cascade)
+
+  /// CAPITALIZATION
+  capitalCash Decimal @default(0)
+  capitalBank Decimal @default(0)
+
+  /// REVENUE
+  revenueCash Decimal @default(0)
+  revenueBank Decimal @default(0)
+
+  /// PROFIT (calculate & save)
+  profitCash  Decimal @default(0)
+  profitBank  Decimal @default(0)
+  totalProfit Decimal @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("daily_finance")
+}
+
+model MonthlyExpense {
+  id Int @id @default(autoincrement())
+
+  monthlyFinanceId Int
+  monthlyFinance   MonthlyFinance @relation(fields: [monthlyFinanceId], references: [id], onDelete: Cascade)
+
+  name   String
+  amount Decimal
+
+  createdAt DateTime @default(now())
+
+  @@map("monthly_expense")
+}
+
+model MonthlyFinance {
+  id Int @id @default(autoincrement())
+
+  year  Int
+  month Int
+
+  /// Total profit for days of the month
+  totalDailyProfit Decimal @default(0)
+
+  /// Total spending for the month
+  totalExpense Decimal @default(0)
+
+  /// Monthly profit
+  /// totalDailyProfit - totalExpense
+  profit Decimal @default(0)
+
+  /// Relations
+  days     DailyFinance[]
+  expenses MonthlyExpense[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([year, month])
+  @@map("monthly_finance")
+}

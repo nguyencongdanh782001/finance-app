@@ -1,0 +1,11 @@
+import { SvgProps, defaultProps } from "./_constant";
+
+const BlockIcon: React.FC<SvgProps> = (props) => {
+  return (
+    <svg {...defaultProps} {...props} viewBox="0 0 15 15">
+      <path d="M8.33333 5V0H15V5H8.33333ZM0 8.33333V0H6.66667V8.33333H0ZM8.33333 15V6.66667H15V15H8.33333ZM0 15V10H6.66667V15H0ZM1.66667 6.66667H5V1.66667H1.66667V6.66667ZM10 13.3333H13.3333V8.33333H10V13.3333ZM10 3.33333H13.3333V1.66667H10V3.33333ZM1.66667 13.3333H5V11.6667H1.66667V13.3333Z" />
+    </svg>
+  );
+};
+
+export default BlockIcon;
