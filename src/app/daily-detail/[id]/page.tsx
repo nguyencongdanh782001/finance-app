@@ -105,8 +105,9 @@ const DailyDetail = () => {
                 className={`text-xl ${dailyDetailData?.totalProfit && dailyDetailData?.totalProfit < 0 ? "text-red-1" : "text-green-13"} font-extrabold`}
               >
                 {dailyDetailData?.totalProfit &&
-                  dailyDetailData?.totalProfit > 0 &&
-                  "+"}
+                dailyDetailData?.totalProfit > 0
+                  ? "+"
+                  : ""}
                 {formatCompactNumber(dailyDetailData?.totalProfit || 0)} VND
               </p>
             )}
