@@ -1,4 +1,5 @@
 import { InputProps } from "@/components/ui/input";
+import { FieldProps } from "formik";
 
 export interface CustomFieldProps {
   version?: "field" | "fast-field"; // choose which version formik field you want
@@ -30,10 +31,10 @@ export interface CustomInputProps
 //   extends DatePickerProps,
 //     Omit<CustomFieldProps, 'children'> {}
 
-// export type AutoCompleteFieldProps<T> = T &
-//   Omit<CustomFieldProps, 'children'> & {
-//     component: React.FC<FieldProps & T>;
-//   };
+export type AutoCompleteFieldProps<T> = T &
+  Omit<CustomFieldProps, "children"> & {
+    component: React.FC<FieldProps & T>;
+  };
 
 // export interface CustomAutoSuggestFieldProps
 //   extends AutoSuggestFieldProps,
