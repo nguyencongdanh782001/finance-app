@@ -11,4 +11,10 @@ export const API_ROUTES = {
   getMonthlyDetailData: (id: number) => APP_API_URL(`monthly/detail/${id}`),
   putMonthlyDetailData: (id: number) =>
     APP_API_URL(`monthly/detail/${id}/expense`),
+  putExpense: (id: number, expenseId: number) =>
+    APP_API_URL(`monthly/detail/${id}/expense/${expenseId}`),
+  deleteExpense: (id: number, expenseId: number) =>
+    APP_API_URL(`monthly/detail/${id}/expense/${expenseId}`),
+  getDailyDetailData: (id: number) => APP_API_URL(`daily/detail/${id}`),
+  putDailyDetailData: (id: number) => APP_API_URL(`daily/detail/${id}`),
 };

@@ -48,6 +48,11 @@
   --color-green-7: #88b9bc;
   --color-green-8: #f1fafa;
   --color-green-9: #758a75;
+  --color-green-10: #8ca38c;
+  --color-green-11: #ccd9cc;
+  --color-green-12: #e6ede6;
+  --color-green-13: #22c55e;
+  --color-green-14: #f0fdf4;
 
   --color-red-1: #fb7185;
   --color-red-2: #fda4af;
@@ -63,6 +68,17 @@
 
   --color-blue-1: #e2e8f0;
   --color-blue-2: #1e293b;
+  --color-blue-3: #f0f9ff;
+  --color-blue-4: #e0f2fe;
+  --color-blue-5: #0ea5e9;
+  --color-blue-6: #0284c7;
+
+  --color-orange-1: #e9b09a;
+
+  --color-purple-1: #7c3aed;
+  --color-purple-2: #f5f3ff;
+  --color-purple-3: #ede9fe;
+  --color-purple-4: #8b5cf6;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

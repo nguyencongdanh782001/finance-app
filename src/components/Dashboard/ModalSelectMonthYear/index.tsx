@@ -111,7 +111,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
         <DialogFooter className="mt-4 w-full flex flex-col justify-center items-center gap-4.5">
           <Button
             type="button"
-            className="h-13.75! w-full bg-green-6 text-sm font-semibold hover:bg-green-6 hover:opacity-90 uppercase"
+            className="h-13.75! w-full bg-green-2 text-sm font-semibold hover:bg-green-2 hover:opacity-90 uppercase"
             onClick={handleConfirm}
           >
             Xác nhận

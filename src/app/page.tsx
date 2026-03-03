@@ -9,8 +9,12 @@ import { RESPONSE_CODES } from "@/constant/codes";
 import { Skeleton } from "@/components/ui/skeleton";
 import ListDate from "@/components/Dashboard/ListDate";
 import ChartYearlyRevenue from "@/components/Dashboard/ChartYearlyRevenue";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Home() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [isLoading, setIsLoading] = useState(true);
   const [yearProfit, setYearProfit] = useState<YearProfitResponse | undefined>(
     undefined,
@@ -26,7 +30,8 @@ export default function Home() {
       setIsLoading(false);
     };
     fetchData();
-  }, []);
+    window.scrollTo({ top: 0, left: 0 });
+  }, [pathname, searchParams.toString()]);
 
   return (
     <Container className="gap-8 pb-8">
@@ -45,7 +50,7 @@ export default function Home() {
           <Skeleton className="h-6 w-50 rounded-2 mb-2" />
         ) : (
           <p className="text-11px text-green-1 font-bold">
-            Tổng doanh thu năm {yearProfit?.year}{" "}
+            Tổng lợi nhuận năm {yearProfit?.year}
           </p>
         )}
 

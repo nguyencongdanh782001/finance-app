@@ -11,6 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         ghost: "",
+        close: "text-gray-2 font-semibold text-base underline p-0! h-fit!",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

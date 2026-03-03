@@ -41,7 +41,7 @@ const SelectMontYear = (props: SelectMontYearProps) => {
         <Separator orientation="vertical" className="bg-gray-1!" />
         <Button
           onClick={() => {
-            if (id) router.push(`/month-detail/${id}`);
+            if (id) router.push(`/monthly-detail/${id}`);
           }}
           variant="ghost"
           className={`p-0! gap-0.5! text-green-1 font-bold h-fit ${id ? "cursor-pointer" : "cursor-not-allowed"}`}

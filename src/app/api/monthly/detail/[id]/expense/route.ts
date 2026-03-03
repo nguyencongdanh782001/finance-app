@@ -18,7 +18,7 @@ export async function PUT(
     return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
   }
 
-  const expense = await prisma.monthlyExpense.create({
+  await prisma.monthlyExpense.create({
     data: {
       monthlyFinanceId,
       name,
@@ -32,7 +32,7 @@ export async function PUT(
     _sum: { amount: true },
   });
 
-  const monthly = await prisma.monthlyFinance.update({
+  await prisma.monthlyFinance.update({
     where: { id: monthlyFinanceId },
     data: {
       totalExpense: expenseAgg._sum.amount ?? 0,
@@ -41,16 +41,5 @@ export async function PUT(
 
   return NextResponse.json({
     success: true,
-    expense: {
-      id: expense.id,
-      name: expense.name,
-      amount: Number(expense.amount),
-      createdAt: expense.createdAt.toISOString(),
-    },
-    summary: {
-      monthlyFinanceId,
-      totalExpense: Number(monthly.totalExpense),
-      profit: Number(monthly.profit),
-    },
   });
 }

@@ -1,5 +1,8 @@
 import { TZ_TEMPLATE } from "@/constant/date";
 import dayjs from "dayjs";
+import "dayjs/locale/vi";
+
+dayjs.locale("vi");
 
 export const formatTZ = (tz: string, template: string) => {
   if (tz) {

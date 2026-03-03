@@ -20,4 +20,5 @@ export const TZ_TEMPLATE = {
   date_utc: "YYYY-MM-DDTHH:mm:ss",
   year_month_day_v5: "YYYY/MM/DD(ddd)",
   year_month_day_v6: "YYYY/MM/DD HH:mm:ss",
+  date_day_month: "dddd, DD MMM",
 };

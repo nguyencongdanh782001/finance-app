@@ -19,11 +19,15 @@ export async function GET(
   const monthly = await prisma.monthlyFinance.findUnique({
     where: { id: monthlyId },
     include: {
-      expenses: true,
+      expenses: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
       days: {
         select: {
-          revenueCash: true,
-          revenueBank: true,
+          profitBank: true,
+          profitCash: true,
         },
       },
     },
@@ -37,7 +41,7 @@ export async function GET(
   }
 
   const totalRevenue = monthly.days.reduce(
-    (acc, d) => acc + Number(d.revenueCash || 0) + Number(d.revenueBank || 0),
+    (acc, d) => acc + Number(d.profitBank || 0) + Number(d.profitCash || 0),
     0,
   );
 

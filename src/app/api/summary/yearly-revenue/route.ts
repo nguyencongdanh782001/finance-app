@@ -11,28 +11,23 @@ export async function GET(req: Request) {
 
   const monthlies = await prisma.monthlyFinance.findMany({
     where: { year },
-    include: {
-      days: {
-        select: {
-          revenueCash: true,
-          revenueBank: true,
-        },
-      },
+    select: {
+      month: true,
+      profit: true,
     },
   });
 
   const result = Array.from({ length: 12 }, (_, i) => ({
     month: i + 1,
-    totalRevenue: 0,
+    profit: 0,
   }));
 
   monthlies.forEach((m) => {
-    const sum = m.days.reduce(
-      (acc, d) => acc + Number(d.revenueCash || 0) + Number(d.revenueBank || 0),
-      0,
-    );
-    result[m.month - 1].totalRevenue = sum;
+    result[m.month - 1].profit = Number(m.profit ?? 0);
   });
 
-  return NextResponse.json({ year, data: result });
+  return NextResponse.json({
+    year,
+    data: result,
+  });
 }

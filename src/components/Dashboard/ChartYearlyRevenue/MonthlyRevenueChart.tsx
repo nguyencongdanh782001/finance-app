@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 import {
   ChartContainer,
@@ -20,7 +20,7 @@ function generateTicks(max: number, steps = 4) {
 }
 
 export default function MonthlyRevenueChart({ data }: Props) {
-  const ticks = generateTicks(Math.max(...data.map((d) => d.totalRevenue)));
+  const ticks = generateTicks(Math.max(...data.map((d) => d.profit)));
 
   const longestLabel = ticks
     .map((v) => formatCompactNumber(v))
@@ -30,9 +30,9 @@ export default function MonthlyRevenueChart({ data }: Props) {
 
   return (
     <div className="rounded-[40px] bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
-        <h3 className="uppercase mb-6 text-sm font-bold text-green-4">
-          Doanh thu theo tháng
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="uppercase text-sm font-bold text-green-4">
+          Lợi nhuận theo tháng
         </h3>
         <p className="uppercase text-sm font-bold text-green-4">đơn vị: VND</p>
       </div>
@@ -44,7 +44,7 @@ export default function MonthlyRevenueChart({ data }: Props) {
             className="h-65 w-full"
             config={{
               revenue: {
-                label: "Doanh thu",
+                label: "Lợi nhuận",
                 color: "hsl(var(--chart-1))",
               },
             }}
@@ -80,12 +80,18 @@ export default function MonthlyRevenueChart({ data }: Props) {
                 }
               />
 
-              <Bar
-                dataKey="totalRevenue"
-                fill="var(--color-green-2)"
-                radius={[10, 10, 0, 0]}
-                maxBarSize={24}
-              />
+              <Bar dataKey="profit" radius={[10, 10, 0, 0]} maxBarSize={24}>
+                {data.map((item, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={
+                      item.profit >= 0
+                        ? "var(--color-green-2)"
+                        : "var(--color-red-1)"
+                    }
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ChartContainer>
         </div>

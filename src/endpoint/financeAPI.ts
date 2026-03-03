@@ -1,8 +1,10 @@
 import { IAPIResponse } from "@/interface/APIResponse";
 import {
   CreateMonthlyExpenseRequest,
+  DailyDetailResponse,
   MonthlyDetailResponse,
   MonthlyResponse,
+  UpdateDailyRequest,
   YearlyRevenueResponse,
   YearProfitResponse,
 } from "@/interface/financeAPI";
@@ -34,5 +36,29 @@ export const financeAPI = {
     payload: CreateMonthlyExpenseRequest,
   ): Promise<IAPIResponse<unknown>> => {
     return appAxios.put(API_ROUTES.putMonthlyDetailData(id), payload);
+  },
+  putExpenseData: (
+    id: number,
+    expenseId: number,
+    payload: CreateMonthlyExpenseRequest,
+  ): Promise<IAPIResponse<unknown>> => {
+    return appAxios.put(API_ROUTES.putExpense(id, expenseId), payload);
+  },
+  deleteExpense: (
+    id: number,
+    expenseId: number,
+  ): Promise<IAPIResponse<unknown>> => {
+    return appAxios.delete(API_ROUTES.deleteExpense(id, expenseId));
+  },
+  getDailyDetailData: (
+    id: number,
+  ): Promise<IAPIResponse<DailyDetailResponse>> => {
+    return appAxios.get(API_ROUTES.getDailyDetailData(id));
+  },
+  putDailyDetailData: (
+    id: number,
+    payload: UpdateDailyRequest,
+  ): Promise<IAPIResponse<unknown>> => {
+    return appAxios.put(API_ROUTES.putDailyDetailData(id), payload);
   },
 };

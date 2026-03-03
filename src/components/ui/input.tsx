@@ -1,26 +1,29 @@
+"use client";
 import * as React from "react";
-
 import { cva, VariantProps } from "class-variance-authority";
 import { FieldProps, getIn } from "formik";
 import { Button } from "./button";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const inputVariants = cva("focus:outline-none h-full w-full !rounded-[4px]", {
-  variants: {
-    variant: {
-      default:
-        "p-[20px] border border-gray-5 rounded-[5px] bg-white text-sm font-medium !placeholder-green-1",
-      invisible: "bg-white text-sm font-normal placeholder-gray-8",
-      gray: "bg-gray-6 text-sm placeholder-gray-12 rounded-[5px]",
-      border:
-        "px-[14px] h-[42px] border border-gray-8 text-sm placeholder-gray-12 rounded-[4px]",
+const inputVariants = cva(
+  "focus:outline-none h-full w-full !rounded-[4px] disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default:
+          "p-[20px] border border-gray-5 rounded-[5px] bg-white text-sm font-medium !placeholder-green-1",
+        invisible: "bg-white text-sm font-normal placeholder-gray-8",
+        gray: "bg-gray-6 text-sm placeholder-gray-12 rounded-[5px]",
+        border:
+          "px-[14px] h-[42px] border border-gray-8 text-sm placeholder-gray-12 rounded-[4px]",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
     },
   },
-  defaultVariants: {
-    variant: "default",
-  },
-});
+);
 
 export interface InputProps
   extends
@@ -49,6 +52,7 @@ const Input = React.forwardRef<HTMLInputElement, FieldProps & InputProps>(
       hiddenErr,
       clearable,
       onManualClear,
+      disabled,
       ...props
     },
     ref,
@@ -76,6 +80,7 @@ const Input = React.forwardRef<HTMLInputElement, FieldProps & InputProps>(
             type={type}
             className={`${inputClasses}${showError && !hiddenErr ? "border! border-red-1!" : ""}`}
             ref={ref}
+            disabled={disabled}
             {...field}
             {...props}
             onChange={handleChange}

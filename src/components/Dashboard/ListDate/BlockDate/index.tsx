@@ -3,6 +3,7 @@
 import { DailyFinance } from "@/app/generated/prisma/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCompactNumber } from "@/helper/formatCompactNumber";
+import { useRouter } from "next/navigation";
 
 type CalendarCell = {
   date: Date | null;
@@ -71,6 +72,7 @@ function dateKey(date: Date) {
 }
 
 export default function BlockDate({ year, month, days, isLoading }: Props) {
+  const router = useRouter();
   const dayMap = normalizeDays(days);
   const cells = buildCalendar(year, month, dayMap);
   const todayKey = dateKey(new Date());
@@ -107,12 +109,14 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
               key={i}
               onClick={() => {
                 if (isFutureDay) return;
+                if (cell?.data?.id)
+                  router.push(`/daily-detail/${cell?.data?.id}`);
               }}
               className={`
-                rounded-[5px] p-2 text-center text-xs transition
+                rounded-[5px] p-2 text-center text-xs transition cursor-pointer
                 ${
                   isFutureDay
-                    ? "opacity-50 cursor-not-allowed"
+                    ? "opacity-50 cursor-not-allowed!"
                     : isPositive
                       ? "bg-green-3"
                       : isNegative

@@ -30,7 +30,7 @@ export type YearProfitResponse = {
 
 export type MonthlyRevenue = {
   month: number;
-  totalRevenue: number;
+  profit: number;
 };
 
 export type YearlyRevenueResponse = {
@@ -40,5 +40,26 @@ export type YearlyRevenueResponse = {
 
 export interface CreateMonthlyExpenseRequest {
   name: string;
-  amount: number | "";
+  amount: number | string;
+}
+
+export type UpdateMonthlyExpenseRequest = CreateMonthlyExpenseRequest;
+
+export type DailyDetailResponse = {
+  id: number;
+  date: string;
+  capitalCash: number;
+  capitalBank: number;
+  revenueCash: number;
+  revenueBank: number;
+  profitCash: number;
+  profitBank: number;
+  totalProfit: number;
+};
+
+export interface UpdateDailyRequest {
+  capitalCash?: number | string;
+  capitalBank?: number | string;
+  revenueCash?: number | string;
+  revenueBank?: number | string;
 }
