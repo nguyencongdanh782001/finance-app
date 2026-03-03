@@ -1,5 +1,7 @@
 const APP_API_URL = (path: string) => {
-  return `${process.env.NEXT_PUBLIC_BASE_URL}/api/${path}`;
+  return process.env.NEXT_PUBLIC_NODE_ENV === "local"
+    ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/${path}`
+    : `/api/${path}`;
 };
 
 export const API_ROUTES = {
