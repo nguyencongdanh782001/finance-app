@@ -3,12 +3,13 @@
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { YearlyRevenueResponse } from "@/interface/financeAPI";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import MonthlyRevenueChart from "./MonthlyRevenueChart";
 
 const ChartYearlyRevenue = () => {
   const now = new Date();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const urlYear = Number(searchParams.get("year"));
   const defaultYear = urlYear || now.getFullYear();
@@ -24,7 +25,7 @@ const ChartYearlyRevenue = () => {
       }
     };
     fetchData();
-  }, [defaultYear, searchParams.toString]);
+  }, [defaultYear, searchParams.toString(), pathname.toString()]);
 
   return (
     <div className="flex flex-col gap-4">
