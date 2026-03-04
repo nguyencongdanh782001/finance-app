@@ -7,7 +7,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import MonthlyRevenueChart from "./MonthlyRevenueChart";
 
-const ChartYearlyRevenue = () => {
+const ChartYearlyRevenue = ({ isLoading }: { isLoading: boolean }) => {
   const now = new Date();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -24,8 +24,8 @@ const ChartYearlyRevenue = () => {
         setYearlyRevenueData(res.data);
       }
     };
-    fetchData();
-  }, [defaultYear, searchParams.toString(), pathname.toString()]);
+    if (!isLoading) fetchData();
+  }, [defaultYear, searchParams.toString(), pathname.toString(), isLoading]);
 
   return (
     <div className="flex flex-col gap-4">

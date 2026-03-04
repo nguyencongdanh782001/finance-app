@@ -67,7 +67,7 @@ export default function HomeContainer() {
       <ListDate />
 
       {/* Chart Yearly Revenue */}
-      <ChartYearlyRevenue />
+      <ChartYearlyRevenue isLoading={isLoading} />
     </Container>
   );
 }
