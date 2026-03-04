@@ -65,8 +65,8 @@ export async function PUT(
   const revenueCash = Number(body.revenueCash ?? daily.revenueCash);
   const revenueBank = Number(body.revenueBank ?? daily.revenueBank);
 
-  const profitCash = revenueCash - capitalCash;
-  const profitBank = revenueBank - capitalBank;
+  const profitCash = revenueCash === 0 ? 0 : revenueCash - capitalCash;
+  const profitBank = revenueBank === 0 ? 0 : revenueBank - capitalBank;
   const totalProfit = profitCash + profitBank;
 
   await prisma.dailyFinance.update({

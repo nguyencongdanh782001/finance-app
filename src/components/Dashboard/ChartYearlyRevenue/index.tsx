@@ -24,7 +24,8 @@ const ChartYearlyRevenue = () => {
       }
     };
     fetchData();
-  }, [defaultYear]);
+  }, [defaultYear, searchParams.toString]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
