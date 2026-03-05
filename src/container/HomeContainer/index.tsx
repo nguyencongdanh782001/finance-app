@@ -65,7 +65,7 @@ export default function HomeContainer() {
             className={`text-3xl ${yearProfit?.totalProfit && yearProfit?.totalProfit < 0 ? "text-red-3" : "text-green-15"} font-extrabold`}
           >
             {formatCurrencyVND(yearProfit?.totalProfit || 0)}
-            <span className="uppercase text-md text-green-1">vnđ</span>
+            <span className="uppercase text-md text-green-1">vnd</span>
           </p>
         )}
       </div>
