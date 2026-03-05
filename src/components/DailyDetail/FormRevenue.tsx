@@ -1,21 +1,21 @@
 "use client";
+import { RESPONSE_CODES } from "@/constant/codes";
+import { financeAPI } from "@/endpoint/financeAPI";
+import { toast } from "@/hook/use-toast";
 import { CustomInputProps } from "@/interface/Field";
 import {
   DailyDetailResponse,
   UpdateDailyRequest,
 } from "@/interface/financeAPI";
 import { Form, FormikProvider, useFormik } from "formik";
-import AutoCompleteField from "../common/CustomFields/AutoCompleteField";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { useCallback, useEffect } from "react";
 import { debounce } from "lodash";
-import { Skeleton } from "../ui/skeleton";
 import { CandlestickChartIcon } from "lucide-react";
-import { financeAPI } from "@/endpoint/financeAPI";
-import { RESPONSE_CODES } from "@/constant/codes";
-import { toast } from "@/hook/use-toast";
 import { useParams } from "next/navigation";
+import { useCallback } from "react";
+import AutoCompleteField from "../common/CustomFields/AutoCompleteField";
+import { Label } from "../ui/label";
+import { NumericInput } from "../ui/numberInput";
+import { Skeleton } from "../ui/skeleton";
 
 interface FormRevenueProps {
   data: DailyDetailResponse | undefined;
@@ -72,13 +72,7 @@ export default function FormRevenue(props: FormRevenueProps) {
     },
   });
 
-  const { values, isSubmitting, setSubmitting, dirty } = formik;
-
-  useEffect(() => {
-    if (dirty && !isLoading && !reload) {
-      fuzzySubmit(values, setSubmitting);
-    }
-  }, [values, dirty]);
+  const { isSubmitting, submitForm, dirty } = formik;
 
   return (
     <FormikProvider value={formik}>
@@ -104,14 +98,15 @@ export default function FormRevenue(props: FormRevenueProps) {
             <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
           ) : (
             <AutoCompleteField<CustomInputProps>
-              component={Input}
+              component={NumericInput}
               version="field"
               placeholder="0"
               name="revenueCash"
               variant="default"
-              className="bg-purple-2! h-14! rounded-xl! border-purple-3! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+              className="bg-purple-2! h-14! rounded-xl! border-purple-3! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
+              onBlur={submitForm}
             />
           )}
         </div>
@@ -128,17 +123,19 @@ export default function FormRevenue(props: FormRevenueProps) {
             <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
           ) : (
             <AutoCompleteField<CustomInputProps>
-              component={Input}
+              component={NumericInput}
               version="field"
               placeholder="0"
               name="revenueBank"
               variant="default"
-              className="bg-blue-3! h-14! rounded-xl! border-blue-4! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+              className="bg-blue-3! h-14! rounded-xl! border-blue-4! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
+              onBlur={submitForm}
             />
           )}
         </div>
+        <button disabled={!dirty} type="submit" className="hidden" />
       </Form>
     </FormikProvider>
   );

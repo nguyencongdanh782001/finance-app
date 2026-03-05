@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { formatCompactNumber } from "@/helper/formatCompactNumber";
 import { MonthlyDetailResponse } from "@/interface/financeAPI";
 import { useParams } from "next/navigation";
@@ -130,7 +131,9 @@ const MonthDetail = () => {
                 <Skeleton className="h-6 w-30 rounded-2 bg-gray-300" />
               ) : (
                 <p className="text-gray-3 text-base font-bold uppercase">
-                  {formatCompactNumber(monthlyDetailData?.totalExpense || 0)}{" "}
+                  {formatCurrencyVND(
+                    Number(monthlyDetailData?.totalExpense || 0),
+                  )}{" "}
                   vnd
                 </p>
               )}
@@ -160,7 +163,7 @@ const MonthDetail = () => {
               <p
                 className={`${monthlyDetailData?.profit && monthlyDetailData?.profit < 0 ? "text-red-1" : "text-green-9"}  text-base font-extrabold`}
               >
-                {formatCompactNumber(monthlyDetailData?.profit || 0)} VND
+                {formatCurrencyVND(Number(monthlyDetailData?.profit || 0))} VND
               </p>
             )}
           </div>

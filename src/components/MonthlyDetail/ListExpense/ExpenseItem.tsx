@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { TZ_TEMPLATE } from "@/constant/date";
 import { formatTZ } from "@/helper/date";
-import { formatCompactNumber } from "@/helper/formatCompactNumber";
 import { Expense } from "@/interface/financeAPI";
 import { Edit, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import ModalEditExpense from "../ModalEditExpense";
 import ModalDeleteExpense from "../ModalDeleteExpense";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 
 interface ExpenseItemProps {
   data: Expense;
@@ -46,7 +46,7 @@ const ExpenseItem = (props: ExpenseItemProps) => {
         {formatTZ(data?.createdAt || "", TZ_TEMPLATE.year_month_day)}
       </p>
       <p className="mt-2 text-base text-gray-2 font-bold">
-        {formatCompactNumber(data?.amount || 0)} VND
+        {formatCurrencyVND(Number(data?.amount || 0))} VND
       </p>
 
       <ModalEditExpense

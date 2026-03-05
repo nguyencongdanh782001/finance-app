@@ -33,6 +33,7 @@ export async function GET(
     profitCash: Number(daily.profitCash),
     profitBank: Number(daily.profitBank),
     totalProfit: Number(daily.totalProfit),
+    note: daily.note,
   });
 }
 
@@ -69,6 +70,8 @@ export async function PUT(
   const profitBank = revenueBank === 0 ? 0 : revenueBank - capitalBank;
   const totalProfit = profitCash + profitBank;
 
+  const note = body.note;
+
   await prisma.dailyFinance.update({
     where: { id: dailyId },
     data: {
@@ -79,6 +82,7 @@ export async function PUT(
       profitCash,
       profitBank,
       totalProfit,
+      note,
     },
   });
 

@@ -1,21 +1,19 @@
 "use client";
+import { RESPONSE_CODES } from "@/constant/codes";
+import { financeAPI } from "@/endpoint/financeAPI";
+import { toast } from "@/hook/use-toast";
 import { CustomInputProps } from "@/interface/Field";
 import {
   DailyDetailResponse,
   UpdateDailyRequest,
 } from "@/interface/financeAPI";
 import { Form, FormikProvider, useFormik } from "formik";
-import { debounce } from "lodash";
 import { WalletIcon } from "lucide-react";
-import { useCallback, useEffect } from "react";
-import AutoCompleteField from "../common/CustomFields/AutoCompleteField";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Skeleton } from "../ui/skeleton";
-import { financeAPI } from "@/endpoint/financeAPI";
-import { RESPONSE_CODES } from "@/constant/codes";
-import { toast } from "@/hook/use-toast";
 import { useParams } from "next/navigation";
+import AutoCompleteField from "../common/CustomFields/AutoCompleteField";
+import { Label } from "../ui/label";
+import { NumericInput } from "../ui/numberInput";
+import { Skeleton } from "../ui/skeleton";
 
 interface FormCapitalProps {
   data: DailyDetailResponse | undefined;
@@ -35,33 +33,27 @@ export default function FormCapital(props: FormCapitalProps) {
       capitalCash: data?.capitalCash || "",
     };
 
-  const fuzzySubmit = useCallback(
-    debounce(
-      async (
-        value: Pick<UpdateDailyRequest, "capitalBank" | "capitalCash">,
-        setSubmitting: (isSubmitting: boolean) => void,
-      ) => {
-        setSubmitting(true);
-        const res = await financeAPI.putDailyDetailData(id, {
-          capitalBank: Number(value.capitalBank || 0),
-          capitalCash: Number(value.capitalCash || 0),
-        });
+  const fuzzySubmit = async (
+    value: Pick<UpdateDailyRequest, "capitalBank" | "capitalCash">,
+    setSubmitting: (isSubmitting: boolean) => void,
+  ) => {
+    setSubmitting(true);
+    const res = await financeAPI.putDailyDetailData(id, {
+      capitalBank: Number(value.capitalBank || 0),
+      capitalCash: Number(value.capitalCash || 0),
+    });
 
-        if (res.code === RESPONSE_CODES.success) {
-          onReload();
-        } else {
-          toast({
-            title: "Cập nhật vốn hoá thất bại",
-            className: "bg-red-1 text-white text-sm font-medium w-fit",
-            duration: 3000,
-          });
-        }
-        setSubmitting(false);
-      },
-      500,
-    ),
-    [data],
-  );
+    if (res.code === RESPONSE_CODES.success) {
+      onReload();
+    } else {
+      toast({
+        title: "Cập nhật vốn hoá thất bại",
+        className: "bg-red-1 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
+    }
+    setSubmitting(false);
+  };
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -71,13 +63,7 @@ export default function FormCapital(props: FormCapitalProps) {
     },
   });
 
-  const { values, isSubmitting, setSubmitting, dirty } = formik;
-
-  useEffect(() => {
-    if (dirty && !isLoading && !reload) {
-      fuzzySubmit(values, setSubmitting);
-    }
-  }, [values, dirty]);
+  const { isSubmitting, submitForm, dirty } = formik;
 
   return (
     <FormikProvider value={formik}>
@@ -103,14 +89,15 @@ export default function FormCapital(props: FormCapitalProps) {
             <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
           ) : (
             <AutoCompleteField<CustomInputProps>
-              component={Input}
+              component={NumericInput}
               version="field"
               placeholder="0"
               name="capitalCash"
               variant="default"
-              className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+              className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
+              onBlur={submitForm}
             />
           )}
         </div>
@@ -127,17 +114,19 @@ export default function FormCapital(props: FormCapitalProps) {
             <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
           ) : (
             <AutoCompleteField<CustomInputProps>
-              component={Input}
+              component={NumericInput}
               version="field"
               placeholder="0"
               name="capitalBank"
               variant="default"
-              className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+              className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
+              onBlur={submitForm}
             />
           )}
         </div>
+        <button disabled={!dirty} type="submit" className="hidden" />
       </Form>
     </FormikProvider>
   );

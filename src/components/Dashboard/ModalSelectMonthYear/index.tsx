@@ -58,7 +58,11 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
           <Button
             variant="ghost"
             className="text-green-6"
-            onClick={() => setYear((y) => y - 1)}
+            onClick={() => {
+              const newYear = year - 1;
+              setYear(newYear);
+              setMonth(newYear === currentYear ? currentMonth : 1);
+            }}
           >
             <ChevronLeft className="size-5!" />
           </Button>
@@ -69,7 +73,11 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
             variant="ghost"
             className="text-green-6 disabled:cursor-not-allowed!"
             disabled={isCurrentYear}
-            onClick={() => setYear((y) => y + 1)}
+            onClick={() => {
+              const newYear = year + 1;
+              setYear(newYear);
+              setMonth(newYear === currentYear ? currentMonth : 1);
+            }}
           >
             <ChevronRight className="size-5!" />
           </Button>
@@ -88,7 +96,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
                 key={m}
                 disabled={disabled}
                 onClick={() => setMonth(m)}
-                className={`flex flex-col rounded-2xl border border-gray-1 p-3 transition h-23.5 text-center text-green-1 uppercase font-bold cursor-pointer disabled:cursor-not-allowed!
+                className={`flex flex-col rounded-2xl border ${currentYear === year && currentMonth === m ? "border-blue-5" : "border-gray-1"}  p-3 transition h-23.5 text-center text-green-1 uppercase font-bold cursor-pointer disabled:cursor-not-allowed!
         ${
           disabled
             ? "cursor-not-allowed! opacity-50"

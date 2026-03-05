@@ -54,6 +54,7 @@ export type DailyDetailResponse = {
   profitCash: number;
   profitBank: number;
   totalProfit: number;
+  note: string;
 };
 
 export interface UpdateDailyRequest {
@@ -61,4 +62,5 @@ export interface UpdateDailyRequest {
   capitalBank?: number | string;
   revenueCash?: number | string;
   revenueBank?: number | string;
+  note?: string;
 }

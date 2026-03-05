@@ -1,6 +1,6 @@
 "use client";
 import { MonthlyResponse } from "@/interface/financeAPI";
-import SelectMontYear from "../SelectMontYear";
+import SelectMontYear from "../SelectMonthYear";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { financeAPI } from "@/endpoint/financeAPI";
@@ -41,7 +41,7 @@ const ListDate = () => {
     <div className="flex flex-col gap-8">
       <div className="grid grid-cols-2 gap-4">
         <BlockTotalExpense
-          totalExpense={Number(monthlyData?.totalDailyProfit)}
+          totalExpense={Number(monthlyData?.totalExpense)}
           isLoading={isLoading}
         />
         <BlockTotalProfit

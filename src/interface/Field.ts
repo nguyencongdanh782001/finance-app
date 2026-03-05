@@ -1,4 +1,5 @@
 import { InputProps } from "@/components/ui/input";
+import { TextAreaProps } from "@/components/ui/textarea";
 import { FieldProps } from "formik";
 
 export interface CustomFieldProps {
@@ -17,7 +18,8 @@ export interface CustomInputProps
 //   extends TimePickerProps,
 //     Omit<CustomFieldProps, 'children'> {}
 
-// export interface CustomTextAreaProps extends TextAreaProps, Omit<CustomFieldProps, 'children'> {}
+export interface CustomTextAreaProps
+  extends TextAreaProps, Omit<CustomFieldProps, "children"> {}
 
 // export interface CustomSelectProps extends SelectProps, Omit<CustomFieldProps, 'children'> {}
 

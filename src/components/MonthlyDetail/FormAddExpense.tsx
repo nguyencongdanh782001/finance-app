@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Label } from "../ui/label";
 import AutoCompleteField from "../common/CustomFields/AutoCompleteField";
 import { CustomInputProps } from "@/interface/Field";
+import { NumericInput } from "../ui/numberInput";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { financeAPI } from "@/endpoint/financeAPI";
@@ -89,7 +90,7 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
             <div className="flex w-full items-start gap-3">
               <div className="flex flex-col w-full">
                 <AutoCompleteField<CustomInputProps>
-                  component={Input}
+                  component={NumericInput}
                   version="field"
                   placeholder="0"
                   name="amount"

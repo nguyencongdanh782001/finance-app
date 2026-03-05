@@ -4,6 +4,7 @@ import Header from "@/components/common/Header";
 import BlockBankProfit from "@/components/DailyDetail/BlockCashBank";
 import BlockCashProfit from "@/components/DailyDetail/BlockCashProfit";
 import FormCapital from "@/components/DailyDetail/FormCapital";
+import FormNote from "@/components/DailyDetail/FormNote";
 import FormRevenue from "@/components/DailyDetail/FormRevenue";
 import { Container } from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,13 +12,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { TZ_TEMPLATE } from "@/constant/date";
 import { financeAPI } from "@/endpoint/financeAPI";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { formatTZ } from "@/helper/date";
-import { formatCompactNumber } from "@/helper/formatCompactNumber";
-import { toast } from "@/hook/use-toast";
-import {
-  DailyDetailResponse,
-  UpdateDailyRequest,
-} from "@/interface/financeAPI";
+import { DailyDetailResponse } from "@/interface/financeAPI";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -85,6 +82,12 @@ const DailyDetail = () => {
           onReload={() => setReload(true)}
         />
 
+        <FormNote
+          data={dailyDetailData}
+          isLoading={isLoading}
+          reload={reload}
+          onReload={() => setReload(true)}
+        />
         <div className="grid grid-cols-2 gap-4">
           <BlockCashProfit data={dailyDetailData} isLoading={isLoading} />
           <BlockBankProfit data={dailyDetailData} isLoading={isLoading} />
@@ -108,7 +111,7 @@ const DailyDetail = () => {
                 dailyDetailData?.totalProfit > 0
                   ? "+"
                   : ""}
-                {formatCompactNumber(dailyDetailData?.totalProfit || 0)} VND
+                {formatCurrencyVND(dailyDetailData?.totalProfit || 0)} VND
               </p>
             )}
           </div>

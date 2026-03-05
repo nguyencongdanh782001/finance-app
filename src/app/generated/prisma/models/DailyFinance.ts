@@ -61,6 +61,7 @@ export type DailyFinanceMinAggregateOutputType = {
   profitCash: runtime.Decimal | null
   profitBank: runtime.Decimal | null
   totalProfit: runtime.Decimal | null
+  note: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -76,6 +77,7 @@ export type DailyFinanceMaxAggregateOutputType = {
   profitCash: runtime.Decimal | null
   profitBank: runtime.Decimal | null
   totalProfit: runtime.Decimal | null
+  note: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -91,6 +93,7 @@ export type DailyFinanceCountAggregateOutputType = {
   profitCash: number
   profitBank: number
   totalProfit: number
+  note: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -132,6 +135,7 @@ export type DailyFinanceMinAggregateInputType = {
   profitCash?: true
   profitBank?: true
   totalProfit?: true
+  note?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -147,6 +151,7 @@ export type DailyFinanceMaxAggregateInputType = {
   profitCash?: true
   profitBank?: true
   totalProfit?: true
+  note?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -162,6 +167,7 @@ export type DailyFinanceCountAggregateInputType = {
   profitCash?: true
   profitBank?: true
   totalProfit?: true
+  note?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -264,6 +270,7 @@ export type DailyFinanceGroupByOutputType = {
   profitCash: runtime.Decimal
   profitBank: runtime.Decimal
   totalProfit: runtime.Decimal
+  note: string | null
   createdAt: Date
   updatedAt: Date
   _count: DailyFinanceCountAggregateOutputType | null
@@ -302,6 +309,7 @@ export type DailyFinanceWhereInput = {
   profitCash?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.StringNullableFilter<"DailyFinance"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
   monthlyFinance?: Prisma.XOR<Prisma.MonthlyFinanceScalarRelationFilter, Prisma.MonthlyFinanceWhereInput>
@@ -318,6 +326,7 @@ export type DailyFinanceOrderByWithRelationInput = {
   profitCash?: Prisma.SortOrder
   profitBank?: Prisma.SortOrder
   totalProfit?: Prisma.SortOrder
+  note?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   monthlyFinance?: Prisma.MonthlyFinanceOrderByWithRelationInput
@@ -337,6 +346,7 @@ export type DailyFinanceWhereUniqueInput = Prisma.AtLeast<{
   profitCash?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.StringNullableFilter<"DailyFinance"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
   monthlyFinance?: Prisma.XOR<Prisma.MonthlyFinanceScalarRelationFilter, Prisma.MonthlyFinanceWhereInput>
@@ -353,6 +363,7 @@ export type DailyFinanceOrderByWithAggregationInput = {
   profitCash?: Prisma.SortOrder
   profitBank?: Prisma.SortOrder
   totalProfit?: Prisma.SortOrder
+  note?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DailyFinanceCountOrderByAggregateInput
@@ -376,6 +387,7 @@ export type DailyFinanceScalarWhereWithAggregatesInput = {
   profitCash?: Prisma.DecimalWithAggregatesFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalWithAggregatesFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalWithAggregatesFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.StringNullableWithAggregatesFilter<"DailyFinance"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DailyFinance"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DailyFinance"> | Date | string
 }
@@ -389,6 +401,7 @@ export type DailyFinanceCreateInput = {
   profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   monthlyFinance: Prisma.MonthlyFinanceCreateNestedOneWithoutDaysInput
@@ -405,6 +418,7 @@ export type DailyFinanceUncheckedCreateInput = {
   profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -418,6 +432,7 @@ export type DailyFinanceUpdateInput = {
   profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   monthlyFinance?: Prisma.MonthlyFinanceUpdateOneRequiredWithoutDaysNestedInput
@@ -434,6 +449,7 @@ export type DailyFinanceUncheckedUpdateInput = {
   profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -449,6 +465,7 @@ export type DailyFinanceCreateManyInput = {
   profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -462,6 +479,7 @@ export type DailyFinanceUpdateManyMutationInput = {
   profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -477,6 +495,7 @@ export type DailyFinanceUncheckedUpdateManyInput = {
   profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -492,6 +511,7 @@ export type DailyFinanceCountOrderByAggregateInput = {
   profitCash?: Prisma.SortOrder
   profitBank?: Prisma.SortOrder
   totalProfit?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -519,6 +539,7 @@ export type DailyFinanceMaxOrderByAggregateInput = {
   profitCash?: Prisma.SortOrder
   profitBank?: Prisma.SortOrder
   totalProfit?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -534,6 +555,7 @@ export type DailyFinanceMinOrderByAggregateInput = {
   profitCash?: Prisma.SortOrder
   profitBank?: Prisma.SortOrder
   totalProfit?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -570,6 +592,10 @@ export type DecimalFieldUpdateOperationsInput = {
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -631,6 +657,7 @@ export type DailyFinanceCreateWithoutMonthlyFinanceInput = {
   profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -645,6 +672,7 @@ export type DailyFinanceUncheckedCreateWithoutMonthlyFinanceInput = {
   profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -689,6 +717,7 @@ export type DailyFinanceScalarWhereInput = {
   profitCash?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFilter<"DailyFinance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.StringNullableFilter<"DailyFinance"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
 }
@@ -703,6 +732,7 @@ export type DailyFinanceCreateManyMonthlyFinanceInput = {
   profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -716,6 +746,7 @@ export type DailyFinanceUpdateWithoutMonthlyFinanceInput = {
   profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -730,6 +761,7 @@ export type DailyFinanceUncheckedUpdateWithoutMonthlyFinanceInput = {
   profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -744,6 +776,7 @@ export type DailyFinanceUncheckedUpdateManyWithoutMonthlyFinanceInput = {
   profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -761,6 +794,7 @@ export type DailyFinanceSelect<ExtArgs extends runtime.Types.Extensions.Internal
   profitCash?: boolean
   profitBank?: boolean
   totalProfit?: boolean
+  note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   monthlyFinance?: boolean | Prisma.MonthlyFinanceDefaultArgs<ExtArgs>
@@ -777,6 +811,7 @@ export type DailyFinanceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   profitCash?: boolean
   profitBank?: boolean
   totalProfit?: boolean
+  note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   monthlyFinance?: boolean | Prisma.MonthlyFinanceDefaultArgs<ExtArgs>
@@ -793,6 +828,7 @@ export type DailyFinanceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   profitCash?: boolean
   profitBank?: boolean
   totalProfit?: boolean
+  note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   monthlyFinance?: boolean | Prisma.MonthlyFinanceDefaultArgs<ExtArgs>
@@ -809,11 +845,12 @@ export type DailyFinanceSelectScalar = {
   profitCash?: boolean
   profitBank?: boolean
   totalProfit?: boolean
+  note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DailyFinanceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "monthlyFinanceId" | "capitalCash" | "capitalBank" | "revenueCash" | "revenueBank" | "profitCash" | "profitBank" | "totalProfit" | "createdAt" | "updatedAt", ExtArgs["result"]["dailyFinance"]>
+export type DailyFinanceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "monthlyFinanceId" | "capitalCash" | "capitalBank" | "revenueCash" | "revenueBank" | "profitCash" | "profitBank" | "totalProfit" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["dailyFinance"]>
 export type DailyFinanceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   monthlyFinance?: boolean | Prisma.MonthlyFinanceDefaultArgs<ExtArgs>
 }
@@ -852,6 +889,10 @@ export type $DailyFinancePayload<ExtArgs extends runtime.Types.Extensions.Intern
     profitCash: runtime.Decimal
     profitBank: runtime.Decimal
     totalProfit: runtime.Decimal
+    /**
+     * NOTE
+     */
+    note: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["dailyFinance"]>
@@ -1288,6 +1329,7 @@ export interface DailyFinanceFieldRefs {
   readonly profitCash: Prisma.FieldRef<"DailyFinance", 'Decimal'>
   readonly profitBank: Prisma.FieldRef<"DailyFinance", 'Decimal'>
   readonly totalProfit: Prisma.FieldRef<"DailyFinance", 'Decimal'>
+  readonly note: Prisma.FieldRef<"DailyFinance", 'String'>
   readonly createdAt: Prisma.FieldRef<"DailyFinance", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DailyFinance", 'DateTime'>
 }
