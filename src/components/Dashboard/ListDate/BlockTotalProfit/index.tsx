@@ -11,13 +11,18 @@ interface BlockTotalProfitProps {
 
 const BlockTotalProfit = (props: BlockTotalProfitProps) => {
   const { isLoading, profit } = props;
+  const now = new Date();
+  const searchParams = useSearchParams();
+
+  const urlMonth = Number(searchParams.get("month"));
+  const defaultMonth = urlMonth || now.getMonth() + 1;
 
   return (
     <div
       className={`flex flex-col gap-1 rounded-[40px] px-5 py-6 border border-white shadow-sm bg-linear-to-tr ${profit && profit < 0 ? "from-red-6 to-red-5" : "from-green-18 to-green-17"}`}
     >
       <p className="text-green-1 text-13px font-bold uppercase">
-        Lợi nhuận còn lại
+        Lợi nhuận tháng {defaultMonth}
       </p>
       {isLoading ? (
         <Skeleton className="h-7 w-full rounded-1 mb-2 bg-gray-300" />
