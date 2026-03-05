@@ -53,7 +53,7 @@ export default function HomeContainer() {
         {isLoading ? (
           <Skeleton className="h-6 w-50 rounded-2 mb-2" />
         ) : (
-          <p className="text-11px text-green-1 font-bold">
+          <p className="text-13px text-green-1 font-bold">
             Tổng lợi nhuận năm {yearProfit?.year}
           </p>
         )}
