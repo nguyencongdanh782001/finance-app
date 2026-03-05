@@ -15,6 +15,10 @@ export default function HomeContainer() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const now = new Date();
+  const urlYear = Number(searchParams.get("year"));
+  const defaultYear = urlYear || now.getFullYear();
+
   const [isLoading, setIsLoading] = useState(true);
   const [yearProfit, setYearProfit] = useState<YearProfitResponse | undefined>(
     undefined,
@@ -23,7 +27,7 @@ export default function HomeContainer() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const res = await financeAPI.getYearProfit();
+      const res = await financeAPI.getYearProfit(defaultYear);
       if (res.code === RESPONSE_CODES.success) {
         setYearProfit(res.data);
       }
@@ -57,8 +61,10 @@ export default function HomeContainer() {
         {isLoading ? (
           <Skeleton className="h-6 w-50 rounded-2" />
         ) : (
-          <p className="text-3xl text-blue-2 font-extrabold">
-            {formatCurrencyVND(yearProfit?.totalProfit || 0)}{" "}
+          <p
+            className={`text-3xl ${yearProfit?.totalProfit && yearProfit?.totalProfit < 0 ? "text-red-3" : "text-green-15"} font-extrabold`}
+          >
+            {formatCurrencyVND(yearProfit?.totalProfit || 0)}
             <span className="uppercase text-md text-green-1">vnđ</span>
           </p>
         )}

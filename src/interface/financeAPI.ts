@@ -2,9 +2,8 @@ import { DailyFinance, MonthlyFinance } from "@/app/generated/prisma/client";
 
 export type MonthlyResponse = {
   id: number;
-  monthly: MonthlyFinance;
   days: DailyFinance[];
-};
+} & MonthlyFinance;
 
 export type Expense = {
   id: number;

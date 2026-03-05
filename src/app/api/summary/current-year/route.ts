@@ -1,8 +1,11 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET() {
-  const year = new Date().getFullYear();
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+
+  const yearParam = searchParams.get("year");
+  const year = yearParam ? Number(yearParam) : new Date().getFullYear();
 
   // 1️⃣ Sum profit từ daily
   const dailyProfit = await prisma.dailyFinance.aggregate({
@@ -12,7 +15,7 @@ export async function GET() {
     where: {
       date: {
         gte: new Date(`${year}-01-01`),
-        lt: new Date(`${year + 1}-01-01`),
+        lte: new Date(`${year}-12-31`),
       },
     },
   });

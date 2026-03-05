@@ -5,7 +5,8 @@ const APP_API_URL = (path: string) => {
 };
 
 export const API_ROUTES = {
-  getYearProfit: APP_API_URL("summary/current-year"),
+  getYearProfit: (year: number) =>
+    APP_API_URL(`summary/current-year?year=${year}`),
   getMonthlyData: (year: number, month: number) =>
     APP_API_URL(`monthly?year=${year}&month=${month}`),
   getYearlyRevenue: (year: number) =>

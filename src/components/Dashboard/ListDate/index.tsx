@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { RESPONSE_CODES } from "@/constant/codes";
 import BlockDate from "./BlockDate";
+import BlockTotalExpense from "./BlockTotalExpense";
+import BlockTotalProfit from "./BlockTotalProfit";
 
 const ListDate = () => {
   const now = new Date();
@@ -36,25 +38,37 @@ const ListDate = () => {
   }, [year, month]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <p className="uppercase text-base text-gray-2 font-extrabold">
-          Chi Tiết Tháng
-        </p>
-        <SelectMontYear
-          year={year}
-          month={month}
-          setYear={setYear}
-          setMonth={setMonth}
-          id={monthlyData?.id}
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-2 gap-4">
+        <BlockTotalExpense
+          totalExpense={Number(monthlyData?.totalDailyProfit)}
+          isLoading={isLoading}
+        />
+        <BlockTotalProfit
+          profit={Number(monthlyData?.profit)}
+          isLoading={isLoading}
         />
       </div>
-      <BlockDate
-        year={year}
-        month={month}
-        days={monthlyData?.days || []}
-        isLoading={isLoading}
-      />
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <p className="uppercase text-base text-gray-2 font-extrabold">
+            Chi Tiết Tháng
+          </p>
+          <SelectMontYear
+            year={year}
+            month={month}
+            setYear={setYear}
+            setMonth={setMonth}
+            id={monthlyData?.id}
+          />
+        </div>
+        <BlockDate
+          year={year}
+          month={month}
+          days={monthlyData?.days || []}
+          isLoading={isLoading}
+        />
+      </div>
     </div>
   );
 };

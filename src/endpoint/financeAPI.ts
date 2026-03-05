@@ -12,8 +12,8 @@ import appAxios from "./appAxios";
 import { API_ROUTES } from "@/constant/routes";
 
 export const financeAPI = {
-  getYearProfit: (): Promise<IAPIResponse<YearProfitResponse>> => {
-    return appAxios.get(API_ROUTES.getYearProfit);
+  getYearProfit: (year: number): Promise<IAPIResponse<YearProfitResponse>> => {
+    return appAxios.get(API_ROUTES.getYearProfit(year));
   },
   getMonthlyData: (
     year: number,
