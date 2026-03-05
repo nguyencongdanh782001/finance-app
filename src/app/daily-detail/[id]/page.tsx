@@ -115,7 +115,7 @@ const DailyDetail = () => {
               </p>
             )}
           </div>
-          {dailyDetailData?.totalProfit && (
+          {dailyDetailData?.totalProfit ? (
             <div
               className={`p-5.5 rounded-3xl  ${dailyDetailData?.totalProfit < 0 ? "bg-red-100" : "bg-green-14"}`}
             >
@@ -125,6 +125,8 @@ const DailyDetail = () => {
                 <TrendingUp className={`size-5 text-green-13`} />
               )}
             </div>
+          ) : (
+            <></>
           )}
         </div>
       </Container>
