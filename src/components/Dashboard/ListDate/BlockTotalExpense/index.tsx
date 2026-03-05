@@ -18,7 +18,7 @@ const BlockTotalExpense = (props: BlockTotalExpenseProps) => {
   const defaultMonth = urlMonth || now.getMonth() + 1;
 
   return (
-    <div className="flex flex-col gap-1 rounded-[40px] p-6 border border-white shadow-sm bg-linear-to-tr from-orange-2 to-orange-5">
+    <div className="flex flex-col gap-1 rounded-[40px] p-5 border border-white shadow-sm bg-linear-to-tr from-orange-2 to-orange-5">
       <p className="text-green-1 text-13px font-bold uppercase">
         chi tiêu tháng {defaultMonth}
       </p>
