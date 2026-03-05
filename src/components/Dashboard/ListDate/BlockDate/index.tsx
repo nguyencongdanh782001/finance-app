@@ -106,7 +106,7 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
 
           const cellDateKey = toLocalDateKey(cell.date);
           const isFutureDay = cellDateKey > todayKey;
-
+          const isCurrentDay = cellDateKey === todayKey;
           return (
             <div
               key={i}
@@ -117,10 +117,10 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
                 }
               }}
               className={
-                "rounded-[5px] p-2 text-center text-xs transition " +
+                "rounded-[5px] p-2 text-center text-xs transition relative " +
                 (isFutureDay
                   ? "opacity-50 cursor-not-allowed"
-                  : "cursor-pointer ") +
+                  : "cursor-pointer") +
                 (isPositive
                   ? " bg-green-3"
                   : isNegative
@@ -128,6 +128,10 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
                     : " bg-slate-50")
               }
             >
+              {isCurrentDay && (
+                <div className="absolute size-2 rounded-full bg-blue-5 -right-0.5 -top-0.5" />
+              )}
+
               {/* Day number */}
               <p
                 className={

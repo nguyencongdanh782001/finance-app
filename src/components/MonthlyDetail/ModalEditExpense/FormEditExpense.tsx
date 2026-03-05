@@ -112,7 +112,7 @@ export default function FormEditExpense({
         <Button
           type="submit"
           disabled={isSubmitting || !dirty}
-          className="mt-8 shadow-sm! h-13.75! w-full flex items-center gap-2 rounded-xl bg-green-9 text-base text-white font-bold"
+          className="mt-8 shadow-sm! h-13.75! w-full flex items-center gap-2 rounded-xl bg-green-9 hover:bg-green-9/80 text-base text-white font-bold"
         >
           {isSubmitting && (
             <Loader2 className="animate-spin w-3.5 h-3.5 text-white" />

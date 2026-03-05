@@ -102,7 +102,7 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
               <Button
                 type="submit"
                 disabled={isSubmitting || !dirty}
-                className="shadow-sm! h-14! w-30! flex items-center gap-2 rounded-xl bg-green-9 text-base text-white font-bold"
+                className="shadow-sm! h-14! w-30! flex items-center gap-2 rounded-xl bg-green-9 hover:bg-green-9/80 text-base text-white font-bold"
               >
                 {isSubmitting ? (
                   <Loader2 className="animate-spin w-3.5 h-3.5 text-white" />
