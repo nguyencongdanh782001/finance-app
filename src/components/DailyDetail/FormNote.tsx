@@ -87,7 +87,7 @@ export default function FormNote(props: FormNoteProps) {
 
   return (
     <FormikProvider value={formik}>
-      <Form className="w-full rounded-2xl border border-gray-200 p-6 space-y-4 bg-white shadow-sm">
+      <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-4 bg-white shadow-sm">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-full bg-gray-1">
             <Text className="size-4 text-gray-2" />
@@ -95,9 +95,9 @@ export default function FormNote(props: FormNoteProps) {
           <p className="text-13px text-gray-2 font-bold uppercase">Ghi chú</p>
         </div>
 
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col w-full">
           {isLoading ? (
-            <Skeleton className="h-25! w-full  rounded-xl! bg-gray-300" />
+            <Skeleton className="h-25! w-full rounded-xl! bg-gray-300" />
           ) : (
             <AutoCompleteField<CustomTextAreaProps>
               component={Textarea}

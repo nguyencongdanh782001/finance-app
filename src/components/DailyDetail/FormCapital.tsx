@@ -67,7 +67,7 @@ export default function FormCapital(props: FormCapitalProps) {
 
   return (
     <FormikProvider value={formik}>
-      <Form className="w-full rounded-2xl border border-gray-200 p-6 space-y-4 bg-white shadow-sm">
+      <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-4 bg-white shadow-sm">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-full bg-gray-1">
             <WalletIcon className="size-4 text-gray-2" />
