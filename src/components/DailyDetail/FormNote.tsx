@@ -109,7 +109,9 @@ export default function FormNote(props: FormNoteProps) {
               className="min-h-25 max-h-75 rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               onInput={(e) => resizeTextarea(e.currentTarget)}
               disabled={isSubmitting || isLoading || reload}
-              onBlur={submitForm}
+              onBlur={() => {
+                if (dirty) submitForm();
+              }}
             />
           )}
         </div>

@@ -106,7 +106,9 @@ export default function FormRevenue(props: FormRevenueProps) {
               className="bg-purple-2! h-14! rounded-xl! border-purple-3! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
-              onBlur={submitForm}
+              onBlur={() => {
+                if (dirty) submitForm();
+              }}
             />
           )}
         </div>
@@ -131,7 +133,9 @@ export default function FormRevenue(props: FormRevenueProps) {
               className="bg-blue-3! h-14! rounded-xl! border-blue-4! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
-              onBlur={submitForm}
+              onBlur={() => {
+                if (dirty) submitForm();
+              }}
             />
           )}
         </div>

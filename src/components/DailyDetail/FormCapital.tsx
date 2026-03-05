@@ -97,7 +97,9 @@ export default function FormCapital(props: FormCapitalProps) {
               className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
-              onBlur={submitForm}
+              onBlur={() => {
+                if (dirty) submitForm();
+              }}
             />
           )}
         </div>
@@ -122,7 +124,9 @@ export default function FormCapital(props: FormCapitalProps) {
               className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
-              onBlur={submitForm}
+              onBlur={() => {
+                if (dirty) submitForm();
+              }}
             />
           )}
         </div>
