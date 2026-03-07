@@ -45,7 +45,7 @@ const BlockBankProfit = (props: BlockBankProfitProps) => {
           <Skeleton className="h-7 w-full rounded-1 mb-2 bg-gray-300" />
         ) : (
           <p className="text-blue-6 text-base font-extrabold">
-            {formatCompactNumber(data?.profitBank || 0)} VND
+            {formatCompactNumber(data?.profitBank || 0)}
           </p>
         )}
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCompactNumber } from "@/helper/formatCompactNumber";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { useSearchParams } from "next/navigation";
 
 interface BlockTotalExpenseProps {
@@ -26,7 +26,7 @@ const BlockTotalExpense = (props: BlockTotalExpenseProps) => {
         <Skeleton className="h-7 w-full rounded-1 mb-2 bg-gray-300" />
       ) : (
         <p className="text-orange-3 text-base font-extrabold uppercase">
-          {formatCompactNumber(totalExpense || 0)} VND
+          {formatCurrencyVND(totalExpense || 0)}
         </p>
       )}
     </div>

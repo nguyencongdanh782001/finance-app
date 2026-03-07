@@ -135,7 +135,7 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
               {/* Day number */}
               <p
                 className={
-                  "text-xs font-bold " +
+                  "text-10px font-bold " +
                   (isPositive
                     ? "text-green-1"
                     : isNegative
@@ -149,7 +149,7 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
               {/* Profit */}
               <p
                 className={
-                  "text-11px font-extrabold " +
+                  "text-10px font-extrabold " +
                   (isPositive
                     ? "text-green-2"
                     : isNegative

@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCompactNumber } from "@/helper/formatCompactNumber";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { useSearchParams } from "next/navigation";
 
 interface BlockTotalProfitProps {
@@ -30,7 +30,7 @@ const BlockTotalProfit = (props: BlockTotalProfitProps) => {
         <p
           className={`text-base font-extrabold uppercase ${profit && profit < 0 ? "text-red-3" : "text-green-15 "}`}
         >
-          {formatCompactNumber(profit || 0)} VND
+          {formatCurrencyVND(profit || 0)}
         </p>
       )}
     </div>

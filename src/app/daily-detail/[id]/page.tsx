@@ -111,7 +111,7 @@ const DailyDetail = () => {
                 dailyDetailData?.totalProfit > 0
                   ? "+"
                   : ""}
-                {formatCurrencyVND(dailyDetailData?.totalProfit || 0)} VND
+                {formatCurrencyVND(dailyDetailData?.totalProfit || 0)}
               </p>
             )}
           </div>

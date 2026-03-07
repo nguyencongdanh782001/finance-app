@@ -21,7 +21,7 @@ export async function GET(
     include: {
       expenses: {
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       },
       days: {
@@ -51,7 +51,7 @@ export async function GET(
     month: monthly.month,
     totalRevenue,
     totalExpense: Number(monthly.totalExpense),
-    profit: totalRevenue - Number(monthly.totalExpense),
+    profit: totalRevenue,
     expenses: monthly.expenses,
   });
 }

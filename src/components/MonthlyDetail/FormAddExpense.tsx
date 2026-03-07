@@ -71,10 +71,10 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
           <AutoCompleteField<CustomInputProps>
             component={Input}
             version="field"
-            placeholder="Ví dụ: Văn phòng phẩm"
+            placeholder="Nhập chi phí"
             name="name"
             variant="default"
-            className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+            className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
           />
         </div>
 
@@ -85,7 +85,7 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
               variant="secondary"
               className="text-green-1! text-11px font-bold"
             >
-              Số tiền (VNĐ)
+              Số tiền (VND)
             </Label>
             <div className="flex w-full items-start gap-3">
               <div className="flex flex-col w-full">
@@ -95,7 +95,7 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
                   placeholder="0"
                   name="amount"
                   variant="default"
-                  className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+                  className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
                   pattern="^\d+(\.\d*)?$"
                 />
               </div>

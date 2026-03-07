@@ -60,7 +60,8 @@ export async function GET(req: Request) {
     0,
   );
 
-  const profit = totalDailyProfit - totalExpense;
+  const profit = totalDailyProfit;
+  // - totalExpense;
 
   // 4️⃣ Update monthly (ONLY if changed – optional)
   await prisma.monthlyFinance.update({

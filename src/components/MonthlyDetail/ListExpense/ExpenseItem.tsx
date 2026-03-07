@@ -46,7 +46,7 @@ const ExpenseItem = (props: ExpenseItemProps) => {
         {formatTZ(data?.createdAt || "", TZ_TEMPLATE.year_month_day)}
       </p>
       <p className="mt-2 text-base text-gray-2 font-bold">
-        {formatCurrencyVND(Number(data?.amount || 0))} VND
+        {formatCurrencyVND(Number(data?.amount || 0))}
       </p>
 
       <ModalEditExpense
