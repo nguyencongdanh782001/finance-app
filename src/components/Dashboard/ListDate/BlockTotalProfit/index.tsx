@@ -25,7 +25,7 @@ const BlockTotalProfit = (props: BlockTotalProfitProps) => {
         Lợi nhuận tháng {defaultMonth}
       </p>
       {isLoading ? (
-        <Skeleton className="h-7 w-full rounded-1 mb-2 bg-gray-300" />
+        <Skeleton className="h-7 w-full rounded-1 mb-2" />
       ) : (
         <p
           className={`text-base font-extrabold uppercase ${profit && profit < 0 ? "text-red-3" : "text-green-15 "}`}

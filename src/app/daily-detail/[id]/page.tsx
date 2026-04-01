@@ -16,7 +16,7 @@ import { financeAPI } from "@/endpoint/financeAPI";
 import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { formatTZ } from "@/helper/date";
 import { DailyDetailResponse } from "@/interface/financeAPI";
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { PackageCheck, TrendingDown, TrendingUp } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -60,32 +60,52 @@ const DailyDetail = () => {
   return (
     <div className="sm:max-w-191.25 mx-auto relative">
       <Toaster />
-      <Header />
-      <Container className="gap-8 py-8 min-h-[calc(100svh-117px)]!">
+      <Header>
+        <div className="sm:max-w-[765px] mx-auto">
+          <div className="grid w-full grid-cols-2 rounded-full border border-slate-200 bg-slate-50 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("revenue")}
+              className={`flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
+                activeTab === "revenue"
+                  ? "bg-white text-slate-700 shadow-sm"
+                  : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              <TrendingUp
+                className={`size-3.5 ${
+                  activeTab === "revenue" ? "text-green-13" : "text-slate-400"
+                }`}
+              />
+              Doanh thu
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("products")}
+              className={`flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
+                activeTab === "products"
+                  ? "bg-white text-slate-700 shadow-sm"
+                  : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              <PackageCheck
+                className={`size-3.5 ${
+                  activeTab === "products" ? "text-green-13" : "text-slate-400"
+                }`}
+              />
+              Sản phẩm
+            </button>
+          </div>
+        </div>
+      </Header>
+      <Container className="gap-8 py-6 min-h-[calc(100svh-117px)]!">
         {isLoading ? (
-          <Skeleton className="mb-2 h-7 w-60 rounded-2 bg-gray-300" />
+          <Skeleton className="mb-2 h-7 w-60 rounded-2" />
         ) : (
           <h3 className="text-blue-2 text-3xl font-extrabold capitalize">
             {formatTZ(dailyDetailData?.date || "", TZ_TEMPLATE.date_day_month)}
           </h3>
         )}
-
-        <div className="mt-4 grid grid-cols-2 bg-slate-100 p-1 w-full">
-          <button
-            type="button"
-            onClick={() => setActiveTab("revenue")}
-            className={`cursor-pointer h-11 rounded-[18px] text-sm font-bold transition-colors ${activeTab === "revenue" ? "bg-white text-slate-700 shadow-[0_10px_24px_rgba(148,163,184,0.16)]" : "text-slate-400"}`}
-          >
-            Doanh thu
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("products")}
-            className={`cursor-pointer h-11 rounded-[18px] text-sm font-bold transition-colors ${activeTab === "products" ? "bg-white text-slate-700 shadow-[0_10px_24px_rgba(148,163,184,0.16)]" : "text-slate-400"}`}
-          >
-            Sản phẩm
-          </button>
-        </div>
 
         {activeTab === "revenue" ? (
           <>
@@ -123,7 +143,7 @@ const DailyDetail = () => {
                   Tổng lợi nhuận ngày
                 </p>
                 {isLoading ? (
-                  <Skeleton className="h-8 w-60 rounded-2 mt-1 bg-gray-300" />
+                  <Skeleton className="h-8 w-60 rounded-2 mt-1" />
                 ) : (
                   <p
                     className={`text-xl ${dailyDetailData?.totalProfit && dailyDetailData?.totalProfit < 0 ? "text-red-1" : "text-green-13"} font-extrabold`}

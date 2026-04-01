@@ -86,7 +86,7 @@ export default function FormCapital(props: FormCapitalProps) {
             Vốn tiền mặt
           </Label>
           {isLoading ? (
-            <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
+            <Skeleton className="h-14! w-full  rounded-xl!" />
           ) : (
             <AutoCompleteField<CustomInputProps>
               component={NumericInput}
@@ -113,7 +113,7 @@ export default function FormCapital(props: FormCapitalProps) {
             Vốn chuyển khoản
           </Label>
           {isLoading ? (
-            <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
+            <Skeleton className="h-14! w-full  rounded-xl!" />
           ) : (
             <AutoCompleteField<CustomInputProps>
               component={NumericInput}

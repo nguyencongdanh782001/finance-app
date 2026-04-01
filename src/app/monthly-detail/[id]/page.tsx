@@ -61,7 +61,7 @@ const MonthDetail = () => {
       <Header />
       <Container className="gap-8 py-8 min-h-[calc(100svh-117px)]!">
         {isLoading ? (
-          <Skeleton className="h-7 w-60 rounded-2 mb-2 bg-gray-300" />
+          <Skeleton className="h-7 w-60 rounded-2 mb-2" />
         ) : (
           <h3 className="text-blue-2 text-3xl font-extrabold">
             Tháng {monthlyDetailData?.month}, {monthlyDetailData?.year}
@@ -73,7 +73,7 @@ const MonthDetail = () => {
             Tổng lợi nhuận
           </p>
           {isLoading ? (
-            <Skeleton className="h-7 w-60 rounded-2 mb-2 bg-gray-300" />
+            <Skeleton className="h-7 w-60 rounded-2 mb-2" />
           ) : (
             <p className="text-[28px] text-blue-2 font-extrabold">
               {formatCompactNumber(monthlyDetailData?.totalRevenue || 0)} VND
@@ -95,7 +95,7 @@ const MonthDetail = () => {
             </p>
 
             {isLoading ? (
-              <Skeleton className="h-6 w-30 rounded-2 bg-gray-300" />
+              <Skeleton className="h-6 w-30 rounded-2" />
             ) : (
               <p className="text-green-1 text-xs font-bold uppercase">
                 {monthlyDetailData?.expenses.length} hạng mục
@@ -105,9 +105,9 @@ const MonthDetail = () => {
 
           {isLoading ? (
             <div className="flex flex-col bg-white shadow-md p-5 rounded-[32px] gap-2">
-              <Skeleton className="h-7 w-60 rounded-2 bg-gray-300" />
-              <Skeleton className="h-6 w-60 rounded-2 bg-gray-300" />
-              <Skeleton className="h-7 w-60 rounded-2 bg-gray-300" />
+              <Skeleton className="h-7 w-60 rounded-2" />
+              <Skeleton className="h-6 w-60 rounded-2" />
+              <Skeleton className="h-7 w-60 rounded-2" />
             </div>
           ) : (
             <ListExpense
@@ -127,7 +127,7 @@ const MonthDetail = () => {
                 Tổng chi phí
               </p>
               {isLoading ? (
-                <Skeleton className="h-6 w-30 rounded-2 bg-gray-300" />
+                <Skeleton className="h-6 w-30 rounded-2" />
               ) : (
                 <p className="text-gray-3 text-base font-bold uppercase">
                   {formatCurrencyVND(
@@ -142,7 +142,7 @@ const MonthDetail = () => {
                 Phần trăm chi tiêu
               </p>
               {isLoading ? (
-                <Skeleton className="h-6 w-30 rounded-2 bg-gray-300" />
+                <Skeleton className="h-6 w-30 rounded-2" />
               ) : (
                 <p className="text-orange-1 text-base font-bold text-right">
                   {!revenue && expense > 0 ? 100 : expensePercent || 0}%
@@ -156,7 +156,7 @@ const MonthDetail = () => {
               {/* <p className="text-green-10 text-sm font-medium">(còn lại)</p> */}
             </div>
             {isLoading ? (
-              <Skeleton className="h-6 w-30 rounded-2 bg-gray-300" />
+              <Skeleton className="h-6 w-30 rounded-2" />
             ) : (
               <p
                 className={`${monthlyDetailData?.profit && monthlyDetailData?.profit < 0 ? "text-red-1" : "text-green-9"}  text-base font-extrabold`}

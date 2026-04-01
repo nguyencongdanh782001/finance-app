@@ -256,40 +256,12 @@ export default function FormProducts(props: FormProductsProps) {
               </p>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
-              <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
-                Tổng số lượng
-              </p>
-              <p className="mt-2 text-2xl font-black leading-none text-green-13">
-                {totalSoldCount.toLocaleString("vi-VN")}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Sản phẩm đã bán hôm nay
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_10px_28px_rgba(100,116,139,0.1)]">
-              <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-500">
-                Lợi nhuận dự kiến
-              </p>
-              <p
-                className={`mt-2 text-2xl font-black leading-none ${totalEstimatedProfit < 0 ? "text-red-1" : "text-green-13"}`}
-              >
-                {formatCurrency(totalEstimatedProfit)}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Tạm tính theo giá vốn và giá bán
-              </p>
-            </div>
-          </div>
         </div>
 
         {isLoading || isInventoryLoading ? (
           <div className="space-y-4">
-            <Skeleton className="h-26! w-full rounded-[24px]! bg-gray-300" />
-            <Skeleton className="h-26! w-full rounded-[24px]! bg-gray-300" />
+            <Skeleton className="h-26! w-full rounded-[24px]!" />
+            <Skeleton className="h-26! w-full rounded-[24px]!" />
           </div>
         ) : (
           <FieldArray
@@ -360,7 +332,7 @@ export default function FormProducts(props: FormProductsProps) {
                           </Button>
                         </div>
 
-                        <div className="mt-3 grid grid-cols-[minmax(0,1fr)_104px] gap-2.5">
+                        <div className="mt-3 grid grid-cols-1 gap-2.5">
                           <div className="flex flex-col gap-2">
                             <Label
                               variant="secondary"
@@ -386,7 +358,7 @@ export default function FormProducts(props: FormProductsProps) {
                             />
                           </div>
 
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-2 w-full">
                             <Label
                               variant="secondary"
                               className="text-green-1! text-11px font-bold"
@@ -398,7 +370,7 @@ export default function FormProducts(props: FormProductsProps) {
                               version="field"
                               name={`soldProducts[${index}].quantity`}
                               placeholder="0"
-                              className="bg-white! h-12! rounded-xl! border-slate-100! w-full py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+                              className="bg-white! h-12! rounded-xl! border-slate-100! min-w-full! max-w-32 py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
                               pattern="^\\d+$"
                               disabled={isSubmitting || reload}
                             />
@@ -440,9 +412,7 @@ export default function FormProducts(props: FormProductsProps) {
                                 </div>
                                 <div
                                   className={`rounded-xl px-2 py-1.5 ${
-                                    isOutOfStock
-                                      ? "bg-rose-50"
-                                      : "bg-slate-50"
+                                    isOutOfStock ? "bg-rose-50" : "bg-slate-50"
                                   }`}
                                 >
                                   <p className="font-bold text-slate-400">
@@ -529,6 +499,36 @@ export default function FormProducts(props: FormProductsProps) {
             )}
           />
         )}
+
+        {!isLoading && !isInventoryLoading ? (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
+              <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
+                Tổng số lượng
+              </p>
+              <p className="mt-2 text-2xl font-black leading-none text-green-13">
+                {totalSoldCount.toLocaleString("vi-VN")}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Sản phẩm đã bán hôm nay
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_10px_28px_rgba(100,116,139,0.1)]">
+              <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-500">
+                Lợi nhuận dự kiến
+              </p>
+              <p
+                className={`mt-2 text-2xl font-black leading-none ${totalEstimatedProfit < 0 ? "text-red-1" : "text-green-13"}`}
+              >
+                {formatCurrency(totalEstimatedProfit)}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Tạm tính theo giá vốn và giá bán
+              </p>
+            </div>
+          </div>
+        ) : null}
 
         {!isLoading && !isInventoryLoading ? (
           <div className="flex flex-col rounded-[24px] bg-slate-50 px-4 py-4 w-full">

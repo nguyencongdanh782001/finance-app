@@ -22,7 +22,7 @@ const BlockCashProfit = (props: BlockCashProfitProps) => {
       <div className="flex items-center justify-between gap-2 mb-1">
         <p className="text-green-1 text-11px">Doanh thu:</p>
         {isLoading ? (
-          <Skeleton className="h-4 w-8 rounded-1 mb-2 bg-gray-300" />
+          <Skeleton className="h-4 w-8 rounded-1 mb-2" />
         ) : (
           <p className="text-gray-3 text-11px font-bold">
             {formatCompactNumber(data?.revenueCash || 0)}
@@ -32,7 +32,7 @@ const BlockCashProfit = (props: BlockCashProfitProps) => {
       <div className="flex items-center justify-between gap-2 mb-1">
         <p className="text-green-1 text-11px">Vốn:</p>
         {isLoading ? (
-          <Skeleton className="h-4 w-8 rounded-1 mb-2 bg-gray-300" />
+          <Skeleton className="h-4 w-8 rounded-1 mb-2" />
         ) : (
           <p className="text-gray-3 text-11px font-bold">
             {formatCompactNumber(data?.capitalCash || 0)}
@@ -42,7 +42,7 @@ const BlockCashProfit = (props: BlockCashProfitProps) => {
       <div className="flex flex-col gap-2 pt-2 border-t-2 border-gray-6">
         <p className="text-green-1 text-13px font-bold uppercase">Lợi nhuận</p>
         {isLoading ? (
-          <Skeleton className="h-7 w-full rounded-1 mb-2 bg-gray-300" />
+          <Skeleton className="h-7 w-full rounded-1 mb-2" />
         ) : (
           <p className="text-purple-1 text-base font-extrabold">
             {formatCompactNumber(data?.profitCash || 0)}

@@ -95,7 +95,7 @@ export default function FormRevenue(props: FormRevenueProps) {
             Tổng tiền mặt
           </Label>
           {isLoading ? (
-            <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
+            <Skeleton className="h-14! w-full  rounded-xl!" />
           ) : (
             <AutoCompleteField<CustomInputProps>
               component={NumericInput}
@@ -122,7 +122,7 @@ export default function FormRevenue(props: FormRevenueProps) {
             Tổng chuyển khoản
           </Label>
           {isLoading ? (
-            <Skeleton className="h-14! w-full  rounded-xl! bg-gray-300" />
+            <Skeleton className="h-14! w-full  rounded-xl!" />
           ) : (
             <AutoCompleteField<CustomInputProps>
               component={NumericInput}

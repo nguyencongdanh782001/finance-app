@@ -23,7 +23,7 @@ const BlockTotalExpense = (props: BlockTotalExpenseProps) => {
         chi tiêu tháng {defaultMonth}
       </p>
       {isLoading ? (
-        <Skeleton className="h-7 w-full rounded-1 mb-2 bg-gray-300" />
+        <Skeleton className="h-7 w-full rounded-1 mb-2" />
       ) : (
         <p className="text-orange-3 text-base font-extrabold uppercase">
           {formatCurrencyVND(totalExpense || 0)}

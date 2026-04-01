@@ -3,8 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ReactNode } from "react";
 
-const Header = () => {
+interface HeaderProps {
+  children?: ReactNode;
+}
+
+const Header = ({ children }: HeaderProps) => {
   const router = useRouter();
 
   return (
@@ -20,6 +25,7 @@ const Header = () => {
       <h3 className="uppercase font-extrabold text-blue-2 text-base text-center mt-4">
         Báo cáo tài chính
       </h3>
+      {children ? <div className="mt-4 px-5">{children}</div> : null}
     </div>
   );
 };

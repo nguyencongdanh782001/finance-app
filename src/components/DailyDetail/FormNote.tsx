@@ -97,7 +97,7 @@ export default function FormNote(props: FormNoteProps) {
 
         <div className="flex flex-col w-full">
           {isLoading ? (
-            <Skeleton className="h-25! w-full rounded-xl! bg-gray-300" />
+            <Skeleton className="h-25! w-full rounded-xl!" />
           ) : (
             <AutoCompleteField<CustomTextAreaProps>
               component={Textarea}
