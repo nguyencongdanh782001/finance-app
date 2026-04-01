@@ -33,7 +33,7 @@ export default function ProductDeleteDialog({
           <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
             Xác nhận xóa
           </DialogTitle>
-          <DialogDescription className="mx-auto mt-4 max-w-62.5 text-sm leading-7 text-slate-400">
+          <DialogDescription className="mx-auto mt-4 max-w-63 text-sm leading-7 text-slate-400">
             Bạn có chắc chắn muốn xóa sản phẩm
             {product ? ` "${product.title}"` : ""}?
           </DialogDescription>
@@ -50,13 +50,12 @@ export default function ProductDeleteDialog({
               )}
               Xóa
             </Button>
-            <DialogClose asChild>
-              <Button
-                type="button"
-                disabled={isDeleting}
-                className="h-14 w-full rounded-2xl bg-slate-100 text-base font-semibold text-slate-500 hover:bg-slate-200"
-              >
-                Hủy
+            <DialogClose
+              asChild
+              className="flex justify-items-center items-center w-full"
+            >
+              <Button variant="close" type="button">
+                Đóng
               </Button>
             </DialogClose>
           </div>
