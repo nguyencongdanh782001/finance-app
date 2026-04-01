@@ -37,7 +37,7 @@ interface CategoryFormDialogProps {
   initialValues: CategoryFormValues;
   isDeleting?: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (values: CategoryFormValues) => Promise<void> | void;
+  onSubmit: (values: CategoryFormValues) => Promise<boolean> | boolean;
   onDelete?: () => void;
 }
 
@@ -82,12 +82,15 @@ export default function CategoryFormDialog({
     validationSchema,
     onSubmit: async (values, actions) => {
       actions.setSubmitting(true);
-      await onSubmit({
+      const isSuccess = await onSubmit({
         ...values,
         name: values.name.trim(),
       });
       actions.setSubmitting(false);
-      actions.resetForm({ values });
+
+      if (isSuccess) {
+        actions.resetForm();
+      }
     },
   });
 

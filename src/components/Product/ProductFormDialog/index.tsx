@@ -48,7 +48,7 @@ interface ProductFormDialogProps {
   onSubmit: (
     values: ProductFormValues,
     imageFile?: File | null,
-  ) => Promise<void> | void;
+  ) => Promise<boolean> | boolean;
   onDelete?: () => void;
 }
 
@@ -87,7 +87,7 @@ export default function ProductFormDialog({
     validationSchema,
     onSubmit: async (values, actions) => {
       actions.setSubmitting(true);
-      await onSubmit(
+      const isSuccess = await onSubmit(
         {
           ...values,
           title: values.title.trim(),
@@ -95,6 +95,12 @@ export default function ProductFormDialog({
         selectedFile,
       );
       actions.setSubmitting(false);
+
+      if (isSuccess) {
+        actions.resetForm();
+        setSelectedFile(null);
+        setPreviewUrl("");
+      }
     },
   });
 

@@ -99,6 +99,7 @@ export const financeAPI = {
   getProductList: (params?: {
     search?: string;
     categoryId?: number;
+    sort?: "title-asc" | "title-desc" | "createdAt-desc" | "createdAt-asc";
     page?: number;
     limit?: number;
   }): Promise<IAPIResponse<ProductListResponse>> => {

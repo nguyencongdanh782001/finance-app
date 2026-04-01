@@ -110,7 +110,7 @@ export default function CategoryContainer() {
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
-        return;
+        return false;
       }
     } else if (selectedCategory) {
       const res = await financeAPI.updateCategory(selectedCategory.id, payload);
@@ -121,13 +121,14 @@ export default function CategoryContainer() {
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
-        return;
+        return false;
       }
     }
 
     setIsFormOpen(false);
     setSelectedCategory(null);
     await fetchCategories();
+    return true;
   };
 
   const handleConfirmDelete = async () => {

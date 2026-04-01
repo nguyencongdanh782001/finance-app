@@ -6,6 +6,7 @@ export async function GET(req: Request) {
 
   const search = searchParams.get("search") || "";
   const categoryId = searchParams.get("categoryId");
+  const sort = searchParams.get("sort") || "createdAt-desc";
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 10);
 
@@ -24,14 +25,21 @@ export async function GET(req: Request) {
     where.categoryId = Number(categoryId);
   }
 
+  const orderBy =
+    sort === "title-asc"
+      ? { title: "asc" as const }
+      : sort === "title-desc"
+        ? { title: "desc" as const }
+        : sort === "createdAt-asc"
+          ? { createdAt: "asc" as const }
+          : { createdAt: "desc" as const };
+
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
       skip,
       take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy,
       include: {
         category: true,
       },

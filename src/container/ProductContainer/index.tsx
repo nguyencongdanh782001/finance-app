@@ -6,6 +6,12 @@ import ProductList from "@/components/Product/ProductList";
 import Navbar from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
@@ -16,9 +22,20 @@ import {
   ProductFormValues,
   ProductItemData,
 } from "@/interface/product";
-import { Plus, Search } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Plus, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+const PRODUCT_SORT_OPTIONS = [
+  { value: "title-asc", label: "A-Z" },
+  { value: "title-desc", label: "Z-A" },
+  { value: "createdAt-desc", label: "Mới nhất" },
+  { value: "createdAt-asc", label: "Cũ nhất" },
+] as const;
+
+type ProductSortValue = (typeof PRODUCT_SORT_OPTIONS)[number]["value"];
+
+const DEFAULT_SORT: ProductSortValue = "createdAt-desc";
 
 const DEFAULT_FORM_VALUES: ProductFormValues = {
   title: "",
@@ -60,6 +77,9 @@ export default function ProductContainer() {
   const [categoryFilter, setCategoryFilter] = useState(
     searchParams.get("categoryId") || "",
   );
+  const [sortBy, setSortBy] = useState<ProductSortValue>(
+    (searchParams.get("sort") as ProductSortValue) || DEFAULT_SORT,
+  );
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -98,6 +118,7 @@ export default function ProductContainer() {
     const res = await financeAPI.getProductList({
       search: search || undefined,
       categoryId: categoryFilter ? Number(categoryFilter) : undefined,
+      sort: sortBy,
       page: nextPage,
       limit,
     });
@@ -155,7 +176,7 @@ export default function ProductContainer() {
     }, 250);
 
     return () => window.clearTimeout(timeout);
-  }, [search, categoryFilter]);
+  }, [search, categoryFilter, sortBy]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -172,11 +193,17 @@ export default function ProductContainer() {
       params.delete("categoryId");
     }
 
+    if (sortBy !== DEFAULT_SORT) {
+      params.set("sort", sortBy);
+    } else {
+      params.delete("sort");
+    }
+
     const nextQuery = params.toString();
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
       scroll: false,
     });
-  }, [search, categoryFilter, pathname, router]);
+  }, [search, categoryFilter, sortBy, pathname, router]);
 
   useEffect(() => {
     const node = loadMoreRef.current;
@@ -208,6 +235,7 @@ export default function ProductContainer() {
     totalPage,
     search,
     categoryFilter,
+    sortBy,
   ]);
 
   const handleOpenCreate = () => {
@@ -256,7 +284,7 @@ export default function ProductContainer() {
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
-        return;
+        return false;
       }
 
       imageUrl = uploadRes.data.url;
@@ -282,7 +310,7 @@ export default function ProductContainer() {
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
-        return;
+        return false;
       }
     } else if (selectedProduct) {
       const res = await financeAPI.updateProduct(selectedProduct.id, payload);
@@ -293,7 +321,7 @@ export default function ProductContainer() {
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
-        return;
+        return false;
       }
     }
 
@@ -301,6 +329,7 @@ export default function ProductContainer() {
     setSelectedProduct(null);
     await fetchProducts(1);
     await fetchCategories();
+    return true;
   };
 
   const handleConfirmDelete = async () => {
@@ -339,6 +368,10 @@ export default function ProductContainer() {
           quantity: String(selectedProduct.quantity),
         }
       : DEFAULT_FORM_VALUES;
+
+  const selectedSort =
+    PRODUCT_SORT_OPTIONS.find((option) => option.value === sortBy) ??
+    PRODUCT_SORT_OPTIONS[2];
 
   return (
     <div className="sm:max-w-191.25 mx-auto">
@@ -407,9 +440,42 @@ export default function ProductContainer() {
             <p className="text-11px font-bold uppercase tracking-[0.08em] text-slate-300">
               Danh sách mặt hàng
             </p>
-            <p className="text-10px font-bold text-slate-300">
-              {products.length} sản phẩm
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-10px font-bold text-slate-300">
+                {products.length} sản phẩm
+              </p>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="h-8 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
+                  >
+                    <ArrowUpDown className="size-3" />
+                    {selectedSort.label}
+                    <ChevronDown className="size-3 text-slate-400" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-36 p-1">
+                  {PRODUCT_SORT_OPTIONS.map((option) => (
+                    <DropdownMenuItem
+                      key={option.value}
+                      onClick={() => setSortBy(option.value)}
+                      className={
+                        sortBy === option.value
+                          ? "px-2.5 py-2 text-[11px] bg-slate-50 text-slate-700"
+                          : "px-2.5 py-2 text-[11px] text-slate-500"
+                      }
+                    >
+                      <span className="flex-1">{option.label}</span>
+                      {sortBy === option.value ? (
+                        <Check className="size-4 text-green-16" />
+                      ) : null}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
 
           {isInitialLoading ? (
