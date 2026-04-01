@@ -38,7 +38,7 @@ export default function HomeContainer() {
   }, [pathname, searchParams.toString()]);
 
   return (
-    <Container className="gap-8 pb-8">
+    <Container className="gap-8 pb-28">
       <div className="mt-8 flex items-center gap-4">
         <BlockIcon className="text-green-2" />
         <div>

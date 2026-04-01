@@ -20,4 +20,17 @@ export const API_ROUTES = {
     APP_API_URL(`monthly/detail/${id}/expense/${expenseId}`),
   getDailyDetailData: (id: number) => APP_API_URL(`daily/detail/${id}`),
   putDailyDetailData: (id: number) => APP_API_URL(`daily/detail/${id}`),
+  putDailySoldProducts: (id: number) =>
+    APP_API_URL(`daily/detail/${id}/products`),
+  getCategoryList: APP_API_URL("category"),
+  createCategory: APP_API_URL("category"),
+  getCategoryDetail: (id: number) => APP_API_URL(`category/${id}`),
+  updateCategory: (id: number) => APP_API_URL(`category/${id}`),
+  deleteCategory: (id: number) => APP_API_URL(`category/${id}`),
+  getProductList: APP_API_URL("product"),
+  createProduct: APP_API_URL("product"),
+  getProductDetail: (id: number) => APP_API_URL(`product/${id}`),
+  updateProduct: (id: number) => APP_API_URL(`product/${id}`),
+  deleteProduct: (id: number) => APP_API_URL(`product/${id}`),
+  uploadFileCloudinary: APP_API_URL("upload/cloudinary"),
 };

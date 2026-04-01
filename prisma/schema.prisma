@@ -38,6 +38,9 @@ model DailyFinance {
   /// NOTE
   note String?
 
+  /// SOLD PRODUCTS
+  soldProducts DailySoldProduct[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -83,4 +86,71 @@ model MonthlyFinance {
 
   @@unique([year, month])
   @@map("monthly_finance")
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+
+  name  String
+  color String
+  icon  String
+
+  /// Relation
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("category")
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+
+  title String
+
+  /// file (image url hoặc path)
+  imageUrl      String
+  imagePublicId String
+
+  /// Category relation
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  /// Price
+  importPrice Decimal
+  sellPrice   Decimal
+
+  /// Stock
+  quantity Int @default(0)
+
+  /// Relations
+  dailySales DailySoldProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([title])
+  @@index([categoryId])
+  @@map("product")
+}
+
+model DailySoldProduct {
+  id Int @id @default(autoincrement())
+
+  dailyFinanceId Int
+  dailyFinance   DailyFinance @relation(fields: [dailyFinanceId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  quantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([dailyFinanceId, productId])
+  @@index([dailyFinanceId])
+  @@index([productId])
+  @@map("daily_sold_product")
 }

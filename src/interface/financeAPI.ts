@@ -55,6 +55,7 @@ export type DailyDetailResponse = {
   profitBank: number;
   totalProfit: number;
   note: string;
+  soldProducts: DailySoldProductItem[];
 };
 
 export interface UpdateDailyRequest {
@@ -63,4 +64,37 @@ export interface UpdateDailyRequest {
   revenueCash?: number | string;
   revenueBank?: number | string;
   note?: string;
+}
+
+export interface DailySoldProductItem {
+  id: number;
+  productId: number;
+  quantity: number;
+  productTitle: string;
+  productImageUrl: string;
+  categoryName: string;
+  sellPrice: number;
+  currentStock: number;
+  availableStock: number;
+}
+
+export interface UpdateDailySoldProductsRequest {
+  soldProducts: {
+    productId: number;
+    quantity: number;
+  }[];
+}
+
+export interface UpdateDailySoldProductsResponse {
+  success: boolean;
+  summary: {
+    totalCost: number;
+    totalRevenue: number;
+    totalProfit: number;
+  };
+}
+
+export interface UploadImageResponse {
+  url: string;
+  publicId: string;
 }

@@ -11,4 +11,7 @@
 export type * from './models/DailyFinance'
 export type * from './models/MonthlyExpense'
 export type * from './models/MonthlyFinance'
+export type * from './models/Category'
+export type * from './models/Product'
+export type * from './models/DailySoldProduct'
 export type * from './commonInputTypes'

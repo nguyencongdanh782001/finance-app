@@ -56,3 +56,18 @@ export type MonthlyExpense = Prisma.MonthlyExpenseModel
  * 
  */
 export type MonthlyFinance = Prisma.MonthlyFinanceModel
+/**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
+ * Model Product
+ * 
+ */
+export type Product = Prisma.ProductModel
+/**
+ * Model DailySoldProduct
+ * 
+ */
+export type DailySoldProduct = Prisma.DailySoldProductModel
