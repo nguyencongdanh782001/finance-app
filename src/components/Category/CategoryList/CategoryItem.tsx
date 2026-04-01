@@ -7,6 +7,7 @@ import {
 } from "@/components/Category/constants";
 import { CategoryItemData } from "@/interface/category";
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,21 +32,26 @@ export default function CategoryItem({
   return (
     <div className="group rounded-4xl border border-[#edf2f7] bg-white p-4 shadow-[0_12px_30px_rgba(148,163,184,0.08)]">
       <div className="flex items-center gap-4">
-        <div
-          className="flex size-12 shrink-0 items-center justify-center rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]"
-          style={{ backgroundColor: `${category.color}26` }}
+        <Link
+          href={`/products?categoryId=${category.id}`}
+          className="flex min-w-0 flex-1 items-center gap-4"
         >
-          <Icon className="size-5" style={{ color: color.value }} />
-        </div>
+          <div
+            className="flex size-12 shrink-0 items-center justify-center rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]"
+            style={{ backgroundColor: `${category.color}26` }}
+          >
+            <Icon className="size-5" style={{ color: color.value }} />
+          </div>
 
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-base font-bold text-gray-7">
-            {category.name}
-          </p>
-          <p className="mt-px text-sm font-medium text-green-1">
-            {category.productCount.toLocaleString("vi-VN")} sản phẩm
-          </p>
-        </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-base font-bold text-gray-7">
+              {category.name}
+            </p>
+            <p className="mt-px text-sm font-medium text-green-1">
+              {category.productCount.toLocaleString("vi-VN")} sản phẩm
+            </p>
+          </div>
+        </Link>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -388,7 +388,8 @@ export const ModelName = {
   MonthlyExpense: 'MonthlyExpense',
   MonthlyFinance: 'MonthlyFinance',
   Category: 'Category',
-  Product: 'Product'
+  Product: 'Product',
+  DailySoldProduct: 'DailySoldProduct'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "product"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "product" | "dailySoldProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +779,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DailySoldProduct: {
+      payload: Prisma.$DailySoldProductPayload<ExtArgs>
+      fields: Prisma.DailySoldProductFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DailySoldProductFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DailySoldProductFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>
+        }
+        findFirst: {
+          args: Prisma.DailySoldProductFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DailySoldProductFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>
+        }
+        findMany: {
+          args: Prisma.DailySoldProductFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>[]
+        }
+        create: {
+          args: Prisma.DailySoldProductCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>
+        }
+        createMany: {
+          args: Prisma.DailySoldProductCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DailySoldProductCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>[]
+        }
+        delete: {
+          args: Prisma.DailySoldProductDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>
+        }
+        update: {
+          args: Prisma.DailySoldProductUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>
+        }
+        deleteMany: {
+          args: Prisma.DailySoldProductDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DailySoldProductUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DailySoldProductUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>[]
+        }
+        upsert: {
+          args: Prisma.DailySoldProductUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductPayload>
+        }
+        aggregate: {
+          args: Prisma.DailySoldProductAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDailySoldProduct>
+        }
+        groupBy: {
+          args: Prisma.DailySoldProductGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailySoldProductGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DailySoldProductCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailySoldProductCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -887,6 +962,18 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const DailySoldProductScalarFieldEnum = {
+  id: 'id',
+  dailyFinanceId: 'dailyFinanceId',
+  productId: 'productId',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailySoldProductScalarFieldEnum = (typeof DailySoldProductScalarFieldEnum)[keyof typeof DailySoldProductScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1088,6 +1175,7 @@ export type GlobalOmitConfig = {
   monthlyFinance?: Prisma.MonthlyFinanceOmit
   category?: Prisma.CategoryOmit
   product?: Prisma.ProductOmit
+  dailySoldProduct?: Prisma.DailySoldProductOmit
 }
 
 /* Types for Logging */

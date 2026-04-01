@@ -5,6 +5,7 @@ import BlockBankProfit from "@/components/DailyDetail/BlockCashBank";
 import BlockCashProfit from "@/components/DailyDetail/BlockCashProfit";
 import FormCapital from "@/components/DailyDetail/FormCapital";
 import FormNote from "@/components/DailyDetail/FormNote";
+import FormProducts from "@/components/DailyDetail/FormProducts";
 import FormRevenue from "@/components/DailyDetail/FormRevenue";
 import { Container } from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,6 +30,7 @@ const DailyDetail = () => {
   >(undefined);
   const [reload, setReload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"revenue" | "products">("revenue");
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
@@ -56,79 +58,107 @@ const DailyDetail = () => {
   }, [reload]);
 
   return (
-    <div className="sm:max-w-191.25 mx-auto">
+    <div className="sm:max-w-191.25 mx-auto relative">
       <Toaster />
       <Header />
       <Container className="gap-8 py-8 min-h-[calc(100svh-117px)]!">
         {isLoading ? (
-          <Skeleton className="h-7 w-60 rounded-2 mb-2 bg-gray-300" />
+          <Skeleton className="mb-2 h-7 w-60 rounded-2 bg-gray-300" />
         ) : (
           <h3 className="text-blue-2 text-3xl font-extrabold capitalize">
             {formatTZ(dailyDetailData?.date || "", TZ_TEMPLATE.date_day_month)}
           </h3>
         )}
 
-        <FormCapital
-          data={dailyDetailData}
-          isLoading={isLoading}
-          reload={reload}
-          onReload={() => setReload(true)}
-        />
-
-        <FormRevenue
-          data={dailyDetailData}
-          isLoading={isLoading}
-          reload={reload}
-          onReload={() => setReload(true)}
-        />
-
-        <FormNote
-          data={dailyDetailData}
-          isLoading={isLoading}
-          reload={reload}
-          onReload={() => setReload(true)}
-        />
-        <div className="grid grid-cols-2 gap-4">
-          <BlockCashProfit data={dailyDetailData} isLoading={isLoading} />
-          <BlockBankProfit data={dailyDetailData} isLoading={isLoading} />
+        <div className="mt-4 grid grid-cols-2 bg-slate-100 p-1 w-full">
+          <button
+            type="button"
+            onClick={() => setActiveTab("revenue")}
+            className={`cursor-pointer h-11 rounded-[18px] text-sm font-bold transition-colors ${activeTab === "revenue" ? "bg-white text-slate-700 shadow-[0_10px_24px_rgba(148,163,184,0.16)]" : "text-slate-400"}`}
+          >
+            Doanh thu
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("products")}
+            className={`cursor-pointer h-11 rounded-[18px] text-sm font-bold transition-colors ${activeTab === "products" ? "bg-white text-slate-700 shadow-[0_10px_24px_rgba(148,163,184,0.16)]" : "text-slate-400"}`}
+          >
+            Sản phẩm
+          </button>
         </div>
 
-        <div
-          className="mt-auto sticky bottom-0 flex items-center justify-between bg-white p-6 rounded-4xl"
-          style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
-        >
-          <div>
-            <p className="text-base text-green-1 font-bold uppercase">
-              Tổng lợi nhuận ngày
-            </p>
-            {isLoading ? (
-              <Skeleton className="h-8 w-60 rounded-2 mt-1 bg-gray-300" />
-            ) : (
-              <p
-                className={`text-xl ${dailyDetailData?.totalProfit && dailyDetailData?.totalProfit < 0 ? "text-red-1" : "text-green-13"} font-extrabold`}
-              >
-                {dailyDetailData?.totalProfit &&
-                dailyDetailData?.totalProfit > 0
-                  ? "+"
-                  : ""}
-                {formatCurrencyVND(dailyDetailData?.totalProfit || 0)}
-              </p>
-            )}
-          </div>
-          {dailyDetailData?.totalProfit ? (
+        {activeTab === "revenue" ? (
+          <>
+            <FormCapital
+              data={dailyDetailData}
+              isLoading={isLoading}
+              reload={reload}
+              onReload={() => setReload(true)}
+            />
+
+            <FormRevenue
+              data={dailyDetailData}
+              isLoading={isLoading}
+              reload={reload}
+              onReload={() => setReload(true)}
+            />
+
+            <FormNote
+              data={dailyDetailData}
+              isLoading={isLoading}
+              reload={reload}
+              onReload={() => setReload(true)}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <BlockCashProfit data={dailyDetailData} isLoading={isLoading} />
+              <BlockBankProfit data={dailyDetailData} isLoading={isLoading} />
+            </div>
+
             <div
-              className={`p-5.5 rounded-3xl  ${dailyDetailData?.totalProfit < 0 ? "bg-red-100" : "bg-green-14"}`}
+              className="mt-auto sticky bottom-0 flex items-center justify-between bg-white p-6 rounded-4xl"
+              style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
             >
-              {dailyDetailData?.totalProfit < 0 ? (
-                <TrendingDown className={`size-5 text-red-1`} />
+              <div>
+                <p className="text-base text-green-1 font-bold uppercase">
+                  Tổng lợi nhuận ngày
+                </p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-60 rounded-2 mt-1 bg-gray-300" />
+                ) : (
+                  <p
+                    className={`text-xl ${dailyDetailData?.totalProfit && dailyDetailData?.totalProfit < 0 ? "text-red-1" : "text-green-13"} font-extrabold`}
+                  >
+                    {dailyDetailData?.totalProfit &&
+                    dailyDetailData?.totalProfit > 0
+                      ? "+"
+                      : ""}
+                    {formatCurrencyVND(dailyDetailData?.totalProfit || 0)}
+                  </p>
+                )}
+              </div>
+              {dailyDetailData?.totalProfit ? (
+                <div
+                  className={`p-5.5 rounded-3xl  ${dailyDetailData?.totalProfit < 0 ? "bg-red-100" : "bg-green-14"}`}
+                >
+                  {dailyDetailData?.totalProfit < 0 ? (
+                    <TrendingDown className={`size-5 text-red-1`} />
+                  ) : (
+                    <TrendingUp className={`size-5 text-green-13`} />
+                  )}
+                </div>
               ) : (
-                <TrendingUp className={`size-5 text-green-13`} />
+                <></>
               )}
             </div>
-          ) : (
-            <></>
-          )}
-        </div>
+          </>
+        ) : (
+          <FormProducts
+            data={dailyDetailData}
+            isLoading={isLoading}
+            reload={reload}
+            onReload={() => setReload(true)}
+          />
+        )}
       </Container>
     </div>
   );

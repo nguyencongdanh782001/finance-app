@@ -30,7 +30,7 @@ export default function CategoryDeleteDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[calc(100%-24px)] max-w-102.5 overflow-hidden rounded-[32px] border-none bg-transparent p-0 shadow-none">
         <div className="rounded-[32px] bg-white px-6 py-8 text-center shadow-[0_30px_80px_rgba(15,23,42,0.24)]">
-          <DialogTitle className="text-[28px] font-extrabold text-slate-800">
+          <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
             Xác nhận xóa
           </DialogTitle>
           <DialogDescription className="mx-auto mt-4 text-sm leading-7 text-slate-400">
@@ -44,10 +44,10 @@ export default function CategoryDeleteDialog({
               type="button"
               onClick={onConfirm}
               disabled={isDeleting}
-              className="h-14 w-full rounded-3xl bg-[#ffe2e2] text-sm font-semibold text-red-4 hover:bg-[#ffd5d5]"
+              className="h-14 w-full rounded-3xl bg-red-6 text-sm font-semibold text-red-4 hover:bg-red-5"
             >
               {isDeleting && (
-                <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-[#e57373]" />
+                <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-red-4" />
               )}
               Xóa
             </Button>

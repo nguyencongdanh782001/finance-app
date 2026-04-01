@@ -38,6 +38,9 @@ model DailyFinance {
   /// NOTE
   note String?
 
+  /// SOLD PRODUCTS
+  soldProducts DailySoldProduct[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -121,10 +124,33 @@ model Product {
   /// Stock
   quantity Int @default(0)
 
+  /// Relations
+  dailySales DailySoldProduct[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([title])
   @@index([categoryId])
   @@map("product")
+}
+
+model DailySoldProduct {
+  id Int @id @default(autoincrement())
+
+  dailyFinanceId Int
+  dailyFinance   DailyFinance @relation(fields: [dailyFinanceId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  quantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([dailyFinanceId, productId])
+  @@index([dailyFinanceId])
+  @@index([productId])
+  @@map("daily_sold_product")
 }

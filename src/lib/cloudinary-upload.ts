@@ -5,22 +5,49 @@ export type UploadedImage = {
   publicId: string;
 };
 
+const getOutputFormat = (file: File) => {
+  const fileName = file.name.toLowerCase();
+  const mimeType = file.type.toLowerCase();
+
+  if (
+    mimeType.includes("heic") ||
+    mimeType.includes("heif") ||
+    fileName.endsWith(".heic") ||
+    fileName.endsWith(".heif")
+  ) {
+    return "jpg";
+  }
+
+  return undefined;
+};
+
 export async function uploadImageToCloudinary(
   file: File,
   folder = "finance-app/products",
 ): Promise<UploadedImage> {
   const bytes = await file.arrayBuffer();
+
+  if (bytes.byteLength === 0) {
+    throw new Error("Image file is empty");
+  }
+
   const buffer = Buffer.from(bytes);
+  const format = getOutputFormat(file);
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         folder,
         resource_type: "image",
+        format,
       },
       (error, result) => {
         if (error || !result) {
-          reject(error ?? new Error("Upload image failed"));
+          const message =
+            error?.message ||
+            (typeof error === "string" ? error : undefined) ||
+            "Upload image failed";
+          reject(new Error(message));
           return;
         }
 

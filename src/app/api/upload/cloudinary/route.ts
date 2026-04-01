@@ -1,25 +1,44 @@
 import { uploadImageToCloudinary } from "@/lib/cloudinary-upload";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
-  const formData = await req.formData();
-  const file = formData.get("file");
+  try {
+    const formData = await req.formData();
+    const file = formData.get("file");
 
-  if (!(file instanceof File)) {
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        { message: "Image file is required" },
+        { status: 400 },
+      );
+    }
+
+    if (file.size === 0) {
+      return NextResponse.json(
+        { message: "Image file is empty" },
+        { status: 400 },
+      );
+    }
+
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { message: "Only image files are allowed" },
+        { status: 400 },
+      );
+    }
+
+    const result = await uploadImageToCloudinary(file);
+
+    return NextResponse.json(result);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Upload image failed";
+
     return NextResponse.json(
-      { message: "Image file is required" },
-      { status: 400 },
+      { message, hint: "Check Cloudinary env key/secret/cloud name" },
+      { status: 500 },
     );
   }
-
-  if (!file.type.startsWith("image/")) {
-    return NextResponse.json(
-      { message: "Only image files are allowed" },
-      { status: 400 },
-    );
-  }
-
-  const result = await uploadImageToCloudinary(file);
-
-  return NextResponse.json(result);
 }

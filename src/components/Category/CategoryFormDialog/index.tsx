@@ -62,7 +62,7 @@ function IconOption({
       onClick={onClick}
       className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-all cursor-pointer ${
         active
-          ? "border-emerald-300 bg-emerald-400 text-white shadow-[0_12px_24px_rgba(52,211,153,0.28)]"
+          ? "border-green-16 bg-green-16 text-white shadow-[0_12px_24px_rgba(52,211,153,0.28)]"
           : "border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200 hover:bg-white"
       }`}
     >
@@ -114,7 +114,7 @@ export default function CategoryFormDialog({
             <FormikProvider value={formik}>
               <Form className="space-y-5">
                 <div className="text-center">
-                  <DialogTitle className="text-[24px] font-extrabold text-slate-800">
+                  <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
                     {mode === "create"
                       ? "Thêm danh mục mới"
                       : "Chỉnh sửa danh mục"}
@@ -194,10 +194,10 @@ export default function CategoryFormDialog({
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="h-12 w-full rounded-3xl bg-green-17 text-sm font-bold text-emerald-700 hover:bg-[#94ebc2]"
+                    className="h-12 w-full rounded-3xl bg-green-17 text-sm font-bold text-green-15 hover:bg-green-17/90"
                   >
                     {isSubmitting && (
-                      <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-emerald-700" />
+                      <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-green-15" />
                     )}
                     {mode === "create" ? (
                       <>
@@ -214,7 +214,7 @@ export default function CategoryFormDialog({
                       type="button"
                       onClick={onDelete}
                       disabled={isDeleting}
-                      className="h-12 w-full rounded-3xl bg-[#ffe2e2] text-sm font-semibold text-red-4 hover:bg-[#ffd5d5]"
+                      className="h-12 w-full rounded-3xl bg-red-6 text-sm font-semibold text-red-4 hover:bg-red-5"
                     >
                       {isDeleting ? (
                         <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-red-4" />

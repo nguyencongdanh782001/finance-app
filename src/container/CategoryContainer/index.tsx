@@ -6,6 +6,7 @@ import CategoryList from "@/components/Category/CategoryList";
 import Navbar from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { Skeleton } from "@/components/ui/skeleton";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { toast } from "@/hook/use-toast";
@@ -179,7 +180,7 @@ export default function CategoryContainer() {
         <Button
           type="button"
           onClick={handleCreate}
-          className="h-9 rounded-full bg-[#e8fff5] px-3 text-emerald-500 hover:bg-[#d7faeb]"
+          className="h-9 rounded-full bg-green-18 px-3 text-green-15 hover:bg-green-14"
         >
           <Plus className="size-4" />
         </Button>
@@ -188,8 +189,22 @@ export default function CategoryContainer() {
         <div className="overflow-hidden py-0 border-0 shadow-none bg-none">
           <div className="py-5">
             {isLoading ? (
-              <div className="py-12 text-center text-sm font-medium text-slate-400">
-                Đang tải danh mục...
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-[26px] border border-[#edf2f7] bg-white px-4 py-4 shadow-[0_12px_30px_rgba(148,163,184,0.08)]"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-14 w-14 rounded-[18px]" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-28 rounded-full" />
+                        <Skeleton className="h-3 w-20 rounded-full" />
+                      </div>
+                      <Skeleton className="h-9 w-9 rounded-full" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <CategoryList

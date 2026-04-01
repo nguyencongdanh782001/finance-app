@@ -4,6 +4,8 @@ import {
   DailyDetailResponse,
   MonthlyDetailResponse,
   MonthlyResponse,
+  UpdateDailySoldProductsRequest,
+  UpdateDailySoldProductsResponse,
   UpdateDailyRequest,
   UploadImageResponse,
   YearlyRevenueResponse,
@@ -12,6 +14,11 @@ import {
 import appAxios from "./appAxios";
 import { API_ROUTES } from "@/constant/routes";
 import { CategoryApiItem, CategoryPayload } from "@/interface/category";
+import {
+  ProductApiItem,
+  ProductListResponse,
+  ProductPayload,
+} from "@/interface/product";
 
 export const financeAPI = {
   getYearProfit: (year: number): Promise<IAPIResponse<YearProfitResponse>> => {
@@ -63,6 +70,12 @@ export const financeAPI = {
   ): Promise<IAPIResponse<unknown>> => {
     return appAxios.put(API_ROUTES.putDailyDetailData(id), payload);
   },
+  putDailySoldProducts: (
+    id: number,
+    payload: UpdateDailySoldProductsRequest,
+  ): Promise<IAPIResponse<UpdateDailySoldProductsResponse>> => {
+    return appAxios.put(API_ROUTES.putDailySoldProducts(id), payload);
+  },
   getCategoryList: (): Promise<IAPIResponse<CategoryApiItem[]>> => {
     return appAxios.get(API_ROUTES.getCategoryList);
   },
@@ -83,6 +96,31 @@ export const financeAPI = {
   deleteCategory: (id: number): Promise<IAPIResponse<{ message: string }>> => {
     return appAxios.delete(API_ROUTES.deleteCategory(id));
   },
+  getProductList: (params?: {
+    search?: string;
+    categoryId?: number;
+    page?: number;
+    limit?: number;
+  }): Promise<IAPIResponse<ProductListResponse>> => {
+    return appAxios.get(API_ROUTES.getProductList, { params });
+  },
+  getProductDetail: (id: number): Promise<IAPIResponse<ProductApiItem>> => {
+    return appAxios.get(API_ROUTES.getProductDetail(id));
+  },
+  createProduct: (
+    payload: ProductPayload,
+  ): Promise<IAPIResponse<ProductApiItem>> => {
+    return appAxios.post(API_ROUTES.createProduct, payload);
+  },
+  updateProduct: (
+    id: number,
+    payload: ProductPayload,
+  ): Promise<IAPIResponse<{ success: boolean }>> => {
+    return appAxios.put(API_ROUTES.updateProduct(id), payload);
+  },
+  deleteProduct: (id: number): Promise<IAPIResponse<{ success: boolean }>> => {
+    return appAxios.delete(API_ROUTES.deleteProduct(id));
+  },
 
   // UPLOAD IMAGE
   uploadImage: async (
@@ -102,8 +140,8 @@ export const financeAPI = {
     return {
       code: JSON.stringify(res.status),
       data: {
-        url: data.secure_url,
-        publicId: data.public_id,
+        url: data.url,
+        publicId: data.publicId,
       },
     };
   },

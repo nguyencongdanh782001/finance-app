@@ -12,6 +12,7 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         ghost: "",
         close: "text-gray-2 font-semibold text-base underline p-0! h-fit!",
+        input: "border border-gray-8 rounded-[4px] h-[42px] px-[14px]",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

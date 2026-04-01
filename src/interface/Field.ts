@@ -1,3 +1,4 @@
+import { SelectProps } from "@/components/common/CustomFields/CustomSelect";
 import { InputProps } from "@/components/ui/input";
 import { TextAreaProps } from "@/components/ui/textarea";
 import { FieldProps } from "formik";
@@ -21,7 +22,8 @@ export interface CustomInputProps
 export interface CustomTextAreaProps
   extends TextAreaProps, Omit<CustomFieldProps, "children"> {}
 
-// export interface CustomSelectProps extends SelectProps, Omit<CustomFieldProps, 'children'> {}
+export interface CustomSelectProps
+  extends SelectProps, Omit<CustomFieldProps, "children"> {}
 
 // export interface CustomRadioProps extends RadioProps, Omit<CustomFieldProps, 'children'> {}
 

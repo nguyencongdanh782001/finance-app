@@ -55,7 +55,8 @@ export const ModelName = {
   MonthlyExpense: 'MonthlyExpense',
   MonthlyFinance: 'MonthlyFinance',
   Category: 'Category',
-  Product: 'Product'
+  Product: 'Product',
+  DailySoldProduct: 'DailySoldProduct'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -144,6 +145,18 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const DailySoldProductScalarFieldEnum = {
+  id: 'id',
+  dailyFinanceId: 'dailyFinanceId',
+  productId: 'productId',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailySoldProductScalarFieldEnum = (typeof DailySoldProductScalarFieldEnum)[keyof typeof DailySoldProductScalarFieldEnum]
 
 
 export const SortOrder = {

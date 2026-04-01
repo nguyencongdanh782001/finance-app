@@ -87,6 +87,19 @@ export async function DELETE(
     return NextResponse.json({ message: "Product not found" }, { status: 404 });
   }
 
+  const soldCount = await prisma.dailySoldProduct.count({
+    where: {
+      productId: id,
+    },
+  });
+
+  if (soldCount > 0) {
+    return NextResponse.json(
+      { message: "Không thể xóa sản phẩm đã có lịch sử bán hàng" },
+      { status: 409 },
+    );
+  }
+
   if (product.imagePublicId) {
     await deleteImageFromCloudinary(product.imagePublicId);
   }

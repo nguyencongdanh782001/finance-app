@@ -1,6 +1,11 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
+const isDailySoldProductSchemaError = (error: unknown) =>
+  error instanceof Error &&
+  (error.message.includes("daily_sold_product") ||
+    error.message.includes("soldProducts"));
+
 export async function GET(
   _req: Request,
   context: { params: Promise<{ id: string }> },
@@ -12,9 +17,62 @@ export async function GET(
     return NextResponse.json({ message: "Invalid daily id" }, { status: 400 });
   }
 
-  const daily = await prisma.dailyFinance.findUnique({
-    where: { id: dailyId },
-  });
+  let daily:
+    | Awaited<ReturnType<typeof prisma.dailyFinance.findUnique>>
+    | null = null;
+  let soldProducts: {
+    id: number;
+    productId: number;
+    quantity: number;
+    productTitle: string;
+    productImageUrl: string;
+    categoryName: string;
+    sellPrice: number;
+    currentStock: number;
+    availableStock: number;
+  }[] = [];
+
+  try {
+    const dailyWithProducts = await prisma.dailyFinance.findUnique({
+      where: { id: dailyId },
+      include: {
+        soldProducts: {
+          orderBy: {
+            createdAt: "asc",
+          },
+          include: {
+            product: {
+              include: {
+                category: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    daily = dailyWithProducts;
+    soldProducts =
+      dailyWithProducts?.soldProducts.map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        quantity: item.quantity,
+        productTitle: item.product.title,
+        productImageUrl: item.product.imageUrl,
+        categoryName: item.product.category.name,
+        sellPrice: Number(item.product.sellPrice),
+        currentStock: item.product.quantity,
+        availableStock: item.product.quantity + item.quantity,
+      })) ?? [];
+  } catch (error) {
+    if (!isDailySoldProductSchemaError(error)) {
+      throw error;
+    }
+
+    daily = await prisma.dailyFinance.findUnique({
+      where: { id: dailyId },
+    });
+  }
 
   if (!daily) {
     return NextResponse.json(
@@ -34,6 +92,7 @@ export async function GET(
     profitBank: Number(daily.profitBank),
     totalProfit: Number(daily.totalProfit),
     note: daily.note,
+    soldProducts,
   });
 }
 
