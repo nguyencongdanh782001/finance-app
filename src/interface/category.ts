@@ -1,0 +1,46 @@
+import { LucideIcon } from "lucide-react";
+
+export interface CategoryItemData {
+  id: number;
+  name: string;
+  description?: string;
+  color: string;
+  icon: string;
+  productCount: number;
+}
+
+export interface CategoryColorOption {
+  value: string;
+  label: string;
+  className: string;
+  ringClassName: string;
+}
+
+export interface CategoryIconOption {
+  value: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+export interface CategoryFormValues {
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+}
+
+export interface CategoryApiItem {
+  id: number;
+  name: string;
+  color: string;
+  icon: string;
+  _count?: {
+    products: number;
+  };
+}
+
+export interface CategoryPayload {
+  name: string;
+  color: string;
+  icon: string;
+}

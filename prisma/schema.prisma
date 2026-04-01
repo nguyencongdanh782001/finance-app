@@ -84,3 +84,47 @@ model MonthlyFinance {
   @@unique([year, month])
   @@map("monthly_finance")
 }
+
+model Category {
+  id Int @id @default(autoincrement())
+
+  name  String
+  color String
+  icon  String
+
+  /// Relation
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("category")
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+
+  title String
+
+  /// file (image url hoặc path)
+  imageUrl      String
+  imagePublicId String
+
+  /// Category relation
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  /// Price
+  importPrice Decimal
+  sellPrice   Decimal
+
+  /// Stock
+  quantity Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([title])
+  @@index([categoryId])
+  @@map("product")
+}

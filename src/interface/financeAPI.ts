@@ -64,3 +64,8 @@ export interface UpdateDailyRequest {
   revenueBank?: number | string;
   note?: string;
 }
+
+export interface UploadImageResponse {
+  url: string;
+  publicId: string;
+}

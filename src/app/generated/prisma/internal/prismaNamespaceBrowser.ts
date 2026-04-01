@@ -53,7 +53,9 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   DailyFinance: 'DailyFinance',
   MonthlyExpense: 'MonthlyExpense',
-  MonthlyFinance: 'MonthlyFinance'
+  MonthlyFinance: 'MonthlyFinance',
+  Category: 'Category',
+  Product: 'Product'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -114,6 +116,34 @@ export const MonthlyFinanceScalarFieldEnum = {
 } as const
 
 export type MonthlyFinanceScalarFieldEnum = (typeof MonthlyFinanceScalarFieldEnum)[keyof typeof MonthlyFinanceScalarFieldEnum]
+
+
+export const CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  color: 'color',
+  icon: 'icon',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+export const ProductScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  imageUrl: 'imageUrl',
+  imagePublicId: 'imagePublicId',
+  categoryId: 'categoryId',
+  importPrice: 'importPrice',
+  sellPrice: 'sellPrice',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
 export const SortOrder = {

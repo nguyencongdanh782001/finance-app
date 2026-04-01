@@ -5,11 +5,13 @@ import {
   MonthlyDetailResponse,
   MonthlyResponse,
   UpdateDailyRequest,
+  UploadImageResponse,
   YearlyRevenueResponse,
   YearProfitResponse,
 } from "@/interface/financeAPI";
 import appAxios from "./appAxios";
 import { API_ROUTES } from "@/constant/routes";
+import { CategoryApiItem, CategoryPayload } from "@/interface/category";
 
 export const financeAPI = {
   getYearProfit: (year: number): Promise<IAPIResponse<YearProfitResponse>> => {
@@ -60,5 +62,49 @@ export const financeAPI = {
     payload: UpdateDailyRequest,
   ): Promise<IAPIResponse<unknown>> => {
     return appAxios.put(API_ROUTES.putDailyDetailData(id), payload);
+  },
+  getCategoryList: (): Promise<IAPIResponse<CategoryApiItem[]>> => {
+    return appAxios.get(API_ROUTES.getCategoryList);
+  },
+  getCategoryDetail: (id: number): Promise<IAPIResponse<CategoryApiItem>> => {
+    return appAxios.get(API_ROUTES.getCategoryDetail(id));
+  },
+  createCategory: (
+    payload: CategoryPayload,
+  ): Promise<IAPIResponse<CategoryApiItem>> => {
+    return appAxios.post(API_ROUTES.createCategory, payload);
+  },
+  updateCategory: (
+    id: number,
+    payload: CategoryPayload,
+  ): Promise<IAPIResponse<CategoryApiItem>> => {
+    return appAxios.put(API_ROUTES.updateCategory(id), payload);
+  },
+  deleteCategory: (id: number): Promise<IAPIResponse<{ message: string }>> => {
+    return appAxios.delete(API_ROUTES.deleteCategory(id));
+  },
+
+  // UPLOAD IMAGE
+  uploadImage: async (
+    file: File,
+  ): Promise<IAPIResponse<UploadImageResponse>> => {
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    const res = await fetch(API_ROUTES.uploadFileCloudinary, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    return {
+      code: JSON.stringify(res.status),
+      data: {
+        url: data.secure_url,
+        publicId: data.public_id,
+      },
+    };
   },
 };
