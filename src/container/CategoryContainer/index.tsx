@@ -20,7 +20,6 @@ import { useEffect, useState } from "react";
 
 const DEFAULT_FORM_VALUES: CategoryFormValues = {
   name: "",
-  description: "",
   color: "#9EE9C8",
   icon: "shirt",
 };
@@ -160,7 +159,6 @@ export default function CategoryContainer() {
     formMode === "edit" && selectedCategory
       ? {
           name: selectedCategory.name,
-          description: selectedCategory.description || "",
           color: selectedCategory.color,
           icon: selectedCategory.icon,
         }

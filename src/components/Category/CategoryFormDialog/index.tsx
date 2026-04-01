@@ -27,10 +27,6 @@ const validationSchema = Yup.object({
     .trim()
     .required("Vui lòng nhập tên danh mục")
     .max(40, "Tên danh mục tối đa 40 ký tự"),
-  description: Yup.string()
-    .trim()
-    .required("Vui lòng nhập mô tả")
-    .max(120, "Mô tả tối đa 120 ký tự"),
   color: Yup.string().required("Vui lòng chọn màu"),
   icon: Yup.string().required("Vui lòng chọn biểu tượng"),
 });
@@ -89,7 +85,6 @@ export default function CategoryFormDialog({
       await onSubmit({
         ...values,
         name: values.name.trim(),
-        description: values.description.trim(),
       });
       actions.setSubmitting(false);
       actions.resetForm({ values });

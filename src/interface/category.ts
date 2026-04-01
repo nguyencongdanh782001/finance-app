@@ -24,7 +24,6 @@ export interface CategoryIconOption {
 
 export interface CategoryFormValues {
   name: string;
-  description: string;
   color: string;
   icon: string;
 }
