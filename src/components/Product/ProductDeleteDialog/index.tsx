@@ -35,7 +35,7 @@ export default function ProductDeleteDialog({
           </DialogTitle>
           <DialogDescription className="mx-auto mt-4 max-w-62.5 text-sm leading-7 text-slate-400">
             Bạn có chắc chắn muốn xóa sản phẩm
-            {product ? ` "${product.title}"` : ""}? Ảnh sản phẩm cũng sẽ bị xóa.
+            {product ? ` "${product.title}"` : ""}?
           </DialogDescription>
 
           <div className="mt-8 space-y-3">
