@@ -14,6 +14,7 @@ import { DailyDetailResponse } from "@/interface/financeAPI";
 import { ProductApiItem } from "@/interface/product";
 import { FieldArray, Form, FormikProvider, useFormik } from "formik";
 import {
+  AlertTriangle,
   Box,
   ImageOff,
   Loader2,
@@ -319,11 +320,20 @@ export default function FormProducts(props: FormProductsProps) {
                     const isSavedProduct = item.productId
                       ? initialSoldProductMap.has(Number(item.productId))
                       : false;
+                    const isOutOfStock = Boolean(
+                      selectedProduct && maxAvailable === 0,
+                    );
 
                     const optionValue = inventoryProducts.map((product) => ({
-                      label: `${product.title} • ${product.categoryName}`,
+                      label:
+                        product.quantity === 0
+                          ? `${product.title} • ${product.categoryName} • Hết hàng`
+                          : `${product.title} • ${product.categoryName}`,
                       value: String(product.id),
-                      disabled: selectedIds.includes(String(product.id)),
+                      disabled:
+                        selectedIds.includes(String(product.id)) ||
+                        (product.quantity === 0 &&
+                          !initialSoldProductMap.has(product.id)),
                     }));
 
                     return (
@@ -409,6 +419,12 @@ export default function FormProducts(props: FormProductsProps) {
                                 <p className="mt-1 text-10px font-bold uppercase tracking-[0.08em] text-slate-300">
                                   {selectedProduct.categoryName}
                                 </p>
+                                {isOutOfStock ? (
+                                  <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-rose-600">
+                                    <AlertTriangle className="size-3.5" />
+                                    Hết hàng
+                                  </div>
+                                ) : null}
                               </div>
                             </div>
 
@@ -422,11 +438,23 @@ export default function FormProducts(props: FormProductsProps) {
                                     {formatCurrency(selectedProduct.sellPrice)}
                                   </p>
                                 </div>
-                                <div className="rounded-xl bg-slate-50 px-2 py-1.5">
+                                <div
+                                  className={`rounded-xl px-2 py-1.5 ${
+                                    isOutOfStock
+                                      ? "bg-rose-50"
+                                      : "bg-slate-50"
+                                  }`}
+                                >
                                   <p className="font-bold text-slate-400">
                                     Trong kho
                                   </p>
-                                  <p className="mt-0.5 font-extrabold text-slate-700">
+                                  <p
+                                    className={`mt-0.5 font-extrabold ${
+                                      isOutOfStock
+                                        ? "text-rose-500"
+                                        : "text-slate-700"
+                                    }`}
+                                  >
                                     {selectedProduct.quantity.toLocaleString(
                                       "vi-VN",
                                     )}
@@ -448,6 +476,13 @@ export default function FormProducts(props: FormProductsProps) {
                                   {maxAvailable.toLocaleString("vi-VN")}
                                 </span>
                               </p>
+                              {isOutOfStock ? (
+                                <p className="mt-2 flex items-center gap-1.5 text-11px font-semibold text-rose-500">
+                                  <AlertTriangle className="size-3.5" />
+                                  Sản phẩm này đã hết hàng và không thể thêm mới
+                                  vào danh sách bán.
+                                </p>
+                              ) : null}
                             </div>
                           </div>
                         ) : (

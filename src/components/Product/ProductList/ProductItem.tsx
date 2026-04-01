@@ -8,7 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ProductItemData } from "@/interface/product";
-import { Box, EllipsisVertical, Pencil, Trash2 } from "lucide-react";
+import {
+  AlertTriangle,
+  Box,
+  EllipsisVertical,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 function formatCurrency(value: number) {
@@ -27,13 +33,18 @@ export default function ProductItem({
   onDelete,
 }: ProductItemProps) {
   const [showImage, setShowImage] = useState(Boolean(product.imageUrl));
+  const isOutOfStock = product.quantity === 0;
 
   useEffect(() => {
     setShowImage(Boolean(product.imageUrl));
   }, [product.imageUrl]);
 
   return (
-    <div className="rounded-[24px] bg-white px-4 py-4 shadow-[0_16px_40px_rgba(148,163,184,0.10)]">
+    <div
+      className={`rounded-[24px] bg-white px-4 py-4 shadow-[0_16px_40px_rgba(148,163,184,0.10)] ${
+        isOutOfStock ? "ring-1 ring-rose-100 bg-rose-50/30" : ""
+      }`}
+    >
       <div className="flex items-start gap-3">
         <div className="h-23 w-23 shrink-0 overflow-hidden rounded-[24px] bg-slate-100">
           {showImage ? (
@@ -63,6 +74,12 @@ export default function ProductItem({
               <p className="mt-1 text-10px font-bold uppercase tracking-[0.08em] text-slate-300">
                 {product.categoryName}
               </p>
+              {isOutOfStock ? (
+                <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-rose-600">
+                  <AlertTriangle className="size-3.5" />
+                  Hết hàng
+                </div>
+              ) : null}
             </div>
 
             <DropdownMenu>
@@ -117,8 +134,19 @@ export default function ProductItem({
       </div>
 
       <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-center">
-        <p className="text-10px font-bold text-slate-300">Số lượng trong kho</p>
-        <p className="mt-1 text-sm font-extrabold text-slate-600">
+        <div>
+          <p className="text-10px font-bold text-slate-300">Số lượng trong kho</p>
+          {isOutOfStock ? (
+            <p className="mt-1 text-xs font-semibold text-rose-500">
+              Sản phẩm hiện đã hết hàng
+            </p>
+          ) : null}
+        </div>
+        <p
+          className={`mt-1 text-sm font-extrabold ${
+            isOutOfStock ? "text-rose-500" : "text-slate-600"
+          }`}
+        >
           {product.quantity.toLocaleString("vi-VN")}
         </p>
       </div>
