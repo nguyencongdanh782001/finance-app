@@ -134,20 +134,6 @@ export default function CategoryFormDialog({
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-11px font-bold text-slate-500">
-                    Mô tả ngắn gọn
-                  </Label>
-                  <AutoCompleteField<CustomTextAreaProps>
-                    component={Textarea}
-                    version="field"
-                    name="description"
-                    rows={4}
-                    placeholder="Nhập mô tả về danh mục này để dễ quản lý hơn..."
-                    className="rounded-3xl! border-slate-100 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 placeholder:text-slate-300"
-                  />
-                </div>
-
                 <div className="space-y-2.5">
                   <Label className="text-11px font-bold text-slate-500">
                     Chọn màu sắc

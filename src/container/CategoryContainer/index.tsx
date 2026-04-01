@@ -25,16 +25,12 @@ const DEFAULT_FORM_VALUES: CategoryFormValues = {
   icon: "shirt",
 };
 
-const CATEGORY_DESCRIPTION_FALLBACK =
-  "Danh mục đang được quản lý bằng dữ liệu lấy trực tiếp từ API.";
-
 const mapCategoryFromApi = (category: CategoryApiItem): CategoryItemData => ({
   id: category.id,
   name: category.name,
   color: category.color,
   icon: category.icon,
   productCount: category._count?.products ?? 0,
-  description: CATEGORY_DESCRIPTION_FALLBACK,
 });
 
 export default function CategoryContainer() {
