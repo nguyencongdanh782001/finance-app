@@ -46,7 +46,7 @@ export default function ProductDeleteDialog({
               className="h-14 w-full rounded-2xl bg-red-6 text-base font-semibold text-red-4 hover:bg-red-5"
             >
               {isDeleting && (
-                <Loader2 className="mr-[5px] h-[14px] w-[14px] animate-spin text-red-4" />
+                <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-red-4" />
               )}
               Xóa
             </Button>
