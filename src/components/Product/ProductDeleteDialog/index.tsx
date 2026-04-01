@@ -33,7 +33,7 @@ export default function ProductDeleteDialog({
           <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
             Xác nhận xóa
           </DialogTitle>
-          <DialogDescription className="mx-auto mt-4 max-w-63 text-sm leading-7 text-slate-400">
+          <DialogDescription className="mx-auto mt-4 max-w-64 text-sm leading-7 text-slate-400">
             Bạn có chắc chắn muốn xóa sản phẩm
             {product ? ` "${product.title}"` : ""}?
           </DialogDescription>
