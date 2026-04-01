@@ -27,10 +27,10 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const PRODUCT_SORT_OPTIONS = [
-  { value: "title-asc", label: "A-Z" },
-  { value: "title-desc", label: "Z-A" },
   { value: "createdAt-desc", label: "Mới nhất" },
   { value: "createdAt-asc", label: "Cũ nhất" },
+  { value: "title-asc", label: "A-Z" },
+  { value: "title-desc", label: "Z-A" },
 ] as const;
 
 type ProductSortValue = (typeof PRODUCT_SORT_OPTIONS)[number]["value"];
