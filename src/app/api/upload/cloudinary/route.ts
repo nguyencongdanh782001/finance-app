@@ -1,4 +1,7 @@
-import { uploadImageToCloudinary } from "@/lib/cloudinary-upload";
+import {
+  uploadImageToCloudinary,
+} from "@/lib/cloudinary-upload";
+import { isHeicLikeFile } from "@/lib/image-file";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -22,7 +25,10 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!file.type.startsWith("image/")) {
+    const isSupportedImage =
+      file.type.startsWith("image/") || isHeicLikeFile(file);
+
+    if (!isSupportedImage) {
       return NextResponse.json(
         { message: "Only image files are allowed" },
         { status: 400 },

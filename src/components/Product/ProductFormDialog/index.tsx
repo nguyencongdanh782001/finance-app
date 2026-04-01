@@ -15,16 +15,17 @@ import AutoCompleteField from "@/components/common/CustomFields/AutoCompleteFiel
 import CustomSelect from "@/components/common/CustomFields/CustomSelect";
 import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numberInput";
+import { toast } from "@/hook/use-toast";
 import { CategoryItemData } from "@/interface/category";
 import { CustomInputProps, CustomSelectProps } from "@/interface/Field";
 import { ProductFormValues } from "@/interface/product";
+import { isHeicLikeFile } from "@/lib/image-file";
 import {
   ImagePlus,
   Loader2,
   PlusCircle,
   RefreshCcw,
   Trash2,
-  X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -65,22 +66,26 @@ export default function ProductFormDialog({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState(initialImageUrl || "");
+  const [isConvertingImage, setIsConvertingImage] = useState(false);
 
   useEffect(() => {
     setSelectedFile(null);
     setPreviewUrl(initialImageUrl || "");
   }, [initialImageUrl, open]);
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values, actions) => {
-      if (mode === "create" && !selectedFile && !previewUrl) {
-        actions.setFieldError("title", undefined);
-        return;
-      }
-
       actions.setSubmitting(true);
       await onSubmit(
         {
@@ -93,21 +98,62 @@ export default function ProductFormDialog({
     },
   });
 
-  const { values, isSubmitting, setFieldValue } = formik;
+  const { isSubmitting } = formik;
   const categoryOptions = categories.map((category) => ({
     value: String(category.id),
     label: category.name,
   }));
 
-  const handlePickImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const convertHeicToJpeg = async (file: File) => {
+    const { default: heic2any } = await import("heic2any");
+    const converted = await heic2any({
+      blob: file,
+      toType: "image/jpeg",
+      quality: 0.9,
+    });
+    const blob = Array.isArray(converted) ? converted[0] : converted;
+    const nextFileName = file.name.replace(/\.(heic|heif)$/i, ".jpg");
+
+    return new File([blob], nextFileName, {
+      type: "image/jpeg",
+      lastModified: Date.now(),
+    });
+  };
+
+  const handlePickImage = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
 
     if (!file) {
       return;
     }
 
-    setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    try {
+      setIsConvertingImage(true);
+      const nextFile = isHeicLikeFile(file)
+        ? await convertHeicToJpeg(file)
+        : file;
+
+      if (previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      setSelectedFile(nextFile);
+      setPreviewUrl(URL.createObjectURL(nextFile));
+    } catch {
+      toast({
+        title: "Không thể chuyển ảnh HEIC",
+        description: "Vui lòng chọn ảnh khác hoặc thử lại.",
+        className: "bg-red-1 text-white text-sm font-medium",
+        duration: 3500,
+      });
+      setSelectedFile(null);
+      setPreviewUrl(initialImageUrl || "");
+    } finally {
+      setIsConvertingImage(false);
+      event.target.value = "";
+    }
   };
 
   return (
@@ -119,6 +165,7 @@ export default function ProductFormDialog({
           formik.resetForm();
           setSelectedFile(null);
           setPreviewUrl(initialImageUrl || "");
+          setIsConvertingImage(false);
         }
       }}
     >
@@ -164,19 +211,25 @@ export default function ProductFormDialog({
                         ) : (
                           <div className="space-y-3 py-5">
                             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-18 text-green-15">
-                              <ImagePlus className="size-6" />
+                              {isConvertingImage ? (
+                                <Loader2 className="size-6 animate-spin" />
+                              ) : (
+                                <ImagePlus className="size-6" />
+                              )}
                             </div>
                             <div>
                               <p className="text-sm font-semibold text-slate-700">
-                                Tải ảnh sản phẩm
+                                Thêm ảnh sản phẩm
                               </p>
                               <p className="mt-1 text-xs text-slate-400">
-                                PNG, JPG tối đa 5MB
+                                PNG, JPG, HEIC tối đa 5MB. Ảnh HEIC sẽ được
+                                chuyển sang JPG tự động.
                               </p>
                             </div>
                             <Button
                               type="button"
                               onClick={() => inputRef.current?.click()}
+                              disabled={isConvertingImage}
                               className="h-10 rounded-full bg-white px-4 text-sm font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
                             >
                               Chọn tệp
@@ -187,9 +240,10 @@ export default function ProductFormDialog({
                         <input
                           ref={inputRef}
                           type="file"
-                          accept="image/*"
+                          accept="image/*,.heic,.heif"
                           className="hidden"
                           onChange={handlePickImage}
+                          disabled={isConvertingImage}
                         />
                       </div>
                     </div>
@@ -270,7 +324,7 @@ export default function ProductFormDialog({
                 <div className="sticky bottom-0 z-10 space-y-3 border-t border-slate-100 bg-white px-5 py-4 sm:px-6">
                   <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isConvertingImage}
                     className="h-12 w-full rounded-3xl bg-green-16 text-sm font-bold text-white hover:bg-green-15"
                   >
                     {isSubmitting && (

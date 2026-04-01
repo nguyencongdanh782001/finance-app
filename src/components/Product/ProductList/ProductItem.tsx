@@ -8,7 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ProductItemData } from "@/interface/product";
-import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
+import { Box, EllipsisVertical, Pencil, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 function formatCurrency(value: number) {
   return `${value.toLocaleString("vi-VN")} vnđ`;
@@ -25,16 +26,32 @@ export default function ProductItem({
   onEdit,
   onDelete,
 }: ProductItemProps) {
+  const [showImage, setShowImage] = useState(Boolean(product.imageUrl));
+
+  useEffect(() => {
+    setShowImage(Boolean(product.imageUrl));
+  }, [product.imageUrl]);
+
   return (
     <div className="rounded-[24px] bg-white px-4 py-4 shadow-[0_16px_40px_rgba(148,163,184,0.10)]">
       <div className="flex items-start gap-3">
         <div className="h-23 w-23 shrink-0 overflow-hidden rounded-[24px] bg-slate-100">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={product.imageUrl}
-            alt={product.title}
-            className="h-full w-full object-cover"
-          />
+          {showImage ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={product.imageUrl}
+                alt={product.title}
+                className="h-full w-full object-cover"
+                onError={() => setShowImage(false)}
+              />
+            </>
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-slate-50 text-slate-400">
+              <Box className="size-6" />
+              <span className="text-[10px] font-semibold">Chưa có ảnh</span>
+            </div>
+          )}
         </div>
 
         <div className="min-w-0 flex-1 pt-1">

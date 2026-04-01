@@ -1,4 +1,5 @@
 import cloudinary from "@/lib/cloudinary";
+import { isHeicLikeFile } from "@/lib/image-file";
 
 export type UploadedImage = {
   url: string;
@@ -6,15 +7,7 @@ export type UploadedImage = {
 };
 
 const getOutputFormat = (file: File) => {
-  const fileName = file.name.toLowerCase();
-  const mimeType = file.type.toLowerCase();
-
-  if (
-    mimeType.includes("heic") ||
-    mimeType.includes("heif") ||
-    fileName.endsWith(".heic") ||
-    fileName.endsWith(".heif")
-  ) {
+  if (isHeicLikeFile(file)) {
     return "jpg";
   }
 

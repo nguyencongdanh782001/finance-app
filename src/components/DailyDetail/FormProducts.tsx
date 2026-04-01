@@ -13,7 +13,15 @@ import { CustomInputProps, CustomSelectProps } from "@/interface/Field";
 import { DailyDetailResponse } from "@/interface/financeAPI";
 import { ProductApiItem } from "@/interface/product";
 import { FieldArray, Form, FormikProvider, useFormik } from "formik";
-import { Box, Loader2, PackageCheck, Plus, Save, Trash2 } from "lucide-react";
+import {
+  Box,
+  ImageOff,
+  Loader2,
+  PackageCheck,
+  Plus,
+  Save,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import * as Yup from "yup";
@@ -85,6 +93,40 @@ const mapProductFromApi = (product: ProductApiItem): InventoryProduct => ({
 });
 
 const formatCurrency = (value: number) => `${value.toLocaleString("vi-VN")} đ`;
+
+function ProductImagePreview({
+  imageUrl,
+  title,
+}: {
+  imageUrl: string;
+  title: string;
+}) {
+  const [showImage, setShowImage] = useState(Boolean(imageUrl));
+
+  useEffect(() => {
+    setShowImage(Boolean(imageUrl));
+  }, [imageUrl]);
+
+  if (!showImage) {
+    return (
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] bg-slate-50 text-slate-400">
+        <ImageOff className="size-4" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-14 w-14 shrink-0 rounded-[14px] bg-slate-100 overflow-hidden">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={imageUrl}
+        alt={title}
+        className="h-full w-full object-cover"
+        onError={() => setShowImage(false)}
+      />
+    </div>
+  );
+}
 
 export default function FormProducts(props: FormProductsProps) {
   const { data, isLoading, reload, onReload } = props;
@@ -356,14 +398,10 @@ export default function FormProducts(props: FormProductsProps) {
                         {selectedProduct ? (
                           <div className="mt-3 flex flex-col gap-2.5 rounded-[16px] bg-white p-2.5">
                             <div className="flex gap-2 w-full">
-                              <div className="h-14 w-14 shrink-0 rounded-[14px] bg-slate-100 overflow-hidden">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={selectedProduct.imageUrl}
-                                  alt={selectedProduct.title}
-                                  className="h-full w-full object-cover"
-                                />
-                              </div>
+                              <ProductImagePreview
+                                imageUrl={selectedProduct.imageUrl}
+                                title={selectedProduct.title}
+                              />
                               <div className="flex flex-col w-full">
                                 <p className="line-clamp-1 text-sm font-extrabold text-slate-700">
                                   {selectedProduct.title}

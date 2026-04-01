@@ -263,19 +263,10 @@ export default function ProductContainer() {
       imagePublicId = uploadRes.data.publicId;
     }
 
-    if (formMode === "create" && (!imageUrl || !imagePublicId)) {
-      toast({
-        title: "Vui lòng chọn ảnh sản phẩm",
-        className: "bg-red-1 text-white text-sm font-medium w-fit",
-        duration: 3000,
-      });
-      return;
-    }
-
     const payload = {
       title: values.title,
-      imageUrl,
-      imagePublicId,
+      imageUrl: imageUrl || "",
+      imagePublicId: imagePublicId || "",
       categoryId: Number(values.categoryId),
       importPrice: Number(values.importPrice),
       sellPrice: Number(values.sellPrice),
