@@ -321,7 +321,7 @@ export default function CategoryContainer() {
                     <Button
                       type="button"
                       variant="ghost"
-                      className="h-8 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
+                      className="h-8 rounded-full border border-slate-200 bg-white px-2.5 text-11px font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
                     >
                       <ArrowUpDown className="size-3" />
                       {selectedSort.label}

@@ -485,7 +485,7 @@ export default function ProductContainer() {
                   <Button
                     type="button"
                     variant="ghost"
-                    className="h-8 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
+                    className="h-8 rounded-full border border-slate-200 bg-white px-2.5 text-11px font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
                   >
                     <ArrowUpDown className="size-3" />
                     {selectedSort.label}
@@ -499,8 +499,8 @@ export default function ProductContainer() {
                       onClick={() => setSortBy(option.value)}
                       className={
                         sortBy === option.value
-                          ? "px-2.5 py-2 text-[11px] bg-slate-50 text-slate-700"
-                          : "px-2.5 py-2 text-[11px] text-slate-500"
+                          ? "px-2.5 py-2 text-11px bg-slate-50 text-slate-700"
+                          : "px-2.5 py-2 text-11px text-slate-500"
                       }
                     >
                       <span className="flex-1">{option.label}</span>
