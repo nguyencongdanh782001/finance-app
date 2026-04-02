@@ -12,15 +12,13 @@ import { toast } from "@/hook/use-toast";
 import { CustomInputProps, CustomSelectProps } from "@/interface/Field";
 import { DailyDetailResponse } from "@/interface/financeAPI";
 import { ProductApiItem } from "@/interface/product";
-import { FieldArray, Form, FormikProvider, useFormik } from "formik";
+import { FieldArray, Form, FormikProvider, setIn, useFormik } from "formik";
 import {
   AlertTriangle,
   Box,
   ImageOff,
-  Loader2,
   PackageCheck,
   Plus,
-  Save,
   Trash2,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -46,10 +44,10 @@ type ProductSalesFormValues = {
   soldProducts: ProductSaleFormValue[];
 };
 
-const DEFAULT_ROW: ProductSaleFormValue = {
+const createDefaultRow = (): ProductSaleFormValue => ({
   productId: "",
   quantity: "1",
-};
+});
 
 const validationSchema = Yup.object({
   soldProducts: Yup.array()
@@ -95,6 +93,25 @@ const mapProductFromApi = (product: ProductApiItem): InventoryProduct => ({
 
 const formatCurrency = (value: number) => `${value.toLocaleString("vi-VN")} đ`;
 
+const getFormikErrorsFromYup = async (values: ProductSalesFormValues) => {
+  try {
+    await validationSchema.validate(values, { abortEarly: false });
+    return {};
+  } catch (error) {
+    if (error instanceof Yup.ValidationError) {
+      return error.inner.reduce<Record<string, string>>((acc, currentError) => {
+        if (currentError.path) {
+          acc[currentError.path] = currentError.message;
+        }
+
+        return acc;
+      }, {});
+    }
+
+    return {};
+  }
+};
+
 function ProductImagePreview({
   imageUrl,
   title,
@@ -138,24 +155,33 @@ export default function FormProducts(props: FormProductsProps) {
   >([]);
   const [isInventoryLoading, setIsInventoryLoading] = useState(true);
 
+  const serverInitialValues = useMemo<ProductSalesFormValues>(
+    () => ({
+      soldProducts:
+        data?.soldProducts.map((item) => ({
+          productId: String(item.productId),
+          quantity: String(item.quantity),
+        })) ?? [],
+    }),
+    [data?.soldProducts],
+  );
+  const [stableInitialValues, setStableInitialValues] =
+    useState<ProductSalesFormValues>(serverInitialValues);
+
+  useEffect(() => {
+    setStableInitialValues(serverInitialValues);
+  }, [serverInitialValues]);
+
   const initialSoldProductMap = useMemo(
     () =>
       new Map(
-        (data?.soldProducts ?? []).map((item) => [
-          item.productId,
-          item.quantity,
+        stableInitialValues.soldProducts.map((item) => [
+          Number(item.productId),
+          Number(item.quantity),
         ]),
       ),
-    [data?.soldProducts],
+    [stableInitialValues],
   );
-
-  const initialValues: ProductSalesFormValues = {
-    soldProducts:
-      data?.soldProducts.map((item) => ({
-        productId: String(item.productId),
-        quantity: String(item.quantity),
-      })) ?? [],
-  };
 
   useEffect(() => {
     const fetchInventoryProducts = async () => {
@@ -183,9 +209,36 @@ export default function FormProducts(props: FormProductsProps) {
   }, []);
 
   const formik = useFormik<ProductSalesFormValues>({
-    initialValues,
+    initialValues: stableInitialValues,
     enableReinitialize: true,
-    validationSchema,
+    validate: async (values) => {
+      let nextErrors = await getFormikErrorsFromYup(values);
+
+      values.soldProducts.forEach((item, index) => {
+        if (!item.productId || !item.quantity) return;
+
+        const selectedProduct = inventoryProducts.find(
+          (product) => String(product.id) === item.productId,
+        );
+        const initialQuantity =
+          initialSoldProductMap.get(Number(item.productId)) ?? 0;
+        const maxAvailable = selectedProduct
+          ? selectedProduct.quantity + initialQuantity
+          : 0;
+        const quantity = Number(item.quantity);
+
+        if (!Number.isNaN(quantity) && quantity > maxAvailable) {
+          nextErrors = setIn(
+            nextErrors,
+            `soldProducts[${index}].quantity`,
+            `Số lượng không được lớn hơn ${maxAvailable.toLocaleString("vi-VN")}`,
+          );
+        }
+      });
+
+      return nextErrors;
+    },
+
     onSubmit: async (values, actions) => {
       const payload = values.soldProducts.map((item) => ({
         productId: Number(item.productId),
@@ -200,11 +253,12 @@ export default function FormProducts(props: FormProductsProps) {
         const savedProfit = res.data?.summary?.totalProfit ?? 0;
 
         toast({
-          title: "Đã cập nhật sản phẩm bán trong ngày",
-          description: `Tổng lợi nhuận theo sản phẩm hôm nay: ${formatCurrency(savedProfit)}`,
+          title: "Cập nhật sản phẩm bán thành công",
+          // description: `Tổng lợi nhuận theo sản phẩm hôm nay: ${formatCurrency(savedProfit)}`,
           className: "bg-green-16 text-white text-sm font-medium w-fit",
           duration: 3500,
         });
+        setStableInitialValues(values);
         actions.resetForm({ values });
         onReload();
         return;
@@ -216,14 +270,18 @@ export default function FormProducts(props: FormProductsProps) {
 
       toast({
         title: "Cập nhật sản phẩm bán thất bại",
-        description: errorMessage,
+        // description: errorMessage,
         className: "bg-red-1 text-white text-sm font-medium",
         duration: 3500,
       });
     },
   });
 
-  const { values, isSubmitting, dirty, errors } = formik;
+  const { values, isSubmitting, dirty, errors, submitForm, validateField } =
+    formik;
+  const hasPendingDraftRow = values.soldProducts.some(
+    (item) => !item.productId,
+  );
 
   const totalSoldCount = values.soldProducts.reduce(
     (sum, item) => sum + Number(item.quantity || 0),
@@ -241,7 +299,6 @@ export default function FormProducts(props: FormProductsProps) {
 
     return sum + unitProfit * quantity;
   }, 0);
-
   return (
     <FormikProvider value={formik}>
       <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-5 bg-white shadow-sm">
@@ -325,8 +382,13 @@ export default function FormProducts(props: FormProductsProps) {
                             variant="ghost"
                             size="icon-sm"
                             className="h-9 w-9 rounded-full bg-white text-rose-400 hover:bg-rose-50 hover:text-rose-500"
-                            onClick={() => arrayHelpers.remove(index)}
-                            disabled={isSubmitting}
+                            onClick={() => {
+                              arrayHelpers.remove(index);
+                              setTimeout(() => {
+                                void submitForm();
+                              }, 0);
+                            }}
+                            disabled={isSubmitting || isLoading || reload}
                           >
                             <Trash2 className="size-4" />
                           </Button>
@@ -352,8 +414,18 @@ export default function FormProducts(props: FormProductsProps) {
                               popoverTrgVariant={{
                                 variant: "search-box--lgray",
                               }}
+                              onManualSelect={(v) => {
+                                setTimeout(() => {
+                                  if (v) {
+                                    submitForm();
+                                  }
+                                }, 0);
+                              }}
                               disabled={
-                                isSubmitting || reload || isSavedProduct
+                                isSubmitting ||
+                                isLoading ||
+                                reload ||
+                                isSavedProduct
                               }
                             />
                           </div>
@@ -370,9 +442,26 @@ export default function FormProducts(props: FormProductsProps) {
                               version="field"
                               name={`soldProducts[${index}].quantity`}
                               placeholder="0"
-                              className="bg-white! h-12! rounded-xl! border-slate-100! min-w-full! max-w-32 py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
-                              pattern="^\\d+$"
-                              disabled={isSubmitting || reload}
+                              className="bg-white! h-12! rounded-xl! border-slate-100 min-w-full! max-w-32 py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+                              pattern="^\d+(\.\d*)?$"
+                              disabled={
+                                isSubmitting ||
+                                isLoading ||
+                                reload ||
+                                !item.productId
+                              }
+                              onBlur={() => {
+                                formik.setFieldTouched(
+                                  `soldProducts[${index}].quantity`,
+                                  true,
+                                );
+                                void validateField(
+                                  `soldProducts[${index}].quantity`,
+                                );
+                                if (dirty) {
+                                  submitForm();
+                                }
+                              }}
                             />
                           </div>
                         </div>
@@ -392,7 +481,7 @@ export default function FormProducts(props: FormProductsProps) {
                                   {selectedProduct.categoryName}
                                 </p>
                                 {isOutOfStock ? (
-                                  <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-rose-600">
+                                  <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-10px font-bold uppercase tracking-[0.08em] text-rose-600">
                                     <AlertTriangle className="size-3.5" />
                                     Hết hàng
                                   </div>
@@ -487,9 +576,13 @@ export default function FormProducts(props: FormProductsProps) {
                   type="button"
                   variant="ghost"
                   className="h-12 w-full rounded-3xl border border-dashed border-green-15 bg-green-14 text-sm font-semibold text-green-13 hover:bg-green-14"
-                  onClick={() => arrayHelpers.push(DEFAULT_ROW)}
+                  onClick={() => arrayHelpers.push(createDefaultRow())}
                   disabled={
-                    isSubmitting || reload || inventoryProducts.length === 0
+                    isSubmitting ||
+                    isLoading ||
+                    reload ||
+                    inventoryProducts.length === 0 ||
+                    hasPendingDraftRow
                   }
                 >
                   <Plus className="size-4" />
@@ -499,6 +592,8 @@ export default function FormProducts(props: FormProductsProps) {
             )}
           />
         )}
+
+        <button disabled={!dirty} type="submit" className="hidden" />
 
         {!isLoading && !isInventoryLoading ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -527,23 +622,6 @@ export default function FormProducts(props: FormProductsProps) {
                 Tạm tính theo giá vốn và giá bán
               </p>
             </div>
-          </div>
-        ) : null}
-
-        {!isLoading && !isInventoryLoading ? (
-          <div className="flex flex-col rounded-[24px] bg-slate-50 px-4 py-4 w-full">
-            <Button
-              type="submit"
-              className="h-12 rounded-3xl bg-green-16 px-6 text-sm font-semibold text-white hover:bg-green-16/90"
-              disabled={isSubmitting || reload || isInventoryLoading || !dirty}
-            >
-              {isSubmitting ? (
-                <Loader2 className="animate-spin w-3.5 h-3.5 text-white mr-1.25" />
-              ) : (
-                <Save className="size-4" />
-              )}
-              Lưu danh sách sản phẩm
-            </Button>
           </div>
         ) : null}
       </Form>

@@ -2,20 +2,18 @@
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { toast } from "@/hook/use-toast";
-import { CustomInputProps, CustomTextAreaProps } from "@/interface/Field";
+import { CustomTextAreaProps } from "@/interface/Field";
 import {
   DailyDetailResponse,
   UpdateDailyRequest,
 } from "@/interface/financeAPI";
 import { Form, FormikProvider, useFormik } from "formik";
 import { debounce } from "lodash";
+import { Text } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import AutoCompleteField from "../common/CustomFields/AutoCompleteField";
-import { Label } from "../ui/label";
-import { NumericInput } from "../ui/numberInput";
 import { Skeleton } from "../ui/skeleton";
-import { Text } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 
 interface FormNoteProps {

@@ -61,12 +61,12 @@ const DailyDetail = () => {
     <div className="sm:max-w-191.25 mx-auto relative">
       <Toaster />
       <Header>
-        <div className="sm:max-w-[765px] mx-auto">
+        <div className="sm:max-w-191.25 mx-auto">
           <div className="grid w-full grid-cols-2 rounded-full border border-slate-200 bg-slate-50 p-1">
             <button
               type="button"
               onClick={() => setActiveTab("revenue")}
-              className={`flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
+              className={`cursor-pointer flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
                 activeTab === "revenue"
                   ? "bg-white text-slate-700 shadow-sm"
                   : "text-slate-400 hover:text-slate-600"
@@ -82,7 +82,7 @@ const DailyDetail = () => {
             <button
               type="button"
               onClick={() => setActiveTab("products")}
-              className={`flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
+              className={`cursor-pointer flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
                 activeTab === "products"
                   ? "bg-white text-slate-700 shadow-sm"
                   : "text-slate-400 hover:text-slate-600"
