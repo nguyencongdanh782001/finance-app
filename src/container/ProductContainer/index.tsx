@@ -268,6 +268,8 @@ export default function ProductContainer() {
     values: ProductFormValues,
     imageFile?: File | null,
   ) => {
+    const isCreating = formMode === "create";
+    const productTitle = values.title;
     let imageUrl = selectedProduct?.imageUrl || "";
     let imagePublicId = selectedProduct?.imagePublicId || "";
 
@@ -281,6 +283,9 @@ export default function ProductContainer() {
       ) {
         toast({
           title: "Upload ảnh thất bại",
+          description: productTitle
+            ? `Không thể tải ảnh cho "${productTitle}". Vui lòng thử lại.`
+            : "Không thể tải ảnh sản phẩm. Vui lòng thử lại.",
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
@@ -307,6 +312,9 @@ export default function ProductContainer() {
       if (res.code !== RESPONSE_CODES.success || !res.data) {
         toast({
           title: "Tạo sản phẩm thất bại",
+          description: productTitle
+            ? `Không thể tạo "${productTitle}". Vui lòng kiểm tra lại thông tin.`
+            : "Không thể tạo sản phẩm. Vui lòng kiểm tra lại thông tin.",
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
@@ -318,6 +326,9 @@ export default function ProductContainer() {
       if (res.code !== RESPONSE_CODES.success) {
         toast({
           title: "Cập nhật sản phẩm thất bại",
+          description: productTitle
+            ? `Không thể cập nhật "${productTitle}". Vui lòng thử lại.`
+            : "Không thể cập nhật sản phẩm. Vui lòng thử lại.",
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
@@ -329,6 +340,18 @@ export default function ProductContainer() {
     setSelectedProduct(null);
     await fetchProducts(1);
     await fetchCategories();
+    toast({
+      title: isCreating
+        ? "Tạo sản phẩm thành công"
+        : "Cập nhật sản phẩm thành công",
+      description: productTitle
+        ? isCreating
+          ? `Đã thêm "${productTitle}" vào danh sách sản phẩm`
+          : `Đã cập nhật "${productTitle}"`
+        : undefined,
+      className: "bg-green-16 text-white text-sm font-medium w-fit",
+      duration: 3000,
+    });
     return true;
   };
 
@@ -337,12 +360,17 @@ export default function ProductContainer() {
       return;
     }
 
+    const deletedProductTitle = selectedProduct.title;
+
     setIsDeleting(true);
     const res = await financeAPI.deleteProduct(selectedProduct.id);
 
     if (res.code !== RESPONSE_CODES.success) {
       toast({
         title: "Xóa sản phẩm thất bại",
+        description: deletedProductTitle
+          ? `Không thể xóa "${deletedProductTitle}". Vui lòng thử lại.`
+          : "Không thể xóa sản phẩm. Vui lòng thử lại.",
         className: "bg-red-1 text-white text-sm font-medium w-fit",
         duration: 3000,
       });
@@ -355,6 +383,14 @@ export default function ProductContainer() {
     setSelectedProduct(null);
     await fetchProducts(1);
     await fetchCategories();
+    toast({
+      title: "Xóa sản phẩm thành công",
+      description: deletedProductTitle
+        ? `Đã xóa "${deletedProductTitle}" khỏi danh sách sản phẩm`
+        : undefined,
+      className: "bg-green-16 text-white text-sm font-medium w-fit",
+      duration: 3000,
+    });
     setIsDeleting(false);
   };
 
