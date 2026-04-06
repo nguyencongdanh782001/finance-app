@@ -77,7 +77,7 @@ export default function ChartMonthlyProductProfit() {
           <>
             <div className="mb-6 flex items-center justify-between gap-3">
               <h3 className="text-sm font-bold uppercase text-green-4">
-                Lợi nhuận bán sản phẩm theo ngày
+                Lợi nhuận sản phẩm theo ngày
               </h3>
               <p className="shrink-0 text-xs font-bold uppercase text-green-4 sm:text-sm">
                 Đơn vị: VND
