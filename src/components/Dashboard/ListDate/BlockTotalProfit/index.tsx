@@ -19,7 +19,7 @@ const BlockTotalProfit = (props: BlockTotalProfitProps) => {
 
   return (
     <div
-      className={`flex flex-col gap-1 rounded-[40px] px-5 py-6 border border-white shadow-sm bg-linear-to-tr ${profit && profit < 0 ? "from-red-6 to-red-5" : "from-green-18 to-green-17"}`}
+      className={`flex flex-col gap-1 rounded-[40px] px-4 py-5 border border-white shadow-sm bg-linear-to-tr ${profit && profit < 0 ? "from-red-6 to-red-5" : "from-green-18 to-green-17"}`}
     >
       <p className="text-green-1 text-13px font-bold uppercase">
         Doanh thu tháng {defaultMonth}
