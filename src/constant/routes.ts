@@ -11,6 +11,8 @@ export const API_ROUTES = {
     APP_API_URL(`monthly?year=${year}&month=${month}`),
   getYearlyRevenue: (year: number) =>
     APP_API_URL(`summary/yearly-revenue?year=${year}`),
+  getYearlyExpense: (year: number) =>
+    APP_API_URL(`summary/yearly-expense?year=${year}`),
   getTopSellingProducts: (year: number, month: number) =>
     APP_API_URL(`summary/top-products?year=${year}&month=${month}`),
   getMonthlyProductProfit: (year: number, month: number) =>

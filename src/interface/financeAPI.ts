@@ -52,6 +52,16 @@ export type YearlyRevenueResponse = {
   data: MonthlyRevenue[];
 };
 
+export type MonthlyExpenseChartItem = {
+  month: number;
+  expense: number;
+};
+
+export type YearlyExpenseResponse = {
+  year: number;
+  data: MonthlyExpenseChartItem[];
+};
+
 export type TopSellingProduct = {
   productId: number;
   productTitle: string;

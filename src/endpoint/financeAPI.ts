@@ -10,6 +10,7 @@ import {
   UpdateDailyRequest,
   UploadImageResponse,
   TopSellingProductsResponse,
+  YearlyExpenseResponse,
   YearlyRevenueResponse,
   YearProfitResponse,
 } from "@/interface/financeAPI";
@@ -36,6 +37,11 @@ export const financeAPI = {
     year: number,
   ): Promise<IAPIResponse<YearlyRevenueResponse>> => {
     return appAxios.get(API_ROUTES.getYearlyRevenue(year));
+  },
+  getYearlyExpense: (
+    year: number,
+  ): Promise<IAPIResponse<YearlyExpenseResponse>> => {
+    return appAxios.get(API_ROUTES.getYearlyExpense(year));
   },
   getTopSellingProducts: (
     year: number,

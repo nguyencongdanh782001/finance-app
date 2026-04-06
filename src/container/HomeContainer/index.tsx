@@ -11,6 +11,7 @@ import ListDate from "@/components/Dashboard/ListDate";
 import ChartMonthlyProductProfit from "@/components/Dashboard/ChartMonthlyProductProfit";
 import TopSellingProductsChart from "@/components/Dashboard/TopSellingProductsChart";
 import ChartYearlyRevenue from "@/components/Dashboard/ChartYearlyRevenue";
+import ChartYearlyExpense from "@/components/Dashboard/ChartYearlyExpense";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function HomeContainer() {
@@ -80,6 +81,8 @@ export default function HomeContainer() {
 
       {/* Chart Yearly Revenue */}
       <ChartYearlyRevenue isLoading={isLoading} />
+
+      <ChartYearlyExpense isLoading={isLoading} />
     </Container>
   );
 }
