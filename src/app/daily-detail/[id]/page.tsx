@@ -140,7 +140,7 @@ const DailyDetail = () => {
             >
               <div>
                 <p className="text-base text-green-1 font-bold uppercase">
-                  Tổng lợi nhuận ngày
+                  Tổng doanh thu ngày
                 </p>
                 {isLoading ? (
                   <Skeleton className="h-8 w-60 rounded-2 mt-1" />

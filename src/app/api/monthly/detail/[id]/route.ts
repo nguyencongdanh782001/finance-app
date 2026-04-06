@@ -1,6 +1,39 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
+type SaleSnapshot = {
+  quantity: number;
+  sellPrice: number;
+};
+
+type NumericLike = number | string | { toString(): string } | null;
+
+type MonthlyDaySummary = {
+  profitBank: NumericLike;
+  profitCash: NumericLike;
+};
+
+type MonthlyExpenseItem = {
+  id: number;
+  name: string;
+  amount: NumericLike;
+  createdAt: Date;
+};
+
+type MonthlyDetailRecord = {
+  id: number;
+  year: number;
+  month: number;
+  totalExpense: NumericLike;
+  expenses: MonthlyExpenseItem[];
+  days: MonthlyDaySummary[];
+};
+
+const isDailySoldProductSchemaError = (error: unknown) =>
+  error instanceof Error &&
+  (error.message.includes("daily_sold_product") ||
+    error.message.includes("soldProducts"));
+
 export async function GET(
   _req: Request,
   context: { params: Promise<{ id: string }> },
@@ -16,22 +49,93 @@ export async function GET(
     );
   }
 
-  const monthly = await prisma.monthlyFinance.findUnique({
-    where: { id: monthlyId },
-    include: {
-      expenses: {
-        orderBy: {
-          createdAt: "desc",
+  let monthly: MonthlyDetailRecord | null = null;
+  let soldProductsByDay: {
+    dailyId: number;
+    date: Date;
+    soldProducts: {
+      productId: number;
+      productTitle: string;
+      categoryName: string;
+      importPrice: number;
+      sales: SaleSnapshot[];
+    }[];
+  }[] = [];
+
+  try {
+    const monthlyWithSoldProducts = await prisma.monthlyFinance.findUnique({
+      where: { id: monthlyId },
+      include: {
+        expenses: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        days: {
+          orderBy: {
+            date: "asc",
+          },
+          include: {
+            soldProducts: {
+              orderBy: {
+                createdAt: "asc",
+              },
+              include: {
+                product: {
+                  include: {
+                    category: true,
+                  },
+                },
+              },
+            },
+          },
         },
       },
-      days: {
-        select: {
-          profitBank: true,
-          profitCash: true,
+    });
+
+    monthly = monthlyWithSoldProducts;
+    soldProductsByDay =
+      monthlyWithSoldProducts?.days.map((day) => ({
+        dailyId: day.id,
+        date: day.date,
+        soldProducts: day.soldProducts.map((item) => ({
+          productId: item.productId,
+          productTitle: item.product.title,
+          categoryName: item.product.category.name,
+          importPrice: Number(item.importPrice),
+          sales: Array.isArray(item.sales)
+            ? (item.sales as unknown as SaleSnapshot[]).map((sale) => ({
+                quantity: Number(sale.quantity),
+                sellPrice: Number(sale.sellPrice),
+              }))
+            : [],
+        })),
+      })) ?? [];
+  } catch (error) {
+    if (!isDailySoldProductSchemaError(error)) {
+      throw error;
+    }
+
+    monthly = await prisma.monthlyFinance.findUnique({
+      where: { id: monthlyId },
+      include: {
+        expenses: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        days: {
+          orderBy: {
+            date: "asc",
+          },
+          select: {
+            profitBank: true,
+            profitCash: true,
+          },
         },
       },
-    },
-  });
+    });
+  }
 
   if (!monthly) {
     return NextResponse.json(
@@ -53,5 +157,10 @@ export async function GET(
     totalExpense: Number(monthly.totalExpense),
     profit: totalRevenue,
     expenses: monthly.expenses,
+    soldProductsByDay: soldProductsByDay.map((day) => ({
+      dailyId: day.dailyId,
+      date: day.date,
+      soldProducts: day.soldProducts,
+    })),
   });
 }

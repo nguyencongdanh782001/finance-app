@@ -3,6 +3,13 @@
 import AutoCompleteField from "@/components/common/CustomFields/AutoCompleteField";
 import CustomSelect from "@/components/common/CustomFields/CustomSelect";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { NumericInput } from "@/components/ui/numberInput";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,11 +19,21 @@ import { toast } from "@/hook/use-toast";
 import { CustomInputProps, CustomSelectProps } from "@/interface/Field";
 import { DailyDetailResponse } from "@/interface/financeAPI";
 import { ProductApiItem } from "@/interface/product";
-import { FieldArray, Form, FormikProvider, setIn, useFormik } from "formik";
+import {
+  FieldArray,
+  Form,
+  FormikProvider,
+  getIn,
+  setIn,
+  useFormik,
+} from "formik";
 import {
   AlertTriangle,
   Box,
+  ChevronDown,
+  ChevronUp,
   ImageOff,
+  Minus,
   PackageCheck,
   Plus,
   Trash2,
@@ -35,18 +52,28 @@ type InventoryProduct = {
   quantity: number;
 };
 
+type SaleEntryFormValue = {
+  quantity: string;
+  sellPrice: string;
+};
+
 type ProductSaleFormValue = {
   productId: string;
-  quantity: string;
+  sales: SaleEntryFormValue[];
 };
 
 type ProductSalesFormValues = {
   soldProducts: ProductSaleFormValue[];
 };
 
+const createDefaultSale = (): SaleEntryFormValue => ({
+  quantity: "1",
+  sellPrice: "",
+});
+
 const createDefaultRow = (): ProductSaleFormValue => ({
   productId: "",
-  quantity: "1",
+  sales: [createDefaultSale()],
 });
 
 const validationSchema = Yup.object({
@@ -54,11 +81,21 @@ const validationSchema = Yup.object({
     .of(
       Yup.object({
         productId: Yup.string().required("Vui lòng chọn sản phẩm"),
-        quantity: Yup.number()
-          .typeError("Vui lòng nhập số lượng")
-          .integer("Số lượng phải là số nguyên")
-          .min(1, "Số lượng phải lớn hơn 0")
-          .required("Vui lòng nhập số lượng"),
+        sales: Yup.array()
+          .of(
+            Yup.object({
+              quantity: Yup.number()
+                .typeError("Vui lòng nhập số lượng")
+                .integer("Số lượng phải là số nguyên")
+                .min(1, "Số lượng phải lớn hơn 0")
+                .required("Vui lòng nhập số lượng"),
+              sellPrice: Yup.number()
+                .typeError("Vui lòng nhập giá bán")
+                .min(0, "Giá bán không được âm")
+                .required("Vui lòng nhập giá bán"),
+            }),
+          )
+          .min(1, "Vui lòng nhập ít nhất một mức giá"),
       }),
     )
     .test(
@@ -146,6 +183,9 @@ function ProductImagePreview({
   );
 }
 
+const getRowQuantity = (sales: SaleEntryFormValue[]) =>
+  sales.reduce((sum, sale) => sum + Number(sale.quantity || 0), 0);
+
 export default function FormProducts(props: FormProductsProps) {
   const { data, isLoading, reload, onReload } = props;
   const params = useParams();
@@ -154,13 +194,30 @@ export default function FormProducts(props: FormProductsProps) {
     InventoryProduct[]
   >([]);
   const [isInventoryLoading, setIsInventoryLoading] = useState(true);
+  const [deleteTargetIndex, setDeleteTargetIndex] = useState<number | null>(
+    null,
+  );
+  const [collapsedProductIds, setCollapsedProductIds] = useState<string[]>([]);
+  const savedImportPriceMap = useMemo(
+    () =>
+      new Map(
+        (data?.soldProducts ?? []).map((item) => [
+          item.productId,
+          item.importPrice,
+        ]),
+      ),
+    [data?.soldProducts],
+  );
 
   const serverInitialValues = useMemo<ProductSalesFormValues>(
     () => ({
       soldProducts:
         data?.soldProducts.map((item) => ({
           productId: String(item.productId),
-          quantity: String(item.quantity),
+          sales: item.sales.map((sale) => ({
+            quantity: String(sale.quantity),
+            sellPrice: String(sale.sellPrice),
+          })),
         })) ?? [],
     }),
     [data?.soldProducts],
@@ -174,18 +231,25 @@ export default function FormProducts(props: FormProductsProps) {
 
   const initialSoldProductMap = useMemo(
     () =>
-      new Map(
-        stableInitialValues.soldProducts.map((item) => [
-          Number(item.productId),
-          Number(item.quantity),
-        ]),
-      ),
+      stableInitialValues.soldProducts.reduce((map, item) => {
+        const productId = Number(item.productId);
+
+        if (!productId) return map;
+
+        map.set(
+          productId,
+          (map.get(productId) ?? 0) + getRowQuantity(item.sales),
+        );
+        return map;
+      }, new Map<number, number>()),
     [stableInitialValues],
   );
 
   useEffect(() => {
     const fetchInventoryProducts = async () => {
-      setIsInventoryLoading(true);
+      if (inventoryProducts.length === 0) {
+        setIsInventoryLoading(true);
+      }
 
       const res = await financeAPI.getProductList({
         page: 1,
@@ -206,7 +270,7 @@ export default function FormProducts(props: FormProductsProps) {
     };
 
     fetchInventoryProducts();
-  }, []);
+  }, [reload, inventoryProducts.length]);
 
   const formik = useFormik<ProductSalesFormValues>({
     initialValues: stableInitialValues,
@@ -215,7 +279,7 @@ export default function FormProducts(props: FormProductsProps) {
       let nextErrors = await getFormikErrorsFromYup(values);
 
       values.soldProducts.forEach((item, index) => {
-        if (!item.productId || !item.quantity) return;
+        if (!item.productId) return;
 
         const selectedProduct = inventoryProducts.find(
           (product) => String(product.id) === item.productId,
@@ -225,13 +289,13 @@ export default function FormProducts(props: FormProductsProps) {
         const maxAvailable = selectedProduct
           ? selectedProduct.quantity + initialQuantity
           : 0;
-        const quantity = Number(item.quantity);
+        const totalQuantity = getRowQuantity(item.sales);
 
-        if (!Number.isNaN(quantity) && quantity > maxAvailable) {
+        if (totalQuantity > maxAvailable) {
           nextErrors = setIn(
             nextErrors,
-            `soldProducts[${index}].quantity`,
-            `Số lượng không được lớn hơn ${maxAvailable.toLocaleString("vi-VN")}`,
+            `soldProducts[${index}].sales`,
+            `Tổng số lượng không được lớn hơn ${maxAvailable.toLocaleString("vi-VN")}`,
           );
         }
       });
@@ -242,7 +306,10 @@ export default function FormProducts(props: FormProductsProps) {
     onSubmit: async (values, actions) => {
       const payload = values.soldProducts.map((item) => ({
         productId: Number(item.productId),
-        quantity: Number(item.quantity),
+        sales: item.sales.map((sale) => ({
+          quantity: Number(sale.quantity),
+          sellPrice: Number(sale.sellPrice),
+        })),
       }));
 
       const res = await financeAPI.putDailySoldProducts(id, {
@@ -250,11 +317,8 @@ export default function FormProducts(props: FormProductsProps) {
       });
 
       if (res.code === RESPONSE_CODES.success) {
-        const savedProfit = res.data?.summary?.totalProfit ?? 0;
-
         toast({
           title: "Cập nhật sản phẩm bán thành công",
-          // description: `Tổng lợi nhuận theo sản phẩm hôm nay: ${formatCurrency(savedProfit)}`,
           className: "bg-green-16 text-white text-sm font-medium w-fit",
           duration: 3500,
         });
@@ -269,8 +333,7 @@ export default function FormProducts(props: FormProductsProps) {
         "Vui lòng kiểm tra lại số lượng tồn kho rồi thử lại.";
 
       toast({
-        title: "Cập nhật sản phẩm bán thất bại",
-        // description: errorMessage,
+        title: errorMessage,
         className: "bg-red-1 text-white text-sm font-medium",
         duration: 3500,
       });
@@ -284,7 +347,7 @@ export default function FormProducts(props: FormProductsProps) {
   );
 
   const totalSoldCount = values.soldProducts.reduce(
-    (sum, item) => sum + Number(item.quantity || 0),
+    (sum, item) => sum + getRowQuantity(item.sales),
     0,
   );
   const totalEstimatedProfit = values.soldProducts.reduce((sum, item) => {
@@ -294,11 +357,22 @@ export default function FormProducts(props: FormProductsProps) {
 
     if (!selectedProduct) return sum;
 
-    const quantity = Number(item.quantity || 0);
-    const unitProfit = selectedProduct.sellPrice - selectedProduct.importPrice;
+    const effectiveImportPrice =
+      savedImportPriceMap.get(Number(item.productId)) ??
+      selectedProduct.importPrice;
 
-    return sum + unitProfit * quantity;
+    return (
+      sum +
+      item.sales.reduce((rowSum, sale) => {
+        const quantity = Number(sale.quantity || 0);
+        const unitSellPrice = Number(sale.sellPrice || 0);
+        const unitProfit = unitSellPrice - effectiveImportPrice;
+
+        return rowSum + unitProfit * quantity;
+      }, 0)
+    );
   }, 0);
+
   return (
     <FormikProvider value={formik}>
       <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-5 bg-white shadow-sm">
@@ -339,19 +413,22 @@ export default function FormProducts(props: FormProductsProps) {
                     const initialQuantity = item.productId
                       ? (initialSoldProductMap.get(Number(item.productId)) ?? 0)
                       : 0;
+                    const effectiveImportPrice =
+                      savedImportPriceMap.get(Number(item.productId)) ??
+                      selectedProduct?.importPrice ??
+                      0;
                     const maxAvailable = selectedProduct
                       ? selectedProduct.quantity + initialQuantity
                       : 0;
-                    const previewRemaining =
-                      selectedProduct && item.quantity
-                        ? Math.max(maxAvailable - Number(item.quantity || 0), 0)
-                        : (selectedProduct?.quantity ?? 0);
                     const isSavedProduct = item.productId
                       ? initialSoldProductMap.has(Number(item.productId))
                       : false;
                     const isOutOfStock = Boolean(
                       selectedProduct && maxAvailable === 0,
                     );
+                    const isCollapsed = item.productId
+                      ? collapsedProductIds.includes(item.productId)
+                      : false;
 
                     const optionValue = inventoryProducts.map((product) => ({
                       label:
@@ -382,12 +459,7 @@ export default function FormProducts(props: FormProductsProps) {
                             variant="ghost"
                             size="icon-sm"
                             className="h-9 w-9 rounded-full bg-white text-rose-400 hover:bg-rose-50 hover:text-rose-500"
-                            onClick={() => {
-                              arrayHelpers.remove(index);
-                              setTimeout(() => {
-                                void submitForm();
-                              }, 0);
-                            }}
+                            onClick={() => setDeleteTargetIndex(index)}
                             disabled={isSubmitting || isLoading || reload}
                           >
                             <Trash2 className="size-4" />
@@ -415,9 +487,20 @@ export default function FormProducts(props: FormProductsProps) {
                                 variant: "search-box--lgray",
                               }}
                               onManualSelect={(v) => {
+                                const nextProduct = inventoryProducts.find(
+                                  (product) => String(product.id) === v,
+                                );
+
+                                formik.setFieldValue(
+                                  `soldProducts[${index}].sales[0].sellPrice`,
+                                  nextProduct
+                                    ? String(nextProduct.sellPrice)
+                                    : "",
+                                );
+
                                 setTimeout(() => {
                                   if (v) {
-                                    submitForm();
+                                    void submitForm();
                                   }
                                 }, 0);
                               }}
@@ -429,64 +512,56 @@ export default function FormProducts(props: FormProductsProps) {
                               }
                             />
                           </div>
-
-                          <div className="flex flex-col gap-2 w-full">
-                            <Label
-                              variant="secondary"
-                              className="text-green-1! text-11px font-bold"
-                            >
-                              Số lượng đã bán
-                            </Label>
-                            <AutoCompleteField<CustomInputProps>
-                              component={NumericInput}
-                              version="field"
-                              name={`soldProducts[${index}].quantity`}
-                              placeholder="0"
-                              className="bg-white! h-12! rounded-xl! border-slate-100 min-w-full! max-w-32 py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
-                              pattern="^\d+(\.\d*)?$"
-                              disabled={
-                                isSubmitting ||
-                                isLoading ||
-                                reload ||
-                                !item.productId
-                              }
-                              onBlur={() => {
-                                formik.setFieldTouched(
-                                  `soldProducts[${index}].quantity`,
-                                  true,
-                                );
-                                void validateField(
-                                  `soldProducts[${index}].quantity`,
-                                );
-                                if (dirty) {
-                                  submitForm();
-                                }
-                              }}
-                            />
-                          </div>
                         </div>
 
                         {selectedProduct ? (
                           <div className="mt-3 flex flex-col gap-2.5 rounded-[16px] bg-white p-2.5">
-                            <div className="flex gap-2 w-full">
-                              <ProductImagePreview
-                                imageUrl={selectedProduct.imageUrl}
-                                title={selectedProduct.title}
-                              />
-                              <div className="flex flex-col w-full">
-                                <p className="line-clamp-1 text-sm font-extrabold text-slate-700">
-                                  {selectedProduct.title}
-                                </p>
-                                <p className="mt-1 text-10px font-bold uppercase tracking-[0.08em] text-slate-300">
-                                  {selectedProduct.categoryName}
-                                </p>
-                                {isOutOfStock ? (
-                                  <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-10px font-bold uppercase tracking-[0.08em] text-rose-600">
-                                    <AlertTriangle className="size-3.5" />
-                                    Hết hàng
-                                  </div>
-                                ) : null}
+                            <div className="flex w-full items-start justify-between gap-2">
+                              <div className="flex gap-2 w-full">
+                                <ProductImagePreview
+                                  imageUrl={selectedProduct.imageUrl}
+                                  title={selectedProduct.title}
+                                />
+                                <div className="flex flex-col w-full">
+                                  <p className="line-clamp-1 text-sm font-extrabold text-slate-700">
+                                    {selectedProduct.title}
+                                  </p>
+                                  <p className="mt-1 text-10px font-bold uppercase tracking-[0.08em] text-slate-300">
+                                    {selectedProduct.categoryName}
+                                  </p>
+                                  {isOutOfStock ? (
+                                    <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-10px font-bold uppercase tracking-[0.08em] text-rose-600">
+                                      <AlertTriangle className="size-3.5" />
+                                      Hết hàng
+                                    </div>
+                                  ) : null}
+                                </div>
                               </div>
+
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon-sm"
+                                className="h-9 w-9 shrink-0 rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                                onClick={() => {
+                                  if (!item.productId) return;
+
+                                  setCollapsedProductIds((prev) =>
+                                    prev.includes(item.productId)
+                                      ? prev.filter(
+                                          (productId) =>
+                                            productId !== item.productId,
+                                        )
+                                      : [...prev, item.productId],
+                                  );
+                                }}
+                              >
+                                {isCollapsed ? (
+                                  <ChevronDown className="size-4" />
+                                ) : (
+                                  <ChevronUp className="size-4" />
+                                )}
+                              </Button>
                             </div>
 
                             <div className="min-w-0 flex-1">
@@ -497,6 +572,14 @@ export default function FormProducts(props: FormProductsProps) {
                                   </p>
                                   <p className="mt-0.5 font-extrabold text-slate-700">
                                     {formatCurrency(selectedProduct.sellPrice)}
+                                  </p>
+                                </div>
+                                <div className="rounded-xl bg-slate-50 px-2 py-1.5">
+                                  <p className="font-bold text-slate-400">
+                                    Giá nhập
+                                  </p>
+                                  <p className="mt-0.5 font-extrabold text-slate-700">
+                                    {formatCurrency(effectiveImportPrice)}
                                   </p>
                                 </div>
                                 <div
@@ -519,22 +602,264 @@ export default function FormProducts(props: FormProductsProps) {
                                     )}
                                   </p>
                                 </div>
-                                <div className="rounded-xl bg-green-14 px-2 py-1.5">
-                                  <p className="font-bold text-green-1">
-                                    Sau lưu
-                                  </p>
-                                  <p className="mt-0.5 font-extrabold text-green-13">
-                                    {previewRemaining.toLocaleString("vi-VN")}
-                                  </p>
-                                </div>
                               </div>
 
-                              <p className="mt-2 text-11px text-slate-400">
+                              {/* <p className="mt-2 text-11px text-slate-400">
                                 Khả dụng cho ngày này:{" "}
                                 <span className="font-semibold text-slate-600">
                                   {maxAvailable.toLocaleString("vi-VN")}
                                 </span>
-                              </p>
+                              </p> */}
+
+                              {!isCollapsed ? (
+                                <FieldArray
+                                  name={`soldProducts[${index}].sales`}
+                                  render={(salesHelpers) => (
+                                    <div className="mt-3 space-y-2.5">
+                                      {item.sales.map((sale, saleIndex) => {
+                                        const currentQuantity = Number(
+                                          sale.quantity || 0,
+                                        );
+                                        const totalOtherQuantity =
+                                          getRowQuantity(item.sales) -
+                                          currentQuantity;
+                                        const maxAvailableForSale = Math.max(
+                                          maxAvailable - totalOtherQuantity,
+                                          0,
+                                        );
+
+                                        return (
+                                          <div
+                                            key={`sale-${index}-${saleIndex}`}
+                                            className="rounded-xl bg-slate-50 px-2 py-2"
+                                          >
+                                            <div className="mb-2 flex items-center justify-between">
+                                              <p className="text-11px font-bold text-slate-500">
+                                                Mức giá #{saleIndex + 1}
+                                              </p>
+                                              <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon-sm"
+                                                className="h-8 w-8 rounded-full bg-white text-rose-400 hover:bg-rose-50 hover:text-rose-500"
+                                                onClick={() => {
+                                                  if (item.sales.length === 1) {
+                                                    arrayHelpers.remove(index);
+                                                  } else {
+                                                    salesHelpers.remove(
+                                                      saleIndex,
+                                                    );
+                                                  }
+                                                  setTimeout(() => {
+                                                    void submitForm();
+                                                  }, 0);
+                                                }}
+                                                disabled={
+                                                  isSubmitting ||
+                                                  isLoading ||
+                                                  reload
+                                                }
+                                              >
+                                                <Trash2 className="size-4" />
+                                              </Button>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                                              <div className="flex flex-col gap-2 w-full">
+                                                <Label
+                                                  variant="secondary"
+                                                  className="text-green-1! text-11px font-bold"
+                                                >
+                                                  Số lượng đã bán
+                                                </Label>
+                                                <div className="flex items-start gap-2">
+                                                  <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon-sm"
+                                                    className="mt-0.5 h-12 w-12 shrink-0 rounded-xl border border-slate-100 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                                                    disabled={
+                                                      isSubmitting ||
+                                                      isLoading ||
+                                                      reload ||
+                                                      currentQuantity <= 1
+                                                    }
+                                                    onClick={() => {
+                                                      const nextQuantity =
+                                                        String(
+                                                          Math.max(
+                                                            currentQuantity - 1,
+                                                            1,
+                                                          ),
+                                                        );
+
+                                                      formik.setFieldValue(
+                                                        `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                        nextQuantity,
+                                                      );
+                                                      formik.setFieldTouched(
+                                                        `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                        true,
+                                                        false,
+                                                      );
+                                                      void validateField(
+                                                        `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                      );
+                                                      setTimeout(() => {
+                                                        void submitForm();
+                                                      }, 0);
+                                                    }}
+                                                  >
+                                                    <Minus className="size-4" />
+                                                  </Button>
+
+                                                  <div className="flex flex-col w-full flex-1">
+                                                    <AutoCompleteField<CustomInputProps>
+                                                      component={NumericInput}
+                                                      version="field"
+                                                      name={`soldProducts[${index}].sales[${saleIndex}].quantity`}
+                                                      placeholder="0"
+                                                      className="text-11px! bg-white! h-12! rounded-xl! border-slate-100 min-w-full! max-w-32 py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+                                                      pattern="^\\d+(\\.\\d*)?$"
+                                                      disabled={
+                                                        isSubmitting ||
+                                                        isLoading ||
+                                                        reload
+                                                      }
+                                                      onBlur={() => {
+                                                        formik.setFieldTouched(
+                                                          `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                          true,
+                                                        );
+                                                        void validateField(
+                                                          `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                        );
+                                                        setTimeout(() => {
+                                                          void submitForm();
+                                                        }, 0);
+                                                      }}
+                                                    />
+                                                  </div>
+
+                                                  <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon-sm"
+                                                    className="mt-0.5 h-12 w-12 shrink-0 rounded-xl border border-slate-100 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                                                    disabled={
+                                                      isSubmitting ||
+                                                      isLoading ||
+                                                      reload ||
+                                                      currentQuantity >=
+                                                        maxAvailableForSale
+                                                    }
+                                                    onClick={() => {
+                                                      const nextQuantity =
+                                                        String(
+                                                          Math.min(
+                                                            currentQuantity + 1,
+                                                            maxAvailableForSale,
+                                                          ),
+                                                        );
+
+                                                      formik.setFieldValue(
+                                                        `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                        nextQuantity,
+                                                      );
+                                                      formik.setFieldTouched(
+                                                        `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                        true,
+                                                        false,
+                                                      );
+                                                      void validateField(
+                                                        `soldProducts[${index}].sales[${saleIndex}].quantity`,
+                                                      );
+                                                      setTimeout(() => {
+                                                        void submitForm();
+                                                      }, 0);
+                                                    }}
+                                                  >
+                                                    <Plus className="size-4" />
+                                                  </Button>
+                                                </div>
+                                              </div>
+
+                                              <div className="flex flex-col gap-2 w-full">
+                                                <Label
+                                                  variant="secondary"
+                                                  className="text-green-1! text-11px font-bold"
+                                                >
+                                                  Giá bán thực tế
+                                                </Label>
+                                                <AutoCompleteField<CustomInputProps>
+                                                  component={NumericInput}
+                                                  version="field"
+                                                  name={`soldProducts[${index}].sales[${saleIndex}].sellPrice`}
+                                                  placeholder="0"
+                                                  className="text-11px! bg-white! h-12! rounded-xl! border-slate-100 min-w-full! py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+                                                  pattern="^\\d+(\\.\\d*)?$"
+                                                  disabled={
+                                                    isSubmitting ||
+                                                    isLoading ||
+                                                    reload
+                                                  }
+                                                  onBlur={() => {
+                                                    formik.setFieldTouched(
+                                                      `soldProducts[${index}].sales[${saleIndex}].sellPrice`,
+                                                      true,
+                                                    );
+                                                    void validateField(
+                                                      `soldProducts[${index}].sales[${saleIndex}].sellPrice`,
+                                                    );
+                                                    setTimeout(() => {
+                                                      void submitForm();
+                                                    }, 0);
+                                                  }}
+                                                />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        className="h-11 w-full rounded-2xl border border-dashed border-green-15 bg-green-14 text-sm font-semibold text-green-13 hover:bg-green-14"
+                                        onClick={() =>
+                                          salesHelpers.push({
+                                            quantity: "1",
+                                            sellPrice: String(
+                                              selectedProduct.sellPrice,
+                                            ),
+                                          })
+                                        }
+                                        disabled={
+                                          isSubmitting || isLoading || reload
+                                        }
+                                      >
+                                        <Plus className="size-4" />
+                                        Thêm mức giá
+                                      </Button>
+                                    </div>
+                                  )}
+                                />
+                              ) : null}
+
+                              {typeof getIn(
+                                errors,
+                                `soldProducts[${index}].sales`,
+                              ) === "string" ? (
+                                <p className="mt-2 text-red-1 text-sm">
+                                  {String(
+                                    getIn(
+                                      errors,
+                                      `soldProducts[${index}].sales`,
+                                    ),
+                                  )}
+                                </p>
+                              ) : null}
+
                               {isOutOfStock ? (
                                 <p className="mt-2 flex items-center gap-1.5 text-11px font-semibold text-rose-500">
                                   <AlertTriangle className="size-3.5" />
@@ -588,6 +913,49 @@ export default function FormProducts(props: FormProductsProps) {
                   <Plus className="size-4" />
                   Thêm sản phẩm đã bán
                 </Button>
+
+                <Dialog
+                  open={deleteTargetIndex !== null}
+                  onOpenChange={(open) => {
+                    if (!open) {
+                      setDeleteTargetIndex(null);
+                    }
+                  }}
+                >
+                  <DialogContent className="w-[calc(100%-24px)] max-w-102.5 overflow-hidden rounded-[32px] border-none bg-transparent p-0 shadow-none">
+                    <div className="rounded-[32px] bg-white px-6 py-8 text-center shadow-[0_30px_80px_rgba(15,23,42,0.24)]">
+                      <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
+                        Xác nhận xóa
+                      </DialogTitle>
+                      <DialogDescription className="mx-auto mt-4 max-w-64 text-sm leading-7 text-slate-400">
+                        Bạn có chắc chắn muốn xóa sản phẩm đã bán này?
+                      </DialogDescription>
+
+                      <div className="mt-8 space-y-3">
+                        <Button
+                          type="button"
+                          className="h-14 w-full rounded-3xl bg-red-6 text-sm font-semibold text-red-4 hover:bg-red-5"
+                          onClick={() => {
+                            if (deleteTargetIndex === null) return;
+
+                            arrayHelpers.remove(deleteTargetIndex);
+                            setDeleteTargetIndex(null);
+                            setTimeout(() => {
+                              void submitForm();
+                            }, 0);
+                          }}
+                        >
+                          Xóa
+                        </Button>
+                        <DialogClose asChild>
+                          <Button type="button" variant="close">
+                            Đóng
+                          </Button>
+                        </DialogClose>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             )}
           />
@@ -619,7 +987,7 @@ export default function FormProducts(props: FormProductsProps) {
                 {formatCurrency(totalEstimatedProfit)}
               </p>
               <p className="mt-1 text-xs text-slate-500">
-                Tạm tính theo giá vốn và giá bán
+                Tạm tính theo giá vốn và giá bán thực tế
               </p>
             </div>
           </div>

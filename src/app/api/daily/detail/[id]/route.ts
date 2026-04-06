@@ -1,6 +1,11 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
+type SaleSnapshot = {
+  quantity: number;
+  sellPrice: number;
+};
+
 const isDailySoldProductSchemaError = (error: unknown) =>
   error instanceof Error &&
   (error.message.includes("daily_sold_product") ||
@@ -21,15 +26,17 @@ export async function GET(
     | Awaited<ReturnType<typeof prisma.dailyFinance.findUnique>>
     | null = null;
   let soldProducts: {
-    id: number;
     productId: number;
-    quantity: number;
     productTitle: string;
     productImageUrl: string;
     categoryName: string;
-    sellPrice: number;
+    importPrice: number;
     currentStock: number;
     availableStock: number;
+    sales: {
+      quantity: number;
+      sellPrice: number;
+    }[];
   }[] = [];
 
   try {
@@ -52,18 +59,29 @@ export async function GET(
     });
 
     daily = dailyWithProducts;
-    soldProducts =
-      dailyWithProducts?.soldProducts.map((item) => ({
-        id: item.id,
+    dailyWithProducts?.soldProducts.forEach((item) => {
+      const parsedSales = Array.isArray(item.sales)
+        ? (item.sales as unknown as SaleSnapshot[]).map((sale) => ({
+            quantity: Number(sale.quantity),
+            sellPrice: Number(sale.sellPrice),
+          }))
+        : [];
+      const totalQuantity = parsedSales.reduce(
+        (sum, sale) => sum + sale.quantity,
+        0,
+      );
+
+      soldProducts.push({
         productId: item.productId,
-        quantity: item.quantity,
         productTitle: item.product.title,
         productImageUrl: item.product.imageUrl,
         categoryName: item.product.category.name,
-        sellPrice: Number(item.product.sellPrice),
+        importPrice: Number(item.importPrice),
         currentStock: item.product.quantity,
-        availableStock: item.product.quantity + item.quantity,
-      })) ?? [];
+        availableStock: item.product.quantity + totalQuantity,
+        sales: parsedSales,
+      });
+    });
   } catch (error) {
     if (!isDailySoldProductSchemaError(error)) {
       throw error;

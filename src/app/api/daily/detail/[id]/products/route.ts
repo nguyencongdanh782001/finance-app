@@ -1,9 +1,13 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
+import type { Prisma } from "@/app/generated/prisma/client";
 
 type SoldProductPayload = {
   productId: number;
-  quantity: number;
+  sales: {
+    quantity: number;
+    sellPrice: number;
+  }[];
 };
 
 const isDailySoldProductSchemaError = (error: unknown) =>
@@ -32,7 +36,12 @@ export async function PUT(
 
     const normalizedSoldProducts = soldProducts.map((item) => ({
       productId: Number(item.productId),
-      quantity: Number(item.quantity),
+      sales: Array.isArray(item.sales)
+        ? item.sales.map((sale) => ({
+            quantity: Number(sale.quantity),
+            sellPrice: Number(sale.sellPrice),
+          }))
+        : [],
     }));
 
     if (
@@ -40,9 +49,15 @@ export async function PUT(
         (item) =>
           !item.productId ||
           Number.isNaN(item.productId) ||
-          !item.quantity ||
-          Number.isNaN(item.quantity) ||
-          item.quantity < 1,
+          item.sales.length === 0 ||
+          item.sales.some(
+            (sale) =>
+              !sale.quantity ||
+              Number.isNaN(sale.quantity) ||
+              sale.quantity < 1 ||
+              Number.isNaN(sale.sellPrice) ||
+              sale.sellPrice < 0,
+          ),
       )
     ) {
       return NextResponse.json(
@@ -51,9 +66,7 @@ export async function PUT(
       );
     }
 
-    const duplicateProductIds = normalizedSoldProducts.map(
-      (item) => item.productId,
-    );
+    const duplicateProductIds = normalizedSoldProducts.map((item) => item.productId);
     const uniqueProductIds = new Set(duplicateProductIds);
 
     if (duplicateProductIds.length !== uniqueProductIds.size) {
@@ -99,13 +112,32 @@ export async function PUT(
     const productMap = new Map<number, (typeof products)[number]>(
       products.map((product) => [product.id, product]),
     );
-    const existingMap = new Map<number, number>(
-      daily.soldProducts.map((item) => [item.productId, item.quantity]),
+    const aggregateQuantityByProduct = (
+      items: Array<{ productId: number; sales: { quantity: number }[] }>,
+    ) =>
+      items.reduce((map, item) => {
+        const totalQuantity = item.sales.reduce(
+          (sum, sale) => sum + sale.quantity,
+          0,
+        );
+        map.set(item.productId, (map.get(item.productId) ?? 0) + totalQuantity);
+        return map;
+      }, new Map<number, number>());
+    const existingMap = aggregateQuantityByProduct(
+      daily.soldProducts.map((item) => ({
+        productId: item.productId,
+        sales: Array.isArray(item.sales)
+          ? ((item.sales as unknown as { quantity: number }[]).map((sale) => ({
+              quantity: Number(sale.quantity),
+            })) ?? [])
+          : [],
+      })),
     );
+    const nextMap = aggregateQuantityByProduct(normalizedSoldProducts);
 
-    for (const item of normalizedSoldProducts) {
-      const product = productMap.get(item.productId);
-      const oldQuantity = existingMap.get(item.productId) ?? 0;
+    for (const [productId, nextQuantity] of nextMap.entries()) {
+      const product = productMap.get(productId);
+      const oldQuantity = existingMap.get(productId) ?? 0;
       const maxAvailable = (product?.quantity ?? 0) + oldQuantity;
 
       if (!product) {
@@ -115,7 +147,7 @@ export async function PUT(
         );
       }
 
-      if (item.quantity > maxAvailable) {
+      if (nextQuantity > maxAvailable) {
         return NextResponse.json(
           {
             message: `Sản phẩm "${product.title}" chỉ còn ${maxAvailable} sản phẩm khả dụng`,
@@ -133,16 +165,17 @@ export async function PUT(
 
       if (!product) continue;
 
-      totalCost += Number(product.importPrice) * item.quantity;
-      totalRevenue += Number(product.sellPrice) * item.quantity;
+      item.sales.forEach((sale) => {
+        const importPrice = Number(product.importPrice);
+
+        totalCost += importPrice * sale.quantity;
+        totalRevenue += sale.sellPrice * sale.quantity;
+      });
     }
 
     const totalProfit = totalRevenue - totalCost;
 
     await prisma.$transaction(async (tx) => {
-      const nextMap = new Map<number, number>(
-        normalizedSoldProducts.map((item) => [item.productId, item.quantity]),
-      );
       const affectedProductIds = new Set<number>([
         ...Array.from(existingMap.keys()),
         ...Array.from(nextMap.keys()),
@@ -187,7 +220,8 @@ export async function PUT(
           data: normalizedSoldProducts.map((item) => ({
             dailyFinanceId: dailyId,
             productId: item.productId,
-            quantity: item.quantity,
+            importPrice: Number(productMap.get(item.productId)?.importPrice ?? 0),
+            sales: item.sales as unknown as Prisma.InputJsonValue,
           })),
         });
       }

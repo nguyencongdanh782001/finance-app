@@ -8,6 +8,8 @@ import { financeAPI } from "@/endpoint/financeAPI";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { Skeleton } from "@/components/ui/skeleton";
 import ListDate from "@/components/Dashboard/ListDate";
+import ChartMonthlyProductProfit from "@/components/Dashboard/ChartMonthlyProductProfit";
+import TopSellingProductsChart from "@/components/Dashboard/TopSellingProductsChart";
 import ChartYearlyRevenue from "@/components/Dashboard/ChartYearlyRevenue";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -54,7 +56,7 @@ export default function HomeContainer() {
           <Skeleton className="h-6 w-50 rounded-2 mb-2" />
         ) : (
           <p className="text-13px text-green-1 font-bold">
-            Tổng lợi nhuận năm {yearProfit?.year}
+            Tổng doanh thu năm {yearProfit?.year}
           </p>
         )}
 
@@ -71,6 +73,10 @@ export default function HomeContainer() {
       </div>
       {/* List revenue follow month */}
       <ListDate />
+
+      <TopSellingProductsChart />
+
+      <ChartMonthlyProductProfit />
 
       {/* Chart Yearly Revenue */}
       <ChartYearlyRevenue isLoading={isLoading} />

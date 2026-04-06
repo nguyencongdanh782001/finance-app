@@ -37,7 +37,10 @@ const ChartYearlyRevenue = ({ isLoading }: { isLoading: boolean }) => {
           Năm {defaultYear}
         </p>
       </div>
-      <MonthlyRevenueChart data={yearlyRevenueData?.data || []} />
+      <MonthlyRevenueChart
+        data={yearlyRevenueData?.data || []}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

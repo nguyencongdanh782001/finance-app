@@ -30,21 +30,21 @@ export type DailySoldProductAvgAggregateOutputType = {
   id: number | null
   dailyFinanceId: number | null
   productId: number | null
-  quantity: number | null
+  importPrice: runtime.Decimal | null
 }
 
 export type DailySoldProductSumAggregateOutputType = {
   id: number | null
   dailyFinanceId: number | null
   productId: number | null
-  quantity: number | null
+  importPrice: runtime.Decimal | null
 }
 
 export type DailySoldProductMinAggregateOutputType = {
   id: number | null
   dailyFinanceId: number | null
   productId: number | null
-  quantity: number | null
+  importPrice: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,7 +53,7 @@ export type DailySoldProductMaxAggregateOutputType = {
   id: number | null
   dailyFinanceId: number | null
   productId: number | null
-  quantity: number | null
+  importPrice: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,7 +62,8 @@ export type DailySoldProductCountAggregateOutputType = {
   id: number
   dailyFinanceId: number
   productId: number
-  quantity: number
+  importPrice: number
+  sales: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -73,21 +74,21 @@ export type DailySoldProductAvgAggregateInputType = {
   id?: true
   dailyFinanceId?: true
   productId?: true
-  quantity?: true
+  importPrice?: true
 }
 
 export type DailySoldProductSumAggregateInputType = {
   id?: true
   dailyFinanceId?: true
   productId?: true
-  quantity?: true
+  importPrice?: true
 }
 
 export type DailySoldProductMinAggregateInputType = {
   id?: true
   dailyFinanceId?: true
   productId?: true
-  quantity?: true
+  importPrice?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -96,7 +97,7 @@ export type DailySoldProductMaxAggregateInputType = {
   id?: true
   dailyFinanceId?: true
   productId?: true
-  quantity?: true
+  importPrice?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -105,7 +106,8 @@ export type DailySoldProductCountAggregateInputType = {
   id?: true
   dailyFinanceId?: true
   productId?: true
-  quantity?: true
+  importPrice?: true
+  sales?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -201,7 +203,8 @@ export type DailySoldProductGroupByOutputType = {
   id: number
   dailyFinanceId: number
   productId: number
-  quantity: number
+  importPrice: runtime.Decimal
+  sales: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
   _count: DailySoldProductCountAggregateOutputType | null
@@ -233,7 +236,8 @@ export type DailySoldProductWhereInput = {
   id?: Prisma.IntFilter<"DailySoldProduct"> | number
   dailyFinanceId?: Prisma.IntFilter<"DailySoldProduct"> | number
   productId?: Prisma.IntFilter<"DailySoldProduct"> | number
-  quantity?: Prisma.IntFilter<"DailySoldProduct"> | number
+  importPrice?: Prisma.DecimalFilter<"DailySoldProduct"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonFilter<"DailySoldProduct">
   createdAt?: Prisma.DateTimeFilter<"DailySoldProduct"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DailySoldProduct"> | Date | string
   dailyFinance?: Prisma.XOR<Prisma.DailyFinanceScalarRelationFilter, Prisma.DailyFinanceWhereInput>
@@ -244,7 +248,8 @@ export type DailySoldProductOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   dailyFinanceId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  quantity?: Prisma.SortOrder
+  importPrice?: Prisma.SortOrder
+  sales?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   dailyFinance?: Prisma.DailyFinanceOrderByWithRelationInput
@@ -259,7 +264,8 @@ export type DailySoldProductWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DailySoldProductWhereInput | Prisma.DailySoldProductWhereInput[]
   dailyFinanceId?: Prisma.IntFilter<"DailySoldProduct"> | number
   productId?: Prisma.IntFilter<"DailySoldProduct"> | number
-  quantity?: Prisma.IntFilter<"DailySoldProduct"> | number
+  importPrice?: Prisma.DecimalFilter<"DailySoldProduct"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonFilter<"DailySoldProduct">
   createdAt?: Prisma.DateTimeFilter<"DailySoldProduct"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DailySoldProduct"> | Date | string
   dailyFinance?: Prisma.XOR<Prisma.DailyFinanceScalarRelationFilter, Prisma.DailyFinanceWhereInput>
@@ -270,7 +276,8 @@ export type DailySoldProductOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   dailyFinanceId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  quantity?: Prisma.SortOrder
+  importPrice?: Prisma.SortOrder
+  sales?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DailySoldProductCountOrderByAggregateInput
@@ -287,13 +294,15 @@ export type DailySoldProductScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"DailySoldProduct"> | number
   dailyFinanceId?: Prisma.IntWithAggregatesFilter<"DailySoldProduct"> | number
   productId?: Prisma.IntWithAggregatesFilter<"DailySoldProduct"> | number
-  quantity?: Prisma.IntWithAggregatesFilter<"DailySoldProduct"> | number
+  importPrice?: Prisma.DecimalWithAggregatesFilter<"DailySoldProduct"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonWithAggregatesFilter<"DailySoldProduct">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DailySoldProduct"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DailySoldProduct"> | Date | string
 }
 
 export type DailySoldProductCreateInput = {
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   dailyFinance: Prisma.DailyFinanceCreateNestedOneWithoutSoldProductsInput
@@ -304,13 +313,15 @@ export type DailySoldProductUncheckedCreateInput = {
   id?: number
   dailyFinanceId: number
   productId: number
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type DailySoldProductUpdateInput = {
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dailyFinance?: Prisma.DailyFinanceUpdateOneRequiredWithoutSoldProductsNestedInput
@@ -321,7 +332,8 @@ export type DailySoldProductUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFinanceId?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -330,13 +342,15 @@ export type DailySoldProductCreateManyInput = {
   id?: number
   dailyFinanceId: number
   productId: number
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type DailySoldProductUpdateManyMutationInput = {
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -345,7 +359,8 @@ export type DailySoldProductUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFinanceId?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -369,7 +384,8 @@ export type DailySoldProductCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dailyFinanceId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  quantity?: Prisma.SortOrder
+  importPrice?: Prisma.SortOrder
+  sales?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -378,14 +394,14 @@ export type DailySoldProductAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dailyFinanceId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  quantity?: Prisma.SortOrder
+  importPrice?: Prisma.SortOrder
 }
 
 export type DailySoldProductMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dailyFinanceId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  quantity?: Prisma.SortOrder
+  importPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -394,7 +410,7 @@ export type DailySoldProductMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dailyFinanceId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  quantity?: Prisma.SortOrder
+  importPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -403,7 +419,7 @@ export type DailySoldProductSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dailyFinanceId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  quantity?: Prisma.SortOrder
+  importPrice?: Prisma.SortOrder
 }
 
 export type DailySoldProductCreateNestedManyWithoutDailyFinanceInput = {
@@ -491,7 +507,8 @@ export type DailySoldProductUncheckedUpdateManyWithoutProductNestedInput = {
 }
 
 export type DailySoldProductCreateWithoutDailyFinanceInput = {
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutDailySalesInput
@@ -500,7 +517,8 @@ export type DailySoldProductCreateWithoutDailyFinanceInput = {
 export type DailySoldProductUncheckedCreateWithoutDailyFinanceInput = {
   id?: number
   productId: number
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -538,13 +556,15 @@ export type DailySoldProductScalarWhereInput = {
   id?: Prisma.IntFilter<"DailySoldProduct"> | number
   dailyFinanceId?: Prisma.IntFilter<"DailySoldProduct"> | number
   productId?: Prisma.IntFilter<"DailySoldProduct"> | number
-  quantity?: Prisma.IntFilter<"DailySoldProduct"> | number
+  importPrice?: Prisma.DecimalFilter<"DailySoldProduct"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonFilter<"DailySoldProduct">
   createdAt?: Prisma.DateTimeFilter<"DailySoldProduct"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DailySoldProduct"> | Date | string
 }
 
 export type DailySoldProductCreateWithoutProductInput = {
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   dailyFinance: Prisma.DailyFinanceCreateNestedOneWithoutSoldProductsInput
@@ -553,7 +573,8 @@ export type DailySoldProductCreateWithoutProductInput = {
 export type DailySoldProductUncheckedCreateWithoutProductInput = {
   id?: number
   dailyFinanceId: number
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -587,13 +608,15 @@ export type DailySoldProductUpdateManyWithWhereWithoutProductInput = {
 export type DailySoldProductCreateManyDailyFinanceInput = {
   id?: number
   productId: number
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type DailySoldProductUpdateWithoutDailyFinanceInput = {
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutDailySalesNestedInput
@@ -602,7 +625,8 @@ export type DailySoldProductUpdateWithoutDailyFinanceInput = {
 export type DailySoldProductUncheckedUpdateWithoutDailyFinanceInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -610,7 +634,8 @@ export type DailySoldProductUncheckedUpdateWithoutDailyFinanceInput = {
 export type DailySoldProductUncheckedUpdateManyWithoutDailyFinanceInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -618,13 +643,15 @@ export type DailySoldProductUncheckedUpdateManyWithoutDailyFinanceInput = {
 export type DailySoldProductCreateManyProductInput = {
   id?: number
   dailyFinanceId: number
-  quantity: number
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type DailySoldProductUpdateWithoutProductInput = {
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dailyFinance?: Prisma.DailyFinanceUpdateOneRequiredWithoutSoldProductsNestedInput
@@ -633,7 +660,8 @@ export type DailySoldProductUpdateWithoutProductInput = {
 export type DailySoldProductUncheckedUpdateWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFinanceId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -641,7 +669,8 @@ export type DailySoldProductUncheckedUpdateWithoutProductInput = {
 export type DailySoldProductUncheckedUpdateManyWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFinanceId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sales?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -652,7 +681,8 @@ export type DailySoldProductSelect<ExtArgs extends runtime.Types.Extensions.Inte
   id?: boolean
   dailyFinanceId?: boolean
   productId?: boolean
-  quantity?: boolean
+  importPrice?: boolean
+  sales?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   dailyFinance?: boolean | Prisma.DailyFinanceDefaultArgs<ExtArgs>
@@ -663,7 +693,8 @@ export type DailySoldProductSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   dailyFinanceId?: boolean
   productId?: boolean
-  quantity?: boolean
+  importPrice?: boolean
+  sales?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   dailyFinance?: boolean | Prisma.DailyFinanceDefaultArgs<ExtArgs>
@@ -674,7 +705,8 @@ export type DailySoldProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   dailyFinanceId?: boolean
   productId?: boolean
-  quantity?: boolean
+  importPrice?: boolean
+  sales?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   dailyFinance?: boolean | Prisma.DailyFinanceDefaultArgs<ExtArgs>
@@ -685,12 +717,13 @@ export type DailySoldProductSelectScalar = {
   id?: boolean
   dailyFinanceId?: boolean
   productId?: boolean
-  quantity?: boolean
+  importPrice?: boolean
+  sales?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DailySoldProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "dailyFinanceId" | "productId" | "quantity" | "createdAt" | "updatedAt", ExtArgs["result"]["dailySoldProduct"]>
+export type DailySoldProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "dailyFinanceId" | "productId" | "importPrice" | "sales" | "createdAt" | "updatedAt", ExtArgs["result"]["dailySoldProduct"]>
 export type DailySoldProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   dailyFinance?: boolean | Prisma.DailyFinanceDefaultArgs<ExtArgs>
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
@@ -714,7 +747,8 @@ export type $DailySoldProductPayload<ExtArgs extends runtime.Types.Extensions.In
     id: number
     dailyFinanceId: number
     productId: number
-    quantity: number
+    importPrice: runtime.Decimal
+    sales: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["dailySoldProduct"]>
@@ -1145,7 +1179,8 @@ export interface DailySoldProductFieldRefs {
   readonly id: Prisma.FieldRef<"DailySoldProduct", 'Int'>
   readonly dailyFinanceId: Prisma.FieldRef<"DailySoldProduct", 'Int'>
   readonly productId: Prisma.FieldRef<"DailySoldProduct", 'Int'>
-  readonly quantity: Prisma.FieldRef<"DailySoldProduct", 'Int'>
+  readonly importPrice: Prisma.FieldRef<"DailySoldProduct", 'Decimal'>
+  readonly sales: Prisma.FieldRef<"DailySoldProduct", 'Json'>
   readonly createdAt: Prisma.FieldRef<"DailySoldProduct", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DailySoldProduct", 'DateTime'>
 }

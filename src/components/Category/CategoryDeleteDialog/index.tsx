@@ -35,8 +35,7 @@ export default function CategoryDeleteDialog({
           </DialogTitle>
           <DialogDescription className="mx-auto mt-4 text-sm leading-7 text-slate-400">
             Bạn có chắc chắn muốn xóa danh mục
-            {category ? ` "${category.name}"` : ""}? Thao tác này không thể hoàn
-            tác.
+            {category ? ` "${category.name}"` : ""}?
           </DialogDescription>
 
           <div className="mt-8 space-y-3">

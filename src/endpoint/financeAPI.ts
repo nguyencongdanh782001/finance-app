@@ -1,6 +1,7 @@
 import { IAPIResponse } from "@/interface/APIResponse";
 import {
   CreateMonthlyExpenseRequest,
+  MonthlyProductProfitResponse,
   DailyDetailResponse,
   MonthlyDetailResponse,
   MonthlyResponse,
@@ -8,6 +9,7 @@ import {
   UpdateDailySoldProductsResponse,
   UpdateDailyRequest,
   UploadImageResponse,
+  TopSellingProductsResponse,
   YearlyRevenueResponse,
   YearProfitResponse,
 } from "@/interface/financeAPI";
@@ -34,6 +36,18 @@ export const financeAPI = {
     year: number,
   ): Promise<IAPIResponse<YearlyRevenueResponse>> => {
     return appAxios.get(API_ROUTES.getYearlyRevenue(year));
+  },
+  getTopSellingProducts: (
+    year: number,
+    month: number,
+  ): Promise<IAPIResponse<TopSellingProductsResponse>> => {
+    return appAxios.get(API_ROUTES.getTopSellingProducts(year, month));
+  },
+  getMonthlyProductProfit: (
+    year: number,
+    month: number,
+  ): Promise<IAPIResponse<MonthlyProductProfitResponse>> => {
+    return appAxios.get(API_ROUTES.getMonthlyProductProfit(year, month));
   },
   getMonthlyDetailData: (
     id: number,

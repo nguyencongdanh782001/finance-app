@@ -151,7 +151,8 @@ export const DailySoldProductScalarFieldEnum = {
   id: 'id',
   dailyFinanceId: 'dailyFinanceId',
   productId: 'productId',
-  quantity: 'quantity',
+  importPrice: 'importPrice',
+  sales: 'sales',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -165,6 +166,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -181,4 +189,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

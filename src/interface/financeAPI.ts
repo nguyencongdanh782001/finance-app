@@ -20,7 +20,22 @@ export type MonthlyDetailResponse = {
   totalExpense: number;
   profit: number;
   expenses: Expense[];
+  soldProductsByDay: MonthlySoldProductsByDayItem[];
 };
+
+export interface MonthlySoldProductsByDayItem {
+  dailyId: number;
+  date: string;
+  soldProducts: MonthlySoldProductItem[];
+}
+
+export interface MonthlySoldProductItem {
+  productId: number;
+  productTitle: string;
+  categoryName: string;
+  importPrice: number;
+  sales: DailySoldProductSaleItem[];
+}
 
 export type YearProfitResponse = {
   year: number;
@@ -35,6 +50,35 @@ export type MonthlyRevenue = {
 export type YearlyRevenueResponse = {
   year: number;
   data: MonthlyRevenue[];
+};
+
+export type TopSellingProduct = {
+  productId: number;
+  productTitle: string;
+  categoryName: string;
+  quantity: number;
+  revenue: number;
+  profit: number;
+};
+
+export type TopSellingProductsResponse = {
+  year: number;
+  month: number;
+  totalQuantity: number;
+  items: TopSellingProduct[];
+};
+
+export type DailyProductProfitItem = {
+  day: number;
+  date: string;
+  profit: number;
+};
+
+export type MonthlyProductProfitResponse = {
+  year: number;
+  month: number;
+  totalProfit: number;
+  data: DailyProductProfitItem[];
 };
 
 export interface CreateMonthlyExpenseRequest {
@@ -67,21 +111,28 @@ export interface UpdateDailyRequest {
 }
 
 export interface DailySoldProductItem {
-  id: number;
   productId: number;
-  quantity: number;
   productTitle: string;
   productImageUrl: string;
   categoryName: string;
-  sellPrice: number;
+  importPrice: number;
   currentStock: number;
   availableStock: number;
+  sales: DailySoldProductSaleItem[];
+}
+
+export interface DailySoldProductSaleItem {
+  quantity: number;
+  sellPrice: number;
 }
 
 export interface UpdateDailySoldProductsRequest {
   soldProducts: {
     productId: number;
-    quantity: number;
+    sales: {
+      quantity: number;
+      sellPrice: number;
+    }[];
   }[];
 }
 
