@@ -546,7 +546,7 @@ export default function ProductContainer() {
               <div ref={loadMoreRef} className="h-6 w-full" />
 
               {isFetchingMore && (
-                <div className="mt-4 space-y-4">
+                <div className="space-y-4">
                   {[1, 2].map((item) => (
                     <div
                       key={`loading-more-${item}`}
