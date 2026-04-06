@@ -18,7 +18,7 @@ import {
 import { useEffect, useState } from "react";
 
 function formatCurrency(value: number) {
-  return `${value.toLocaleString("vi-VN")} vnđ`;
+  return `${value.toLocaleString("vi-VN")}`;
 }
 
 interface ProductItemProps {
@@ -135,7 +135,9 @@ export default function ProductItem({
 
       <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-center">
         <div>
-          <p className="text-10px font-bold text-slate-300">Số lượng trong kho</p>
+          <p className="text-10px font-bold text-slate-300">
+            Số lượng trong kho
+          </p>
           {isOutOfStock ? (
             <p className="mt-1 text-xs font-semibold text-rose-500">
               Sản phẩm hiện đã hết hàng

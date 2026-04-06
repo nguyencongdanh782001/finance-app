@@ -128,7 +128,7 @@ const mapProductFromApi = (product: ProductApiItem): InventoryProduct => ({
   quantity: product.quantity,
 });
 
-const formatCurrency = (value: number) => `${value.toLocaleString("vi-VN")} đ`;
+const formatCurrency = (value: number) => `${value.toLocaleString("vi-VN")}`;
 
 const getFormikErrorsFromYup = async (values: ProductSalesFormValues) => {
   try {

@@ -93,7 +93,7 @@ export default function FormEditExpense({
               variant="secondary"
               className="text-green-1! text-11px font-bold"
             >
-              Số tiền (VNĐ)
+              Số tiền
             </Label>
             <div className="flex flex-col w-full">
               <AutoCompleteField<CustomInputProps>
