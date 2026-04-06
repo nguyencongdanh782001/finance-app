@@ -543,10 +543,10 @@ export default function ProductContainer() {
                 onDelete={handleDeleteClick}
               />
 
-              <div ref={loadMoreRef} className="h-6 w-full" />
+              <div ref={loadMoreRef} className="h-0 w-full" />
 
               {isFetchingMore && (
-                <div className="space-y-4">
+                <div className="space-y-4 mt-4">
                   {[1, 2].map((item) => (
                     <div
                       key={`loading-more-${item}`}
