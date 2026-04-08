@@ -727,6 +727,7 @@ export default function FormProducts(props: FormProductsProps) {
                                                         reload
                                                       }
                                                       onBlur={() => {
+                                                        if (!dirty) return;
                                                         formik.setFieldTouched(
                                                           `soldProducts[${index}].sales[${saleIndex}].quantity`,
                                                           true,
@@ -804,6 +805,7 @@ export default function FormProducts(props: FormProductsProps) {
                                                     reload
                                                   }
                                                   onBlur={() => {
+                                                    if (!dirty) return;
                                                     formik.setFieldTouched(
                                                       `soldProducts[${index}].sales[${saleIndex}].sellPrice`,
                                                       true,
