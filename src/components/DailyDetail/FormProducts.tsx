@@ -720,7 +720,7 @@ export default function FormProducts(props: FormProductsProps) {
                                                       name={`soldProducts[${index}].sales[${saleIndex}].quantity`}
                                                       placeholder="0"
                                                       className="text-11px! bg-white! h-12! rounded-xl! border-slate-100 min-w-full! max-w-32 py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
-                                                      pattern="^\\d+(\\.\\d*)?$"
+                                                      pattern="^\d+(\.\d*)?$"
                                                       disabled={
                                                         isSubmitting ||
                                                         isLoading ||
@@ -797,7 +797,7 @@ export default function FormProducts(props: FormProductsProps) {
                                                   name={`soldProducts[${index}].sales[${saleIndex}].sellPrice`}
                                                   placeholder="0"
                                                   className="text-11px! bg-white! h-12! rounded-xl! border-slate-100 min-w-full! py-2 pl-3 text-sm text-gray-17 border font-normal !placeholder:font-normal"
-                                                  pattern="^\\d+(\\.\\d*)?$"
+                                                  pattern="^\d+(\.\d*)?$"
                                                   disabled={
                                                     isSubmitting ||
                                                     isLoading ||
