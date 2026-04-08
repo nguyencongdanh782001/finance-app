@@ -36,7 +36,9 @@ import {
   Minus,
   PackageCheck,
   Plus,
+  Search,
   Trash2,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
@@ -65,6 +67,12 @@ type ProductSaleFormValue = {
 type ProductSalesFormValues = {
   soldProducts: ProductSaleFormValue[];
 };
+
+type DeleteSaleTarget = {
+  productIndex: number;
+  saleIndex: number;
+  shouldDeleteProduct: boolean;
+} | null;
 
 const createDefaultSale = (): SaleEntryFormValue => ({
   quantity: "1",
@@ -197,7 +205,11 @@ export default function FormProducts(props: FormProductsProps) {
   const [deleteTargetIndex, setDeleteTargetIndex] = useState<number | null>(
     null,
   );
+  const [deleteSaleTarget, setDeleteSaleTarget] = useState<DeleteSaleTarget>(
+    null,
+  );
   const [collapsedProductIds, setCollapsedProductIds] = useState<string[]>([]);
+  const [soldProductSearch, setSoldProductSearch] = useState("");
   const savedImportPriceMap = useMemo(
     () =>
       new Map(
@@ -240,6 +252,18 @@ export default function FormProducts(props: FormProductsProps) {
           productId,
           (map.get(productId) ?? 0) + getRowQuantity(item.sales),
         );
+        return map;
+      }, new Map<number, number>()),
+    [stableInitialValues],
+  );
+  const initialSalesCountMap = useMemo(
+    () =>
+      stableInitialValues.soldProducts.reduce((map, item) => {
+        const productId = Number(item.productId);
+
+        if (!productId) return map;
+
+        map.set(productId, item.sales.length);
         return map;
       }, new Map<number, number>()),
     [stableInitialValues],
@@ -372,6 +396,31 @@ export default function FormProducts(props: FormProductsProps) {
       }, 0)
     );
   }, 0);
+  const normalizedSoldProductSearch = soldProductSearch.trim().toLowerCase();
+  const filteredSoldProducts = values.soldProducts
+    .map((item, index) => {
+      const selectedProduct = inventoryProducts.find(
+        (product) => String(product.id) === item.productId,
+      );
+      const searchText = [
+        selectedProduct?.title,
+        selectedProduct?.categoryName,
+        item.productId ? `#${item.productId}` : "",
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return {
+        item,
+        index,
+        selectedProduct,
+        matches:
+          normalizedSoldProductSearch.length === 0 ||
+          searchText.includes(normalizedSoldProductSearch),
+      };
+    })
+    .filter((row) => row.matches);
 
   return (
     <FormikProvider value={formik}>
@@ -400,49 +449,78 @@ export default function FormProducts(props: FormProductsProps) {
             render={(arrayHelpers) => (
               <div className="space-y-4">
                 {values.soldProducts.length > 0 ? (
-                  values.soldProducts.map((item, index) => {
-                    const selectedProduct = inventoryProducts.find(
-                      (product) => String(product.id) === item.productId,
-                    );
-                    const selectedIds = values.soldProducts
-                      .map((row) => row.productId)
-                      .filter(
-                        (productId, rowIndex) =>
-                          productId && rowIndex !== index,
+                  <div className="rounded-[20px] border border-slate-100 bg-white p-3 shadow-[0_10px_24px_rgba(148,163,184,0.08)]">
+                    <div className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-3">
+                      <Search className="size-4 shrink-0 text-slate-400" />
+                      <input
+                        type="text"
+                        value={soldProductSearch}
+                        onChange={(e) => setSoldProductSearch(e.target.value)}
+                        placeholder="Tìm sản phẩm đã bán theo tên hoặc danh mục"
+                        className="h-11 w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+                        disabled={isSubmitting || isLoading || reload}
+                      />
+                      {soldProductSearch ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          className="h-8 w-8 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                          onClick={() => setSoldProductSearch("")}
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      ) : null}
+                    </div>
+                    <p className="mt-2 text-xs text-slate-400">
+                      Hiển thị {filteredSoldProducts.length}/
+                      {values.soldProducts.length} sản phẩm khớp tìm kiếm.
+                    </p>
+                  </div>
+                ) : null}
+
+                {values.soldProducts.length > 0 ? (
+                  filteredSoldProducts.length > 0 ? (
+                    filteredSoldProducts.map(({ item, index, selectedProduct }) => {
+                      const selectedIds = values.soldProducts
+                        .map((row) => row.productId)
+                        .filter(
+                          (productId, rowIndex) =>
+                            productId && rowIndex !== index,
+                        );
+                      const initialQuantity = item.productId
+                        ? (initialSoldProductMap.get(Number(item.productId)) ?? 0)
+                        : 0;
+                      const effectiveImportPrice =
+                        savedImportPriceMap.get(Number(item.productId)) ??
+                        selectedProduct?.importPrice ??
+                        0;
+                      const maxAvailable = selectedProduct
+                        ? selectedProduct.quantity + initialQuantity
+                        : 0;
+                      const isSavedProduct = item.productId
+                        ? initialSoldProductMap.has(Number(item.productId))
+                        : false;
+                      const isOutOfStock = Boolean(
+                        selectedProduct && maxAvailable === 0,
                       );
-                    const initialQuantity = item.productId
-                      ? (initialSoldProductMap.get(Number(item.productId)) ?? 0)
-                      : 0;
-                    const effectiveImportPrice =
-                      savedImportPriceMap.get(Number(item.productId)) ??
-                      selectedProduct?.importPrice ??
-                      0;
-                    const maxAvailable = selectedProduct
-                      ? selectedProduct.quantity + initialQuantity
-                      : 0;
-                    const isSavedProduct = item.productId
-                      ? initialSoldProductMap.has(Number(item.productId))
-                      : false;
-                    const isOutOfStock = Boolean(
-                      selectedProduct && maxAvailable === 0,
-                    );
-                    const isCollapsed = item.productId
-                      ? collapsedProductIds.includes(item.productId)
-                      : false;
+                      const isCollapsed = item.productId
+                        ? collapsedProductIds.includes(item.productId)
+                        : false;
 
-                    const optionValue = inventoryProducts.map((product) => ({
-                      label:
-                        product.quantity === 0
-                          ? `${product.title} • ${product.categoryName} • Hết hàng`
-                          : `${product.title} • ${product.categoryName}`,
-                      value: String(product.id),
-                      disabled:
-                        selectedIds.includes(String(product.id)) ||
-                        (product.quantity === 0 &&
-                          !initialSoldProductMap.has(product.id)),
-                    }));
+                      const optionValue = inventoryProducts.map((product) => ({
+                        label:
+                          product.quantity === 0
+                            ? `${product.title} • ${product.categoryName} • Hết hàng`
+                            : `${product.title} • ${product.categoryName}`,
+                        value: String(product.id),
+                        disabled:
+                          selectedIds.includes(String(product.id)) ||
+                          (product.quantity === 0 &&
+                            !initialSoldProductMap.has(product.id)),
+                      }));
 
-                    return (
+                      return (
                       <div
                         key={`${item.productId || "new"}-${index}`}
                         className="rounded-[20px] border border-slate-100 bg-slate-50/70 p-3 shadow-[0_10px_24px_rgba(148,163,184,0.08)]"
@@ -642,18 +720,14 @@ export default function FormProducts(props: FormProductsProps) {
                                                 variant="ghost"
                                                 size="icon-sm"
                                                 className="h-8 w-8 rounded-full bg-white text-rose-400 hover:bg-rose-50 hover:text-rose-500"
-                                                onClick={() => {
-                                                  if (item.sales.length === 1) {
-                                                    arrayHelpers.remove(index);
-                                                  } else {
-                                                    salesHelpers.remove(
-                                                      saleIndex,
-                                                    );
-                                                  }
-                                                  setTimeout(() => {
-                                                    void submitForm();
-                                                  }, 0);
-                                                }}
+                                                onClick={() =>
+                                                  setDeleteSaleTarget({
+                                                    productIndex: index,
+                                                    saleIndex,
+                                                    shouldDeleteProduct:
+                                                      item.sales.length === 1,
+                                                  })
+                                                }
                                                 disabled={
                                                   isSubmitting ||
                                                   isLoading ||
@@ -879,7 +953,20 @@ export default function FormProducts(props: FormProductsProps) {
                         )}
                       </div>
                     );
-                  })
+                    })
+                  ) : (
+                    <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 px-5 py-6 text-center">
+                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+                        <Search className="size-5 text-slate-400" />
+                      </div>
+                      <p className="mt-4 text-sm font-bold text-slate-600">
+                        Không tìm thấy sản phẩm phù hợp
+                      </p>
+                      <p className="mt-2 text-sm text-slate-400">
+                        Thử nhập lại tên sản phẩm hoặc danh mục để lọc nhanh hơn.
+                      </p>
+                    </div>
+                  )
                 ) : (
                   <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 px-5 py-6 text-center">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
@@ -948,6 +1035,79 @@ export default function FormProducts(props: FormProductsProps) {
                           }}
                         >
                           Xóa
+                        </Button>
+                        <DialogClose asChild>
+                          <Button type="button" variant="close">
+                            Đóng
+                          </Button>
+                        </DialogClose>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog
+                  open={deleteSaleTarget !== null}
+                  onOpenChange={(open) => {
+                    if (!open) {
+                      setDeleteSaleTarget(null);
+                    }
+                  }}
+                >
+                  <DialogContent className="w-[calc(100%-24px)] max-w-102.5 overflow-hidden rounded-[32px] border-none bg-transparent p-0 shadow-none">
+                    <div className="rounded-[32px] bg-white px-6 py-8 text-center shadow-[0_30px_80px_rgba(15,23,42,0.24)]">
+                      <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
+                        Xác nhận xóa mức giá
+                      </DialogTitle>
+                      <DialogDescription className="mx-auto mt-4 max-w-72 text-sm leading-7 text-slate-400">
+                        {deleteSaleTarget?.shouldDeleteProduct
+                          ? "Đây là mức giá cuối cùng của sản phẩm này. Nếu xóa, sản phẩm cũng sẽ bị gỡ khỏi danh sách đã bán."
+                          : "Bạn có chắc chắn muốn xóa mức giá này không?"}
+                      </DialogDescription>
+
+                      <div className="mt-8 space-y-3">
+                        <Button
+                          type="button"
+                          className="h-14 w-full rounded-3xl bg-red-6 text-sm font-semibold text-red-4 hover:bg-red-5"
+                          onClick={() => {
+                            if (!deleteSaleTarget) return;
+
+                            const targetProductId = Number(
+                              values.soldProducts[
+                                deleteSaleTarget.productIndex
+                              ]?.productId,
+                            );
+                            const initialSalesCount = targetProductId
+                              ? (initialSalesCountMap.get(targetProductId) ?? 0)
+                              : 0;
+                            const shouldCallApi =
+                              deleteSaleTarget.saleIndex < initialSalesCount;
+
+                            if (deleteSaleTarget.shouldDeleteProduct) {
+                              arrayHelpers.remove(deleteSaleTarget.productIndex);
+                            } else {
+                              const nextSales = [
+                                ...values.soldProducts[
+                                  deleteSaleTarget.productIndex
+                                ].sales,
+                              ];
+
+                              nextSales.splice(deleteSaleTarget.saleIndex, 1);
+                              formik.setFieldValue(
+                                `soldProducts[${deleteSaleTarget.productIndex}].sales`,
+                                nextSales,
+                              );
+                            }
+
+                            setDeleteSaleTarget(null);
+                            if (shouldCallApi) {
+                              setTimeout(() => {
+                                void submitForm();
+                              }, 0);
+                            }
+                          }}
+                        >
+                          Xóa mức giá
                         </Button>
                         <DialogClose asChild>
                           <Button type="button" variant="close">
