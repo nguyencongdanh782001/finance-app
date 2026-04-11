@@ -420,6 +420,7 @@ export default function FormProducts(props: FormProductsProps) {
       };
     })
     .filter((row) => row.matches);
+  const displayedSoldProducts = [...filteredSoldProducts].reverse();
 
   return (
     <FormikProvider value={formik}>
@@ -496,8 +497,8 @@ export default function FormProducts(props: FormProductsProps) {
                 ) : null}
 
                 {values.soldProducts.length > 0 ? (
-                  filteredSoldProducts.length > 0 ? (
-                    filteredSoldProducts.map(
+                  displayedSoldProducts.length > 0 ? (
+                    displayedSoldProducts.map(
                       ({ item, index, selectedProduct }) => {
                         const selectedIds = values.soldProducts
                           .map((row) => row.productId)
