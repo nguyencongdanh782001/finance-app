@@ -447,7 +447,7 @@ export default function FormProducts(props: FormProductsProps) {
           <FieldArray
             name="soldProducts"
             render={(arrayHelpers) => (
-              <div className="space-y-4 pb-34">
+              <div className="space-y-4">
                 <Button
                   type="button"
                   variant="ghost"
