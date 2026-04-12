@@ -447,7 +447,7 @@ export default function FormProducts(props: FormProductsProps) {
           <FieldArray
             name="soldProducts"
             render={(arrayHelpers) => (
-              <div className="space-y-4">
+              <div className="space-y-4 pb-34">
                 <Button
                   type="button"
                   variant="ghost"
@@ -549,7 +549,7 @@ export default function FormProducts(props: FormProductsProps) {
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div>
-                                <p className="text-sm font-bold uppercase tracking-[0.06em] text-slate-500">
+                                <p className="text-sm font-bold uppercase tracking-[0.06em] text-slate-700">
                                   Sản phẩm #{index + 1}
                                 </p>
                               </div>
@@ -570,7 +570,7 @@ export default function FormProducts(props: FormProductsProps) {
                               <div className="flex flex-col gap-2">
                                 <Label
                                   variant="secondary"
-                                  className="text-green-1! text-xs font-bold"
+                                  className="text-slate-700! text-xs font-bold"
                                 >
                                   Tên sản phẩm
                                 </Label>
@@ -581,7 +581,14 @@ export default function FormProducts(props: FormProductsProps) {
                                   placeholder="Chọn sản phẩm đã bán"
                                   optionValue={optionValue}
                                   className="h-12! w-full! min-w-full!"
-                                  inputClassName="!h-12 !rounded-xl !bg-white"
+                                  inputClassName="!h-12 !rounded-xl !bg-white !text-[15px] !font-semibold !text-slate-800"
+                                  lblClassName="text-[15px] font-semibold text-slate-800"
+                                  arrow={
+                                    <ChevronDown
+                                      className="h-5! w-5! text-slate-500"
+                                      style={{ paddingBottom: "2px" }}
+                                    />
+                                  }
                                   searchable
                                   popoverTrgVariant={{
                                     variant: "search-box--lgray",
@@ -1147,31 +1154,36 @@ export default function FormProducts(props: FormProductsProps) {
         <button disabled={!dirty} type="submit" className="hidden" />
 
         {!isLoading && !isInventoryLoading ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
-              <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
-                Tổng số lượng
-              </p>
-              <p className="mt-2 text-2xl font-black leading-none text-green-13">
-                {totalSoldCount.toLocaleString("vi-VN")}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Sản phẩm đã bán hôm nay
-              </p>
-            </div>
+          <div
+            className="mt-auto sticky bottom-0 z-10 rounded-4xl bg-white p-4"
+            style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
+          >
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
+                <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
+                  Tổng số lượng
+                </p>
+                <p className="mt-2 text-2xl font-black leading-none text-green-13">
+                  {totalSoldCount.toLocaleString("vi-VN")}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Sản phẩm đã bán hôm nay
+                </p>
+              </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_10px_28px_rgba(100,116,139,0.1)]">
-              <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-500">
-                Lợi nhuận dự kiến
-              </p>
-              <p
-                className={`mt-2 text-2xl font-black leading-none ${totalEstimatedProfit < 0 ? "text-red-1" : "text-green-13"}`}
-              >
-                {formatCurrency(totalEstimatedProfit)}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Tạm tính theo giá vốn và giá bán thực tế
-              </p>
+              <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_10px_28px_rgba(100,116,139,0.1)]">
+                <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-500">
+                  Lợi nhuận dự kiến
+                </p>
+                <p
+                  className={`mt-2 text-2xl font-black leading-none ${totalEstimatedProfit < 0 ? "text-red-1" : "text-green-13"}`}
+                >
+                  {formatCurrency(totalEstimatedProfit)}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Tạm tính theo giá vốn và giá bán thực tế
+                </p>
+              </div>
             </div>
           </div>
         ) : null}
