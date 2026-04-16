@@ -194,6 +194,17 @@ function ProductImagePreview({
 const getRowQuantity = (sales: SaleEntryFormValue[]) =>
   sales.reduce((sum, sale) => sum + Number(sale.quantity || 0), 0);
 
+const getRowEstimatedProfit = (
+  sales: SaleEntryFormValue[],
+  importPrice: number,
+) =>
+  sales.reduce((sum, sale) => {
+    const quantity = Number(sale.quantity || 0);
+    const sellPrice = Number(sale.sellPrice || 0);
+
+    return sum + (sellPrice - importPrice) * quantity;
+  }, 0);
+
 export default function FormProducts(props: FormProductsProps) {
   const { data, isLoading, reload, onReload } = props;
   const params = useParams();
@@ -515,6 +526,10 @@ export default function FormProducts(props: FormProductsProps) {
                           savedImportPriceMap.get(Number(item.productId)) ??
                           selectedProduct?.importPrice ??
                           0;
+                        const productEstimatedProfit = getRowEstimatedProfit(
+                          item.sales,
+                          effectiveImportPrice,
+                        );
                         const maxAvailable = selectedProduct
                           ? selectedProduct.quantity + initialQuantity
                           : 0;
@@ -672,7 +687,7 @@ export default function FormProducts(props: FormProductsProps) {
                                 </div>
 
                                 <div className="min-w-0 flex-1">
-                                  <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                                  <div className="mt-2 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
                                     <div className="rounded-xl bg-slate-50 px-2 py-1.5">
                                       <p className="font-bold text-slate-400">
                                         Giá bán
@@ -711,6 +726,20 @@ export default function FormProducts(props: FormProductsProps) {
                                         {selectedProduct.quantity.toLocaleString(
                                           "vi-VN",
                                         )}
+                                      </p>
+                                    </div>
+                                    <div className="rounded-xl bg-slate-50 px-2 py-1.5">
+                                      <p className="font-bold text-slate-400">
+                                        Tổng lợi nhuận
+                                      </p>
+                                      <p
+                                        className={`mt-1 text-sm font-extrabold ${
+                                          productEstimatedProfit < 0
+                                            ? "text-red-1"
+                                            : "text-green-13"
+                                        }`}
+                                      >
+                                        {formatCurrency(productEstimatedProfit)}
                                       </p>
                                     </div>
                                   </div>
