@@ -1190,7 +1190,7 @@ export default function FormProducts(props: FormProductsProps) {
             <button
               type="button"
               onClick={() => setIsSummaryExpanded((prev) => !prev)}
-              className="flex w-full items-center justify-between gap-3 rounded-2xl bg-slate-50 px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100"
+              className="cursor-pointer flex w-full items-center justify-between gap-3 rounded-2xl bg-slate-50 px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100"
               aria-expanded={isSummaryExpanded}
             >
               <p className="truncate text-sm font-bold text-slate-700">
