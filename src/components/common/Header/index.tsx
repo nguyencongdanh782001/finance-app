@@ -107,14 +107,12 @@ const Header = ({ children, compact }: HeaderProps) => {
 
   return (
     <div
-      className={cn(
-        "sticky top-0 z-10 border-b border-blue-1 bg-white shadow",
-      )}
+      className={cn("sticky top-0 z-10 border-b border-blue-1 bg-white shadow")}
     >
       <div
         className={cn(
           "overflow-hidden px-5 transition-[padding] duration-300 ease-out",
-          isCompact ? "pb-3 pt-2" : "pb-6 pt-6",
+          isCompact ? "pb-3 pt-3" : "pb-6 pt-6",
         )}
       >
         <div

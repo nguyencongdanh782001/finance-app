@@ -210,7 +210,7 @@ const MonthDetail = () => {
   return (
     <div className="sm:max-w-191.25 mx-auto">
       <Toaster />
-      <Header />
+      <Header compact={false} />
       <Container className="gap-8 py-8 min-h-[calc(100svh-117px)]!">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {isLoading ? (
