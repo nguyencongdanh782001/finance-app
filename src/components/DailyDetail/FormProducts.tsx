@@ -220,6 +220,7 @@ export default function FormProducts(props: FormProductsProps) {
     useState<DeleteSaleTarget>(null);
   const [collapsedProductIds, setCollapsedProductIds] = useState<string[]>([]);
   const [soldProductSearch, setSoldProductSearch] = useState("");
+  const [isSummaryExpanded, setIsSummaryExpanded] = useState(false);
   const savedImportPriceMap = useMemo(
     () =>
       new Map(
@@ -664,7 +665,7 @@ export default function FormProducts(props: FormProductsProps) {
                                     type="button"
                                     variant="ghost"
                                     size="icon-sm"
-                                    className="h-9 w-9 shrink-0 rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                                    className="cursor-pointer h-9 w-9 shrink-0 rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                                     onClick={() => {
                                       if (!item.productId) return;
 
@@ -685,7 +686,6 @@ export default function FormProducts(props: FormProductsProps) {
                                     )}
                                   </Button>
                                 </div>
-
                                 <div className="min-w-0 flex-1">
                                   <div className="mt-2 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
                                     <div className="rounded-xl bg-slate-50 px-2 py-1.5">
@@ -1184,34 +1184,63 @@ export default function FormProducts(props: FormProductsProps) {
 
         {!isLoading && !isInventoryLoading ? (
           <div
-            className="mt-auto sticky bottom-0 z-10 rounded-4xl bg-white p-4"
+            className="mt-auto sticky bottom-0 z-10 rounded-4xl bg-white p-3"
             style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
           >
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
-                <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
-                  Tổng số lượng
-                </p>
-                <p className="mt-2 text-2xl font-black leading-none text-green-13">
-                  {totalSoldCount.toLocaleString("vi-VN")}
-                </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Sản phẩm đã bán hôm nay
-                </p>
+            <button
+              type="button"
+              onClick={() => setIsSummaryExpanded((prev) => !prev)}
+              className="flex w-full items-center justify-between gap-3 rounded-2xl bg-slate-50 px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100"
+              aria-expanded={isSummaryExpanded}
+            >
+              <p className="truncate text-sm font-bold text-slate-700">
+                Tổng kết sản phẩm
+              </p>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-slate-500 shadow-sm">
+                <ChevronDown
+                  className={`size-4 transition-transform duration-200 ease-out ${
+                    isSummaryExpanded ? "rotate-180" : "rotate-0"
+                  }`}
+                />
               </div>
+            </button>
 
-              <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_10px_28px_rgba(100,116,139,0.1)]">
-                <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-500">
-                  Lợi nhuận dự kiến
-                </p>
-                <p
-                  className={`mt-2 text-2xl font-black leading-none ${totalEstimatedProfit < 0 ? "text-red-1" : "text-green-13"}`}
-                >
-                  {formatCurrency(totalEstimatedProfit)}
-                </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Tạm tính theo giá vốn và giá bán thực tế
-                </p>
+            <div
+              className={`grid overflow-hidden transition-[grid-template-rows,opacity,margin] duration-200 ease-out ${
+                isSummaryExpanded
+                  ? "mt-3 grid-rows-[1fr] opacity-100"
+                  : "mt-0 grid-rows-[0fr] opacity-0"
+              }`}
+              aria-hidden={!isSummaryExpanded}
+            >
+              <div className="min-h-0">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
+                    <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
+                      Tổng số lượng
+                    </p>
+                    <p className="mt-2 text-2xl font-black leading-none text-green-13">
+                      {totalSoldCount.toLocaleString("vi-VN")}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Sản phẩm đã bán hôm nay
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_10px_28px_rgba(100,116,139,0.1)]">
+                    <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-500">
+                      Lợi nhuận dự kiến
+                    </p>
+                    <p
+                      className={`mt-2 text-2xl font-black leading-none ${totalEstimatedProfit < 0 ? "text-red-1" : "text-green-13"}`}
+                    >
+                      {formatCurrency(totalEstimatedProfit)}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Tạm tính theo giá vốn và giá bán thực tế
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
