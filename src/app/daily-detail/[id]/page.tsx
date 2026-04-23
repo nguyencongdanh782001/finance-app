@@ -60,7 +60,7 @@ const DailyDetail = () => {
   return (
     <div className="sm:max-w-191.25 mx-auto relative">
       <Toaster />
-      <Header>
+      <Header compact={isLoading ? false : undefined}>
         <div className="sm:max-w-191.25 mx-auto">
           <div className="grid w-full grid-cols-2 rounded-full border border-slate-200 bg-slate-50 p-1">
             <button
