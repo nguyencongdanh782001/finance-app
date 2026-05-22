@@ -5,10 +5,13 @@ export function formatCompactNumber(value: number): string {
   const sign = value < 0 ? "-" : "";
 
   const format = (num: number) => {
-    const truncated = Math.floor(num * 10) / 10;
-    return Number.isInteger(truncated)
-      ? truncated.toString()
-      : truncated.toString();
+    const precision = num >= 100 ? 0 : num >= 10 ? 1 : 2;
+    const factor = 10 ** precision;
+    const truncated = Math.trunc(num * factor) / factor;
+
+    return truncated
+      .toFixed(precision)
+      .replace(/\.0+$|(\.\d*?[1-9])0+$/, "$1");
   };
 
   if (abs >= 1_000_000_000) {
