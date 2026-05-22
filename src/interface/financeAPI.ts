@@ -110,7 +110,14 @@ export type DailyDetailResponse = {
   totalProfit: number;
   note: string;
   soldProducts: DailySoldProductItem[];
+  previousDay: DailyDetailNavigationItem | null;
+  nextDay: DailyDetailNavigationItem | null;
 };
+
+export interface DailyDetailNavigationItem {
+  id: number;
+  date: string;
+}
 
 export interface UpdateDailyRequest {
   capitalCash?: number | string;

@@ -2,6 +2,7 @@
 
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { formatCompactNumber } from "@/helper/formatCompactNumber";
 import { MonthlyProductProfitResponse } from "@/interface/financeAPI";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -50,6 +51,7 @@ export default function ChartMonthlyProductProfit() {
   }, [year, month, pathname, searchParams.toString()]);
 
   const chartData = data?.data ?? [];
+  const totalProfit = data?.totalProfit ?? 0;
 
   const ticks = generateTicks(Math.max(...chartData.map((d) => d.profit)));
 
@@ -75,10 +77,21 @@ export default function ChartMonthlyProductProfit() {
           <Skeleton className="h-72 w-full rounded-[28px] sm:rounded-[32px]" />
         ) : (
           <>
-            <div className="mb-6 flex items-center justify-between gap-3">
-              <h3 className="text-sm font-bold uppercase text-green-4">
-                Lợi nhuận sản phẩm theo ngày
-              </h3>
+            <div className="mb-6 flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-bold uppercase text-green-4">
+                  Lợi nhuận sản phẩm theo ngày
+                </h3>
+                <p
+                  className={`mt-2 text-md font-black leading-none ${totalProfit < 0 ? "text-red-1" : "text-green-13"}`}
+                >
+                  {totalProfit > 0 ? "+" : ""}
+                  {formatCurrencyVND(totalProfit)}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Tổng lợi nhuận trong tháng
+                </p>
+              </div>
               <p className="shrink-0 text-xs font-bold uppercase text-green-4 sm:text-sm">
                 Đơn vị: VND
               </p>

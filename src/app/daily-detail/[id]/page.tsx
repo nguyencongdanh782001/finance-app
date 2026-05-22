@@ -7,6 +7,7 @@ import FormCapital from "@/components/DailyDetail/FormCapital";
 import FormNote from "@/components/DailyDetail/FormNote";
 import FormProducts from "@/components/DailyDetail/FormProducts";
 import FormRevenue from "@/components/DailyDetail/FormRevenue";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
@@ -16,12 +17,20 @@ import { financeAPI } from "@/endpoint/financeAPI";
 import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { formatTZ } from "@/helper/date";
 import { DailyDetailResponse } from "@/interface/financeAPI";
-import { PackageCheck, TrendingDown, TrendingUp } from "lucide-react";
-import { useParams } from "next/navigation";
+import dayjs from "dayjs";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PackageCheck,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const DailyDetail = () => {
   const params = useParams();
+  const router = useRouter();
 
   const id = Number(params.id);
 
@@ -32,13 +41,12 @@ const DailyDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"revenue" | "products">("revenue");
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0 });
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = async (showLoading = true) => {
     try {
-      if (!reload) setIsLoading(true);
+      if (showLoading) {
+        setIsLoading(true);
+      }
+
       const res = await financeAPI.getDailyDetailData(id);
       if (res.code === RESPONSE_CODES.success) {
         setDailyDetailData(res.data);
@@ -50,12 +58,35 @@ const DailyDetail = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    window.scrollTo({ top: 0, left: 0 });
+    void fetchData();
+  }, [id]);
 
   useEffect(() => {
-    if (reload) fetchData();
-  }, [reload]);
+    if (reload) {
+      void fetchData(false);
+    }
+  }, [reload, id]);
+
+  const canNavigatePrevious = Boolean(dailyDetailData?.previousDay);
+  const canNavigateNext = Boolean(
+    dailyDetailData?.nextDay &&
+      !dayjs(dailyDetailData.nextDay.date).isAfter(dayjs(), "day"),
+  );
+
+  const handleNavigateDay = (targetId?: number, targetDate?: string) => {
+    if (
+      !targetId ||
+      isLoading ||
+      targetId === id ||
+      (targetDate && dayjs(targetDate).isAfter(dayjs(), "day"))
+    ) {
+      return;
+    }
+
+    setIsLoading(true);
+    router.push(`/daily-detail/${targetId}`);
+  };
 
   return (
     <div className="sm:max-w-191.25 mx-auto relative">
@@ -100,11 +131,62 @@ const DailyDetail = () => {
       </Header>
       <Container className="gap-8 py-6 min-h-[calc(100svh-117px)]!">
         {isLoading ? (
-          <Skeleton className="mb-2 h-7 w-60 rounded-2" />
+          <div className="grid grid-cols-[40px_1fr_40px] items-center gap-2.5">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex flex-col items-center gap-2">
+              <Skeleton className="h-3 w-24 rounded-2" />
+              <Skeleton className="h-8 w-56 rounded-2" />
+            </div>
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
         ) : (
-          <h3 className="text-blue-2 text-3xl font-extrabold capitalize">
-            {formatTZ(dailyDetailData?.date || "", TZ_TEMPLATE.date_day_month)}
-          </h3>
+          <div className="grid grid-cols-[40px_1fr_40px] items-center gap-2.5">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                handleNavigateDay(
+                  dailyDetailData?.previousDay?.id,
+                  dailyDetailData?.previousDay?.date,
+                )
+              }
+              disabled={!canNavigatePrevious}
+              className="h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-800"
+              aria-label="Chuyển về ngày trước"
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+
+            <div className="min-w-0 text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-400">
+                Ngày hiện tại
+              </p>
+              <h3 className="mt-1 text-blue-2 text-xl font-extrabold capitalize">
+                {formatTZ(
+                  dailyDetailData?.date || "",
+                  TZ_TEMPLATE.date_day_month,
+                )}
+              </h3>
+            </div>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                handleNavigateDay(
+                  dailyDetailData?.nextDay?.id,
+                  dailyDetailData?.nextDay?.date,
+                )
+              }
+              disabled={!canNavigateNext}
+              className="h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-800"
+              aria-label="Chuyển tới ngày kế tiếp"
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
         )}
 
         {activeTab === "revenue" ? (

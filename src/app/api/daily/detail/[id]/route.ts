@@ -99,6 +99,37 @@ export async function GET(
     );
   }
 
+  const [previousDay, nextDay] = await Promise.all([
+    prisma.dailyFinance.findFirst({
+      where: {
+        date: {
+          lt: daily.date,
+        },
+      },
+      orderBy: {
+        date: "desc",
+      },
+      select: {
+        id: true,
+        date: true,
+      },
+    }),
+    prisma.dailyFinance.findFirst({
+      where: {
+        date: {
+          gt: daily.date,
+        },
+      },
+      orderBy: {
+        date: "asc",
+      },
+      select: {
+        id: true,
+        date: true,
+      },
+    }),
+  ]);
+
   return NextResponse.json({
     id: daily.id,
     date: daily.date,
@@ -111,6 +142,8 @@ export async function GET(
     totalProfit: Number(daily.totalProfit),
     note: daily.note,
     soldProducts,
+    previousDay,
+    nextDay,
   });
 }
 

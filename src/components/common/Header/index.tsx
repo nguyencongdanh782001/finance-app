@@ -128,7 +128,7 @@ const Header = ({ children, compact }: HeaderProps) => {
           <div className="min-h-0">
             <Button
               variant="ghost"
-              onClick={() => router.back()}
+              onClick={() => router.push("/")}
               disabled={isCompact}
               className={cn(
                 "h-fit! gap-1 p-0! font-medium text-base text-green-9 transition-transform duration-300 ease-out",

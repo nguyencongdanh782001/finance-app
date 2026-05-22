@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/chart";
 
 import type { MonthlyExpenseChartItem } from "@/interface/financeAPI";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { formatCompactNumber } from "@/helper/formatCompactNumber";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -24,6 +25,7 @@ function generateTicks(max: number, steps = 4) {
 }
 
 export default function MonthlyExpenseChart({ data, isLoading }: Props) {
+  const totalExpense = data.reduce((sum, item) => sum + item.expense, 0);
   const ticks = generateTicks(Math.max(...data.map((d) => d.expense)));
 
   const longestLabel = ticks
@@ -43,10 +45,18 @@ export default function MonthlyExpenseChart({ data, isLoading }: Props) {
         <Skeleton className="h-72 w-full rounded-[28px] sm:rounded-[32px]" />
       ) : (
         <>
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <h3 className="uppercase text-sm font-bold text-green-4">
-              Chi tiêu theo tháng
-            </h3>
+          <div className="mb-6 flex items-start justify-between gap-3">
+            <div>
+              <h3 className="uppercase text-sm font-bold text-green-4">
+                Chi tiêu theo tháng
+              </h3>
+              <p className="mt-2 text-md font-black leading-none text-orange-3">
+                {formatCurrencyVND(totalExpense)}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Tổng chi tiêu trong năm
+              </p>
+            </div>
             <p className="shrink-0 uppercase text-xs font-bold text-green-4 sm:text-sm">
               Đơn vị: VND
             </p>
@@ -96,7 +106,11 @@ export default function MonthlyExpenseChart({ data, isLoading }: Props) {
                     }
                   />
 
-                  <Bar dataKey="expense" radius={[10, 10, 0, 0]} maxBarSize={24}>
+                  <Bar
+                    dataKey="expense"
+                    radius={[10, 10, 0, 0]}
+                    maxBarSize={24}
+                  >
                     {data.map((item, index) => (
                       <Cell
                         key={`cell-${index}`}

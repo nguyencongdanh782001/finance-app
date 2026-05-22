@@ -205,6 +205,14 @@ const getRowEstimatedProfit = (
     return sum + (sellPrice - importPrice) * quantity;
   }, 0);
 
+const getRowRevenue = (sales: SaleEntryFormValue[]) =>
+  sales.reduce((sum, sale) => {
+    const quantity = Number(sale.quantity || 0);
+    const sellPrice = Number(sale.sellPrice || 0);
+
+    return sum + sellPrice * quantity;
+  }, 0);
+
 export default function FormProducts(props: FormProductsProps) {
   const { data, isLoading, reload, onReload } = props;
   const params = useParams();
@@ -385,6 +393,10 @@ export default function FormProducts(props: FormProductsProps) {
     (sum, item) => sum + getRowQuantity(item.sales),
     0,
   );
+  const totalRecordedRevenue = values.soldProducts.reduce(
+    (sum, item) => sum + getRowRevenue(item.sales),
+    0,
+  );
   const totalEstimatedProfit = values.soldProducts.reduce((sum, item) => {
     const selectedProduct = inventoryProducts.find(
       (product) => String(product.id) === item.productId,
@@ -551,10 +563,10 @@ export default function FormProducts(props: FormProductsProps) {
                                 ? `${product.title} • ${product.categoryName} • Hết hàng`
                                 : `${product.title} • ${product.categoryName}`,
                             value: String(product.id),
-                            disabled:
-                              selectedIds.includes(String(product.id)) ||
-                              (product.quantity === 0 &&
-                                !initialSoldProductMap.has(product.id)),
+                            // disabled:
+                            //   selectedIds.includes(String(product.id)) ||
+                            //   (product.quantity === 0 &&
+                            //     !initialSoldProductMap.has(product.id)),
                           }),
                         );
 
@@ -1214,7 +1226,7 @@ export default function FormProducts(props: FormProductsProps) {
               aria-hidden={!isSummaryExpanded}
             >
               <div className="min-h-0">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
                     <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
                       Tổng số lượng
@@ -1224,6 +1236,18 @@ export default function FormProducts(props: FormProductsProps) {
                     </p>
                     <p className="mt-1 text-xs text-slate-500">
                       Sản phẩm đã bán hôm nay
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-sky-100 bg-linear-to-br from-sky-50 to-white px-4 py-3.5 shadow-[0_10px_28px_rgba(14,165,233,0.12)]">
+                    <p className="text-10px font-bold uppercase tracking-[0.08em] text-sky-600">
+                      Doanh thu tạm tính
+                    </p>
+                    <p className="mt-2 text-2xl font-black leading-none text-sky-700">
+                      {formatCurrency(totalRecordedRevenue)}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Cộng theo giá bán thực tế
                     </p>
                   </div>
 
