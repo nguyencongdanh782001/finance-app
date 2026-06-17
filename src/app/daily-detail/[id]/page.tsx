@@ -78,8 +78,8 @@ const DailyDetail = () => {
     if (
       !targetId ||
       isLoading ||
-      targetId === id ||
-      (targetDate && dayjs(targetDate).isAfter(dayjs(), "day"))
+      targetId === id
+      // || (targetDate && dayjs(targetDate).isAfter(dayjs(), "day"))
     ) {
       return;
     }
