@@ -12,6 +12,7 @@ import AutoCompleteField from "@/components/common/CustomFields/AutoCompleteFiel
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { NumericInput } from "@/components/ui/numberInput";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Vui lòng nhập mô tả"),
@@ -82,7 +83,7 @@ export default function FormEditExpense({
             placeholder="Ví dụ: Văn phòng phẩm"
             name="name"
             variant="default"
-            className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+            className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
           />
         </div>
 
@@ -97,12 +98,12 @@ export default function FormEditExpense({
             </Label>
             <div className="flex flex-col w-full">
               <AutoCompleteField<CustomInputProps>
-                component={Input}
+                component={NumericInput}
                 version="field"
                 placeholder="0"
                 name="amount"
                 variant="default"
-                className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+                className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
                 pattern="^\d+(\.\d*)?$"
               />
             </div>

@@ -11,6 +11,7 @@ import {
 import type { MonthlyRevenue } from "@/interface/financeAPI";
 import { formatCompactNumber } from "@/helper/formatCompactNumber";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
 
 const CHART_Y_AXIS_WIDTH = 28;
 
@@ -31,6 +32,7 @@ export default function MonthlyRevenueChart({ data, isLoading }: Props) {
     .reduce((a, b) => (a.length > b.length ? a : b));
 
   const estimatedWidth = Math.max(longestLabel.length * 10.5);
+  const totalRevenue = data.reduce((sum, item) => sum + item.profit, 0);
 
   return (
     <div className="rounded-[32px] bg-white p-4 shadow-sm sm:rounded-[40px] sm:p-5">
@@ -38,10 +40,18 @@ export default function MonthlyRevenueChart({ data, isLoading }: Props) {
         <Skeleton className="h-72 w-full rounded-[28px] sm:rounded-[32px]" />
       ) : (
         <>
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <h3 className="uppercase text-sm font-bold text-green-4">
-              Doanh thu theo tháng
-            </h3>
+          <div className="mb-6 flex items-start justify-between gap-3">
+            <div>
+              <h3 className="uppercase text-sm font-bold text-green-4">
+                Doanh thu theo tháng
+              </h3>
+              <p className="mt-2 text-md font-black leading-none text-green-2">
+                {formatCurrencyVND(totalRevenue)}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Tổng chi tiêu trong năm
+              </p>
+            </div>
             <p className="shrink-0 uppercase text-xs font-bold text-green-4 sm:text-sm">
               Đơn vị: VND
             </p>

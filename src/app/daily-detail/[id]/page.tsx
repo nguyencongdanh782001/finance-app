@@ -69,10 +69,10 @@ const DailyDetail = () => {
   }, [reload, id]);
 
   const canNavigatePrevious = Boolean(dailyDetailData?.previousDay);
-  const canNavigateNext = Boolean(
-    dailyDetailData?.nextDay &&
-      !dayjs(dailyDetailData.nextDay.date).isAfter(dayjs(), "day"),
-  );
+  // const canNavigateNext = Boolean(
+  //   dailyDetailData?.nextDay &&
+  //   !dayjs(dailyDetailData.nextDay.date).isAfter(dayjs(), "day"),
+  // );
 
   const handleNavigateDay = (targetId?: number, targetDate?: string) => {
     if (
@@ -180,7 +180,7 @@ const DailyDetail = () => {
                   dailyDetailData?.nextDay?.date,
                 )
               }
-              disabled={!canNavigateNext}
+              // disabled={!canNavigateNext}
               className="h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-800"
               aria-label="Chuyển tới ngày kế tiếp"
             >

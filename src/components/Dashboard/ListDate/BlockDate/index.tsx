@@ -111,16 +111,17 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
             <div
               key={i}
               onClick={() => {
-                if (isFutureDay) return;
+                // if (isFutureDay) return;
                 if (cell.data?.id) {
                   router.push(`/daily-detail/${cell.data.id}`);
                 }
               }}
               className={
                 "rounded-[5px] p-2 text-center text-xs transition relative " +
-                (isFutureDay
-                  ? "opacity-50 cursor-not-allowed"
-                  : "cursor-pointer") +
+                "cursor-pointer" +
+                // (isFutureDay
+                //   ? "opacity-50 cursor-not-allowed"
+                //   : "cursor-pointer")
                 (isPositive
                   ? " bg-green-3"
                   : isNegative
