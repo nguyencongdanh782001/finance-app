@@ -49,7 +49,7 @@ export default function MonthlyRevenueChart({ data, isLoading }: Props) {
                 {formatCurrencyVND(totalRevenue)}
               </p>
               <p className="mt-1 text-xs text-slate-500">
-                Tổng chi tiêu trong năm
+                Tổng doanh thu trong năm
               </p>
             </div>
             <p className="shrink-0 uppercase text-xs font-bold text-green-4 sm:text-sm">
