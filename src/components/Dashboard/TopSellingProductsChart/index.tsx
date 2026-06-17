@@ -13,6 +13,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronDown } from "lucide-react";
 
 type TopSellingChartItem = TopSellingProductsResponse["items"][number] & {
   fill: string;
@@ -37,6 +38,7 @@ export default function TopSellingProductsChart() {
   const month = urlMonth || now.getMonth() + 1;
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [data, setData] = useState<TopSellingProductsResponse | undefined>(
     undefined,
   );
@@ -91,6 +93,13 @@ export default function TopSellingProductsChart() {
     return [...topItems, others];
   }, [data?.items]);
 
+  const orderDetailData = useMemo(() => {
+    const items = data?.items ?? [];
+    const remainingItems = items.slice(5);
+
+    return remainingItems;
+  }, [data?.items]);
+
   const totalQuantity = data?.totalQuantity ?? 0;
   const hasData = chartData.length > 0 && totalQuantity > 0;
 
@@ -119,7 +128,7 @@ export default function TopSellingProductsChart() {
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:gap-5">
             <div className="rounded-[28px] bg-linear-to-br from-green-12 via-white to-orange-1/15 p-3 sm:rounded-[32px] sm:p-4">
               <ChartContainer
-                className="mx-auto h-60 w-full max-w-[320px] sm:h-72 sm:max-w-[420px]"
+                className="mx-auto h-60 w-full max-w-[320px] sm:h-72 sm:max-w-105"
                 config={{
                   quantity: {
                     label: "Số lượng bán",
@@ -201,7 +210,7 @@ export default function TopSellingProductsChart() {
                   ? ((item.quantity / totalQuantity) * 100).toFixed(1)
                   : "0.0";
 
-                return (
+                return index < chartData.length - 1 ? (
                   <div
                     key={item.productTitle}
                     className="rounded-[20px] border border-gray-200 bg-linear-to-r from-white to-slate-50 px-3 py-3 shadow-sm sm:rounded-[24px] sm:px-4"
@@ -213,10 +222,10 @@ export default function TopSellingProductsChart() {
                           style={{ backgroundColor: item.fill }}
                         />
                         <div className="min-w-0 flex flex-col">
-                          <p className="text-sm font-extrabold text-gray-2 break-words">
+                          <p className="text-sm font-extrabold text-gray-2 wrap-break-word">
                             #{index + 1} {item.productTitle}
                           </p>
-                          <p className="text-xs font-medium uppercase text-green-1 break-words">
+                          <p className="text-xs font-medium uppercase text-green-1 wrap-break-word">
                             {item.categoryName}
                           </p>
                         </div>
@@ -224,6 +233,77 @@ export default function TopSellingProductsChart() {
                       <p className="shrink-0 rounded-full bg-green-12 px-2.5 py-1 text-xs font-bold text-green-2">
                         {percent}%
                       </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className="rounded-4xl bg-white p-2"
+                    style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
+                    onClick={() => setIsExpanded((prev) => !prev)}
+                  >
+                    <div
+                      key={item.productTitle}
+                      className="cursor-pointer! rounded-[20px] border border-gray-200 bg-linear-to-r from-white to-slate-50 px-3 py-3 shadow-sm sm:rounded-[24px] sm:px-4"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                          <span
+                            className="mt-1 h-3.5 w-3.5 shrink-0 rounded-full"
+                            style={{ backgroundColor: item.fill }}
+                          />
+                          <div className="min-w-0 flex flex-col">
+                            <p className="text-sm font-extrabold text-gray-2 wrap-break-word">
+                              #{index + 1} {item.productTitle}
+                            </p>
+                            <p className="text-xs font-medium uppercase text-green-1 wrap-break-word">
+                              {item.categoryName}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="shrink-0 rounded-full bg-green-12 px-2.5 py-1 text-xs font-bold text-green-2">
+                          {percent}%
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`grid overflow-auto transition-[grid-template-rows,opacity,margin] duration-200 ease-out gap-3 ${
+                        isExpanded
+                          ? "mt-3 grid-rows-[1fr] opacity-100 max-h-60"
+                          : "mt-0 grid-rows-[0fr] opacity-0 max-h-0"
+                      }`}
+                      aria-hidden={!isExpanded}
+                    >
+                      {orderDetailData?.map((itemOrder, indexOrder) => {
+                        const percentOrder = totalQuantity
+                          ? (
+                              (itemOrder.quantity / totalQuantity) *
+                              100
+                            ).toFixed(1)
+                          : "0.0";
+                        return (
+                          <div
+                            key={itemOrder.productTitle}
+                            className="rounded-[20px] border border-gray-200 bg-linear-to-r from-white to-slate-50 px-3 py-3 shadow-sm sm:rounded-[24px] sm:px-4"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-start gap-3">
+                                <div className="min-w-0 flex flex-col">
+                                  <p className="text-sm font-extrabold text-gray-2 wrap-break-word">
+                                    #{indexOrder + 1} {itemOrder.productTitle}
+                                  </p>
+                                  <p className="text-xs font-medium uppercase text-green-1 wrap-break-word">
+                                    {itemOrder.categoryName}
+                                  </p>
+                                </div>
+                              </div>
+                              <p className="shrink-0 rounded-full bg-green-12 px-2.5 py-1 text-xs font-bold text-green-2">
+                                {percentOrder}%
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 );
