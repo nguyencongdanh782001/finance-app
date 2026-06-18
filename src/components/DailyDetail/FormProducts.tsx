@@ -563,10 +563,9 @@ export default function FormProducts(props: FormProductsProps) {
                                 ? `${product.title} • ${product.categoryName} • Hết hàng`
                                 : `${product.title} • ${product.categoryName}`,
                             value: String(product.id),
-                            // disabled:
-                            //   selectedIds.includes(String(product.id)) ||
-                            //   (product.quantity === 0 &&
-                            //     !initialSoldProductMap.has(product.id)),
+                            disabled: selectedIds.includes(String(product.id)),
+                            // || (product.quantity === 0 &&
+                            //   !initialSoldProductMap.has(product.id)),
                           }),
                         );
 
@@ -665,7 +664,7 @@ export default function FormProducts(props: FormProductsProps) {
                                         {selectedProduct.categoryName}
                                       </p>
                                       {isOutOfStock ? (
-                                        <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-rose-600">
+                                        <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-11px font-bold uppercase tracking-[0.08em] text-rose-600">
                                           <AlertTriangle className="size-3.5" />
                                           Hết hàng
                                         </div>
