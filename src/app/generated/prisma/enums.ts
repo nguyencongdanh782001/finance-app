@@ -9,7 +9,229 @@
 * 🟢 You can import this file directly.
 */
 
+export const UserRole = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
+  CUSTOMER: 'CUSTOMER'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const UserStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  BLOCKED: 'BLOCKED'
+} as const
+
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
+
+
+export const OtpPurpose = {
+  LOGIN: 'LOGIN',
+  REGISTER: 'REGISTER',
+  VERIFY_PHONE: 'VERIFY_PHONE',
+  RESET_PASSWORD: 'RESET_PASSWORD'
+} as const
+
+export type OtpPurpose = (typeof OtpPurpose)[keyof typeof OtpPurpose]
+
+
+export const ProductStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED',
+  OUT_OF_STOCK: 'OUT_OF_STOCK'
+} as const
+
+export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus]
+
+
+export const ProductGender = {
+  WOMEN: 'WOMEN',
+  MEN: 'MEN',
+  UNISEX: 'UNISEX',
+  KIDS: 'KIDS'
+} as const
+
+export type ProductGender = (typeof ProductGender)[keyof typeof ProductGender]
+
+
+export const UserGender = {
+  FEMALE: 'FEMALE',
+  MALE: 'MALE',
+  OTHER: 'OTHER',
+  UNSPECIFIED: 'UNSPECIFIED'
+} as const
+
+export type UserGender = (typeof UserGender)[keyof typeof UserGender]
+
+
+export const ProductVisibility = {
+  PUBLIC: 'PUBLIC',
+  HIDDEN: 'HIDDEN',
+  PRIVATE: 'PRIVATE'
+} as const
+
+export type ProductVisibility = (typeof ProductVisibility)[keyof typeof ProductVisibility]
+
+
+export const AddressType = {
+  SHIPPING: 'SHIPPING',
+  BILLING: 'BILLING',
+  BOTH: 'BOTH'
+} as const
+
+export type AddressType = (typeof AddressType)[keyof typeof AddressType]
+
+
+export const CartStatus = {
+  ACTIVE: 'ACTIVE',
+  ABANDONED: 'ABANDONED',
+  CONVERTED: 'CONVERTED'
+} as const
+
+export type CartStatus = (typeof CartStatus)[keyof typeof CartStatus]
+
+
+export const OrderSource = {
+  OFFLINE: 'OFFLINE',
+  ONLINE: 'ONLINE'
+} as const
+
+export type OrderSource = (typeof OrderSource)[keyof typeof OrderSource]
+
+
+export const OrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PREPARING: 'PREPARING',
+  READY_TO_SHIP: 'READY_TO_SHIP',
+  SHIPPING: 'SHIPPING',
+  PROCESSING: 'PROCESSING',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  REFUNDED: 'REFUNDED'
+} as const
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const PaymentStatus = {
+  UNPAID: 'UNPAID',
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  AUTHORIZED: 'AUTHORIZED',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED',
+  REFUNDED: 'REFUNDED',
+  PARTIALLY_REFUNDED: 'PARTIALLY_REFUNDED'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const PaymentMethod = {
+  COD: 'COD',
+  CARD: 'CARD',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  MOMO: 'MOMO',
+  ZALOPAY: 'ZALOPAY',
+  PAYPAL: 'PAYPAL',
+  STRIPE: 'STRIPE'
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const ShippingStatus = {
+  PENDING: 'PENDING',
+  READY_TO_SHIP: 'READY_TO_SHIP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
+  RETURNED: 'RETURNED'
+} as const
+
+export type ShippingStatus = (typeof ShippingStatus)[keyof typeof ShippingStatus]
+
+
+export const CouponType = {
+  PERCENTAGE: 'PERCENTAGE',
+  FIXED_AMOUNT: 'FIXED_AMOUNT',
+  FREE_SHIPPING: 'FREE_SHIPPING'
+} as const
+
+export type CouponType = (typeof CouponType)[keyof typeof CouponType]
+
+
+export const NotificationType = {
+  ORDER: 'ORDER',
+  PAYMENT: 'PAYMENT',
+  SHIPPING: 'SHIPPING',
+  PROMOTION: 'PROMOTION',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const NotificationPriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type NotificationPriority = (typeof NotificationPriority)[keyof typeof NotificationPriority]
+
+
+export const InventoryTransactionType = {
+  IMPORT: 'IMPORT',
+  EXPORT: 'EXPORT',
+  SALE: 'SALE',
+  RETURN: 'RETURN',
+  ADJUSTMENT: 'ADJUSTMENT',
+  RESERVATION: 'RESERVATION',
+  RELEASE: 'RELEASE'
+} as const
+
+export type InventoryTransactionType = (typeof InventoryTransactionType)[keyof typeof InventoryTransactionType]
+
+
+export const HomepageBannerPlacement = {
+  HERO: 'HERO',
+  TOP: 'TOP',
+  MIDDLE: 'MIDDLE',
+  BOTTOM: 'BOTTOM'
+} as const
+
+export type HomepageBannerPlacement = (typeof HomepageBannerPlacement)[keyof typeof HomepageBannerPlacement]
+
+
+export const HomepageSectionType = {
+  BANNER: 'BANNER',
+  FEATURED_PRODUCTS: 'FEATURED_PRODUCTS',
+  CATEGORY_PRODUCTS: 'CATEGORY_PRODUCTS',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type HomepageSectionType = (typeof HomepageSectionType)[keyof typeof HomepageSectionType]
+
+
+export const PaymentLogType = {
+  CREATED: 'CREATED',
+  REDIRECTED: 'REDIRECTED',
+  WEBHOOK_RECEIVED: 'WEBHOOK_RECEIVED',
+  VERIFIED: 'VERIFIED',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED',
+  REFUNDED: 'REFUNDED',
+  MANUAL_UPDATE: 'MANUAL_UPDATE'
+} as const
+
+export type PaymentLogType = (typeof PaymentLogType)[keyof typeof PaymentLogType]
