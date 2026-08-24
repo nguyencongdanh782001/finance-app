@@ -1,6 +1,6 @@
 "use client";
 
-import { DailyFinance } from "@/app/generated/prisma/client";
+import type { DailyFinance } from "@/app/generated/prisma/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCompactNumber } from "@/helper/formatCompactNumber";
 import { useRouter } from "next/navigation";

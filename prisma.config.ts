@@ -3,12 +3,19 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+const isProductionDeployment = process.env.VERCEL_ENV === "production";
+const databaseUrl = isProductionDeployment
+  ? process.env["DATABASE_URL"]
+  : process.env["DEV_DATABASE_URL_PRISMA_DATABASE_URL"] ||
+    process.env["DEV_DATABASE_URL_POSTGRES_URL"] ||
+    process.env["DATABASE_URL"];
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: databaseUrl,
   },
 });

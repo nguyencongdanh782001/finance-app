@@ -1,4 +1,7 @@
-import { DailyFinance, MonthlyFinance } from "@/app/generated/prisma/client";
+import type {
+  DailyFinance,
+  MonthlyFinance,
+} from "@/app/generated/prisma/client";
 
 export type MonthlyResponse = {
   id: number;
