@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build --webpack",
+    "db:clone-prod-to-dev": "bash scripts/clone-prod-to-dev-db.sh",
     "dev": "next dev --webpack",
     "format": "prettier --write .",
     "lint": "eslint . --max-warnings=0",
