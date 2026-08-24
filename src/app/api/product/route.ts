@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import type { Prisma } from "@/app/generated/prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -12,7 +13,7 @@ export async function GET(req: Request) {
 
   const skip = (page - 1) * limit;
 
-  const where: any = {};
+  const where: Prisma.ProductWhereInput = {};
 
   if (search) {
     where.title = {
