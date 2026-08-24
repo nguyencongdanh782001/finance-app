@@ -1,13 +1,13 @@
 "use client";
 
-import { debounce } from "lodash";
+import { debounce, DebouncedFunction } from "@/lib/debounce";
 import { useCallback, useEffect, useRef } from "react";
 
 export function useDailyAutoSave<T>(
   submitFn: (value: T) => Promise<void>,
   delay = 300,
 ) {
-  const debouncedRef = useRef<ReturnType<typeof debounce> | null>(null);
+  const debouncedRef = useRef<DebouncedFunction<[T]> | null>(null);
 
   useEffect(() => {
     debouncedRef.current = debounce(async (value: T) => {

@@ -1,0 +1,25 @@
+<svg width="720" height="220" viewBox="0 0 720 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Quỳnh Nhi Store logo</title>
+  <desc id="desc">Minimal soft boutique logo with a delicate hanger line and elegant wordmark.</desc>
+  <defs>
+    <linearGradient id="silk" x1="70" y1="64" x2="176" y2="166" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DFA9B3"/>
+      <stop offset="1" stop-color="#8E5F67"/>
+    </linearGradient>
+  </defs>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M123 70C123 57.5 132.5 49 144 49C155.5 49 164 57 164 67.5C164 80.5 153.5 87 143.5 90.5C136.5 93 132.5 98 132.5 105.5V109" stroke="#75545B" stroke-width="5.5"/>
+    <path d="M74 134C90 113 108.5 103 132 103C155.5 103 174 113 190 134" stroke="#75545B" stroke-width="5.5"/>
+    <path d="M98 137H166" stroke="#75545B" stroke-width="5.5"/>
+    <path d="M101 136C109 156 124.5 166 146 166C162 166 175.5 159.5 186.5 146" stroke="url(#silk)" stroke-width="6"/>
+    <path d="M105 136C118.5 124 146 124 160 136" stroke="#D9A4AE" stroke-width="4.5"/>
+    <path d="M183 74C192.5 84 191.5 97 181.5 107C170.5 100 168 87 174.5 77.5C177.5 77.5 181 76 183 74Z" fill="#E8BDC5"/>
+  </g>
+
+  <g>
+    <text x="236" y="108" fill="#49383D" font-family="'Cormorant Garamond', 'Playfair Display', Georgia, serif" font-size="60" font-style="italic" font-weight="500">Quỳnh Nhi</text>
+    <text x="242" y="143" fill="#9D6C74" font-family="'Avenir Next', Inter, Arial, sans-serif" font-size="14" font-weight="500" letter-spacing="8">STORE</text>
+    <path d="M242 160C300 164 363 164 421 160" stroke="#DEC0C6" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+</svg>

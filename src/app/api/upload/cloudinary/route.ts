@@ -1,4 +1,5 @@
 import {
+  deleteProductImageFromCloudinary,
   uploadImageToCloudinary,
 } from "@/lib/cloudinary-upload";
 import { isHeicLikeFile } from "@/lib/image-file";
@@ -46,5 +47,27 @@ export async function POST(req: Request) {
       { message, hint: "Check Cloudinary env key/secret/cloud name" },
       { status: 500 },
     );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { publicId } = await req.json();
+
+    if (typeof publicId !== "string" || !publicId) {
+      return NextResponse.json(
+        { message: "Image public id is required" },
+        { status: 400 },
+      );
+    }
+
+    await deleteProductImageFromCloudinary(publicId);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Delete image failed";
+
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

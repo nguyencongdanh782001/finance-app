@@ -272,6 +272,22 @@ export default function ProductContainer() {
     const productTitle = values.title;
     let imageUrl = selectedProduct?.imageUrl || "";
     let imagePublicId = selectedProduct?.imagePublicId || "";
+    let uploadedImagePublicId: string | undefined;
+
+    const cleanupUploadedImage = async () => {
+      if (!uploadedImagePublicId) {
+        return;
+      }
+
+      try {
+        await financeAPI.deleteUploadedImage(uploadedImagePublicId);
+      } catch (error) {
+        console.error("Cleanup uploaded product image failed", {
+          publicId: uploadedImagePublicId,
+          error,
+        });
+      }
+    };
 
     if (imageFile) {
       const uploadRes = await financeAPI.uploadImage(imageFile);
@@ -294,6 +310,7 @@ export default function ProductContainer() {
 
       imageUrl = uploadRes.data.url;
       imagePublicId = uploadRes.data.publicId;
+      uploadedImagePublicId = uploadRes.data.publicId;
     }
 
     const payload = {
@@ -310,6 +327,7 @@ export default function ProductContainer() {
       const res = await financeAPI.createProduct(payload);
 
       if (res.code !== RESPONSE_CODES.success || !res.data) {
+        await cleanupUploadedImage();
         toast({
           title: "Tạo sản phẩm thất bại",
           description: productTitle
@@ -324,6 +342,7 @@ export default function ProductContainer() {
       const res = await financeAPI.updateProduct(selectedProduct.id, payload);
 
       if (res.code !== RESPONSE_CODES.success) {
+        await cleanupUploadedImage();
         toast({
           title: "Cập nhật sản phẩm thất bại",
           description: productTitle
