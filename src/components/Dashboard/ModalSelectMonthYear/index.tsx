@@ -35,7 +35,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
 
   function handleConfirm() {
     ChangeMonthYear(year, month);
-    router.push(`/?year=${year}&month=${month}`);
+    router.push(`/admin?year=${year}&month=${month}`);
     onClose();
   }
   function isMonthDisabled(m: number) {

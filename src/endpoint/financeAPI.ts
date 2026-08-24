@@ -166,4 +166,22 @@ export const financeAPI = {
       },
     };
   },
+  deleteUploadedImage: async (
+    publicId: string,
+  ): Promise<IAPIResponse<{ success: boolean }>> => {
+    const res = await fetch(API_ROUTES.uploadFileCloudinary, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ publicId }),
+    });
+
+    const data = await res.json();
+
+    return {
+      code: JSON.stringify(res.status),
+      data,
+    };
+  },
 };

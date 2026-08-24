@@ -1,11 +1,17 @@
 {
-  "name": "Thuy Vui Store",
-  "short_name": "Vui Store",
-  "start_url": "/",
+  "name": "Quỳnh Nhi Store",
+  "short_name": "Quỳnh Nhi",
+  "start_url": "/admin",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0f766e",
   "icons": [
+    {
+      "src": "/icons/quynh-nhi-store-icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",

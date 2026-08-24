@@ -8,7 +8,7 @@ import {
   UpdateDailyRequest,
 } from "@/interface/financeAPI";
 import { Form, FormikProvider, useFormik } from "formik";
-import { debounce } from "lodash";
+import { debounce } from "@/lib/debounce";
 import { CandlestickChartIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useCallback } from "react";

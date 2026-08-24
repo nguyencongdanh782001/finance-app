@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Quỳnh Nhi Store icon</title>
+  <desc id="desc">Minimal soft boutique icon with a delicate hanger line.</desc>
+  <defs>
+    <linearGradient id="bg" x1="96" y1="74" x2="416" y2="438" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8F9"/>
+      <stop offset="1" stop-color="#F2E1E4"/>
+    </linearGradient>
+    <linearGradient id="silk" x1="145" y1="170" x2="358" y2="350" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DFA9B3"/>
+      <stop offset="1" stop-color="#805862"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M239 170C239 143 260 124 286 124C312 124 331 142 331 166C331 195 307 210 284 218C268 223.5 258 236 258 252.5V263" stroke="#75545B" stroke-width="18"/>
+    <path d="M135 315C169 268 209 246 258 246C307 246 347 268 381 315" stroke="#75545B" stroke-width="18"/>
+    <path d="M184 322H332" stroke="#75545B" stroke-width="18"/>
+    <path d="M190 321C207 364 240 386 286 386C320 386 349 372 372 343" stroke="url(#silk)" stroke-width="20"/>
+    <path d="M198 322C227 296 286 296 316 322" stroke="#D9A4AE" stroke-width="15"/>
+  </g>
+  <path d="M369 165C391 188 389 217 366 240C341 224 335 195 350 173C357 173 364 169 369 165Z" fill="#E8BDC5"/>
+</svg>

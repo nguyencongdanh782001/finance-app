@@ -2,17 +2,85 @@
 import { Container } from "@/components/ui/container";
 import BlockIcon from "@/components/icon/element/BlockIcon";
 import { formatCurrencyVND } from "@/helper/convertCurrency";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { YearProfitResponse } from "@/interface/financeAPI";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { Skeleton } from "@/components/ui/skeleton";
 import ListDate from "@/components/Dashboard/ListDate";
-import ChartMonthlyProductProfit from "@/components/Dashboard/ChartMonthlyProductProfit";
-import TopSellingProductsChart from "@/components/Dashboard/TopSellingProductsChart";
-import ChartYearlyRevenue from "@/components/Dashboard/ChartYearlyRevenue";
-import ChartYearlyExpense from "@/components/Dashboard/ChartYearlyExpense";
 import { usePathname, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const ChartLoading = () => (
+  <div className="flex flex-col gap-4">
+    <div className="flex items-center justify-between gap-3">
+      <Skeleton className="h-5 w-40 rounded-2" />
+      <Skeleton className="h-8 w-28 rounded-full" />
+    </div>
+    <Skeleton className="h-72 w-full rounded-[32px] sm:rounded-[40px]" />
+  </div>
+);
+
+const TopSellingProductsChart = dynamic(
+  () => import("@/components/Dashboard/TopSellingProductsChart"),
+  {
+    ssr: false,
+    loading: ChartLoading,
+  },
+);
+
+const ChartMonthlyProductProfit = dynamic(
+  () => import("@/components/Dashboard/ChartMonthlyProductProfit"),
+  {
+    ssr: false,
+    loading: ChartLoading,
+  },
+);
+
+const ChartYearlyRevenue = dynamic(
+  () => import("@/components/Dashboard/ChartYearlyRevenue"),
+  {
+    ssr: false,
+    loading: ChartLoading,
+  },
+);
+
+const ChartYearlyExpense = dynamic(
+  () => import("@/components/Dashboard/ChartYearlyExpense"),
+  {
+    ssr: false,
+    loading: ChartLoading,
+  },
+);
+
+function LazySection({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+
+    if (!element || isVisible) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "480px 0px" },
+    );
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  return <div ref={ref}>{isVisible ? children : <ChartLoading />}</div>;
+}
 
 export default function HomeContainer() {
   const pathname = usePathname();
@@ -75,14 +143,22 @@ export default function HomeContainer() {
       {/* List revenue follow month */}
       <ListDate />
 
-      <TopSellingProductsChart />
+      <LazySection>
+        <TopSellingProductsChart />
+      </LazySection>
 
-      <ChartMonthlyProductProfit />
+      <LazySection>
+        <ChartMonthlyProductProfit />
+      </LazySection>
 
       {/* Chart Yearly Revenue */}
-      <ChartYearlyRevenue isLoading={isLoading} />
+      <LazySection>
+        <ChartYearlyRevenue isLoading={isLoading} />
+      </LazySection>
 
-      <ChartYearlyExpense isLoading={isLoading} />
+      <LazySection>
+        <ChartYearlyExpense isLoading={isLoading} />
+      </LazySection>
     </Container>
   );
 }

@@ -16,9 +16,71 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CHART_Y_AXIS_WIDTH = 28;
+const CHART_MIN_WIDTH_CLASS = "min-w-160";
+const CHART_HEIGHT_CLASS = "h-72";
+const CHART_HEIGHT_PX = 288;
+const CHART_PLOT_TOP = 8;
+const CHART_PLOT_BOTTOM = 36;
 
 function generateTicks(max: number, steps = 4) {
   return Array.from({ length: steps + 1 }, (_, i) => (max / steps) * i);
+}
+
+function generateDomainTicks(min: number, max: number, steps = 4) {
+  const lower = Math.min(0, min);
+  const upper = Math.max(0, max);
+  const range = upper - lower;
+
+  if (range === 0) {
+    return {
+      domain: [0, 0] as [number, number],
+      ticks: generateTicks(0, steps),
+    };
+  }
+
+  return {
+    domain: [lower, upper] as [number, number],
+    ticks: Array.from(
+      { length: steps + 1 },
+      (_, index) => lower + (range / steps) * index,
+    ),
+  };
+}
+
+function StickyYAxisLabels({
+  axisWidth,
+  domain,
+  ticks,
+}: {
+  axisWidth: number;
+  domain: [number, number];
+  ticks: number[];
+}) {
+  const [min, max] = domain;
+  const range = max - min;
+  const plotHeight = CHART_HEIGHT_PX - CHART_PLOT_TOP - CHART_PLOT_BOTTOM;
+
+  return (
+    <div
+      className={`relative ${CHART_HEIGHT_CLASS} bg-white text-[10px] text-slate-500`}
+      style={{ width: axisWidth }}
+    >
+      {ticks.map((tick) => {
+        const ratio = range === 0 ? 1 : (tick - min) / range;
+        const top = CHART_PLOT_TOP + (1 - ratio) * plotHeight;
+
+        return (
+          <span
+            key={tick}
+            className="absolute right-2 whitespace-nowrap leading-none"
+            style={{ top, transform: "translateY(-50%)" }}
+          >
+            {formatCompactNumber(tick)}
+          </span>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function ChartMonthlyProductProfit() {
@@ -53,13 +115,25 @@ export default function ChartMonthlyProductProfit() {
   const chartData = data?.data ?? [];
   const totalProfit = data?.totalProfit ?? 0;
 
-  const ticks = generateTicks(Math.max(...chartData.map((d) => d.profit)));
+  const minProfit = Math.min(0, ...chartData.map((d) => d.profit));
+  const maxProfit = Math.max(0, ...chartData.map((d) => d.profit));
+  const { domain, ticks } = generateDomainTicks(minProfit, maxProfit);
 
   const longestLabel = ticks
     .map((v) => formatCompactNumber(v))
     .reduce((a, b) => (a.length > b.length ? a : b));
 
-  const estimatedWidth = Math.max(longestLabel.length * 10.5);
+  const estimatedWidth = Math.max(
+    longestLabel.length * 10.5,
+    CHART_Y_AXIS_WIDTH,
+  );
+  const axisWidth = estimatedWidth + 16;
+  const chartConfig = {
+    profit: {
+      label: "Lợi nhuận",
+      color: "var(--color-green-2)",
+    },
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -98,69 +172,83 @@ export default function ChartMonthlyProductProfit() {
             </div>
 
             <div className="overflow-x-auto">
-              <div className="min-w-160">
-                <ChartContainer
-                  className="h-72 w-full"
-                  config={{
-                    profit: {
-                      label: "Lợi nhuận",
-                      color: "var(--color-green-2)",
-                    },
-                  }}
+              <div
+                className="flex"
+                style={{ minWidth: `calc(40rem + ${axisWidth}px)` }}
+              >
+                <div
+                  className="sticky left-0 z-10 shrink-0 bg-white"
+                  style={{ width: axisWidth }}
                 >
-                  <BarChart data={chartData}>
-                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="day"
-                      tickFormatter={(value) => `${value}`}
-                      tick={{ fontSize: 10 }}
-                      tickLine={false}
-                      axisLine={false}
-                      interval={0}
-                    />
-                    <YAxis
-                      width={estimatedWidth}
-                      tickFormatter={formatCompactNumber}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <ChartTooltip
-                      content={
-                        <ChartTooltipContent
-                          labelFormatter={(_, payload) => {
-                            const item = payload?.[0]?.payload as
-                              | MonthlyProductProfitResponse["data"][number]
-                              | undefined;
-                            return item
-                              ? `Ngày ${item.day}/${String(month).padStart(2, "0")}/${year}`
-                              : "";
-                          }}
-                          formatter={(value) =>
-                            formatCompactNumber(Number(value))
-                          }
-                        />
-                      }
-                    />
-                    <Bar
-                      dataKey="profit"
-                      radius={[10, 10, 0, 0]}
-                      maxBarSize={20}
-                    >
-                      {chartData.map((item) => (
-                        <Cell
-                          key={`${item.day}-${item.date}`}
-                          fill={
-                            item.profit > 0
-                              ? "var(--color-green-2)"
-                              : item.profit < 0
-                                ? "var(--color-red-1)"
-                                : "var(--color-gray-8)"
-                          }
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ChartContainer>
+                  <StickyYAxisLabels
+                    axisWidth={axisWidth}
+                    domain={domain}
+                    ticks={ticks}
+                  />
+                </div>
+
+                <div className={`${CHART_MIN_WIDTH_CLASS} flex-1`}>
+                  <ChartContainer
+                    className={`${CHART_HEIGHT_CLASS} w-full`}
+                    config={chartConfig}
+                  >
+                    <BarChart data={chartData}>
+                      <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="day"
+                        tickFormatter={(value) => `${value}`}
+                        tick={{ fontSize: 10 }}
+                        tickLine={false}
+                        axisLine={false}
+                        interval={0}
+                      />
+                      <YAxis
+                        hide
+                        width={0}
+                        ticks={ticks}
+                        domain={domain}
+                        tickFormatter={formatCompactNumber}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            labelFormatter={(_, payload) => {
+                              const item = payload?.[0]?.payload as
+                                | MonthlyProductProfitResponse["data"][number]
+                                | undefined;
+                              return item
+                                ? `Ngày ${item.day}/${String(month).padStart(2, "0")}/${year}`
+                                : "";
+                            }}
+                            formatter={(value) =>
+                              formatCompactNumber(Number(value))
+                            }
+                          />
+                        }
+                      />
+                      <Bar
+                        dataKey="profit"
+                        radius={[10, 10, 0, 0]}
+                        maxBarSize={20}
+                      >
+                        {chartData.map((item) => (
+                          <Cell
+                            key={`${item.day}-${item.date}`}
+                            fill={
+                              item.profit > 0
+                                ? "var(--color-green-2)"
+                                : item.profit < 0
+                                  ? "var(--color-red-1)"
+                                  : "var(--color-gray-8)"
+                            }
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ChartContainer>
+                </div>
               </div>
             </div>
           </>
