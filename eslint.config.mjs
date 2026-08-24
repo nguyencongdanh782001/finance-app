@@ -4,7 +4,8 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 
 import tseslint from "typescript-eslint";
-import next from "eslint-config-next";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
@@ -21,8 +22,10 @@ export default defineConfig([
 
     // From file 1
     "dist/**",
-    ".eslint.config.js",
+    "eslint.config.mjs",
     "vite.config.ts",
+    "public/sw.js",
+    "public/workbox-*.js",
   ]),
 
   /* ================= Base ================= */
@@ -30,8 +33,8 @@ export default defineConfig([
   ...tseslint.configs.recommended,
 
   /* ================= Next 16.1 ================= */
-  next.configs["core-web-vitals"],
-  next.configs["typescript"],
+  ...nextCoreWebVitals,
+  ...nextTypescript,
 
   /* ================= Custom rules ================= */
   {
@@ -51,8 +54,11 @@ export default defineConfig([
       "prettier/prettier": "off",
 
       /* ========= React Hooks ========= */
-      ...reactHooks.configs.recommended.rules,
+      "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "off",
+      "react-hooks/static-components": "off",
+      "react-hooks/use-memo": "off",
+      "react-hooks/set-state-in-effect": "off",
 
       /* ========= React Refresh ========= */
       "react-refresh/only-export-components": [

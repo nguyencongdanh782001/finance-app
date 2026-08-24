@@ -25,7 +25,7 @@ export async function GET(
   let daily:
     | Awaited<ReturnType<typeof prisma.dailyFinance.findUnique>>
     | null = null;
-  let soldProducts: {
+  const soldProducts: {
     productId: number;
     productTitle: string;
     productImageUrl: string;

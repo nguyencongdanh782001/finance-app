@@ -14,7 +14,7 @@ const ListExpense = (props: ListExpenseProps) => {
 
   const groupExpensesByDate = useMemo(() => {
     if (!data || data.length < 1) return [];
-    const map = new Map<string, any[]>();
+    const map = new Map<string, Expense[]>();
 
     data.forEach((item) => {
       const date = item.createdAt.slice(0, 10); // YYYY-MM-DD
@@ -23,7 +23,11 @@ const ListExpense = (props: ListExpenseProps) => {
         map.set(date, []);
       }
 
-      map.get(date)!.push(item);
+      const expenses = map.get(date);
+
+      if (expenses) {
+        expenses.push(item);
+      }
     });
 
     return Array.from(map.entries()).map(([date, data]) => ({
@@ -36,7 +40,7 @@ const ListExpense = (props: ListExpenseProps) => {
     <div className="flex flex-col gap-4 flex-1">
       {groupExpensesByDate.length > 0 ? (
         groupExpensesByDate?.map((item) => (
-          <div className="flex flex-col gap-4">
+          <div key={item.date} className="flex flex-col gap-4">
             <p className="text-sm text-blue-6 font-medium bg-white px-5 py-2.5 rounded-sm shadow-sm">
               {item.date}
             </p>
