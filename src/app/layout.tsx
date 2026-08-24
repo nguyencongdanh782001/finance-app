@@ -16,9 +16,13 @@ const manrope = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Thuy Vui Store",
+  title: "Quỳnh Nhi Store",
   manifest: "/manifest.json",
-  description: "Shop quần áo của vợ",
+  description: "Shop quần áo Quỳnh Nhi Store",
+  icons: {
+    icon: "/icons/quynh-nhi-store-icon.svg",
+    apple: "/icons/quynh-nhi-store-icon.svg",
+  },
 };
 
 export default function RootLayout({

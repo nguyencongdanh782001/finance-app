@@ -85,7 +85,7 @@ const DailyDetail = () => {
     }
 
     setIsLoading(true);
-    router.push(`/daily-detail/${targetId}`);
+    router.push(`/admin/daily-detail/${targetId}`);
   };
 
   return (

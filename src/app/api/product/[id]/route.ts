@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { deleteImageFromCloudinary } from "@/lib/cloudinary-upload";
+import { deleteProductImageFromCloudinary } from "@/lib/cloudinary-upload";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -47,10 +47,10 @@ export async function PUT(
     return NextResponse.json({ message: "Product not found" }, { status: 404 });
   }
 
-  // nếu có ảnh mới → xoá ảnh cũ
-  if (body.imagePublicId && product.imagePublicId) {
-    await deleteImageFromCloudinary(product.imagePublicId);
-  }
+  const shouldDeletePreviousImage =
+    Boolean(body.imagePublicId) &&
+    Boolean(product.imagePublicId) &&
+    body.imagePublicId !== product.imagePublicId;
 
   await prisma.product.update({
     where: { id },
@@ -64,6 +64,18 @@ export async function PUT(
       quantity: body.quantity,
     },
   });
+
+  if (shouldDeletePreviousImage) {
+    try {
+      await deleteProductImageFromCloudinary(product.imagePublicId);
+    } catch (error) {
+      console.error("Delete previous Cloudinary product image failed", {
+        productId: id,
+        publicId: product.imagePublicId,
+        error,
+      });
+    }
+  }
 
   return NextResponse.json({ success: true });
 }
@@ -100,13 +112,21 @@ export async function DELETE(
     );
   }
 
-  if (product.imagePublicId) {
-    await deleteImageFromCloudinary(product.imagePublicId);
-  }
-
   await prisma.product.delete({
     where: { id },
   });
+
+  if (product.imagePublicId) {
+    try {
+      await deleteProductImageFromCloudinary(product.imagePublicId);
+    } catch (error) {
+      console.error("Delete Cloudinary product image failed", {
+        productId: id,
+        publicId: product.imagePublicId,
+        error,
+      });
+    }
+  }
 
   return NextResponse.json({ success: true });
 }

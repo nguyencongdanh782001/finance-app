@@ -33,7 +33,7 @@ export default function CategoryItem({
     <div className="group rounded-4xl border border-[#edf2f7] bg-white p-4 shadow-[0_12px_30px_rgba(148,163,184,0.08)]">
       <div className="flex items-center gap-4">
         <Link
-          href={`/products?categoryId=${category.id}`}
+          href={`/admin/products?categoryId=${category.id}`}
           className="flex min-w-0 flex-1 items-center gap-4"
         >
           <div

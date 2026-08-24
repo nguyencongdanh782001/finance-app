@@ -8,17 +8,17 @@ const menu = [
   {
     icon: Home,
     title: "trang chủ",
-    link: "/",
+    link: "/admin",
   },
   {
     icon: LayoutGrid,
     title: "danh mục",
-    link: "/categories",
+    link: "/admin/categories",
   },
   {
     icon: Package,
     title: "sản phẩm",
-    link: "/products",
+    link: "/admin/products",
   },
 ];
 
@@ -30,7 +30,9 @@ const Navbar = () => {
       <div className="flex w-full justify-between">
         {menu.map((item, index) => {
           const Icon = item.icon;
-          const isActive = pathname === item.link;
+          const isActive =
+            pathname === item.link ||
+            (item.link !== "/admin" && pathname.startsWith(`${item.link}/`));
 
           return (
             <Link

@@ -113,7 +113,7 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
               onClick={() => {
                 // if (isFutureDay) return;
                 if (cell.data?.id) {
-                  router.push(`/daily-detail/${cell.data.id}`);
+                  router.push(`/admin/daily-detail/${cell.data.id}`);
                 }
               }}
               className={
