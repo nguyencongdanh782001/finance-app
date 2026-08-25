@@ -17,7 +17,9 @@ const ChartLoading = () => (
       <Skeleton className="h-5 w-40 rounded-2" />
       <Skeleton className="h-8 w-28 rounded-full" />
     </div>
-    <Skeleton className="h-72 w-full rounded-[32px] sm:rounded-[40px]" />
+    <div className="rounded-[32px] bg-white p-4 shadow-sm sm:rounded-[40px] sm:p-5">
+      <Skeleton className="h-72 w-full rounded-[28px] sm:rounded-[32px]" />
+    </div>
   </div>
 );
 

@@ -65,7 +65,9 @@ function StickyYAxisLabels({
       className={`relative ${CHART_HEIGHT_CLASS} bg-white text-[10px] text-slate-500`}
       style={{ width: axisWidth }}
     >
-      {ticks.map((tick) => {
+      {ticks
+        .filter((tick) => tick !== 0)
+        .map((tick) => {
         const ratio = range === 0 ? 1 : (tick - min) / range;
         const top = CHART_PLOT_TOP + (1 - ratio) * plotHeight;
 
