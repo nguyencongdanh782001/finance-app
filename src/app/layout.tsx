@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { AuthProvider } from "@/components/Auth/AuthProvider";
 import "./globals.css";
 import type { Viewport } from "next";
 
@@ -15,13 +16,19 @@ const manrope = Inter({
   subsets: ["latin", "vietnamese"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Quỳnh Nhi Store",
   manifest: "/manifest.json",
   description: "Shop quần áo Quỳnh Nhi Store",
   icons: {
-    icon: "/icons/quynh-nhi-store-icon.svg",
-    apple: "/icons/quynh-nhi-store-icon.svg",
+    icon: "/favicon.svg",
+    apple: "/logo-quynh-nhi-store-mark.svg",
+  },
+  other: {
+    "zalo-platform-site-verification": "UVta4g_HCoXhyR0AZu4v30c2upNbz3biD3On",
   },
 };
 
@@ -33,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${manrope.variable} font-manrope antialiased`}>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

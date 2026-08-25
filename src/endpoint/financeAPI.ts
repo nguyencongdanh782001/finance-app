@@ -22,6 +22,13 @@ import {
   ProductListResponse,
   ProductPayload,
 } from "@/interface/product";
+import {
+  AuthPurpose,
+  LoginResponse,
+  RegisterResponse,
+  VerifyOtpResponse,
+} from "@/interface/auth";
+import { authTokenStorage } from "./appAxios";
 
 export const financeAPI = {
   getYearProfit: (year: number): Promise<IAPIResponse<YearProfitResponse>> => {
@@ -141,6 +148,70 @@ export const financeAPI = {
   },
   deleteProduct: (id: number): Promise<IAPIResponse<{ success: boolean }>> => {
     return appAxios.delete(API_ROUTES.deleteProduct(id));
+  },
+  register: (payload: {
+    phone: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    birthday: string;
+    gender: "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
+  }): Promise<IAPIResponse<RegisterResponse>> => {
+    return appAxios.post(API_ROUTES.authRegister, payload, {
+      headers: { "Un-Authorized": true },
+    });
+  },
+  login: async (payload: {
+    phone: string;
+    password: string;
+  }): Promise<IAPIResponse<LoginResponse>> => {
+    const response = (await appAxios.post(API_ROUTES.authLogin, payload, {
+      headers: { "Un-Authorized": true },
+    })) as unknown as IAPIResponse<LoginResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  verifyOtp: async (payload: {
+    phone: string;
+    code: string;
+    purpose?: AuthPurpose;
+  }): Promise<IAPIResponse<VerifyOtpResponse>> => {
+    const response = (await appAxios.post(API_ROUTES.authVerify, payload, {
+      headers: { "Un-Authorized": true },
+    })) as unknown as IAPIResponse<VerifyOtpResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  refreshSession: async (): Promise<IAPIResponse<VerifyOtpResponse>> => {
+    const response = (await appAxios.post(
+      API_ROUTES.authRefresh,
+      {},
+      {
+        headers: { "Un-Authorized": true },
+      },
+    )) as unknown as IAPIResponse<VerifyOtpResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  logout: async (): Promise<IAPIResponse<{ success: boolean }>> => {
+    const response = (await appAxios.post(
+      API_ROUTES.authLogout,
+    )) as unknown as IAPIResponse<{ success: boolean }>;
+    authTokenStorage.clearAccessToken();
+
+    return response;
   },
 
   // UPLOAD IMAGE
