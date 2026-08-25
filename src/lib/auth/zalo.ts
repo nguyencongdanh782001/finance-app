@@ -33,7 +33,10 @@ const normalizeVietnamPhone = (phone: string) => {
   return digits;
 };
 
-const shouldRefreshToken = (response: Response, data: ZaloApiResponse | null) => {
+const shouldRefreshToken = (
+  response: Response,
+  data: ZaloApiResponse | null,
+) => {
   return response.status === 401 || data?.error === -216;
 };
 
@@ -61,9 +64,9 @@ async function refreshZaloAccessToken() {
       refresh_token: refreshToken,
     }),
   });
-  const data = (await response.json().catch(() => null)) as
-    | ZaloTokenResponse
-    | null;
+  const data = (await response
+    .json()
+    .catch(() => null)) as ZaloTokenResponse | null;
 
   if (
     !response.ok ||
@@ -110,9 +113,9 @@ async function requestZaloOtp({
       tracking_id: `otp_${Date.now()}`,
     }),
   });
-  const data = (await response.json().catch(() => null)) as
-    | ZaloApiResponse
-    | null;
+  const data = (await response
+    .json()
+    .catch(() => null)) as ZaloApiResponse | null;
 
   return { response, data };
 }
@@ -149,7 +152,7 @@ export async function sendZaloOtp(
       templateId,
       templateData,
     });
-
+    console.log(data);
     if (shouldRefreshToken(response, data)) {
       const refreshedAccessToken = await refreshZaloAccessToken();
 

@@ -8,23 +8,23 @@ if [ -f ".env" ]; then
   set +a
 fi
 
-PROD_URL="${PROD_DATABASE_URL:-${PRODUCTION_DATABASE_URL:-}}"
-DEV_URL="${DEV_DATABASE_URL_PRISMA_DATABASE_URL:-${DEV_DATABASE_URL_POSTGRES_URL:-${DATABASE_URL:-}}}"
+PRO_URL="${PRO_DATABASE_URL:-}"
+DEV_URL="${DEV_DATABASE_URL:-}"
 CONFIRM_VALUE="${CONFIRM_DEV_DB_RESET:-}"
 
-if [ -z "$PROD_URL" ]; then
-  echo "Missing PROD_DATABASE_URL or PRODUCTION_DATABASE_URL."
+if [ -z "$PRO_URL" ]; then
+  echo "Missing PRO_DATABASE_URL."
   echo "Add it to your local .env before cloning production data."
   exit 1
 fi
 
 if [ -z "$DEV_URL" ]; then
   echo "Missing dev database URL."
-  echo "Set DEV_DATABASE_URL_PRISMA_DATABASE_URL or DEV_DATABASE_URL_POSTGRES_URL."
+  echo "Set DEV_DATABASE_URL."
   exit 1
 fi
 
-if [ "$PROD_URL" = "$DEV_URL" ]; then
+if [ "$PRO_URL" = "$DEV_URL" ]; then
   echo "Refusing to run because production and development database URLs are identical."
   exit 1
 fi
@@ -53,7 +53,7 @@ DEV_BACKUP="$BACKUP_DIR/dev-before-clone-$TIMESTAMP.dump"
 mkdir -p "$BACKUP_DIR"
 
 echo "Creating production dump..."
-pg_dump "$PROD_URL" -Fc --no-owner --no-acl -f "$PROD_DUMP"
+pg_dump "$PRO_URL" -Fc --no-owner --no-acl -f "$PROD_DUMP"
 
 echo "Creating development backup before overwrite..."
 pg_dump "$DEV_URL" -Fc --no-owner --no-acl -f "$DEV_BACKUP"
@@ -63,7 +63,6 @@ pg_restore --clean --if-exists --no-owner --no-acl --dbname "$DEV_URL" "$PROD_DU
 
 echo "Checking development migration status..."
 DATABASE_URL="$DEV_URL" \
-DEV_DATABASE_URL_PRISMA_DATABASE_URL="$DEV_URL" \
 npx prisma migrate status --schema prisma/schema.prisma
 
 echo "Done."
