@@ -107,6 +107,31 @@ const modeContent = {
   },
 };
 
+const getOtpDeliveryMessage = (
+  zalo:
+    | {
+        sent: boolean;
+        skipped: boolean;
+        error?: string;
+      }
+    | undefined,
+  fallback: string,
+) => {
+  if (zalo?.sent) {
+    return fallback;
+  }
+
+  if (zalo?.skipped) {
+    return "Mã OTP đã được tạo cho môi trường phát triển.";
+  }
+
+  if (zalo?.error) {
+    return `Zalo chưa gửi được OTP: ${zalo.error}`;
+  }
+
+  return fallback;
+};
+
 const formatBirthdayLabel = (value: string) => {
   if (!value) {
     return "Chọn ngày sinh";
@@ -649,9 +674,12 @@ export default function AuthPageClient({
         setDevOtp(verificationPayload?.devOtp || "");
         setStep("otp");
         setMessage(
-          verificationPayload?.zalo?.skipped
-            ? "Tài khoản chưa xác thực. Mã OTP đã được tạo cho môi trường phát triển."
-            : "Tài khoản chưa xác thực. Mã OTP đã được gửi qua Zalo.",
+          verificationPayload?.zalo?.sent
+            ? "Tài khoản chưa xác thực. Mã OTP đã được gửi qua Zalo."
+            : `Tài khoản chưa xác thực. ${getOtpDeliveryMessage(
+                verificationPayload?.zalo,
+                "Mã OTP đã được gửi qua Zalo.",
+              )}`,
         );
         return;
       }
@@ -713,9 +741,7 @@ export default function AuthPageClient({
     setDevOtp(response.data?.devOtp || "");
     setStep("otp");
     setMessage(
-      response.data?.zalo.skipped
-        ? "Mã OTP đã được tạo cho môi trường phát triển."
-        : "Mã OTP đã được gửi qua Zalo.",
+      getOtpDeliveryMessage(response.data?.zalo, "Mã OTP đã được gửi qua Zalo."),
     );
   };
 
@@ -740,7 +766,13 @@ export default function AuthPageClient({
 
     setIsSubmitting(false);
 
-    if (response.code !== RESPONSE_CODES.success || !response.data?.user) {
+    const verifiedSession = response.data;
+
+    if (
+      response.code !== RESPONSE_CODES.success ||
+      !verifiedSession?.accessToken ||
+      !verifiedSession.user
+    ) {
       setError(
         response.data && "message" in response.data
           ? String(response.data.message)
@@ -750,10 +782,10 @@ export default function AuthPageClient({
     }
 
     setAuthenticatedSession({
-      accessToken: response.data.accessToken,
-      user: response.data.user,
+      accessToken: verifiedSession.accessToken,
+      user: verifiedSession.user,
     });
-    router.replace(getRouteAfterAuth(response.data.user, redirectTo));
+    router.replace(getRouteAfterAuth(verifiedSession.user, redirectTo));
   };
 
   if (isInitializing || (isAuthenticated && shouldRedirectAuthenticatedUser)) {

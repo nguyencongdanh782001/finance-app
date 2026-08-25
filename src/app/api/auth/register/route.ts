@@ -176,7 +176,7 @@ export async function POST(req: Request) {
     zalo,
   };
 
-  if (zalo.skipped && isDevOtpEnabled()) {
+  if (!zalo.sent && isDevOtpEnabled()) {
     payload.devOtp = code;
   }
 
