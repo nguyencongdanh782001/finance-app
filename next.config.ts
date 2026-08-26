@@ -1,4 +1,3 @@
-import type { Configuration } from "webpack";
 import withPWA from "next-pwa";
 
 /** @type {import('next').NextConfig} */
@@ -6,9 +5,6 @@ const nextConfig = {
   turbopack: {},
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
-  },
-  webpack: (config: Configuration) => {
-    return config;
   },
 };
 

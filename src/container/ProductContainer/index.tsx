@@ -1,7 +1,5 @@
 "use client";
 
-import ProductDeleteDialog from "@/components/Product/ProductDeleteDialog";
-import ProductFormDialog from "@/components/Product/ProductFormDialog";
 import ProductList from "@/components/Product/ProductList";
 import Navbar from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
@@ -25,6 +23,21 @@ import {
 import { ArrowUpDown, Check, ChevronDown, Plus, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const ProductFormDialog = dynamic(
+  () => import("@/components/Product/ProductFormDialog"),
+  {
+    ssr: false,
+  },
+);
+
+const ProductDeleteDialog = dynamic(
+  () => import("@/components/Product/ProductDeleteDialog"),
+  {
+    ssr: false,
+  },
+);
 
 const PRODUCT_SORT_OPTIONS = [
   { value: "createdAt-desc", label: "Mới nhất" },

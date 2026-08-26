@@ -31,9 +31,11 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Clock3,
   Loader2,
   LockKeyhole,
   Mail,
+  RotateCw,
   ShieldCheck,
   Sparkles,
   UserRound,
@@ -65,6 +67,7 @@ type FieldName =
   | "code";
 type FieldErrors = Partial<Record<FieldName, string>>;
 const OTP_LENGTH = 6;
+const OTP_TTL_SECONDS = 5 * 60;
 const createEmptyOtp = () => Array.from({ length: OTP_LENGTH }, () => "");
 const GENDER_OPTIONS: Array<{ value: UserGender; label: string }> = [
   { value: "FEMALE", label: "Nữ" },
@@ -127,6 +130,13 @@ const normalizeEmailInput = (value: string) => value.trim().toLowerCase();
 
 const isValidEmailInput = (value: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+};
+
+const formatOtpTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 };
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -497,6 +507,7 @@ export default function AuthPageClient({
   const [isGoogleReady, setIsGoogleReady] = useState(false);
   const [isGoogleButtonRendered, setIsGoogleButtonRendered] = useState(false);
   const [isGoogleScriptFailed, setIsGoogleScriptFailed] = useState(false);
+  const [otpSecondsLeft, setOtpSecondsLeft] = useState(0);
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
 
@@ -532,6 +543,20 @@ export default function AuthPageClient({
     shouldRedirectAuthenticatedUser,
     user,
   ]);
+
+  useEffect(() => {
+    if (step !== "otp" || otpSecondsLeft <= 0) {
+      return;
+    }
+
+    const timerId = window.setInterval(() => {
+      setOtpSecondsLeft((current) => Math.max(current - 1, 0));
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [otpSecondsLeft, step]);
 
   const handleGoogleCredential = useCallback(
     async (credential: string) => {
@@ -717,6 +742,7 @@ export default function AuthPageClient({
     setMessage("");
     setError("");
     setFieldErrors({});
+    setOtpSecondsLeft(0);
   };
 
   const focusOtpInput = (index: number) => {
@@ -779,8 +805,7 @@ export default function AuthPageClient({
     handleOtpChange(index, digits);
   };
 
-  const handleRequestOtp = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const requestOtp = async () => {
     const cleanEmail = normalizeEmailInput(email);
 
     if (!validateCredentials()) {
@@ -816,6 +841,7 @@ export default function AuthPageClient({
         setOtpDigits(createEmptyOtp());
         setDevOtp(verificationPayload?.devOtp || "");
         setStep("otp");
+        setOtpSecondsLeft(OTP_TTL_SECONDS);
         setMessage(
           verificationPayload?.email?.sent
             ? "Mã OTP đã được gửi qua email."
@@ -882,12 +908,18 @@ export default function AuthPageClient({
     setOtpDigits(createEmptyOtp());
     setDevOtp(response.data?.devOtp || "");
     setStep("otp");
+    setOtpSecondsLeft(OTP_TTL_SECONDS);
     setMessage(
       getEmailDeliveryMessage(
         response.data?.email,
         "Mã OTP đã được gửi qua email.",
       ),
     );
+  };
+
+  const handleRequestOtp = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await requestOtp();
   };
 
   const handleVerifyOtp = async (event: FormEvent<HTMLFormElement>) => {
@@ -960,7 +992,7 @@ export default function AuthPageClient({
             alt="Quỳnh Nhi Store"
             width={700}
             height={260}
-            priority
+            sizes="(min-width: 1024px) 50vw"
             className="absolute left-1/2 top-[42%] h-auto w-[68%] max-w-2xl -translate-x-1/2 -translate-y-1/2 opacity-95 drop-shadow-[0_24px_60px_rgba(122,41,68,0.16)]"
           />
           <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-white via-white/88 to-transparent p-12">
@@ -1000,6 +1032,7 @@ export default function AuthPageClient({
                     width={76}
                     height={76}
                     priority
+                    sizes="76px"
                     className="h-[125%] w-[125%] max-w-none object-contain"
                   />
                 </span>
@@ -1310,6 +1343,31 @@ export default function AuthPageClient({
                     ) : null}
                   </div>
 
+                  <div className="flex flex-col gap-3 rounded-lg border border-[#E9E2E5] bg-[#FFFCFA] p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="flex items-center gap-2 text-sm font-bold text-[#6F686B]">
+                      <Clock3 className="size-4 text-[#D96C8A]" />
+                      {otpSecondsLeft > 0
+                        ? `Mã hết hạn sau ${formatOtpTime(otpSecondsLeft)}`
+                        : "Mã OTP đã hết hạn"}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="linkBrand"
+                      onClick={() => {
+                        void requestOtp();
+                      }}
+                      disabled={isSubmitting || otpSecondsLeft > 0}
+                      className="justify-start text-sm disabled:cursor-not-allowed disabled:opacity-50 sm:justify-center"
+                    >
+                      {isSubmitting ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <RotateCw className="size-4" />
+                      )}
+                      Gửi lại mã
+                    </Button>
+                  </div>
+
                   <label className="block">
                     <span className="mb-2 flex items-center gap-2 text-sm font-bold text-[#1C1A1B]">
                       <LockKeyhole className="size-4 text-[#D96C8A]" />
@@ -1368,6 +1426,7 @@ export default function AuthPageClient({
                       setStep("phone");
                       setOtpDigits(createEmptyOtp());
                       setOtpPurpose("REGISTER");
+                      setOtpSecondsLeft(0);
                       setError("");
                       setMessage("");
                     }}

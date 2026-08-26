@@ -6,34 +6,67 @@ import { financeAPI } from "@/endpoint/financeAPI";
 import {
   ArrowLeft,
   ArrowRight,
+  Clock3,
   Loader2,
   LockKeyhole,
   Mail,
+  RotateCw,
   ShieldCheck,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import {
+  ClipboardEvent,
+  FormEvent,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 const OTP_LENGTH = 6;
+const OTP_TTL_SECONDS = 5 * 60;
+const createEmptyOtp = () => Array.from({ length: OTP_LENGTH }, () => "");
 const normalizeEmailInput = (value: string) => value.trim().toLowerCase();
 const isValidEmailInput = (value: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 };
 
+const formatOtpTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+};
+
 export default function ForgotPasswordClient() {
   const [step, setStep] = useState<"email" | "reset">("email");
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
+  const [otpDigits, setOtpDigits] = useState<string[]>(createEmptyOtp);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [devOtp, setDevOtp] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [otpSecondsLeft, setOtpSecondsLeft] = useState(0);
+  const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
-  const handleRequestReset = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  useEffect(() => {
+    if (step !== "reset" || otpSecondsLeft <= 0) {
+      return;
+    }
+
+    const timerId = window.setInterval(() => {
+      setOtpSecondsLeft((current) => Math.max(current - 1, 0));
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [otpSecondsLeft, step]);
+
+  const requestResetOtp = async () => {
     const cleanEmail = normalizeEmailInput(email);
 
     if (!cleanEmail || !isValidEmailInput(cleanEmail)) {
@@ -61,13 +94,21 @@ export default function ForgotPasswordClient() {
     setEmail(cleanEmail);
     setDevOtp(response.data?.devOtp || "");
     setMessage("Mã OTP đã được gửi qua email nếu tài khoản tồn tại.");
+    setOtpDigits(createEmptyOtp());
+    setOtpSecondsLeft(OTP_TTL_SECONDS);
     setStep("reset");
+  };
+
+  const handleRequestReset = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await requestResetOtp();
   };
 
   const handleResetPassword = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const code = otpDigits.join("");
 
-    if (code.replace(/\D/g, "").length !== OTP_LENGTH) {
+    if (code.length !== OTP_LENGTH) {
       setError("Mã OTP phải gồm 6 số.");
       return;
     }
@@ -104,6 +145,68 @@ export default function ForgotPasswordClient() {
 
     setMessage("Đổi mật khẩu thành công. Bạn có thể đăng nhập lại.");
     setDevOtp("");
+    setOtpDigits(createEmptyOtp());
+    setOtpSecondsLeft(0);
+  };
+
+  const focusOtpInput = (index: number) => {
+    otpInputRefs.current[index]?.focus();
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    const digits = value.replace(/\D/g, "");
+
+    setError("");
+
+    if (!digits) {
+      setOtpDigits((prev) => {
+        const next = [...prev];
+        next[index] = "";
+
+        return next;
+      });
+      return;
+    }
+
+    setOtpDigits((prev) => {
+      const next = [...prev];
+
+      digits
+        .slice(0, OTP_LENGTH - index)
+        .split("")
+        .forEach((digit, offset) => {
+          next[index + offset] = digit;
+        });
+
+      return next;
+    });
+
+    focusOtpInput(Math.min(index + digits.length, OTP_LENGTH - 1));
+  };
+
+  const handleOtpKeyDown = (
+    index: number,
+    event: KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key !== "Backspace" || otpDigits[index]) {
+      return;
+    }
+
+    focusOtpInput(Math.max(index - 1, 0));
+  };
+
+  const handleOtpPaste = (
+    index: number,
+    event: ClipboardEvent<HTMLInputElement>,
+  ) => {
+    const digits = event.clipboardData.getData("text").replace(/\D/g, "");
+
+    if (!digits) {
+      return;
+    }
+
+    event.preventDefault();
+    handleOtpChange(index, digits);
   };
 
   return (
@@ -189,22 +292,64 @@ export default function ForgotPasswordClient() {
                 </div>
               ) : null}
 
+              <div className="flex flex-col gap-3 rounded-lg border border-[#E9E2E5] bg-[#FFFCFA] p-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="flex items-center gap-2 text-sm font-bold text-[#6F686B]">
+                  <Clock3 className="size-4 text-[#D96C8A]" />
+                  {otpSecondsLeft > 0
+                    ? `Mã hết hạn sau ${formatOtpTime(otpSecondsLeft)}`
+                    : "Mã OTP đã hết hạn"}
+                </p>
+                <Button
+                  type="button"
+                  variant="linkBrand"
+                  onClick={() => {
+                    void requestResetOtp();
+                  }}
+                  disabled={isSubmitting || otpSecondsLeft > 0}
+                  className="justify-start text-sm disabled:cursor-not-allowed disabled:opacity-50 sm:justify-center"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <RotateCw className="size-4" />
+                  )}
+                  Gửi lại mã
+                </Button>
+              </div>
+
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-sm font-bold">
                   <ShieldCheck className="size-4 text-[#D96C8A]" />
                   Mã OTP
                 </span>
                 <input
-                  value={code}
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  maxLength={OTP_LENGTH}
-                  onChange={(event) =>
-                    setCode(event.target.value.replace(/\D/g, ""))
-                  }
-                  placeholder="Nhập 6 số"
-                  className="h-12 w-full rounded-md border border-[#E9E2E5] bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12"
+                  className="sr-only"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  value={otpDigits.join("")}
+                  readOnly
                 />
+                <div className="grid grid-cols-6 gap-2">
+                  {otpDigits.map((digit, index) => (
+                    <input
+                      key={index}
+                      ref={(element) => {
+                        otpInputRefs.current[index] = element;
+                      }}
+                      value={digit}
+                      inputMode="numeric"
+                      autoComplete={index === 0 ? "one-time-code" : "off"}
+                      maxLength={1}
+                      aria-label={`Số OTP thứ ${index + 1}`}
+                      onChange={(event) =>
+                        handleOtpChange(index, event.target.value)
+                      }
+                      onKeyDown={(event) => handleOtpKeyDown(index, event)}
+                      onPaste={(event) => handleOtpPaste(index, event)}
+                      className="aspect-square min-h-11 rounded-md border border-[#E9E2E5] bg-[#FFFCFA] text-center text-xl font-extrabold text-[#1C1A1B] outline-none transition focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 sm:min-h-12"
+                    />
+                  ))}
+                </div>
               </label>
 
               <label className="block">

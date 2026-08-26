@@ -1,7 +1,5 @@
 "use client";
 
-import CategoryDeleteDialog from "@/components/Category/CategoryDeleteDialog";
-import CategoryFormDialog from "@/components/Category/CategoryFormDialog";
 import CategoryList from "@/components/Category/CategoryList";
 import Navbar from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
@@ -24,6 +22,21 @@ import {
 import { ArrowUpDown, Check, ChevronDown, Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const CategoryFormDialog = dynamic(
+  () => import("@/components/Category/CategoryFormDialog"),
+  {
+    ssr: false,
+  },
+);
+
+const CategoryDeleteDialog = dynamic(
+  () => import("@/components/Category/CategoryDeleteDialog"),
+  {
+    ssr: false,
+  },
+);
 
 const DEFAULT_FORM_VALUES: CategoryFormValues = {
   name: "",
