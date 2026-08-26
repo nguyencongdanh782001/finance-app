@@ -496,6 +496,7 @@ export default function AuthPageClient({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleReady, setIsGoogleReady] = useState(false);
   const [isGoogleButtonRendered, setIsGoogleButtonRendered] = useState(false);
+  const [isGoogleScriptFailed, setIsGoogleScriptFailed] = useState(false);
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
 
@@ -574,6 +575,9 @@ export default function AuthPageClient({
         return;
       }
 
+      setIsGoogleScriptFailed(false);
+      setIsGoogleReady(false);
+      setIsGoogleButtonRendered(false);
       googleButtonRef.current.innerHTML = "";
       window.google.accounts.id.initialize({
         client_id: googleClientId,
@@ -611,12 +615,13 @@ export default function AuthPageClient({
     script.onerror = () => {
       setIsGoogleReady(false);
       setIsGoogleButtonRendered(false);
+      setIsGoogleScriptFailed(true);
     };
     document.head.appendChild(script);
   }, [handleGoogleCredential, mode]);
 
   const handleGoogleFallbackClick = () => {
-    if (!window.google || !isGoogleReady) {
+    if (!window.google || !isGoogleReady || !isGoogleButtonRendered) {
       setError("Google Login chưa sẵn sàng. Vui lòng thử lại sau vài giây.");
       return;
     }
@@ -630,6 +635,14 @@ export default function AuthPageClient({
       }
     });
   };
+  const isGoogleLoading = !isGoogleButtonRendered && !isGoogleScriptFailed;
+  const googleButtonLabel = isGoogleScriptFailed
+    ? "Google chưa khả dụng"
+    : isGoogleLoading
+      ? "Đang tải Google..."
+      : mode === "login"
+        ? "Đăng nhập bằng Google"
+        : "Đăng ký bằng Google";
 
   const validateCredentials = () => {
     const cleanEmail = normalizeEmailInput(email);
@@ -1252,7 +1265,11 @@ export default function AuthPageClient({
                           variant="google"
                           size="google"
                           onClick={handleGoogleFallbackClick}
-                          disabled={isSubmitting}
+                          disabled={
+                            isSubmitting ||
+                            isGoogleLoading ||
+                            isGoogleScriptFailed
+                          }
                           aria-label={
                             mode === "login"
                               ? "Đăng nhập bằng Google"
@@ -1260,12 +1277,12 @@ export default function AuthPageClient({
                           }
                           className="group relative overflow-hidden"
                         >
-                          <GoogleIcon className="relative size-5" />
-                          <span className="relative">
-                            {mode === "login"
-                              ? "Đăng nhập bằng Google"
-                              : "Đăng ký bằng Google"}
-                          </span>
+                          {isGoogleLoading ? (
+                            <Loader2 className="relative size-5 animate-spin text-[#7A2944]" />
+                          ) : (
+                            <GoogleIcon className="relative size-5" />
+                          )}
+                          <span className="relative">{googleButtonLabel}</span>
                         </Button>
                         <div
                           ref={googleButtonRef}
