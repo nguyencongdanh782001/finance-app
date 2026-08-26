@@ -62,25 +62,25 @@ function StickyYAxisLabels({
 
   return (
     <div
-      className={`relative ${CHART_HEIGHT_CLASS} bg-white text-[10px] text-slate-500`}
+      className={`relative ${CHART_HEIGHT_CLASS} bg-white text-10px text-slate-500`}
       style={{ width: axisWidth }}
     >
       {ticks
         .filter((tick) => tick !== 0)
         .map((tick) => {
-        const ratio = range === 0 ? 1 : (tick - min) / range;
-        const top = CHART_PLOT_TOP + (1 - ratio) * plotHeight;
+          const ratio = range === 0 ? 1 : (tick - min) / range;
+          const top = CHART_PLOT_TOP + (1 - ratio) * plotHeight;
 
-        return (
-          <span
-            key={tick}
-            className="absolute right-2 whitespace-nowrap leading-none"
-            style={{ top, transform: "translateY(-50%)" }}
-          >
-            {formatCompactNumber(tick)}
-          </span>
-        );
-      })}
+          return (
+            <span
+              key={tick}
+              className="absolute right-2 whitespace-nowrap leading-none"
+              style={{ top, transform: "translateY(-50%)" }}
+            >
+              {formatCompactNumber(tick)}
+            </span>
+          );
+        })}
     </div>
   );
 }

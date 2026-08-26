@@ -25,6 +25,11 @@ enum UserStatus {
   BLOCKED
 }
 
+enum AuthProvider {
+  WEB
+  GOOGLE
+}
+
 enum OtpPurpose {
   LOGIN
   REGISTER
@@ -405,10 +410,13 @@ model DailySoldProduct {
 model User {
   id Int @id @default(autoincrement())
 
-  phone        String     @unique
+  phone        String?      @unique
+  email        String?      @unique
+  googleId     String?      @unique
   passwordHash String?
-  role         UserRole   @default(CUSTOMER)
-  status       UserStatus @default(ACTIVE)
+  authProvider AuthProvider @default(WEB)
+  role         UserRole     @default(CUSTOMER)
+  status       UserStatus   @default(ACTIVE)
 
   firstName    String?
   lastName     String?
@@ -421,6 +429,7 @@ model User {
   rewardPoints Int         @default(0)
 
   phoneVerifiedAt DateTime?
+  emailVerifiedAt DateTime?
   lastLoginAt     DateTime?
 
   membershipId Int?
@@ -428,6 +437,7 @@ model User {
 
   sessions               UserSession[]
   otps                   Otp[]
+  passwordResetTokens    PasswordResetToken[]
   addresses              UserAddress[]
   carts                  Cart[]
   wishlists              Wishlist[]
@@ -443,12 +453,34 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([phone])
+  @@index([email])
+  @@index([googleId])
+  @@index([authProvider])
   @@index([role])
   @@index([status])
   @@index([membershipId])
   @@index([totalOrders])
   @@index([rewardPoints])
   @@map("user")
+}
+
+model PasswordResetToken {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  consumedAt DateTime?
+  ipAddress  String?
+  userAgent  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_reset_token")
 }
 
 model UserSession {
@@ -507,7 +539,8 @@ model Otp {
   userId Int?
   user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  phone    String
+  phone    String?
+  email    String?
   codeHash String
   purpose  OtpPurpose
 
@@ -522,6 +555,7 @@ model Otp {
 
   @@index([userId])
   @@index([phone, purpose])
+  @@index([email, purpose])
   @@index([expiresAt])
   @@index([ipAddress])
   @@map("otp")

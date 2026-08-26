@@ -181,6 +181,12 @@
   html {
     @apply bg-gray-1;
   }
+
+  a,
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    @apply cursor-pointer;
+  }
 }
 
 body.scrolling--hidden::-webkit-scrollbar {

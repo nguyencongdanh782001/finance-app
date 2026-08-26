@@ -1,7 +1,5 @@
 const APP_API_URL = (path: string) => {
-  return process.env.NEXT_PUBLIC_NODE_ENV === "local"
-    ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/${path}`
-    : `/api/${path}`;
+  return `/api/${path}`;
 };
 
 export const API_ROUTES = {
@@ -39,4 +37,12 @@ export const API_ROUTES = {
   updateProduct: (id: number) => APP_API_URL(`product/${id}`),
   deleteProduct: (id: number) => APP_API_URL(`product/${id}`),
   uploadFileCloudinary: APP_API_URL("upload/cloudinary"),
+  authRegister: APP_API_URL("auth/register"),
+  authLogin: APP_API_URL("auth/login"),
+  authGoogleLogin: APP_API_URL("auth/google"),
+  authVerify: APP_API_URL("auth/verify"),
+  authForgotPassword: APP_API_URL("auth/forgot-password"),
+  authResetPassword: APP_API_URL("auth/reset-password"),
+  authRefresh: APP_API_URL("auth/refresh"),
+  authLogout: APP_API_URL("auth/logout"),
 };

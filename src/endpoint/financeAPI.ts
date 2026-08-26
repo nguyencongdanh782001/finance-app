@@ -22,6 +22,14 @@ import {
   ProductListResponse,
   ProductPayload,
 } from "@/interface/product";
+import {
+  AuthPurpose,
+  GoogleLoginResponse,
+  LoginResponse,
+  RegisterResponse,
+  VerifyOtpResponse,
+} from "@/interface/auth";
+import { authTokenStorage } from "./appAxios";
 
 export const financeAPI = {
   getYearProfit: (year: number): Promise<IAPIResponse<YearProfitResponse>> => {
@@ -141,6 +149,106 @@ export const financeAPI = {
   },
   deleteProduct: (id: number): Promise<IAPIResponse<{ success: boolean }>> => {
     return appAxios.delete(API_ROUTES.deleteProduct(id));
+  },
+  register: (payload: {
+    email: string;
+    phone?: string;
+    password: string;
+    displayName: string;
+    birthday: string;
+    gender: "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
+  }): Promise<IAPIResponse<RegisterResponse>> => {
+    return appAxios.post(API_ROUTES.authRegister, payload, {
+      headers: { "Un-Authorized": true },
+    });
+  },
+  login: async (payload: {
+    email: string;
+    password: string;
+  }): Promise<IAPIResponse<LoginResponse>> => {
+    const response = (await appAxios.post(API_ROUTES.authLogin, payload, {
+      headers: { "Un-Authorized": true },
+    })) as unknown as IAPIResponse<LoginResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  verifyOtp: async (payload: {
+    email: string;
+    code: string;
+    purpose?: AuthPurpose;
+  }): Promise<IAPIResponse<VerifyOtpResponse>> => {
+    const response = (await appAxios.post(API_ROUTES.authVerify, payload, {
+      headers: { "Un-Authorized": true },
+    })) as unknown as IAPIResponse<VerifyOtpResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  googleLogin: async (payload: {
+    credential: string;
+  }): Promise<IAPIResponse<GoogleLoginResponse>> => {
+    const response = (await appAxios.post(API_ROUTES.authGoogleLogin, payload, {
+      headers: { "Un-Authorized": true },
+    })) as unknown as IAPIResponse<GoogleLoginResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  forgotPassword: (payload: {
+    email: string;
+  }): Promise<
+    IAPIResponse<{
+      success: boolean;
+      message: string;
+      email?: { sent: boolean; skipped: boolean; error?: string };
+      devOtp?: string;
+    }>
+  > => {
+    return appAxios.post(API_ROUTES.authForgotPassword, payload, {
+      headers: { "Un-Authorized": true },
+    });
+  },
+  resetPassword: (payload: {
+    email: string;
+    code: string;
+    password: string;
+  }): Promise<IAPIResponse<{ success: boolean; message?: string }>> => {
+    return appAxios.post(API_ROUTES.authResetPassword, payload, {
+      headers: { "Un-Authorized": true },
+    });
+  },
+  refreshSession: async (): Promise<IAPIResponse<VerifyOtpResponse>> => {
+    const response = (await appAxios.post(
+      API_ROUTES.authRefresh,
+      {},
+      {
+        headers: { "Un-Authorized": true },
+      },
+    )) as unknown as IAPIResponse<VerifyOtpResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  logout: async (): Promise<IAPIResponse<{ success: boolean }>> => {
+    const response = (await appAxios.post(
+      API_ROUTES.authLogout,
+    )) as unknown as IAPIResponse<{ success: boolean }>;
+    authTokenStorage.clearAccessToken();
+
+    return response;
   },
 
   // UPLOAD IMAGE

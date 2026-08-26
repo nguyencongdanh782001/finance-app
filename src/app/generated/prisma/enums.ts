@@ -27,6 +27,14 @@ export const UserStatus = {
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
 
 
+export const AuthProvider = {
+  WEB: 'WEB',
+  GOOGLE: 'GOOGLE'
+} as const
+
+export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
+
+
 export const OtpPurpose = {
   LOGIN: 'LOGIN',
   REGISTER: 'REGISTER',

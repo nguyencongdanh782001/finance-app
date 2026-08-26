@@ -1,25 +1,45 @@
-<svg width="720" height="220" viewBox="0 0 720 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Quỳnh Nhi Store logo</title>
-  <desc id="desc">Minimal soft boutique logo with a delicate hanger line and elegant wordmark.</desc>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520" role="img" aria-labelledby="title desc">
+  <title id="title">Quỳnh Nhi Store — fashion boutique logo</title>
+  <desc id="desc">A refined QN monogram whose flowing Q tail becomes a dress, paired with an elegant wordmark.</desc>
   <defs>
-    <linearGradient id="silk" x1="70" y1="64" x2="176" y2="166" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#DFA9B3"/>
-      <stop offset="1" stop-color="#8E5F67"/>
+    <linearGradient id="signature" x1="80" y1="55" x2="390" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B67887" />
+      <stop offset="0.52" stop-color="#7B3F50" />
+      <stop offset="1" stop-color="#4B2430" />
     </linearGradient>
+    <linearGradient id="roseGold" x1="100" y1="100" x2="360" y2="390" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E8C7C9" />
+      <stop offset="0.5" stop-color="#C9949D" />
+      <stop offset="1" stop-color="#A76C7B" />
+    </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#4B2430" flood-opacity="0.13" />
+    </filter>
   </defs>
-
-  <g stroke-linecap="round" stroke-linejoin="round">
-    <path d="M123 70C123 57.5 132.5 49 144 49C155.5 49 164 57 164 67.5C164 80.5 153.5 87 143.5 90.5C136.5 93 132.5 98 132.5 105.5V109" stroke="#75545B" stroke-width="5.5"/>
-    <path d="M74 134C90 113 108.5 103 132 103C155.5 103 174 113 190 134" stroke="#75545B" stroke-width="5.5"/>
-    <path d="M98 137H166" stroke="#75545B" stroke-width="5.5"/>
-    <path d="M101 136C109 156 124.5 166 146 166C162 166 175.5 159.5 186.5 146" stroke="url(#silk)" stroke-width="6"/>
-    <path d="M105 136C118.5 124 146 124 160 136" stroke="#D9A4AE" stroke-width="4.5"/>
-    <path d="M183 74C192.5 84 191.5 97 181.5 107C170.5 100 168 87 174.5 77.5C177.5 77.5 181 76 183 74Z" fill="#E8BDC5"/>
+  <g transform="translate(46 32)" filter="url(#softShadow)">
+    <circle cx="230" cy="230" r="188" fill="none" stroke="#E8D4D6" stroke-width="2" />
+    <circle cx="230" cy="230" r="173" fill="#FFF9F8" stroke="url(#roseGold)" stroke-width="3" />
+    <path d="M229 94 C145 94 98 153 98 225 C98 305 155 352 229 352 C306 352 361 302 361 225 C361 149 307 94 229 94Z" fill="none" stroke="url(#signature)" stroke-width="12" stroke-linecap="round" />
+    <path d="M229 117 C207 94 181 100 181 119 C181 139 207 140 229 124Z M231 117 C253 94 279 100 279 119 C279 139 253 140 231 124Z" fill="#C9949D" />
+    <circle cx="230" cy="120" r="7" fill="#6A3443" />
+    <path d="M186 161 Q230 194 274 161 C267 194 269 221 282 246 C252 263 208 263 178 246 C191 221 193 194 186 161Z" fill="none" stroke="url(#signature)" stroke-width="7" stroke-linejoin="round" />
+    <path d="M203 169 Q230 190 257 169" fill="none" stroke="#C9949D" stroke-width="5" stroke-linecap="round" />
+    <path d="M201 238 L201 189 L257 239 L257 189" fill="none" stroke="#6A3443" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M178 246 C160 278 137 314 114 343 C165 330 195 347 229 377 C264 346 297 329 347 343 C322 312 301 279 282 246 C255 264 206 264 178 246Z" fill="url(#signature)" />
+    <path d="M229 267 C205 303 187 333 177 354 C199 359 216 367 229 380 C243 363 258 350 281 339 C263 316 246 291 229 267Z" fill="#FFF9F8" opacity="0.94" />
+    <path d="M229 267 C236 306 235 343 229 380" fill="none" stroke="#D8AEB4" stroke-width="3" stroke-linecap="round" />
+    <path d="M273 309 C298 348 326 376 379 392" fill="none" stroke="url(#signature)" stroke-width="12" stroke-linecap="round" />
+    <path d="M341 388 C362 394 380 392 394 383" fill="none" stroke="#C9949D" stroke-width="4" stroke-linecap="round" />
   </g>
-
   <g>
-    <text x="236" y="108" fill="#49383D" font-family="'Cormorant Garamond', 'Playfair Display', Georgia, serif" font-size="60" font-style="italic" font-weight="500">Quỳnh Nhi</text>
-    <text x="242" y="143" fill="#9D6C74" font-family="'Avenir Next', Inter, Arial, sans-serif" font-size="14" font-weight="500" letter-spacing="8">STORE</text>
-    <path d="M242 160C300 164 363 164 421 160" stroke="#DEC0C6" stroke-width="1.6" stroke-linecap="round"/>
+    <text x="520" y="242" fill="#532A36" font-family="'Snell Roundhand','Segoe Script','URW Chancery L','Brush Script MT',cursive" font-size="128" font-weight="400" letter-spacing="-4">Quỳnh Nhi</text>
+    <g transform="translate(531 294)">
+      <path d="M0 0 H92 M500 0 H622" stroke="#C9949D" stroke-width="2" stroke-linecap="round" />
+      <path d="M105 0 C116 -8 128 -8 139 0 C128 8 116 8 105 0Z" fill="#C9949D" />
+      <text x="168" y="10" fill="#7B3F50" font-family="Montserrat,Avenir,'Helvetica Neue',Arial,sans-serif" font-size="27" font-weight="500" letter-spacing="15">STORE</text>
+      <path d="M469 0 C480 -8 492 -8 503 0 C492 8 480 8 469 0Z" fill="#C9949D" />
+    </g>
+    <text x="535" y="365" fill="#A76C7B" font-family="Montserrat,Avenir,'Helvetica Neue',Arial,sans-serif" font-size="18" font-weight="400" letter-spacing="6">WEAR YOUR OWN STORY</text>
   </g>
 </svg>

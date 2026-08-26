@@ -8,13 +8,13 @@ const globalForPrisma = global as unknown as {
 const getDatabaseUrl = () => {
   const isProductionDeployment = process.env.VERCEL_ENV === "production";
   const databaseUrl = isProductionDeployment
-    ? process.env.DATABASE_URL
-    : process.env.DEV_DATABASE_URL_PRISMA_DATABASE_URL ||
-      process.env.DEV_DATABASE_URL_POSTGRES_URL ||
-      process.env.DATABASE_URL;
+    ? process.env.PRO_DATABASE_URL
+    : process.env.DEV_DATABASE_URL;
 
   if (!databaseUrl) {
-    throw new Error("Missing database connection URL");
+    throw new Error(
+      `Missing ${isProductionDeployment ? "PRO" : "DEV"}_DATABASE_URL`,
+    );
   }
 
   return databaseUrl;
