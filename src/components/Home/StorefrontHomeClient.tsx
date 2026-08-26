@@ -3,7 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { getDefaultRouteByRole, isAdminRole } from "@/lib/auth/routing";
-import { Loader2, LogOut, ShoppingBag, Sparkles, UserRound } from "lucide-react";
+import {
+  Loader2,
+  LogOut,
+  ShoppingBag,
+  Sparkles,
+  UserRound,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -46,7 +52,10 @@ export default function StorefrontHomeClient() {
     <main className="min-h-screen bg-[#FFFCFA] text-[#1C1A1B]">
       <section className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 py-6 sm:px-8 lg:px-10">
         <header className="flex items-center justify-between gap-4">
-          <Link href="/" className="flex min-w-0 cursor-pointer items-center gap-3">
+          <Link
+            href="/"
+            className="flex min-w-0 cursor-pointer items-center gap-3"
+          >
             <span className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-[#E9E2E5] bg-white shadow-[0_8px_24px_rgba(28,26,27,0.08)]">
               <Image
                 src="/logo-quynh-nhi-store-mark.svg"
@@ -55,6 +64,7 @@ export default function StorefrontHomeClient() {
                 height={54}
                 className="size-12 object-contain"
                 priority
+                sizes="54px"
               />
             </span>
             <span className="min-w-0">
@@ -142,7 +152,7 @@ export default function StorefrontHomeClient() {
                   width={300}
                   height={300}
                   className="size-[82%] object-contain"
-                  priority
+                  sizes="(min-width: 1024px) 295px, 70vw"
                 />
               </div>
             </div>

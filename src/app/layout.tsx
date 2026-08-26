@@ -12,6 +12,8 @@ export const viewport: Viewport = {
 
 const manrope = Inter({
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  fallback: ["system-ui", "Arial", "sans-serif"],
   variable: "--font-manrope-mono",
   subsets: ["latin", "vietnamese"],
 });
@@ -35,7 +37,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="vi">
+      <head>
+        <link rel="preconnect" href="https://accounts.google.com" />
+        <link rel="preconnect" href="https://www.gstatic.com" />
+      </head>
       <body className={`${manrope.variable} font-manrope antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>

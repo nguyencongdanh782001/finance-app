@@ -4,6 +4,8 @@ import { isDevOtpEnabled, OTP_EXPIRES_IN_MINUTES } from "@/lib/auth/constants";
 import { generateNumericCode, hashValue } from "@/lib/auth/crypto";
 import { isValidEmail, normalizeEmail, sendGmailOtp } from "@/lib/auth/email";
 import { isValidPassword } from "@/lib/auth/validation";
+import { createSession } from "@/lib/auth/session";
+import { setAuthCookies } from "@/lib/auth/cookies";
 
 export async function POST(req: Request) {
   const body = (await req.json()) as { email?: string; password?: string };
@@ -44,6 +46,28 @@ export async function POST(req: Request) {
       { message: "Email hoặc mật khẩu không đúng" },
       { status: 401 },
     );
+  }
+
+  if (user.emailVerifiedAt) {
+    const session = await createSession(
+      { id: user.id, phone: user.phone, email: user.email, role: user.role },
+      req,
+    );
+    const response = NextResponse.json({
+      accessToken: session.accessToken,
+      user: {
+        id: user.id,
+        phone: user.phone,
+        email: user.email,
+        role: user.role,
+        displayName: user.displayName,
+        authProvider: user.authProvider,
+      },
+    });
+
+    setAuthCookies(response, session.accessToken, session.refreshToken);
+
+    return response;
   }
 
   const code = generateNumericCode();
