@@ -27,9 +27,6 @@ export const metadata: Metadata = {
     icon: "/favicon.svg",
     apple: "/logo-quynh-nhi-store-mark.svg",
   },
-  other: {
-    "zalo-platform-site-verification": "UVta4g_HCoXhyR0AZu4v30c2upNbz3biD3On",
-  },
 };
 
 export default function RootLayout({

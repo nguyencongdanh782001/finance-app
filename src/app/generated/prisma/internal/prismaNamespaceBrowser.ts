@@ -59,6 +59,7 @@ export const ModelName = {
   Product: 'Product',
   DailySoldProduct: 'DailySoldProduct',
   User: 'User',
+  PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
   Otp: 'Otp',
@@ -249,7 +250,10 @@ export type DailySoldProductScalarFieldEnum = (typeof DailySoldProductScalarFiel
 export const UserScalarFieldEnum = {
   id: 'id',
   phone: 'phone',
+  email: 'email',
+  googleId: 'googleId',
   passwordHash: 'passwordHash',
+  authProvider: 'authProvider',
   role: 'role',
   status: 'status',
   firstName: 'firstName',
@@ -262,6 +266,7 @@ export const UserScalarFieldEnum = {
   totalSpent: 'totalSpent',
   rewardPoints: 'rewardPoints',
   phoneVerifiedAt: 'phoneVerifiedAt',
+  emailVerifiedAt: 'emailVerifiedAt',
   lastLoginAt: 'lastLoginAt',
   membershipId: 'membershipId',
   createdAt: 'createdAt',
@@ -269,6 +274,20 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  consumedAt: 'consumedAt',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const UserSessionScalarFieldEnum = {
@@ -311,6 +330,7 @@ export const OtpScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   phone: 'phone',
+  email: 'email',
   codeHash: 'codeHash',
   purpose: 'purpose',
   expiresAt: 'expiresAt',

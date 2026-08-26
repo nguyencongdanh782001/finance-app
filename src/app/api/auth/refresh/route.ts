@@ -6,11 +6,17 @@ import { hashValue } from "@/lib/auth/crypto";
 import { rotateSessionRefreshToken } from "@/lib/auth/session";
 
 export async function POST(req: NextRequest) {
-  const body = (await req.json().catch(() => ({}))) as { refreshToken?: string };
-  const refreshToken = body.refreshToken || req.cookies.get(REFRESH_TOKEN_COOKIE)?.value;
+  const body = (await req.json().catch(() => ({}))) as {
+    refreshToken?: string;
+  };
+  const refreshToken =
+    body.refreshToken || req.cookies.get(REFRESH_TOKEN_COOKIE)?.value;
 
   if (!refreshToken) {
-    return NextResponse.json({ message: "Missing refresh token" }, { status: 401 });
+    return NextResponse.json(
+      { message: "Missing refresh token" },
+      { status: 401 },
+    );
   }
 
   const session = await prisma.userSession.findUnique({
@@ -37,6 +43,7 @@ export async function POST(req: NextRequest) {
   const tokens = await rotateSessionRefreshToken(session.id, {
     id: session.user.id,
     phone: session.user.phone,
+    email: session.user.email,
     role: session.user.role,
   });
   const response = NextResponse.json({
@@ -44,8 +51,10 @@ export async function POST(req: NextRequest) {
     user: {
       id: session.user.id,
       phone: session.user.phone,
+      email: session.user.email,
       role: session.user.role,
       displayName: session.user.displayName,
+      authProvider: session.user.authProvider,
     },
   });
 

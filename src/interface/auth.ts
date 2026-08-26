@@ -1,8 +1,9 @@
-export type AuthPurpose = "REGISTER" | "VERIFY_PHONE";
+export type AuthPurpose = "LOGIN" | "REGISTER";
+export type AuthProvider = "WEB" | "GOOGLE";
 
 export interface RequestOtpResponse {
   success: boolean;
-  zalo: {
+  email: {
     sent: boolean;
     skipped: boolean;
     error?: string;
@@ -12,9 +13,11 @@ export interface RequestOtpResponse {
 
 export interface AuthUser {
   id: number;
-  phone: string;
+  phone: string | null;
+  email: string | null;
   role: string;
   displayName: string | null;
+  authProvider: AuthProvider;
 }
 
 export interface VerifyOtpResponse {
@@ -29,8 +32,10 @@ export interface RegisterResponse extends RequestOtpResponse {
 }
 
 export interface LoginResponse extends Partial<VerifyOtpResponse> {
-  requiresPhoneVerification?: boolean;
+  requiresEmailVerification?: boolean;
   message?: string;
-  zalo?: RequestOtpResponse["zalo"];
+  email?: RequestOtpResponse["email"];
   devOtp?: string;
 }
+
+export type GoogleLoginResponse = VerifyOtpResponse;

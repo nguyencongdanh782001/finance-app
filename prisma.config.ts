@@ -5,10 +5,8 @@ import { defineConfig } from "prisma/config";
 
 const isProductionDeployment = process.env.VERCEL_ENV === "production";
 const databaseUrl = isProductionDeployment
-  ? process.env["DATABASE_URL"]
-  : process.env["DEV_DATABASE_URL_PRISMA_DATABASE_URL"] ||
-    process.env["DEV_DATABASE_URL_POSTGRES_URL"] ||
-    process.env["DATABASE_URL"];
+  ? process.env["PRO_DATABASE_URL"]
+  : process.env["DEV_DATABASE_URL"];
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

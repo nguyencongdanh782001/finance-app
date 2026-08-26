@@ -65,7 +65,7 @@ function StickyYAxisLabels({
 
   return (
     <div
-      className={`relative ${CHART_HEIGHT_CLASS} bg-white text-[10px] text-slate-500`}
+      className={`relative ${CHART_HEIGHT_CLASS} bg-white text-10px text-slate-500`}
       style={{ width: axisWidth }}
     >
       {ticks

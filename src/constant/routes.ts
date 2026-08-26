@@ -39,7 +39,10 @@ export const API_ROUTES = {
   uploadFileCloudinary: APP_API_URL("upload/cloudinary"),
   authRegister: APP_API_URL("auth/register"),
   authLogin: APP_API_URL("auth/login"),
+  authGoogleLogin: APP_API_URL("auth/google"),
   authVerify: APP_API_URL("auth/verify"),
+  authForgotPassword: APP_API_URL("auth/forgot-password"),
+  authResetPassword: APP_API_URL("auth/reset-password"),
   authRefresh: APP_API_URL("auth/refresh"),
   authLogout: APP_API_URL("auth/logout"),
 };

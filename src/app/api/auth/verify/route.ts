@@ -4,45 +4,42 @@ import { MAX_OTP_ATTEMPTS } from "@/lib/auth/constants";
 import { setAuthCookies } from "@/lib/auth/cookies";
 import { hashValue } from "@/lib/auth/crypto";
 import { createSession } from "@/lib/auth/session";
-import {
-  isValidVietnamesePhone,
-  normalizeVietnamesePhone,
-} from "@/lib/auth/validation";
+import { isValidEmail, normalizeEmail } from "@/lib/auth/email";
 
 export async function POST(req: Request) {
   const body = (await req.json()) as {
-    phone?: string;
+    email?: string;
     code?: string;
-    purpose?: "REGISTER" | "VERIFY_PHONE";
+    purpose?: "LOGIN" | "REGISTER";
   };
-  const phone = normalizeVietnamesePhone(body.phone?.trim() || "");
+  const email = normalizeEmail(body.email || "");
   const code = body.code?.trim();
   const purpose = body.purpose || "REGISTER";
 
-  if (purpose !== "REGISTER" && purpose !== "VERIFY_PHONE") {
+  if (purpose !== "REGISTER" && purpose !== "LOGIN") {
     return NextResponse.json(
-      { message: "OTP chỉ được dùng để xác thực số điện thoại" },
+      { message: "OTP chỉ được dùng để xác thực email" },
       { status: 400 },
     );
   }
 
-  if (!phone || !code) {
+  if (!email || !code) {
     return NextResponse.json(
-      { message: "Vui lòng nhập số điện thoại và mã OTP" },
+      { message: "Vui lòng nhập email và mã OTP" },
       { status: 400 },
     );
   }
 
-  if (!isValidVietnamesePhone(phone)) {
+  if (!isValidEmail(email)) {
     return NextResponse.json(
-      { message: "Số điện thoại Việt Nam không hợp lệ" },
+      { message: "Email không hợp lệ" },
       { status: 400 },
     );
   }
 
   const otp = await prisma.otp.findFirst({
     where: {
-      phone,
+      email,
       purpose,
       consumedAt: null,
     },
@@ -74,22 +71,21 @@ export async function POST(req: Request) {
       data: { attemptCount: { increment: 1 } },
     });
 
-    return NextResponse.json(
-      { message: "Mã OTP không đúng" },
-      { status: 400 },
-    );
+    return NextResponse.json({ message: "Mã OTP không đúng" }, { status: 400 });
   }
 
   const user =
     otp.user ||
     (await prisma.user.upsert({
-      where: { phone },
+      where: { email },
       update: {
+        authProvider: "WEB",
         role: "CUSTOMER",
         status: "ACTIVE",
       },
       create: {
-        phone,
+        email,
+        authProvider: "WEB",
         role: "CUSTOMER",
       },
     }));
@@ -109,14 +105,14 @@ export async function POST(req: Request) {
     prisma.user.update({
       where: { id: user.id },
       data: {
-        phoneVerifiedAt: user.phoneVerifiedAt || new Date(),
+        emailVerifiedAt: user.emailVerifiedAt || new Date(),
         lastLoginAt: new Date(),
       },
     }),
   ]);
 
   const session = await createSession(
-    { id: user.id, phone: user.phone, role: user.role },
+    { id: user.id, phone: user.phone, email: user.email, role: user.role },
     req,
   );
   const response = NextResponse.json({
@@ -124,8 +120,10 @@ export async function POST(req: Request) {
     user: {
       id: user.id,
       phone: user.phone,
+      email: user.email,
       role: user.role,
       displayName: user.displayName,
+      authProvider: user.authProvider,
     },
   });
 

@@ -30,12 +30,7 @@ import {
   getSafeReturnPath,
   isAdminRole,
 } from "@/lib/auth/routing";
-import {
-  isValidPassword,
-  isValidVietnamesePhone,
-  MIN_PASSWORD_LENGTH,
-  normalizeVietnamesePhone,
-} from "@/lib/auth/validation";
+import { isValidPassword, MIN_PASSWORD_LENGTH } from "@/lib/auth/validation";
 import {
   ArrowRight,
   Cake,
@@ -46,7 +41,7 @@ import {
   ChevronRight,
   Loader2,
   LockKeyhole,
-  Phone,
+  Mail,
   ShieldCheck,
   Sparkles,
   UserRound,
@@ -59,6 +54,7 @@ import {
   ClipboardEvent,
   FormEvent,
   KeyboardEvent,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -70,7 +66,7 @@ type UserGender = "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
 type FieldName =
   | "firstName"
   | "lastName"
-  | "phone"
+  | "email"
   | "password"
   | "confirmPassword"
   | "birthday"
@@ -85,6 +81,36 @@ const GENDER_OPTIONS: Array<{ value: UserGender; label: string }> = [
   { value: "OTHER", label: "Khác" },
   { value: "UNSPECIFIED", label: "Không muốn chia sẻ" },
 ];
+const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+type GoogleCredentialResponse = {
+  credential?: string;
+};
+
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: GoogleCredentialResponse) => void;
+          }) => void;
+          prompt: (
+            callback?: (notification: {
+              isNotDisplayed: () => boolean;
+              isSkippedMoment: () => boolean;
+            }) => void,
+          ) => void;
+          renderButton: (
+            element: HTMLElement,
+            options: Record<string, string | number | boolean>,
+          ) => void;
+        };
+      };
+    };
+  }
+}
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, index) => ({
   value: String(index),
   label: `Tháng ${index + 1}`,
@@ -94,21 +120,55 @@ const modeContent = {
   login: {
     title: "Đăng nhập",
     eyebrow: "Tài khoản",
-    subtitle: "Nhập số điện thoại và mật khẩu để tiếp tục mua sắm.",
+    subtitle: "Nhập email và mật khẩu để nhận mã xác thực.",
     action: "Đăng nhập",
     otpAction: "Xác nhận đăng nhập",
   },
   register: {
     title: "Tạo tài khoản",
     eyebrow: "Tài khoản mới",
-    subtitle: "Tạo mật khẩu và xác thực số điện thoại bằng mã OTP.",
+    subtitle: "Tạo mật khẩu và xác thực email bằng mã OTP.",
     action: "Gửi mã đăng ký",
     otpAction: "Hoàn tất đăng ký",
   },
 };
 
-const getOtpDeliveryMessage = (
-  zalo:
+const normalizeEmailInput = (value: string) => value.trim().toLowerCase();
+
+const isValidEmailInput = (value: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+};
+
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className={className}
+      focusable="false"
+    >
+      <path
+        fill="#4285F4"
+        d="M23.5 12.3c0-.8-.1-1.5-.2-2.2H12v4.2h6.5c-.3 1.4-1.1 2.6-2.3 3.4v2.8h3.7c2.2-2 3.6-4.9 3.6-8.2z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.7-2.8c-1 .7-2.4 1.1-4.2 1.1-3.1 0-5.7-2.1-6.7-4.9H1.5v2.9C3.4 21.3 7.4 24 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.3 14.5c-.2-.7-.4-1.5-.4-2.5s.1-1.7.4-2.5V6.6H1.5C.6 8.2 0 10.1 0 12s.6 3.8 1.5 5.4l3.8-2.9z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.7c1.7 0 3.3.6 4.5 1.8l3.3-3.3C17.9 1.2 15.2 0 12 0 7.4 0 3.4 2.7 1.5 6.6l3.8 2.9c1-2.8 3.6-4.8 6.7-4.8z"
+      />
+    </svg>
+  );
+}
+
+const getEmailDeliveryMessage = (
+  emailDelivery:
     | {
         sent: boolean;
         skipped: boolean;
@@ -117,16 +177,16 @@ const getOtpDeliveryMessage = (
     | undefined,
   fallback: string,
 ) => {
-  if (zalo?.sent) {
+  if (emailDelivery?.sent) {
     return fallback;
   }
 
-  if (zalo?.skipped) {
+  if (emailDelivery?.skipped) {
     return "Mã OTP đã được tạo cho môi trường phát triển.";
   }
 
-  if (zalo?.error) {
-    return `Zalo chưa gửi được OTP: ${zalo.error}`;
+  if (emailDelivery?.error) {
+    return `Gmail chưa gửi được OTP: ${emailDelivery.error}`;
   }
 
   return fallback;
@@ -448,7 +508,7 @@ export default function AuthPageClient({
     isLoginOrRegister || (pathname === "/" && isAdminRole(user?.role));
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [step, setStep] = useState<Step>("phone");
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthday, setBirthday] = useState("");
@@ -462,17 +522,20 @@ export default function AuthPageClient({
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleReady, setIsGoogleReady] = useState(false);
+  const [isGoogleButtonRendered, setIsGoogleButtonRendered] = useState(false);
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const googleButtonRef = useRef<HTMLDivElement | null>(null);
 
   const content = modeContent[mode];
   const otpTitle =
-    otpPurpose === "VERIFY_PHONE" ? "Xác thực số điện thoại" : content.title;
+    otpPurpose === "LOGIN" ? "Xác thực đăng nhập" : "Xác thực email";
   const otpSubtitle =
-    otpPurpose === "VERIFY_PHONE"
-      ? "Tài khoản đã tồn tại nhưng chưa xác thực. Nhập mã OTP để hoàn tất đăng nhập."
-      : content.subtitle;
+    otpPurpose === "LOGIN"
+      ? "Nhập mã OTP đã gửi qua email để hoàn tất đăng nhập."
+      : "Nhập mã OTP đã gửi qua email để hoàn tất đăng ký.";
   const otpAction =
-    otpPurpose === "VERIFY_PHONE" ? "Xác thực và đăng nhập" : content.otpAction;
+    otpPurpose === "LOGIN" ? "Xác thực và đăng nhập" : content.otpAction;
 
   useEffect(() => {
     if (isInitializing || !isAuthenticated || !user) {
@@ -497,8 +560,107 @@ export default function AuthPageClient({
     user,
   ]);
 
+  const handleGoogleCredential = useCallback(
+    async (credential: string) => {
+      setIsSubmitting(true);
+      setError("");
+      setMessage("");
+
+      const response = await financeAPI.googleLogin({ credential });
+
+      setIsSubmitting(false);
+
+      if (
+        response.code !== RESPONSE_CODES.success ||
+        !response.data?.accessToken ||
+        !response.data.user
+      ) {
+        setError(
+          response.data && "message" in response.data
+            ? String(response.data.message)
+            : "Không thể đăng nhập bằng Google. Vui lòng thử lại.",
+        );
+        return;
+      }
+
+      setAuthenticatedSession({
+        accessToken: response.data.accessToken,
+        user: response.data.user,
+      });
+      router.replace(getRouteAfterAuth(response.data.user, redirectTo));
+    },
+    [redirectTo, router, setAuthenticatedSession],
+  );
+
+  useEffect(() => {
+    if (!googleClientId || !googleButtonRef.current) {
+      return;
+    }
+
+    const renderGoogleButton = () => {
+      if (!window.google || !googleButtonRef.current) {
+        return;
+      }
+
+      googleButtonRef.current.innerHTML = "";
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: (response) => {
+          if (response.credential) {
+            void handleGoogleCredential(response.credential);
+          }
+        },
+      });
+      setIsGoogleReady(true);
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: "outline",
+        size: "large",
+        shape: "rectangular",
+        width: googleButtonRef.current.clientWidth || 360,
+        text: mode === "login" ? "signin_with" : "signup_with",
+      });
+      window.setTimeout(() => {
+        setIsGoogleButtonRendered(
+          Boolean(googleButtonRef.current?.childElementCount),
+        );
+      }, 300);
+    };
+
+    if (window.google) {
+      renderGoogleButton();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = renderGoogleButton;
+    script.onerror = () => {
+      setIsGoogleReady(false);
+      setIsGoogleButtonRendered(false);
+    };
+    document.head.appendChild(script);
+  }, [handleGoogleCredential, mode]);
+
+  const handleGoogleFallbackClick = () => {
+    if (!window.google || !isGoogleReady) {
+      setError("Google Login chưa sẵn sàng. Vui lòng thử lại sau vài giây.");
+      return;
+    }
+
+    setError("");
+    window.google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        setError(
+          "Google chưa mở được cửa sổ đăng nhập. Vui lòng kiểm tra cấu hình Google Client ID và domain.",
+        );
+      }
+    });
+  };
+
   const validateCredentials = () => {
-    const cleanPhone = normalizeVietnamesePhone(phone);
+    const cleanEmail = normalizeEmailInput(email);
     const nextErrors: FieldErrors = {};
 
     if (mode === "register" && !lastName.trim()) {
@@ -525,10 +687,10 @@ export default function AuthPageClient({
       nextErrors.gender = "Vui lòng chọn giới tính.";
     }
 
-    if (!cleanPhone) {
-      nextErrors.phone = "Vui lòng nhập số điện thoại.";
-    } else if (!isValidVietnamesePhone(cleanPhone)) {
-      nextErrors.phone = "Số điện thoại phải đúng định dạng Việt Nam.";
+    if (!cleanEmail) {
+      nextErrors.email = "Vui lòng nhập email.";
+    } else if (!isValidEmailInput(cleanEmail)) {
+      nextErrors.email = "Email không hợp lệ.";
     }
 
     if (!password) {
@@ -638,7 +800,7 @@ export default function AuthPageClient({
 
   const handleRequestOtp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const cleanPhone = normalizeVietnamesePhone(phone);
+    const cleanEmail = normalizeEmailInput(email);
 
     if (!validateCredentials()) {
       setError("");
@@ -655,31 +817,31 @@ export default function AuthPageClient({
 
     if (mode === "login") {
       const response = await financeAPI.login({
-        phone: cleanPhone,
+        email: cleanEmail,
         password,
       });
 
       setIsSubmitting(false);
 
-      const verificationPayload = response.data?.requiresPhoneVerification
+      const verificationPayload = response.data?.requiresEmailVerification
         ? response.data
         : undefined;
-      const requiresPhoneVerification =
+      const requiresEmailVerification =
         response.code === "202" || Boolean(verificationPayload);
 
-      if (requiresPhoneVerification) {
-        setPhone(cleanPhone);
-        setOtpPurpose("VERIFY_PHONE");
+      if (requiresEmailVerification) {
+        setEmail(cleanEmail);
+        setOtpPurpose("LOGIN");
         setOtpDigits(createEmptyOtp());
         setDevOtp(verificationPayload?.devOtp || "");
         setStep("otp");
         setMessage(
-          verificationPayload?.zalo?.sent
-            ? "Tài khoản chưa xác thực. Mã OTP đã được gửi qua Zalo."
-            : `Tài khoản chưa xác thực. ${getOtpDeliveryMessage(
-                verificationPayload?.zalo,
-                "Mã OTP đã được gửi qua Zalo.",
-              )}`,
+          verificationPayload?.email?.sent
+            ? "Mã OTP đã được gửi qua email."
+            : getEmailDeliveryMessage(
+                verificationPayload?.email,
+                "Mã OTP đã được gửi qua email.",
+              ),
         );
         return;
       }
@@ -707,7 +869,7 @@ export default function AuthPageClient({
     }
 
     const response = await financeAPI.register({
-      phone: cleanPhone,
+      email: cleanEmail,
       password,
       firstName: firstName.trim(),
       lastName: lastName.trim(),
@@ -735,13 +897,16 @@ export default function AuthPageClient({
       return;
     }
 
-    setPhone(cleanPhone);
+    setEmail(cleanEmail);
     setOtpPurpose("REGISTER");
     setOtpDigits(createEmptyOtp());
     setDevOtp(response.data?.devOtp || "");
     setStep("otp");
     setMessage(
-      getOtpDeliveryMessage(response.data?.zalo, "Mã OTP đã được gửi qua Zalo."),
+      getEmailDeliveryMessage(
+        response.data?.email,
+        "Mã OTP đã được gửi qua email.",
+      ),
     );
   };
 
@@ -759,7 +924,7 @@ export default function AuthPageClient({
     setMessage("");
 
     const response = await financeAPI.verifyOtp({
-      phone,
+      email,
       code: cleanCode,
       purpose: otpPurpose,
     });
@@ -1017,31 +1182,32 @@ export default function AuthPageClient({
 
                   <label className="block">
                     <span className="mb-2 flex items-center gap-2 text-sm font-bold text-[#1C1A1B]">
-                      <Phone className="size-4 text-[#D96C8A]" />
-                      Số điện thoại
+                      <Mail className="size-4 text-[#D96C8A]" />
+                      Email
                     </span>
                     <input
-                      value={phone}
-                      inputMode="tel"
-                      autoComplete="tel"
+                      value={email}
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
                       onChange={(event) => {
-                        setPhone(normalizeVietnamesePhone(event.target.value));
+                        setEmail(event.target.value);
                         setFieldErrors((prev) => ({
                           ...prev,
-                          phone: undefined,
+                          email: undefined,
                         }));
                       }}
-                      placeholder="Ví dụ: 0901234567"
-                      aria-invalid={Boolean(fieldErrors.phone)}
+                      placeholder="Ví dụ: ban@gmail.com"
+                      aria-invalid={Boolean(fieldErrors.email)}
                       className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
-                        fieldErrors.phone
+                        fieldErrors.email
                           ? "border-[#C64040]"
                           : "border-[#E9E2E5]"
                       }`}
                     />
-                    {fieldErrors.phone ? (
+                    {fieldErrors.email ? (
                       <p className="mt-2 text-sm font-semibold text-[#C64040]">
-                        {fieldErrors.phone}
+                        {fieldErrors.email}
                       </p>
                     ) : null}
                   </label>
@@ -1078,6 +1244,14 @@ export default function AuthPageClient({
                       </p>
                     ) : null}
                   </label>
+
+                  {mode === "login" ? (
+                    <div className="flex justify-end">
+                      <Button asChild variant="linkBrand">
+                        <Link href="/forgot-password">Quên mật khẩu?</Link>
+                      </Button>
+                    </div>
+                  ) : null}
 
                   {mode === "register" ? (
                     <label className="block">
@@ -1125,6 +1299,48 @@ export default function AuthPageClient({
                     )}
                     {content.action}
                   </Button>
+                  {googleClientId ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <span className="h-px flex-1 bg-[#E9E2E5]" />
+                        <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#9B9296]">
+                          hoặc
+                        </span>
+                        <span className="h-px flex-1 bg-[#E9E2E5]" />
+                      </div>
+                      <div className="relative">
+                        <Button
+                          type="button"
+                          variant="google"
+                          size="google"
+                          onClick={handleGoogleFallbackClick}
+                          disabled={isSubmitting}
+                          aria-label={
+                            mode === "login"
+                              ? "Đăng nhập bằng Google"
+                              : "Đăng ký bằng Google"
+                          }
+                          className="group relative overflow-hidden"
+                        >
+                          <GoogleIcon className="relative size-5" />
+                          <span className="relative">
+                            {mode === "login"
+                              ? "Đăng nhập bằng Google"
+                              : "Đăng ký bằng Google"}
+                          </span>
+                        </Button>
+                        <div
+                          ref={googleButtonRef}
+                          aria-hidden="true"
+                          className={`absolute inset-0 z-10 overflow-hidden opacity-0 [&>div]:h-12! [&>div]:w-full! ${
+                            isGoogleButtonRendered
+                              ? "pointer-events-auto"
+                              : "pointer-events-none"
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
                 </form>
               ) : (
                 <form className="mt-7 space-y-4" onSubmit={handleVerifyOtp}>
@@ -1202,7 +1418,7 @@ export default function AuthPageClient({
                     }}
                     className="mx-auto flex text-sm"
                   >
-                    Đổi số điện thoại
+                    Đổi email
                   </Button>
                 </form>
               )}

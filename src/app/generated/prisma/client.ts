@@ -82,6 +82,11 @@ export type DailySoldProduct = Prisma.DailySoldProductModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
  * Model UserSession
  * 
  */
