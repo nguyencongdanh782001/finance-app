@@ -14,33 +14,23 @@ export async function POST(req: Request) {
     phone?: string;
     email?: string;
     password?: string;
-    firstName?: string;
-    lastName?: string;
+    displayName?: string;
     birthday?: string;
     gender?: "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
   };
   const phone = normalizeVietnamesePhone(body.phone?.trim() || "");
   const email = normalizeEmail(body.email || "");
   const password = body.password || "";
-  const firstName = body.firstName?.trim() || "";
-  const lastName = body.lastName?.trim() || "";
-  const displayName = [lastName, firstName].filter(Boolean).join(" ");
+  const displayName = body.displayName?.trim() || "";
   const birthday = body.birthday ? new Date(body.birthday) : null;
   const gender = body.gender;
   const allowedGenders = ["FEMALE", "MALE", "OTHER", "UNSPECIFIED"];
 
-  if (
-    !firstName ||
-    !lastName ||
-    !email ||
-    !password ||
-    !body.birthday ||
-    !gender
-  ) {
+  if (!displayName || !email || !password || !body.birthday || !gender) {
     return NextResponse.json(
       {
         message:
-          "Vui lòng nhập đầy đủ họ, tên, email, mật khẩu, ngày sinh và giới tính",
+          "Vui lòng nhập đầy đủ tên hiển thị, email, mật khẩu, ngày sinh và giới tính",
       },
       { status: 400 },
     );
@@ -114,8 +104,8 @@ export async function POST(req: Request) {
           email,
           authProvider: "WEB",
           displayName,
-          firstName,
-          lastName,
+          firstName: null,
+          lastName: null,
           birthday,
           gender,
           status: "ACTIVE",
@@ -129,8 +119,6 @@ export async function POST(req: Request) {
           authProvider: "WEB",
           role: "CUSTOMER",
           displayName,
-          firstName,
-          lastName,
           birthday,
           gender,
         },

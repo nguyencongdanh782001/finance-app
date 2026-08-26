@@ -154,8 +154,7 @@ export const financeAPI = {
     email: string;
     phone?: string;
     password: string;
-    firstName: string;
-    lastName: string;
+    displayName: string;
     birthday: string;
     gender: "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
   }): Promise<IAPIResponse<RegisterResponse>> => {

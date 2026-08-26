@@ -2,14 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -64,8 +56,7 @@ type AuthMode = "login" | "register";
 type Step = "phone" | "otp";
 type UserGender = "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
 type FieldName =
-  | "firstName"
-  | "lastName"
+  | "displayName"
   | "email"
   | "password"
   | "confirmPassword"
@@ -79,7 +70,6 @@ const GENDER_OPTIONS: Array<{ value: UserGender; label: string }> = [
   { value: "FEMALE", label: "Nữ" },
   { value: "MALE", label: "Nam" },
   { value: "OTHER", label: "Khác" },
-  { value: "UNSPECIFIED", label: "Không muốn chia sẻ" },
 ];
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -231,12 +221,11 @@ function AuthSelect({
   hasError?: boolean;
   onChange: (value: string) => void;
 }) {
-  const [open, setOpen] = useState(false);
   const selectedOption = options.find((option) => option.value === value);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button
           type="button"
           variant="authField"
@@ -251,43 +240,27 @@ function AuthSelect({
           </span>
           <ChevronDown className="size-5 text-[#9B9296]" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
         align="start"
-        className="w-(--radix-popover-trigger-width) rounded-lg border-[#E9E2E5] bg-white p-1 shadow-[0_18px_50px_rgba(28,26,27,0.12)]"
+        className="w-(--radix-dropdown-menu-trigger-width) rounded-lg border-[#E9E2E5] bg-white p-1 shadow-[0_18px_50px_rgba(28,26,27,0.12)]"
       >
-        <Command>
-          <CommandInput
-            icon={<VenusAndMars className="size-4 text-[#D96C8A]" />}
-            placeholder="Tìm giới tính"
-            className="h-10"
-          />
-          <CommandList>
-            <CommandEmpty>Không có lựa chọn phù hợp</CommandEmpty>
-            <CommandGroup>
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.label}
-                  onSelect={() => {
-                    onChange(option.value);
-                    setOpen(false);
-                  }}
-                  className="rounded-md px-3 py-2.5 font-semibold text-[#1C1A1B]"
-                >
-                  <Check
-                    className={`size-4 ${
-                      value === option.value ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                  {option.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        {options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => onChange(option.value)}
+            className="rounded-md px-3 py-2.5 font-semibold text-[#1C1A1B]"
+          >
+            <Check
+              className={`size-4 ${
+                value === option.value ? "opacity-100" : "opacity-0"
+              }`}
+            />
+            {option.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -509,8 +482,7 @@ export default function AuthPageClient({
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [step, setStep] = useState<Step>("phone");
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [birthday, setBirthday] = useState("");
   const [gender, setGender] = useState<UserGender | "">("");
   const [password, setPassword] = useState("");
@@ -663,12 +635,8 @@ export default function AuthPageClient({
     const cleanEmail = normalizeEmailInput(email);
     const nextErrors: FieldErrors = {};
 
-    if (mode === "register" && !lastName.trim()) {
-      nextErrors.lastName = "Vui lòng nhập họ.";
-    }
-
-    if (mode === "register" && !firstName.trim()) {
-      nextErrors.firstName = "Vui lòng nhập tên.";
+    if (mode === "register" && !displayName.trim()) {
+      nextErrors.displayName = "Vui lòng nhập tên hiển thị.";
     }
 
     if (mode === "register" && !birthday) {
@@ -871,8 +839,7 @@ export default function AuthPageClient({
     const response = await financeAPI.register({
       email: cleanEmail,
       password,
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      displayName: displayName.trim(),
       birthday,
       gender: gender || "UNSPECIFIED",
     });
@@ -1072,60 +1039,31 @@ export default function AuthPageClient({
                 <form className="mt-7 space-y-4" onSubmit={handleRequestOtp}>
                   {mode === "register" ? (
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <label className="block">
+                      <label className="block sm:col-span-2">
                         <span className="mb-2 flex items-center gap-2 text-sm font-bold text-[#1C1A1B]">
                           <UserRound className="size-4 text-[#D96C8A]" />
-                          Họ
+                          Tên hiển thị
                         </span>
                         <input
-                          value={lastName}
+                          value={displayName}
                           onChange={(event) => {
-                            setLastName(event.target.value);
+                            setDisplayName(event.target.value);
                             setFieldErrors((prev) => ({
                               ...prev,
-                              lastName: undefined,
+                              displayName: undefined,
                             }));
                           }}
-                          placeholder="Ví dụ: Nguyễn"
-                          aria-invalid={Boolean(fieldErrors.lastName)}
+                          placeholder="Ví dụ: Nguyễn Quỳnh Nhi"
+                          aria-invalid={Boolean(fieldErrors.displayName)}
                           className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
-                            fieldErrors.lastName
+                            fieldErrors.displayName
                               ? "border-[#C64040]"
                               : "border-[#E9E2E5]"
                           }`}
                         />
-                        {fieldErrors.lastName ? (
+                        {fieldErrors.displayName ? (
                           <p className="mt-2 text-sm font-semibold text-[#C64040]">
-                            {fieldErrors.lastName}
-                          </p>
-                        ) : null}
-                      </label>
-
-                      <label className="block">
-                        <span className="mb-2 flex items-center gap-2 text-sm font-bold text-[#1C1A1B]">
-                          <UserRound className="size-4 text-[#D96C8A]" />
-                          Tên
-                        </span>
-                        <input
-                          value={firstName}
-                          onChange={(event) => {
-                            setFirstName(event.target.value);
-                            setFieldErrors((prev) => ({
-                              ...prev,
-                              firstName: undefined,
-                            }));
-                          }}
-                          placeholder="Ví dụ: Quỳnh Nhi"
-                          aria-invalid={Boolean(fieldErrors.firstName)}
-                          className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
-                            fieldErrors.firstName
-                              ? "border-[#C64040]"
-                              : "border-[#E9E2E5]"
-                          }`}
-                        />
-                        {fieldErrors.firstName ? (
-                          <p className="mt-2 text-sm font-semibold text-[#C64040]">
-                            {fieldErrors.firstName}
+                            {fieldErrors.displayName}
                           </p>
                         ) : null}
                       </label>
