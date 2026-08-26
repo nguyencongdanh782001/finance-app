@@ -24,6 +24,7 @@ import {
 } from "@/interface/product";
 import {
   AuthPurpose,
+  GoogleLoginResponse,
   LoginResponse,
   RegisterResponse,
   VerifyOtpResponse,
@@ -150,7 +151,8 @@ export const financeAPI = {
     return appAxios.delete(API_ROUTES.deleteProduct(id));
   },
   register: (payload: {
-    phone: string;
+    email: string;
+    phone?: string;
     password: string;
     firstName: string;
     lastName: string;
@@ -162,7 +164,7 @@ export const financeAPI = {
     });
   },
   login: async (payload: {
-    phone: string;
+    email: string;
     password: string;
   }): Promise<IAPIResponse<LoginResponse>> => {
     const response = (await appAxios.post(API_ROUTES.authLogin, payload, {
@@ -176,7 +178,7 @@ export const financeAPI = {
     return response;
   },
   verifyOtp: async (payload: {
-    phone: string;
+    email: string;
     code: string;
     purpose?: AuthPurpose;
   }): Promise<IAPIResponse<VerifyOtpResponse>> => {
@@ -189,6 +191,42 @@ export const financeAPI = {
     }
 
     return response;
+  },
+  googleLogin: async (payload: {
+    credential: string;
+  }): Promise<IAPIResponse<GoogleLoginResponse>> => {
+    const response = (await appAxios.post(API_ROUTES.authGoogleLogin, payload, {
+      headers: { "Un-Authorized": true },
+    })) as unknown as IAPIResponse<GoogleLoginResponse>;
+
+    if (response.data?.accessToken) {
+      authTokenStorage.setAccessToken(response.data.accessToken);
+    }
+
+    return response;
+  },
+  forgotPassword: (payload: {
+    email: string;
+  }): Promise<
+    IAPIResponse<{
+      success: boolean;
+      message: string;
+      email?: { sent: boolean; skipped: boolean; error?: string };
+      devOtp?: string;
+    }>
+  > => {
+    return appAxios.post(API_ROUTES.authForgotPassword, payload, {
+      headers: { "Un-Authorized": true },
+    });
+  },
+  resetPassword: (payload: {
+    email: string;
+    code: string;
+    password: string;
+  }): Promise<IAPIResponse<{ success: boolean; message?: string }>> => {
+    return appAxios.post(API_ROUTES.authResetPassword, payload, {
+      headers: { "Un-Authorized": true },
+    });
   },
   refreshSession: async (): Promise<IAPIResponse<VerifyOtpResponse>> => {
     const response = (await appAxios.post(

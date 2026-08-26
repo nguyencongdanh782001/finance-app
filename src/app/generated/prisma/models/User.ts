@@ -45,7 +45,10 @@ export type UserSumAggregateOutputType = {
 export type UserMinAggregateOutputType = {
   id: number | null
   phone: string | null
+  email: string | null
+  googleId: string | null
   passwordHash: string | null
+  authProvider: $Enums.AuthProvider | null
   role: $Enums.UserRole | null
   status: $Enums.UserStatus | null
   firstName: string | null
@@ -58,6 +61,7 @@ export type UserMinAggregateOutputType = {
   totalSpent: runtime.Decimal | null
   rewardPoints: number | null
   phoneVerifiedAt: Date | null
+  emailVerifiedAt: Date | null
   lastLoginAt: Date | null
   membershipId: number | null
   createdAt: Date | null
@@ -67,7 +71,10 @@ export type UserMinAggregateOutputType = {
 export type UserMaxAggregateOutputType = {
   id: number | null
   phone: string | null
+  email: string | null
+  googleId: string | null
   passwordHash: string | null
+  authProvider: $Enums.AuthProvider | null
   role: $Enums.UserRole | null
   status: $Enums.UserStatus | null
   firstName: string | null
@@ -80,6 +87,7 @@ export type UserMaxAggregateOutputType = {
   totalSpent: runtime.Decimal | null
   rewardPoints: number | null
   phoneVerifiedAt: Date | null
+  emailVerifiedAt: Date | null
   lastLoginAt: Date | null
   membershipId: number | null
   createdAt: Date | null
@@ -89,7 +97,10 @@ export type UserMaxAggregateOutputType = {
 export type UserCountAggregateOutputType = {
   id: number
   phone: number
+  email: number
+  googleId: number
   passwordHash: number
+  authProvider: number
   role: number
   status: number
   firstName: number
@@ -102,6 +113,7 @@ export type UserCountAggregateOutputType = {
   totalSpent: number
   rewardPoints: number
   phoneVerifiedAt: number
+  emailVerifiedAt: number
   lastLoginAt: number
   membershipId: number
   createdAt: number
@@ -129,7 +141,10 @@ export type UserSumAggregateInputType = {
 export type UserMinAggregateInputType = {
   id?: true
   phone?: true
+  email?: true
+  googleId?: true
   passwordHash?: true
+  authProvider?: true
   role?: true
   status?: true
   firstName?: true
@@ -142,6 +157,7 @@ export type UserMinAggregateInputType = {
   totalSpent?: true
   rewardPoints?: true
   phoneVerifiedAt?: true
+  emailVerifiedAt?: true
   lastLoginAt?: true
   membershipId?: true
   createdAt?: true
@@ -151,7 +167,10 @@ export type UserMinAggregateInputType = {
 export type UserMaxAggregateInputType = {
   id?: true
   phone?: true
+  email?: true
+  googleId?: true
   passwordHash?: true
+  authProvider?: true
   role?: true
   status?: true
   firstName?: true
@@ -164,6 +183,7 @@ export type UserMaxAggregateInputType = {
   totalSpent?: true
   rewardPoints?: true
   phoneVerifiedAt?: true
+  emailVerifiedAt?: true
   lastLoginAt?: true
   membershipId?: true
   createdAt?: true
@@ -173,7 +193,10 @@ export type UserMaxAggregateInputType = {
 export type UserCountAggregateInputType = {
   id?: true
   phone?: true
+  email?: true
+  googleId?: true
   passwordHash?: true
+  authProvider?: true
   role?: true
   status?: true
   firstName?: true
@@ -186,6 +209,7 @@ export type UserCountAggregateInputType = {
   totalSpent?: true
   rewardPoints?: true
   phoneVerifiedAt?: true
+  emailVerifiedAt?: true
   lastLoginAt?: true
   membershipId?: true
   createdAt?: true
@@ -281,8 +305,11 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type UserGroupByOutputType = {
   id: number
-  phone: string
+  phone: string | null
+  email: string | null
+  googleId: string | null
   passwordHash: string | null
+  authProvider: $Enums.AuthProvider
   role: $Enums.UserRole
   status: $Enums.UserStatus
   firstName: string | null
@@ -295,6 +322,7 @@ export type UserGroupByOutputType = {
   totalSpent: runtime.Decimal
   rewardPoints: number
   phoneVerifiedAt: Date | null
+  emailVerifiedAt: Date | null
   lastLoginAt: Date | null
   membershipId: number | null
   createdAt: Date
@@ -326,8 +354,11 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.IntFilter<"User"> | number
-  phone?: Prisma.StringFilter<"User"> | string
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
+  email?: Prisma.StringNullableFilter<"User"> | string | null
+  googleId?: Prisma.StringNullableFilter<"User"> | string | null
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   firstName?: Prisma.StringNullableFilter<"User"> | string | null
@@ -340,6 +371,7 @@ export type UserWhereInput = {
   totalSpent?: Prisma.DecimalFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFilter<"User"> | number
   phoneVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   membershipId?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -347,6 +379,7 @@ export type UserWhereInput = {
   membership?: Prisma.XOR<Prisma.MembershipNullableScalarRelationFilter, Prisma.MembershipWhereInput> | null
   sessions?: Prisma.UserSessionListRelationFilter
   otps?: Prisma.OtpListRelationFilter
+  passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
   addresses?: Prisma.UserAddressListRelationFilter
   carts?: Prisma.CartListRelationFilter
   wishlists?: Prisma.WishlistListRelationFilter
@@ -361,8 +394,11 @@ export type UserWhereInput = {
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  phone?: Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  authProvider?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   firstName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -375,6 +411,7 @@ export type UserOrderByWithRelationInput = {
   totalSpent?: Prisma.SortOrder
   rewardPoints?: Prisma.SortOrder
   phoneVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   membershipId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -382,6 +419,7 @@ export type UserOrderByWithRelationInput = {
   membership?: Prisma.MembershipOrderByWithRelationInput
   sessions?: Prisma.UserSessionOrderByRelationAggregateInput
   otps?: Prisma.OtpOrderByRelationAggregateInput
+  passwordResetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput
   addresses?: Prisma.UserAddressOrderByRelationAggregateInput
   carts?: Prisma.CartOrderByRelationAggregateInput
   wishlists?: Prisma.WishlistOrderByRelationAggregateInput
@@ -397,10 +435,13 @@ export type UserOrderByWithRelationInput = {
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   phone?: string
+  email?: string
+  googleId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   firstName?: Prisma.StringNullableFilter<"User"> | string | null
@@ -413,6 +454,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   totalSpent?: Prisma.DecimalFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFilter<"User"> | number
   phoneVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   membershipId?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -420,6 +462,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   membership?: Prisma.XOR<Prisma.MembershipNullableScalarRelationFilter, Prisma.MembershipWhereInput> | null
   sessions?: Prisma.UserSessionListRelationFilter
   otps?: Prisma.OtpListRelationFilter
+  passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
   addresses?: Prisma.UserAddressListRelationFilter
   carts?: Prisma.CartListRelationFilter
   wishlists?: Prisma.WishlistListRelationFilter
@@ -430,12 +473,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   searchHistories?: Prisma.SearchHistoryListRelationFilter
   recentlyViewedProducts?: Prisma.RecentlyViewedProductListRelationFilter
-}, "id" | "phone">
+}, "id" | "phone" | "email" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  phone?: Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  authProvider?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   firstName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -448,6 +494,7 @@ export type UserOrderByWithAggregationInput = {
   totalSpent?: Prisma.SortOrder
   rewardPoints?: Prisma.SortOrder
   phoneVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   membershipId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -464,8 +511,11 @@ export type UserScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"User"> | number
-  phone?: Prisma.StringWithAggregatesFilter<"User"> | string
+  phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  googleId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   passwordHash?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  authProvider?: Prisma.EnumAuthProviderWithAggregatesFilter<"User"> | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
   firstName?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -478,6 +528,7 @@ export type UserScalarWhereWithAggregatesInput = {
   totalSpent?: Prisma.DecimalWithAggregatesFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntWithAggregatesFilter<"User"> | number
   phoneVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   membershipId?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -485,8 +536,11 @@ export type UserScalarWhereWithAggregatesInput = {
 }
 
 export type UserCreateInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -499,12 +553,14 @@ export type UserCreateInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -519,8 +575,11 @@ export type UserCreateInput = {
 
 export type UserUncheckedCreateInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -533,12 +592,14 @@ export type UserUncheckedCreateInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -552,8 +613,11 @@ export type UserUncheckedCreateInput = {
 }
 
 export type UserUpdateInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -566,12 +630,14 @@ export type UserUpdateInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -586,8 +652,11 @@ export type UserUpdateInput = {
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -600,12 +669,14 @@ export type UserUncheckedUpdateInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -620,8 +691,11 @@ export type UserUncheckedUpdateInput = {
 
 export type UserCreateManyInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -634,6 +708,7 @@ export type UserCreateManyInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
@@ -641,8 +716,11 @@ export type UserCreateManyInput = {
 }
 
 export type UserUpdateManyMutationInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -655,6 +733,7 @@ export type UserUpdateManyMutationInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -662,8 +741,11 @@ export type UserUpdateManyMutationInput = {
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -676,6 +758,7 @@ export type UserUncheckedUpdateManyInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -685,7 +768,10 @@ export type UserUncheckedUpdateManyInput = {
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  authProvider?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
@@ -698,6 +784,7 @@ export type UserCountOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rewardPoints?: Prisma.SortOrder
   phoneVerifiedAt?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -715,7 +802,10 @@ export type UserAvgOrderByAggregateInput = {
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  authProvider?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
@@ -728,6 +818,7 @@ export type UserMaxOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rewardPoints?: Prisma.SortOrder
   phoneVerifiedAt?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -737,7 +828,10 @@ export type UserMaxOrderByAggregateInput = {
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  authProvider?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
@@ -750,6 +844,7 @@ export type UserMinOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rewardPoints?: Prisma.SortOrder
   phoneVerifiedAt?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -784,6 +879,10 @@ export type UserNullableScalarRelationFilter = {
   isNot?: Prisma.UserWhereInput | null
 }
 
+export type EnumAuthProviderFieldUpdateOperationsInput = {
+  set?: $Enums.AuthProvider
+}
+
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
 }
@@ -794,6 +893,20 @@ export type EnumUserStatusFieldUpdateOperationsInput = {
 
 export type NullableEnumUserGenderFieldUpdateOperationsInput = {
   set?: $Enums.UserGender | null
+}
+
+export type UserCreateNestedOneWithoutPasswordResetTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetTokensInput, Prisma.UserUncheckedCreateWithoutPasswordResetTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPasswordResetTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPasswordResetTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetTokensInput, Prisma.UserUncheckedCreateWithoutPasswordResetTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPasswordResetTokensInput
+  upsert?: Prisma.UserUpsertWithoutPasswordResetTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPasswordResetTokensInput, Prisma.UserUpdateWithoutPasswordResetTokensInput>, Prisma.UserUncheckedUpdateWithoutPasswordResetTokensInput>
 }
 
 export type UserCreateNestedOneWithoutSessionsInput = {
@@ -1024,9 +1137,12 @@ export type UserUpdateOneRequiredWithoutRecentlyViewedProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRecentlyViewedProductsInput, Prisma.UserUpdateWithoutRecentlyViewedProductsInput>, Prisma.UserUncheckedUpdateWithoutRecentlyViewedProductsInput>
 }
 
-export type UserCreateWithoutSessionsInput = {
-  phone: string
+export type UserCreateWithoutPasswordResetTokensInput = {
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1039,11 +1155,179 @@ export type UserCreateWithoutSessionsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
+  id?: number
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  membershipId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetTokensInput, Prisma.UserUncheckedCreateWithoutPasswordResetTokensInput>
+}
+
+export type UserUpsertWithoutPasswordResetTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPasswordResetTokensInput, Prisma.UserUncheckedUpdateWithoutPasswordResetTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetTokensInput, Prisma.UserUncheckedCreateWithoutPasswordResetTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPasswordResetTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPasswordResetTokensInput, Prisma.UserUncheckedUpdateWithoutPasswordResetTokensInput>
+}
+
+export type UserUpdateWithoutPasswordResetTokensInput = {
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSessionsInput = {
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -1058,8 +1342,11 @@ export type UserCreateWithoutSessionsInput = {
 
 export type UserUncheckedCreateWithoutSessionsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1072,11 +1359,13 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -1106,8 +1395,11 @@ export type UserUpdateToOneWithWhereWithoutSessionsInput = {
 }
 
 export type UserUpdateWithoutSessionsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1120,11 +1412,13 @@ export type UserUpdateWithoutSessionsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -1139,8 +1433,11 @@ export type UserUpdateWithoutSessionsInput = {
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1153,11 +1450,13 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -1171,8 +1470,11 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
 }
 
 export type UserCreateWithoutMembershipInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1185,11 +1487,13 @@ export type UserCreateWithoutMembershipInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -1204,8 +1508,11 @@ export type UserCreateWithoutMembershipInput = {
 
 export type UserUncheckedCreateWithoutMembershipInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1218,11 +1525,13 @@ export type UserUncheckedCreateWithoutMembershipInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -1266,8 +1575,11 @@ export type UserScalarWhereInput = {
   OR?: Prisma.UserScalarWhereInput[]
   NOT?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
   id?: Prisma.IntFilter<"User"> | number
-  phone?: Prisma.StringFilter<"User"> | string
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
+  email?: Prisma.StringNullableFilter<"User"> | string | null
+  googleId?: Prisma.StringNullableFilter<"User"> | string | null
   passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   firstName?: Prisma.StringNullableFilter<"User"> | string | null
@@ -1280,6 +1592,7 @@ export type UserScalarWhereInput = {
   totalSpent?: Prisma.DecimalFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFilter<"User"> | number
   phoneVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   membershipId?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -1287,8 +1600,11 @@ export type UserScalarWhereInput = {
 }
 
 export type UserCreateWithoutOtpsInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1301,11 +1617,13 @@ export type UserCreateWithoutOtpsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -1320,8 +1638,11 @@ export type UserCreateWithoutOtpsInput = {
 
 export type UserUncheckedCreateWithoutOtpsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1334,11 +1655,13 @@ export type UserUncheckedCreateWithoutOtpsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -1368,8 +1691,11 @@ export type UserUpdateToOneWithWhereWithoutOtpsInput = {
 }
 
 export type UserUpdateWithoutOtpsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1382,11 +1708,13 @@ export type UserUpdateWithoutOtpsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -1401,8 +1729,11 @@ export type UserUpdateWithoutOtpsInput = {
 
 export type UserUncheckedUpdateWithoutOtpsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1415,11 +1746,13 @@ export type UserUncheckedUpdateWithoutOtpsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -1433,8 +1766,11 @@ export type UserUncheckedUpdateWithoutOtpsInput = {
 }
 
 export type UserCreateWithoutAddressesInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1447,12 +1783,14 @@ export type UserCreateWithoutAddressesInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
@@ -1466,8 +1804,11 @@ export type UserCreateWithoutAddressesInput = {
 
 export type UserUncheckedCreateWithoutAddressesInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1480,12 +1821,14 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
@@ -1514,8 +1857,11 @@ export type UserUpdateToOneWithWhereWithoutAddressesInput = {
 }
 
 export type UserUpdateWithoutAddressesInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1528,12 +1874,14 @@ export type UserUpdateWithoutAddressesInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
@@ -1547,8 +1895,11 @@ export type UserUpdateWithoutAddressesInput = {
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1561,12 +1912,14 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
@@ -1579,8 +1932,11 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
 }
 
 export type UserCreateWithoutCartsInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1593,12 +1949,14 @@ export type UserCreateWithoutCartsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
@@ -1612,8 +1970,11 @@ export type UserCreateWithoutCartsInput = {
 
 export type UserUncheckedCreateWithoutCartsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1626,12 +1987,14 @@ export type UserUncheckedCreateWithoutCartsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
@@ -1660,8 +2023,11 @@ export type UserUpdateToOneWithWhereWithoutCartsInput = {
 }
 
 export type UserUpdateWithoutCartsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1674,12 +2040,14 @@ export type UserUpdateWithoutCartsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
@@ -1693,8 +2061,11 @@ export type UserUpdateWithoutCartsInput = {
 
 export type UserUncheckedUpdateWithoutCartsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1707,12 +2078,14 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
@@ -1725,8 +2098,11 @@ export type UserUncheckedUpdateWithoutCartsInput = {
 }
 
 export type UserCreateWithoutWishlistsInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1739,12 +2115,14 @@ export type UserCreateWithoutWishlistsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
@@ -1758,8 +2136,11 @@ export type UserCreateWithoutWishlistsInput = {
 
 export type UserUncheckedCreateWithoutWishlistsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1772,12 +2153,14 @@ export type UserUncheckedCreateWithoutWishlistsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
@@ -1806,8 +2189,11 @@ export type UserUpdateToOneWithWhereWithoutWishlistsInput = {
 }
 
 export type UserUpdateWithoutWishlistsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1820,12 +2206,14 @@ export type UserUpdateWithoutWishlistsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
@@ -1839,8 +2227,11 @@ export type UserUpdateWithoutWishlistsInput = {
 
 export type UserUncheckedUpdateWithoutWishlistsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1853,12 +2244,14 @@ export type UserUncheckedUpdateWithoutWishlistsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
@@ -1871,8 +2264,11 @@ export type UserUncheckedUpdateWithoutWishlistsInput = {
 }
 
 export type UserCreateWithoutWishlistItemsInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1885,12 +2281,14 @@ export type UserCreateWithoutWishlistItemsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -1904,8 +2302,11 @@ export type UserCreateWithoutWishlistItemsInput = {
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -1918,12 +2319,14 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -1952,8 +2355,11 @@ export type UserUpdateToOneWithWhereWithoutWishlistItemsInput = {
 }
 
 export type UserUpdateWithoutWishlistItemsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1966,12 +2372,14 @@ export type UserUpdateWithoutWishlistItemsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -1985,8 +2393,11 @@ export type UserUpdateWithoutWishlistItemsInput = {
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1999,12 +2410,14 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2017,8 +2430,11 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
 }
 
 export type UserCreateWithoutOrdersInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2031,12 +2447,14 @@ export type UserCreateWithoutOrdersInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -2050,8 +2468,11 @@ export type UserCreateWithoutOrdersInput = {
 
 export type UserUncheckedCreateWithoutOrdersInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2064,12 +2485,14 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -2098,8 +2521,11 @@ export type UserUpdateToOneWithWhereWithoutOrdersInput = {
 }
 
 export type UserUpdateWithoutOrdersInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2112,12 +2538,14 @@ export type UserUpdateWithoutOrdersInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -2131,8 +2559,11 @@ export type UserUpdateWithoutOrdersInput = {
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2145,12 +2576,14 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2163,8 +2596,11 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
 }
 
 export type UserCreateWithoutOrderStatusChangesInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2177,12 +2613,14 @@ export type UserCreateWithoutOrderStatusChangesInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -2196,8 +2634,11 @@ export type UserCreateWithoutOrderStatusChangesInput = {
 
 export type UserUncheckedCreateWithoutOrderStatusChangesInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2210,12 +2651,14 @@ export type UserUncheckedCreateWithoutOrderStatusChangesInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -2244,8 +2687,11 @@ export type UserUpdateToOneWithWhereWithoutOrderStatusChangesInput = {
 }
 
 export type UserUpdateWithoutOrderStatusChangesInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2258,12 +2704,14 @@ export type UserUpdateWithoutOrderStatusChangesInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -2277,8 +2725,11 @@ export type UserUpdateWithoutOrderStatusChangesInput = {
 
 export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2291,12 +2742,14 @@ export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2309,8 +2762,11 @@ export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
 }
 
 export type UserCreateWithoutReviewsInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2323,12 +2779,14 @@ export type UserCreateWithoutReviewsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -2342,8 +2800,11 @@ export type UserCreateWithoutReviewsInput = {
 
 export type UserUncheckedCreateWithoutReviewsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2356,12 +2817,14 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -2390,8 +2853,11 @@ export type UserUpdateToOneWithWhereWithoutReviewsInput = {
 }
 
 export type UserUpdateWithoutReviewsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2404,12 +2870,14 @@ export type UserUpdateWithoutReviewsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -2423,8 +2891,11 @@ export type UserUpdateWithoutReviewsInput = {
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2437,12 +2908,14 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2455,8 +2928,11 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
 }
 
 export type UserCreateWithoutNotificationsInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2469,12 +2945,14 @@ export type UserCreateWithoutNotificationsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -2488,8 +2966,11 @@ export type UserCreateWithoutNotificationsInput = {
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2502,12 +2983,14 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -2536,8 +3019,11 @@ export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
 }
 
 export type UserUpdateWithoutNotificationsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2550,12 +3036,14 @@ export type UserUpdateWithoutNotificationsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -2569,8 +3057,11 @@ export type UserUpdateWithoutNotificationsInput = {
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2583,12 +3074,14 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2601,8 +3094,11 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
 }
 
 export type UserCreateWithoutSearchHistoriesInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2615,12 +3111,14 @@ export type UserCreateWithoutSearchHistoriesInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -2634,8 +3132,11 @@ export type UserCreateWithoutSearchHistoriesInput = {
 
 export type UserUncheckedCreateWithoutSearchHistoriesInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2648,12 +3149,14 @@ export type UserUncheckedCreateWithoutSearchHistoriesInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -2682,8 +3185,11 @@ export type UserUpdateToOneWithWhereWithoutSearchHistoriesInput = {
 }
 
 export type UserUpdateWithoutSearchHistoriesInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2696,12 +3202,14 @@ export type UserUpdateWithoutSearchHistoriesInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -2715,8 +3223,11 @@ export type UserUpdateWithoutSearchHistoriesInput = {
 
 export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2729,12 +3240,14 @@ export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2747,8 +3260,11 @@ export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
 }
 
 export type UserCreateWithoutRecentlyViewedProductsInput = {
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2761,12 +3277,14 @@ export type UserCreateWithoutRecentlyViewedProductsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
@@ -2780,8 +3298,11 @@ export type UserCreateWithoutRecentlyViewedProductsInput = {
 
 export type UserUncheckedCreateWithoutRecentlyViewedProductsInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2794,12 +3315,14 @@ export type UserUncheckedCreateWithoutRecentlyViewedProductsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   membershipId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
@@ -2828,8 +3351,11 @@ export type UserUpdateToOneWithWhereWithoutRecentlyViewedProductsInput = {
 }
 
 export type UserUpdateWithoutRecentlyViewedProductsInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2842,12 +3368,14 @@ export type UserUpdateWithoutRecentlyViewedProductsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -2861,8 +3389,11 @@ export type UserUpdateWithoutRecentlyViewedProductsInput = {
 
 export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2875,12 +3406,14 @@ export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2894,8 +3427,11 @@ export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
 
 export type UserCreateManyMembershipInput = {
   id?: number
-  phone: string
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
   passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   firstName?: string | null
@@ -2908,14 +3444,18 @@ export type UserCreateManyMembershipInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: number
   phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type UserUpdateWithoutMembershipInput = {
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2928,11 +3468,13 @@ export type UserUpdateWithoutMembershipInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
@@ -2947,8 +3489,11 @@ export type UserUpdateWithoutMembershipInput = {
 
 export type UserUncheckedUpdateWithoutMembershipInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2961,11 +3506,13 @@ export type UserUncheckedUpdateWithoutMembershipInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -2980,8 +3527,11 @@ export type UserUncheckedUpdateWithoutMembershipInput = {
 
 export type UserUncheckedUpdateManyWithoutMembershipInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2994,6 +3544,7 @@ export type UserUncheckedUpdateManyWithoutMembershipInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
   phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3007,6 +3558,7 @@ export type UserUncheckedUpdateManyWithoutMembershipInput = {
 export type UserCountOutputType = {
   sessions: number
   otps: number
+  passwordResetTokens: number
   addresses: number
   carts: number
   wishlists: number
@@ -3022,6 +3574,7 @@ export type UserCountOutputType = {
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   otps?: boolean | UserCountOutputTypeCountOtpsArgs
+  passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
   addresses?: boolean | UserCountOutputTypeCountAddressesArgs
   carts?: boolean | UserCountOutputTypeCountCartsArgs
   wishlists?: boolean | UserCountOutputTypeCountWishlistsArgs
@@ -3056,6 +3609,13 @@ export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.E
  */
 export type UserCountOutputTypeCountOtpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OtpWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PasswordResetTokenWhereInput
 }
 
 /**
@@ -3132,7 +3692,10 @@ export type UserCountOutputTypeCountRecentlyViewedProductsArgs<ExtArgs extends r
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   phone?: boolean
+  email?: boolean
+  googleId?: boolean
   passwordHash?: boolean
+  authProvider?: boolean
   role?: boolean
   status?: boolean
   firstName?: boolean
@@ -3145,6 +3708,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   totalSpent?: boolean
   rewardPoints?: boolean
   phoneVerifiedAt?: boolean
+  emailVerifiedAt?: boolean
   lastLoginAt?: boolean
   membershipId?: boolean
   createdAt?: boolean
@@ -3152,6 +3716,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   membership?: boolean | Prisma.User$membershipArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   otps?: boolean | Prisma.User$otpsArgs<ExtArgs>
+  passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
   wishlists?: boolean | Prisma.User$wishlistsArgs<ExtArgs>
@@ -3168,7 +3733,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   phone?: boolean
+  email?: boolean
+  googleId?: boolean
   passwordHash?: boolean
+  authProvider?: boolean
   role?: boolean
   status?: boolean
   firstName?: boolean
@@ -3181,6 +3749,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   totalSpent?: boolean
   rewardPoints?: boolean
   phoneVerifiedAt?: boolean
+  emailVerifiedAt?: boolean
   lastLoginAt?: boolean
   membershipId?: boolean
   createdAt?: boolean
@@ -3191,7 +3760,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   phone?: boolean
+  email?: boolean
+  googleId?: boolean
   passwordHash?: boolean
+  authProvider?: boolean
   role?: boolean
   status?: boolean
   firstName?: boolean
@@ -3204,6 +3776,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   totalSpent?: boolean
   rewardPoints?: boolean
   phoneVerifiedAt?: boolean
+  emailVerifiedAt?: boolean
   lastLoginAt?: boolean
   membershipId?: boolean
   createdAt?: boolean
@@ -3214,7 +3787,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectScalar = {
   id?: boolean
   phone?: boolean
+  email?: boolean
+  googleId?: boolean
   passwordHash?: boolean
+  authProvider?: boolean
   role?: boolean
   status?: boolean
   firstName?: boolean
@@ -3227,17 +3803,19 @@ export type UserSelectScalar = {
   totalSpent?: boolean
   rewardPoints?: boolean
   phoneVerifiedAt?: boolean
+  emailVerifiedAt?: boolean
   lastLoginAt?: boolean
   membershipId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phone" | "passwordHash" | "role" | "status" | "firstName" | "lastName" | "displayName" | "avatarUrl" | "birthday" | "gender" | "totalOrders" | "totalSpent" | "rewardPoints" | "phoneVerifiedAt" | "lastLoginAt" | "membershipId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phone" | "email" | "googleId" | "passwordHash" | "authProvider" | "role" | "status" | "firstName" | "lastName" | "displayName" | "avatarUrl" | "birthday" | "gender" | "totalOrders" | "totalSpent" | "rewardPoints" | "phoneVerifiedAt" | "emailVerifiedAt" | "lastLoginAt" | "membershipId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   membership?: boolean | Prisma.User$membershipArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   otps?: boolean | Prisma.User$otpsArgs<ExtArgs>
+  passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
   wishlists?: boolean | Prisma.User$wishlistsArgs<ExtArgs>
@@ -3263,6 +3841,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     membership: Prisma.$MembershipPayload<ExtArgs> | null
     sessions: Prisma.$UserSessionPayload<ExtArgs>[]
     otps: Prisma.$OtpPayload<ExtArgs>[]
+    passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
     addresses: Prisma.$UserAddressPayload<ExtArgs>[]
     carts: Prisma.$CartPayload<ExtArgs>[]
     wishlists: Prisma.$WishlistPayload<ExtArgs>[]
@@ -3276,8 +3855,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    phone: string
+    phone: string | null
+    email: string | null
+    googleId: string | null
     passwordHash: string | null
+    authProvider: $Enums.AuthProvider
     role: $Enums.UserRole
     status: $Enums.UserStatus
     firstName: string | null
@@ -3290,6 +3872,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     totalSpent: runtime.Decimal
     rewardPoints: number
     phoneVerifiedAt: Date | null
+    emailVerifiedAt: Date | null
     lastLoginAt: Date | null
     membershipId: number | null
     createdAt: Date
@@ -3691,6 +4274,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   membership<T extends Prisma.User$membershipArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$membershipArgs<ExtArgs>>): Prisma.Prisma__MembershipClient<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   otps<T extends Prisma.User$otpsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$otpsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OtpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  passwordResetTokens<T extends Prisma.User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   addresses<T extends Prisma.User$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   carts<T extends Prisma.User$cartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   wishlists<T extends Prisma.User$wishlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wishlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WishlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3732,7 +4316,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'Int'>
   readonly phone: Prisma.FieldRef<"User", 'String'>
+  readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly googleId: Prisma.FieldRef<"User", 'String'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
+  readonly authProvider: Prisma.FieldRef<"User", 'AuthProvider'>
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
   readonly firstName: Prisma.FieldRef<"User", 'String'>
@@ -3745,6 +4332,7 @@ export interface UserFieldRefs {
   readonly totalSpent: Prisma.FieldRef<"User", 'Decimal'>
   readonly rewardPoints: Prisma.FieldRef<"User", 'Int'>
   readonly phoneVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly emailVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly lastLoginAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly membershipId: Prisma.FieldRef<"User", 'Int'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -4209,6 +4797,30 @@ export type User$otpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   take?: number
   skip?: number
   distinct?: Prisma.OtpScalarFieldEnum | Prisma.OtpScalarFieldEnum[]
+}
+
+/**
+ * User.passwordResetTokens
+ */
+export type User$passwordResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PasswordResetToken
+   */
+  select?: Prisma.PasswordResetTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PasswordResetToken
+   */
+  omit?: Prisma.PasswordResetTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PasswordResetTokenInclude<ExtArgs> | null
+  where?: Prisma.PasswordResetTokenWhereInput
+  orderBy?: Prisma.PasswordResetTokenOrderByWithRelationInput | Prisma.PasswordResetTokenOrderByWithRelationInput[]
+  cursor?: Prisma.PasswordResetTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PasswordResetTokenScalarFieldEnum | Prisma.PasswordResetTokenScalarFieldEnum[]
 }
 
 /**

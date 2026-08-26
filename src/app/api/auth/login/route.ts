@@ -1,34 +1,25 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import {
-  isDevOtpEnabled,
-  OTP_EXPIRES_IN_MINUTES,
-} from "@/lib/auth/constants";
-import { setAuthCookies } from "@/lib/auth/cookies";
+import { isDevOtpEnabled, OTP_EXPIRES_IN_MINUTES } from "@/lib/auth/constants";
 import { generateNumericCode, hashValue } from "@/lib/auth/crypto";
-import { createSession } from "@/lib/auth/session";
-import { sendZaloOtp } from "@/lib/auth/zalo";
-import {
-  isValidPassword,
-  isValidVietnamesePhone,
-  normalizeVietnamesePhone,
-} from "@/lib/auth/validation";
+import { isValidEmail, normalizeEmail, sendGmailOtp } from "@/lib/auth/email";
+import { isValidPassword } from "@/lib/auth/validation";
 
 export async function POST(req: Request) {
-  const body = (await req.json()) as { phone?: string; password?: string };
-  const phone = normalizeVietnamesePhone(body.phone?.trim() || "");
+  const body = (await req.json()) as { email?: string; password?: string };
+  const email = normalizeEmail(body.email || "");
   const password = body.password || "";
 
-  if (!phone || !password) {
+  if (!email || !password) {
     return NextResponse.json(
-      { message: "Vui lòng nhập số điện thoại và mật khẩu" },
+      { message: "Vui lòng nhập email và mật khẩu" },
       { status: 400 },
     );
   }
 
-  if (!isValidVietnamesePhone(phone)) {
+  if (!isValidEmail(email)) {
     return NextResponse.json(
-      { message: "Số điện thoại Việt Nam không hợp lệ" },
+      { message: "Email không hợp lệ" },
       { status: 400 },
     );
   }
@@ -40,75 +31,53 @@ export async function POST(req: Request) {
     );
   }
 
-  const user = await prisma.user.findUnique({ where: { phone } });
+  const user = await prisma.user.findUnique({ where: { email } });
 
   if (
     !user ||
     user.status !== "ACTIVE" ||
+    user.authProvider !== "WEB" ||
     !user.passwordHash ||
     user.passwordHash !== (await hashValue(password))
   ) {
     return NextResponse.json(
-      { message: "Số điện thoại hoặc mật khẩu không đúng" },
+      { message: "Email hoặc mật khẩu không đúng" },
       { status: 401 },
     );
   }
 
-  if (!user.phoneVerifiedAt) {
-    const code = generateNumericCode();
+  const code = generateNumericCode();
 
-    await prisma.otp.create({
-      data: {
-        userId: user.id,
-        phone,
-        codeHash: await hashValue(code),
-        purpose: "VERIFY_PHONE",
-        expiresAt: new Date(Date.now() + OTP_EXPIRES_IN_MINUTES * 60 * 1000),
-        userAgent: req.headers.get("user-agent"),
-        ipAddress:
-          req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-          req.headers.get("x-real-ip"),
-      },
-    });
-
-    const zalo = await sendZaloOtp(phone, code);
-    const payload: {
-      requiresPhoneVerification: true;
-      message: string;
-      zalo: { sent: boolean; skipped: boolean; error?: string };
-      devOtp?: string;
-    } = {
-      requiresPhoneVerification: true,
-      message: "Tài khoản chưa xác thực số điện thoại",
-      zalo,
-    };
-
-    if (!zalo.sent && isDevOtpEnabled()) {
-      payload.devOtp = code;
-    }
-
-    return NextResponse.json(payload, { status: 202 });
-  }
-
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { lastLoginAt: new Date() },
-  });
-  const session = await createSession(
-    { id: user.id, phone: user.phone, role: user.role },
-    req,
-  );
-  const response = NextResponse.json({
-    accessToken: session.accessToken,
-    user: {
-      id: user.id,
+  await prisma.otp.create({
+    data: {
+      userId: user.id,
+      email,
       phone: user.phone,
-      role: user.role,
-      displayName: user.displayName,
+      codeHash: await hashValue(code),
+      purpose: "LOGIN",
+      expiresAt: new Date(Date.now() + OTP_EXPIRES_IN_MINUTES * 60 * 1000),
+      userAgent: req.headers.get("user-agent"),
+      ipAddress:
+        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+        req.headers.get("x-real-ip"),
     },
   });
 
-  setAuthCookies(response, session.accessToken, session.refreshToken);
+  const emailDelivery = await sendGmailOtp(email, code);
+  const payload: {
+    requiresEmailVerification: true;
+    message: string;
+    email: { sent: boolean; skipped: boolean; error?: string };
+    devOtp?: string;
+  } = {
+    requiresEmailVerification: true,
+    message: "Vui lòng nhập mã OTP đã gửi qua email",
+    email: emailDelivery,
+  };
 
-  return response;
+  if (!emailDelivery.sent && isDevOtpEnabled()) {
+    payload.devOtp = code;
+  }
+
+  return NextResponse.json(payload, { status: 202 });
 }

@@ -12,6 +12,8 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         ghost: "",
         brand: "bg-[#D96C8A] text-white font-extrabold hover:bg-[#C55778]",
+        google:
+          "border border-[#E9E2E5] bg-white text-[#1C1A1B] font-extrabold shadow-[0_10px_28px_rgba(28,26,27,0.08)] hover:border-[#D96C8A]/45 hover:bg-[#FFFCFA] hover:shadow-[0_14px_34px_rgba(122,41,68,0.12)]",
         authTab:
           "bg-transparent text-[#6F686B] font-bold hover:bg-[#FFF3F6] hover:text-[#7A2944]",
         authTabActive: "bg-[#D96C8A] text-white font-bold hover:bg-[#C55778]",
@@ -36,6 +38,7 @@ const buttonVariants = cva(
         "icon-sm": "size-8",
         "icon-lg": "size-10",
         auth: "h-12 w-full px-4 text-base",
+        google: "h-12 w-full px-4 text-base",
         authTab: "h-10 px-3 text-sm leading-none sm:h-9 sm:min-w-24",
         authField: "h-12 w-full",
         adminAccount: "h-11 px-3 text-sm",

@@ -7,7 +7,8 @@ import { generateOpaqueToken, hashValue, signJwt } from "./crypto";
 
 type SessionUser = {
   id: number;
-  phone: string;
+  phone?: string | null;
+  email?: string | null;
   role: string;
 };
 
@@ -35,6 +36,7 @@ export async function createSession(user: SessionUser, request: Request) {
     {
       sub: user.id.toString(),
       phone: user.phone,
+      email: user.email,
       role: user.role,
       sessionId: session.id.toString(),
     },
@@ -68,6 +70,7 @@ export async function rotateSessionRefreshToken(
     {
       sub: user.id.toString(),
       phone: user.phone,
+      email: user.email,
       role: user.role,
       sessionId: sessionId.toString(),
     },

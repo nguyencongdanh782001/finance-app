@@ -392,6 +392,7 @@ export const ModelName = {
   Product: 'Product',
   DailySoldProduct: 'DailySoldProduct',
   User: 'User',
+  PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
   Otp: 'Otp',
@@ -445,7 +446,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "user" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "user" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1038,6 +1039,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    PasswordResetToken: {
+      payload: Prisma.$PasswordResetTokenPayload<ExtArgs>
+      fields: Prisma.PasswordResetTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PasswordResetTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PasswordResetTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.PasswordResetTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PasswordResetTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findMany: {
+          args: Prisma.PasswordResetTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        create: {
+          args: Prisma.PasswordResetTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        createMany: {
+          args: Prisma.PasswordResetTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PasswordResetTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.PasswordResetTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        update: {
+          args: Prisma.PasswordResetTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.PasswordResetTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PasswordResetTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PasswordResetTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.PasswordResetTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.PasswordResetTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePasswordResetToken>
+        }
+        groupBy: {
+          args: Prisma.PasswordResetTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenCountAggregateOutputType> | number
         }
       }
     }
@@ -4026,7 +4101,10 @@ export type DailySoldProductScalarFieldEnum = (typeof DailySoldProductScalarFiel
 export const UserScalarFieldEnum = {
   id: 'id',
   phone: 'phone',
+  email: 'email',
+  googleId: 'googleId',
   passwordHash: 'passwordHash',
+  authProvider: 'authProvider',
   role: 'role',
   status: 'status',
   firstName: 'firstName',
@@ -4039,6 +4117,7 @@ export const UserScalarFieldEnum = {
   totalSpent: 'totalSpent',
   rewardPoints: 'rewardPoints',
   phoneVerifiedAt: 'phoneVerifiedAt',
+  emailVerifiedAt: 'emailVerifiedAt',
   lastLoginAt: 'lastLoginAt',
   membershipId: 'membershipId',
   createdAt: 'createdAt',
@@ -4046,6 +4125,20 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  consumedAt: 'consumedAt',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const UserSessionScalarFieldEnum = {
@@ -4088,6 +4181,7 @@ export const OtpScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   phone: 'phone',
+  email: 'email',
   codeHash: 'codeHash',
   purpose: 'purpose',
   expiresAt: 'expiresAt',
@@ -4818,6 +4912,20 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
+ * Reference to a field of type 'AuthProvider'
+ */
+export type EnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider'>
+    
+
+
+/**
+ * Reference to a field of type 'AuthProvider[]'
+ */
+export type ListEnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider[]'>
+    
+
+
+/**
  * Reference to a field of type 'UserRole'
  */
 export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
@@ -5185,6 +5293,7 @@ export type GlobalOmitConfig = {
   product?: Prisma.ProductOmit
   dailySoldProduct?: Prisma.DailySoldProductOmit
   user?: Prisma.UserOmit
+  passwordResetToken?: Prisma.PasswordResetTokenOmit
   userSession?: Prisma.UserSessionOmit
   membership?: Prisma.MembershipOmit
   otp?: Prisma.OtpOmit

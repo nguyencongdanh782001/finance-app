@@ -47,7 +47,8 @@ const getKey = async () => {
 
 export type AuthTokenPayload = {
   sub: string;
-  phone: string;
+  phone?: string | null;
+  email?: string | null;
   role: string;
   sessionId?: string;
   exp: number;
@@ -77,7 +78,9 @@ export async function signJwt(
   return `${unsignedToken}.${base64UrlEncode(signature)}`;
 }
 
-export async function verifyJwt(token: string): Promise<AuthTokenPayload | null> {
+export async function verifyJwt(
+  token: string,
+): Promise<AuthTokenPayload | null> {
   const [encodedHeader, encodedPayload, encodedSignature] = token.split(".");
 
   if (!encodedHeader || !encodedPayload || !encodedSignature) {
@@ -99,7 +102,9 @@ export async function verifyJwt(token: string): Promise<AuthTokenPayload | null>
     return null;
   }
 
-  const payload = JSON.parse(base64UrlDecode(encodedPayload)) as AuthTokenPayload;
+  const payload = JSON.parse(
+    base64UrlDecode(encodedPayload),
+  ) as AuthTokenPayload;
 
   if (!payload.exp || payload.exp < Math.floor(Date.now() / 1000)) {
     return null;

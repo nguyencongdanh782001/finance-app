@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import {
-  isDevOtpEnabled,
-  OTP_EXPIRES_IN_MINUTES,
-} from "@/lib/auth/constants";
-import { setAuthCookies } from "@/lib/auth/cookies";
+import { isDevOtpEnabled, OTP_EXPIRES_IN_MINUTES } from "@/lib/auth/constants";
 import { generateNumericCode, hashValue } from "@/lib/auth/crypto";
-import { createSession } from "@/lib/auth/session";
-import { sendZaloOtp } from "@/lib/auth/zalo";
+import { isValidEmail, normalizeEmail, sendGmailOtp } from "@/lib/auth/email";
 import {
   isValidPassword,
   isValidVietnamesePhone,
@@ -17,6 +12,7 @@ import {
 export async function POST(req: Request) {
   const body = (await req.json()) as {
     phone?: string;
+    email?: string;
     password?: string;
     firstName?: string;
     lastName?: string;
@@ -24,6 +20,7 @@ export async function POST(req: Request) {
     gender?: "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
   };
   const phone = normalizeVietnamesePhone(body.phone?.trim() || "");
+  const email = normalizeEmail(body.email || "");
   const password = body.password || "";
   const firstName = body.firstName?.trim() || "";
   const lastName = body.lastName?.trim() || "";
@@ -32,17 +29,31 @@ export async function POST(req: Request) {
   const gender = body.gender;
   const allowedGenders = ["FEMALE", "MALE", "OTHER", "UNSPECIFIED"];
 
-  if (!firstName || !lastName || !phone || !password || !body.birthday || !gender) {
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !password ||
+    !body.birthday ||
+    !gender
+  ) {
     return NextResponse.json(
       {
         message:
-          "Vui lòng nhập đầy đủ họ, tên, số điện thoại, mật khẩu, ngày sinh và giới tính",
+          "Vui lòng nhập đầy đủ họ, tên, email, mật khẩu, ngày sinh và giới tính",
       },
       { status: 400 },
     );
   }
 
-  if (!isValidVietnamesePhone(phone)) {
+  if (!isValidEmail(email)) {
+    return NextResponse.json(
+      { message: "Email không hợp lệ" },
+      { status: 400 },
+    );
+  }
+
+  if (phone && !isValidVietnamesePhone(phone)) {
     return NextResponse.json(
       { message: "Số điện thoại Việt Nam không hợp lệ" },
       { status: 400 },
@@ -77,85 +88,60 @@ export async function POST(req: Request) {
     );
   }
 
-  const existingUser = await prisma.user.findUnique({ where: { phone } });
+  const existingUser = await prisma.user.findUnique({ where: { email } });
 
-  if (existingUser?.phoneVerifiedAt && existingUser.passwordHash) {
+  if (existingUser?.emailVerifiedAt && existingUser.passwordHash) {
     return NextResponse.json(
-      { message: "Số điện thoại này đã được đăng ký" },
+      { message: "Email này đã được đăng ký" },
+      { status: 409 },
+    );
+  }
+
+  if (existingUser?.authProvider === "GOOGLE" && !existingUser.passwordHash) {
+    return NextResponse.json(
+      { message: "Email này đang đăng nhập bằng Google" },
       { status: 409 },
     );
   }
 
   const passwordHash = await hashValue(password);
-
-  if (existingUser?.phoneVerifiedAt && !existingUser.passwordHash) {
-    const user = await prisma.user.update({
-      where: { id: existingUser.id },
-      data: {
-        passwordHash,
-        displayName,
-        firstName,
-        lastName,
-        birthday,
-        gender,
-        status: "ACTIVE",
-        lastLoginAt: new Date(),
-      },
-    });
-    const session = await createSession(
-      { id: user.id, phone: user.phone, role: user.role },
-      req,
-    );
-    const response = NextResponse.json({
-      success: true,
-      alreadyVerified: true,
-      accessToken: session.accessToken,
-      user: {
-        id: user.id,
-        phone: user.phone,
-        role: user.role,
-        displayName: user.displayName,
-      },
-      zalo: { sent: false, skipped: true },
-    });
-
-    setAuthCookies(response, session.accessToken, session.refreshToken);
-
-    return response;
-  }
-
-  const user =
-    existingUser
-      ? await prisma.user.update({
-          where: { id: existingUser.id },
-          data: {
-            passwordHash,
-            displayName,
-            firstName,
-            lastName,
-            birthday,
-            gender,
-            status: "ACTIVE",
-          },
-        })
-      : await prisma.user.create({
-          data: {
-            phone,
-            passwordHash,
-            role: "CUSTOMER",
-            displayName,
-            firstName,
-            lastName,
-            birthday,
-            gender,
-          },
-        });
+  const user = existingUser
+    ? await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          passwordHash,
+          phone: phone || existingUser.phone,
+          email,
+          authProvider: "WEB",
+          displayName,
+          firstName,
+          lastName,
+          birthday,
+          gender,
+          status: "ACTIVE",
+        },
+      })
+    : await prisma.user.create({
+        data: {
+          phone: phone || null,
+          email,
+          passwordHash,
+          authProvider: "WEB",
+          role: "CUSTOMER",
+          displayName,
+          firstName,
+          lastName,
+          birthday,
+          gender,
+        },
+      });
   const code = generateNumericCode();
 
   await prisma.otp.create({
     data: {
       userId: user.id,
-      phone,
+      phone: phone || null,
+      email,
       codeHash: await hashValue(code),
       purpose: "REGISTER",
       expiresAt: new Date(Date.now() + OTP_EXPIRES_IN_MINUTES * 60 * 1000),
@@ -166,17 +152,17 @@ export async function POST(req: Request) {
     },
   });
 
-  const zalo = await sendZaloOtp(phone, code);
+  const emailDelivery = await sendGmailOtp(email, code);
   const payload: {
     success: boolean;
-    zalo: { sent: boolean; skipped: boolean; error?: string };
+    email: { sent: boolean; skipped: boolean; error?: string };
     devOtp?: string;
   } = {
     success: true,
-    zalo,
+    email: emailDelivery,
   };
 
-  if (!zalo.sent && isDevOtpEnabled()) {
+  if (!emailDelivery.sent && isDevOtpEnabled()) {
     payload.devOtp = code;
   }
 
