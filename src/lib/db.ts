@@ -6,7 +6,9 @@ const globalForPrisma = global as unknown as {
 };
 
 const getDatabaseUrl = () => {
-  const isProductionDeployment = process.env.VERCEL_ENV === "production";
+  const isProductionDeployment =
+    process.env.VERCEL_ENV === "production" ||
+    process.env.NEXT_PUBLIC_NODE_ENV === "production";
   const databaseUrl = isProductionDeployment
     ? process.env.PRO_DATABASE_URL
     : process.env.DEV_DATABASE_URL || process.env.DATABASE_URL;
