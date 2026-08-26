@@ -68,6 +68,8 @@ type FieldName =
 type FieldErrors = Partial<Record<FieldName, string>>;
 const OTP_LENGTH = 6;
 const OTP_TTL_SECONDS = 5 * 60;
+const GOOGLE_SCRIPT_SRC = "https://accounts.google.com/gsi/client";
+const GOOGLE_BUTTON_MIN_WIDTH = 220;
 const createEmptyOtp = () => Array.from({ length: OTP_LENGTH }, () => "");
 const GENDER_OPTIONS: Array<{ value: UserGender; label: string }> = [
   { value: "FEMALE", label: "Nữ" },
@@ -595,54 +597,126 @@ export default function AuthPageClient({
       return;
     }
 
-    const renderGoogleButton = () => {
-      if (!window.google || !googleButtonRef.current) {
+    let isCancelled = false;
+    let renderRetryId: number | undefined;
+    let renderCheckId: number | undefined;
+
+    const markGoogleUnavailable = () => {
+      setIsGoogleReady(false);
+      setIsGoogleButtonRendered(false);
+      setIsGoogleScriptFailed(true);
+    };
+
+    const confirmGoogleButtonRendered = (attempt = 0) => {
+      if (isCancelled) {
+        return;
+      }
+
+      const hasRenderedButton = Boolean(
+        googleButtonRef.current?.childElementCount,
+      );
+
+      if (hasRenderedButton || attempt >= 12) {
+        setIsGoogleButtonRendered(hasRenderedButton);
+        setIsGoogleScriptFailed(!hasRenderedButton);
+        return;
+      }
+
+      renderCheckId = window.setTimeout(
+        () => confirmGoogleButtonRendered(attempt + 1),
+        150,
+      );
+    };
+
+    const renderGoogleButton = (attempt = 0) => {
+      const buttonContainer = googleButtonRef.current;
+
+      if (isCancelled || !window.google || !buttonContainer) {
+        return;
+      }
+
+      const buttonWidth = Math.floor(
+        buttonContainer.getBoundingClientRect().width,
+      );
+
+      if (buttonWidth < GOOGLE_BUTTON_MIN_WIDTH) {
+        if (attempt < 20) {
+          renderRetryId = window.setTimeout(
+            () => renderGoogleButton(attempt + 1),
+            100,
+          );
+          return;
+        }
+
+        markGoogleUnavailable();
         return;
       }
 
       setIsGoogleScriptFailed(false);
       setIsGoogleReady(false);
       setIsGoogleButtonRendered(false);
-      googleButtonRef.current.innerHTML = "";
-      window.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: (response) => {
-          if (response.credential) {
-            void handleGoogleCredential(response.credential);
-          }
-        },
-      });
-      setIsGoogleReady(true);
-      window.google.accounts.id.renderButton(googleButtonRef.current, {
-        theme: "outline",
-        size: "large",
-        shape: "rectangular",
-        width: googleButtonRef.current.clientWidth || 360,
-        text: mode === "login" ? "signin_with" : "signup_with",
-      });
-      window.setTimeout(() => {
-        setIsGoogleButtonRendered(
-          Boolean(googleButtonRef.current?.childElementCount),
-        );
-      }, 300);
+      buttonContainer.innerHTML = "";
+
+      try {
+        window.google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: (response) => {
+            if (response.credential) {
+              void handleGoogleCredential(response.credential);
+            }
+          },
+        });
+        setIsGoogleReady(true);
+        window.google.accounts.id.renderButton(buttonContainer, {
+          theme: "outline",
+          size: "large",
+          shape: "rectangular",
+          width: buttonWidth,
+          text: mode === "login" ? "signin_with" : "signup_with",
+        });
+        confirmGoogleButtonRendered();
+      } catch {
+        markGoogleUnavailable();
+      }
     };
 
     if (window.google) {
       renderGoogleButton();
-      return;
+    } else {
+      const existingScript = document.querySelector<HTMLScriptElement>(
+        `script[src="${GOOGLE_SCRIPT_SRC}"]`,
+      );
+
+      const handleScriptLoad = () => renderGoogleButton();
+      const handleScriptError = () => markGoogleUnavailable();
+
+      if (existingScript) {
+        existingScript.addEventListener("load", handleScriptLoad);
+        existingScript.addEventListener("error", handleScriptError);
+      } else {
+        const script = document.createElement("script");
+        script.src = GOOGLE_SCRIPT_SRC;
+        script.async = true;
+        script.defer = true;
+        script.onload = handleScriptLoad;
+        script.onerror = handleScriptError;
+        document.head.appendChild(script);
+      }
+
+      return () => {
+        isCancelled = true;
+        window.clearTimeout(renderRetryId);
+        window.clearTimeout(renderCheckId);
+        existingScript?.removeEventListener("load", handleScriptLoad);
+        existingScript?.removeEventListener("error", handleScriptError);
+      };
     }
 
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.onload = renderGoogleButton;
-    script.onerror = () => {
-      setIsGoogleReady(false);
-      setIsGoogleButtonRendered(false);
-      setIsGoogleScriptFailed(true);
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(renderRetryId);
+      window.clearTimeout(renderCheckId);
     };
-    document.head.appendChild(script);
   }, [handleGoogleCredential, mode]);
 
   const handleGoogleFallbackClick = () => {
