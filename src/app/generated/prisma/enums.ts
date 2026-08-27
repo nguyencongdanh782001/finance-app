@@ -143,6 +143,7 @@ export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 
 export const PaymentMethod = {
+  CASH: 'CASH',
   COD: 'COD',
   CARD: 'CARD',
   BANK_TRANSFER: 'BANK_TRANSFER',

@@ -26,17 +26,17 @@ export default function AdminAccountMenu() {
   };
 
   return (
-    <div className="pointer-events-none fixed right-3 top-3 z-50 sm:right-5 sm:top-5">
+    <div className="min-w-0">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             type="button"
-            variant="adminAccount"
+            variant="ghost"
             size="adminAccount"
-            className="pointer-events-auto max-w-[calc(100vw-24px)] rounded-full"
+            className="max-w-[min(52vw,220px)] rounded-lg border border-slate-200 bg-white text-slate-700 shadow-none hover:bg-slate-50"
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#FFF3F6]">
-              <UserRound className="size-4 text-[#D96C8A]" />
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10">
+              <UserRound className="size-4 text-primary" />
             </span>
             <span className="hidden max-w-36 truncate sm:block">
               {displayName}
@@ -45,11 +45,11 @@ export default function AdminAccountMenu() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-64 bg-white">
           <div className="px-3 py-2">
-            <p className="truncate text-sm font-extrabold text-[#1C1A1B]">
+            <p className="truncate text-sm font-bold text-slate-900">
               {displayName}
             </p>
-            <p className="mt-1 flex items-center gap-1.5 text-xs font-bold text-[#6F686B]">
-              <ShieldCheck className="size-3.5 text-[#D96C8A]" />
+            <p className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+              <ShieldCheck className="size-3.5 text-primary" />
               {user?.role === "SUPER_ADMIN" ? "Super admin" : "Admin"}
             </p>
           </div>
@@ -60,7 +60,7 @@ export default function AdminAccountMenu() {
               event.preventDefault();
               void handleLogout();
             }}
-            className="text-[#A43E5F] focus:bg-[#FFF3F6] focus:text-[#7A2944]"
+            className="text-red-600 focus:bg-red-50 focus:text-red-700"
           >
             <LogOut className="size-4" />
             {isLoggingOut ? "Đang đăng xuất..." : "Đăng xuất"}

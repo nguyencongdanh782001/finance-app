@@ -1,6 +1,9 @@
 "use client";
-import { Container } from "@/components/ui/container";
-import BlockIcon from "@/components/icon/element/BlockIcon";
+import {
+  AdminPageContainer,
+  AdminPageHeader,
+  AdminSection,
+} from "@/components/Admin/AdminPage";
 import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { YearProfitResponse } from "@/interface/financeAPI";
@@ -17,8 +20,8 @@ const ChartLoading = () => (
       <Skeleton className="h-5 w-40 rounded-2" />
       <Skeleton className="h-8 w-28 rounded-full" />
     </div>
-    <div className="rounded-[32px] bg-white p-4 shadow-sm sm:rounded-[40px] sm:p-5">
-      <Skeleton className="h-72 w-full rounded-[28px] sm:rounded-[32px]" />
+    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+      <Skeleton className="h-72 w-full rounded-lg" />
     </div>
   </div>
 );
@@ -111,22 +114,16 @@ export default function HomeContainer() {
   }, [pathname, searchParams.toString()]);
 
   return (
-    <Container className="gap-8 pb-28">
-      <div className="mt-8 flex items-center gap-4">
-        <BlockIcon className="text-green-2" />
-        <div>
-          <p className="text-blue-2 text-md font-extrabold">Trang Chủ</p>
-          <p className="uppercase text-10px text-green-1 font-bold">
-            Tổng quan tài chính của vợ yêu
-          </p>
-        </div>
-      </div>
-      {/* Total revenue of year */}
-      <div className="p-8 rounded-[40px] bg-white shadow-[0_8px_10px_-6px_rgba(134,188,176,0.05),0_10px_25px_-5px_rgba(134,188,176,0.1)]">
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Tổng quan"
+        description="Theo dõi tài chính và hoạt động bán hàng của cửa hàng."
+      />
+      <AdminSection className="p-5">
         {isLoading ? (
           <Skeleton className="h-6 w-50 rounded-2 mb-2" />
         ) : (
-          <p className="text-13px text-green-1 font-bold">
+          <p className="text-sm font-medium text-slate-500">
             Tổng doanh thu năm {yearProfit?.year}
           </p>
         )}
@@ -135,14 +132,12 @@ export default function HomeContainer() {
           <Skeleton className="h-6 w-50 rounded-2" />
         ) : (
           <p
-            className={`text-3xl ${yearProfit?.totalProfit && yearProfit?.totalProfit < 0 ? "text-red-3" : "text-green-15"} font-extrabold`}
+            className={`mt-1 text-2xl font-bold ${yearProfit?.totalProfit && yearProfit?.totalProfit < 0 ? "text-red-600" : "text-emerald-700"}`}
           >
             {formatCurrencyVND(yearProfit?.totalProfit || 0)}
-            {/* <span className="uppercase text-md text-green-1">vnd</span> */}
           </p>
         )}
-      </div>
-      {/* List revenue follow month */}
+      </AdminSection>
       <ListDate />
 
       <LazySection>
@@ -153,7 +148,6 @@ export default function HomeContainer() {
         <ChartMonthlyProductProfit />
       </LazySection>
 
-      {/* Chart Yearly Revenue */}
       <LazySection>
         <ChartYearlyRevenue isLoading={isLoading} />
       </LazySection>
@@ -161,6 +155,6 @@ export default function HomeContainer() {
       <LazySection>
         <ChartYearlyExpense isLoading={isLoading} />
       </LazySection>
-    </Container>
+    </AdminPageContainer>
   );
 }

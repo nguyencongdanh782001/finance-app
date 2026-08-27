@@ -1,15 +1,18 @@
 "use client";
 
 import CategoryList from "@/components/Category/CategoryList";
-import Navbar from "@/components/common/Navbar";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  AdminSearchInput,
+  AdminSelect,
+  AdminToolbar,
+} from "@/components/Admin/AdminFields";
+import {
+  AdminPageContainer,
+  AdminPageHeader,
+  AdminSection,
+} from "@/components/Admin/AdminPage";
+import { AdminEmptyState } from "@/components/Admin/AdminState";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
@@ -19,7 +22,7 @@ import {
   CategoryFormValues,
   CategoryItemData,
 } from "@/interface/category";
-import { ArrowUpDown, Check, ChevronDown, Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -280,117 +283,82 @@ export default function CategoryContainer() {
     });
   }, [categories, search, sortBy]);
 
-  const selectedSort =
-    CATEGORY_SORT_OPTIONS.find((option) => option.value === sortBy) ??
-    CATEGORY_SORT_OPTIONS[0];
-
   return (
-    <div className="sm:max-w-191.25 mx-auto">
-      <div className="sticky top-0 z-10 bg-white py-6 border-b border-blue-1 shadow px-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-lg font-extrabold text-slate-700">
-              Danh mục sản phẩm
-            </p>
-            <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-300">
-              Quản lý nhóm hàng
-            </p>
-          </div>
-
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Danh mục sản phẩm"
+        description="Tổ chức sản phẩm theo nhóm để quản lý và tìm kiếm nhanh hơn."
+        actions={
           <Button
             type="button"
+            variant="adminPrimary"
+            className="h-10 rounded-lg"
             onClick={handleCreate}
-            className="h-9 rounded-full bg-green-18 px-3 text-green-15 hover:bg-green-14"
           >
             <Plus className="size-4" />
+            Thêm danh mục
           </Button>
-        </div>
+        }
+      />
 
-        <div className="mt-4 rounded-full bg-slate-50 px-4 py-3">
-          <div className="flex items-center gap-2 text-slate-400">
-            <Search className="size-4" />
-            <input
+      <AdminSection>
+        <AdminToolbar
+          search={
+            <AdminSearchInput
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Tìm kiếm theo tên danh mục..."
-              className="w-full bg-transparent text-sm font-medium text-slate-600 outline-none placeholder:text-slate-300"
+              onChange={setSearch}
+              placeholder="Tìm theo tên danh mục"
             />
-          </div>
-        </div>
-      </div>
-      <Container className="pb-32 min-h-[calc(100svh-117px)]!">
-        <div className="overflow-hidden py-0 border-0 shadow-none bg-none">
-          <div className="py-5">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-11px font-bold uppercase tracking-[0.08em] text-slate-300">
-                Danh sách danh mục
-              </p>
-              <div className="flex items-center gap-2">
-                <p className="text-10px font-bold text-slate-300">
-                  {filteredCategories.length} danh mục
-                </p>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="h-8 rounded-full border border-slate-200 bg-white px-2.5 text-11px! font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
-                    >
-                      <ArrowUpDown className="size-3" />
-                      {selectedSort.label}
-                      <ChevronDown className="size-3 text-slate-400" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-36 p-1">
-                    {CATEGORY_SORT_OPTIONS.map((option) => (
-                      <DropdownMenuItem
-                        key={option.value}
-                        onClick={() => setSortBy(option.value)}
-                        className={
-                          sortBy === option.value
-                            ? "px-2.5 py-2 text-11px bg-slate-50 text-slate-700"
-                            : "px-2.5 py-2 text-11px text-slate-500"
-                        }
-                      >
-                        <span className="flex-1">{option.label}</span>
-                        {sortBy === option.value ? (
-                          <Check className="size-4 text-green-16" />
-                        ) : null}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
+          }
+          filters={
+            <AdminSelect
+              name="categorySort"
+              value={sortBy}
+              options={[...CATEGORY_SORT_OPTIONS]}
+              placeholder="Sắp xếp"
+              onChange={(value) => setSortBy(value as CategorySortValue)}
+            />
+          }
+          activeFilterCount={
+            Number(Boolean(search)) + Number(sortBy !== DEFAULT_SORT)
+          }
+          onReset={() => {
+            setSearch("");
+            setSortBy(DEFAULT_SORT);
+          }}
+          desktopClassName="sm:grid-cols-[minmax(220px,1fr)_minmax(140px,180px)_auto]"
+        />
 
-            {isLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3, 4].map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-[26px] border border-[#edf2f7] bg-white px-4 py-4 shadow-[0_12px_30px_rgba(148,163,184,0.08)]"
-                  >
-                    <div className="flex items-center gap-4">
-                      <Skeleton className="h-14 w-14 rounded-[18px]" />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className="h-4 w-28 rounded-full" />
-                        <Skeleton className="h-3 w-20 rounded-full" />
-                      </div>
-                      <Skeleton className="h-9 w-9 rounded-full" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <CategoryList
-                categories={filteredCategories}
-                onEdit={handleEdit}
-                onDelete={handleDeleteClick}
-              />
-            )}
-          </div>
+        <div className="mt-5 flex items-center justify-between gap-3 border-t border-[var(--admin-border)] pt-4">
+          <h2 className="text-base font-semibold text-[var(--admin-text)]">
+            Danh sách danh mục
+          </h2>
+          <p className="whitespace-nowrap text-sm text-[var(--admin-text-secondary)]">
+            {filteredCategories.length} danh mục
+          </p>
         </div>
-      </Container>
+
+        <div className="mt-4">
+          {isLoading ? (
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((item) => (
+                <Skeleton key={item} className="h-20 rounded-xl" />
+              ))}
+            </div>
+          ) : filteredCategories.length === 0 ? (
+            <AdminEmptyState
+              title="Chưa có danh mục phù hợp"
+              description="Thử thay đổi từ khóa hoặc tạo danh mục đầu tiên."
+            />
+          ) : (
+            <CategoryList
+              categories={filteredCategories}
+              onEdit={handleEdit}
+              onDelete={handleDeleteClick}
+            />
+          )}
+        </div>
+      </AdminSection>
 
       <CategoryFormDialog
         open={isFormOpen}
@@ -409,8 +377,6 @@ export default function CategoryContainer() {
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleConfirmDelete}
       />
-
-      <Navbar />
-    </div>
+    </AdminPageContainer>
   );
 }

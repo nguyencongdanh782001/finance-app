@@ -26,9 +26,9 @@ const ModalEditExpense = (props: ModalEditExpenseProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="flex flex-col items-center gap-4! h-fit max-w-[88svw] sm:max-w-92 bg-white rounded-[10px] px-6! py-7.5! overflow-y-auto">
+      <DialogContent className="flex h-fit max-w-[calc(100vw-24px)] flex-col gap-4! overflow-y-auto rounded-xl border-slate-200 bg-white px-6! py-6! shadow-xl sm:max-w-md">
         <DialogHeader className="flex flex-col justify-center items-center gap-4!">
-          <DialogTitle className="uppercase text-13px text-gray-3 font-bold text-center">
+          <DialogTitle className="text-center text-base font-semibold text-slate-900">
             Chỉnh sửa chi phí
           </DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>

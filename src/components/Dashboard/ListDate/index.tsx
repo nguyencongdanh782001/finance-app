@@ -38,8 +38,8 @@ const ListDate = () => {
   }, [year, month]);
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-2 gap-4">
+    <div className="flex min-w-0 flex-col gap-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <BlockTotalExpense
           totalExpense={Number(monthlyData?.totalExpense)}
           isLoading={isLoading}
@@ -49,10 +49,10 @@ const ListDate = () => {
           isLoading={isLoading}
         />
       </div>
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <p className="uppercase text-base text-gray-2 font-extrabold">
-            Chi Tiết Tháng
+      <div className="flex min-w-0 flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-base font-semibold text-slate-800">
+            Chi tiết tháng
           </p>
           <SelectMontYear
             year={year}

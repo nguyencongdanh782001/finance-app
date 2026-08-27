@@ -17,7 +17,9 @@ export default function AdminAuthGuard({ children }: { children: ReactNode }) {
     }
 
     if (!isAuthenticated || !user) {
-      const redirectPath = getSafeReturnPath(`${pathname}${window.location.search}`);
+      const redirectPath = getSafeReturnPath(
+        `${pathname}${window.location.search}`,
+      );
 
       router.replace(`/login?redirect=${encodeURIComponent(redirectPath)}`);
       return;
@@ -30,16 +32,16 @@ export default function AdminAuthGuard({ children }: { children: ReactNode }) {
 
   if (isInitializing || !isAuthenticated || !isAdminRole(user?.role)) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#FFFCFA] px-5">
+      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-5">
         <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center">
-          <div className="flex size-14 items-center justify-center rounded-full border border-[#E9E2E5] bg-white shadow-sm">
-            <Store className="size-7 text-[#D96C8A]" />
+          <div className="flex size-14 items-center justify-center rounded-xl border border-slate-200 bg-white">
+            <Store className="size-7 text-sky-600" />
           </div>
           <div>
-            <p className="text-base font-extrabold text-[#1C1A1B]">
+            <p className="text-base font-bold text-slate-900">
               Đang kiểm tra đăng nhập
             </p>
-            <p className="mt-1 text-sm font-medium text-[#6F686B]">
+            <p className="mt-1 text-sm font-medium text-slate-500">
               Quỳnh Nhi Store đang mở khu vực quản trị cho bạn.
             </p>
           </div>

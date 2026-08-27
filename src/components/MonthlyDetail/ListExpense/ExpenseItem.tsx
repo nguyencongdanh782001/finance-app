@@ -20,29 +20,29 @@ const ExpenseItem = (props: ExpenseItemProps) => {
   const [openDelete, setOpenDelete] = useState(false);
 
   return (
-    <div className="flex flex-col bg-white shadow-md p-5 rounded-[32px]">
+    <div className="flex flex-col rounded-lg border border-slate-200 bg-white p-4">
       <div className="flex items-start justify-between gap-6">
         <p className="text-base text-gray-7 font-bold">{data?.name}</p>
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
-            className="p-2! h-fit! bg-gray-6! rounded-full shadow-sm"
+            className="h-8! w-8! rounded-lg border border-slate-200 bg-white! p-0!"
             onClick={() => setOpenEdit(true)}
           >
-            <Edit className="size-4 text-green-1" />
+            <Edit className="size-4 text-slate-600" />
           </Button>
 
           <Button
             variant="ghost"
-            className="p-2! h-fit! bg-gray-6! rounded-full shadow-sm"
+            className="h-8! w-8! rounded-lg border border-red-200 bg-red-50! p-0!"
             onClick={() => setOpenDelete(true)}
           >
-            <Trash2Icon className="size-4 text-green-1" />
+            <Trash2Icon className="size-4 text-red-600" />
           </Button>
         </div>
       </div>
 
-      <p className="text-xs text-green-1 font-medium">
+      <p className="text-xs font-medium text-slate-500">
         {formatTZ(data?.createdAt || "", TZ_TEMPLATE.year_month_day)}
       </p>
       <p className="mt-2 text-base text-gray-2 font-bold">

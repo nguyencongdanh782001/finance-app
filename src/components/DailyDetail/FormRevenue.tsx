@@ -76,21 +76,19 @@ export default function FormRevenue(props: FormRevenueProps) {
 
   return (
     <FormikProvider value={formik}>
-      <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-4 bg-white shadow-sm">
+      <Form className="flex w-full flex-col gap-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full bg-purple-2">
-            <CandlestickChartIcon className="size-4 text-purple-1" />
+          <div className="rounded-lg bg-primary/10 p-2">
+            <CandlestickChartIcon className="size-4 text-primary" />
           </div>
-          <p className="text-13px text-gray-2 font-bold uppercase">
-            Chốt Doanh Thu
-          </p>
+          <p className="text-sm font-semibold text-slate-800">Chốt doanh thu</p>
         </div>
 
         {/* Vốn tiền mặt */}
         <div className="flex flex-col gap-2 w-full">
           <Label
             variant="secondary"
-            className="text-green-1! text-11px font-bold"
+            className="text-xs font-medium text-slate-600"
           >
             Tổng tiền mặt
           </Label>
@@ -103,7 +101,7 @@ export default function FormRevenue(props: FormRevenueProps) {
               placeholder="0"
               name="revenueCash"
               variant="default"
-              className="bg-purple-2! h-14! rounded-xl! border-purple-3! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+              className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
               onBlur={() => {
@@ -117,7 +115,7 @@ export default function FormRevenue(props: FormRevenueProps) {
         <div className="flex flex-col gap-2 w-full">
           <Label
             variant="secondary"
-            className="text-green-1! text-11px font-bold"
+            className="text-xs font-medium text-slate-600"
           >
             Tổng chuyển khoản
           </Label>
@@ -130,7 +128,7 @@ export default function FormRevenue(props: FormRevenueProps) {
               placeholder="0"
               name="revenueBank"
               variant="default"
-              className="bg-blue-3! h-14! rounded-xl! border-blue-4! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+              className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
               onBlur={() => {

@@ -19,16 +19,16 @@ const BlockTotalProfit = (props: BlockTotalProfitProps) => {
 
   return (
     <div
-      className={`flex flex-col gap-1 rounded-[40px] px-4 py-5 border border-white shadow-sm bg-linear-to-tr ${profit && profit < 0 ? "from-red-6 to-red-5" : "from-green-18 to-green-17"}`}
+      className={`flex min-w-0 flex-col gap-1 rounded-xl border px-4 py-4 ${profit && profit < 0 ? "border-red-200 bg-red-50" : "border-slate-200 bg-white"}`}
     >
-      <p className="text-green-1 text-13px font-bold uppercase">
+      <p className="text-sm font-medium text-emerald-700">
         Doanh thu tháng {defaultMonth}
       </p>
       {isLoading ? (
         <Skeleton className="h-7 w-full rounded-1 mb-2" />
       ) : (
         <p
-          className={`text-base font-extrabold uppercase ${profit && profit < 0 ? "text-red-3" : "text-green-15 "}`}
+          className={`truncate text-lg font-bold ${profit && profit < 0 ? "text-red-700" : "text-emerald-700"}`}
         >
           {formatCurrencyVND(profit || 0)}
         </p>

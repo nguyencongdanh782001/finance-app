@@ -15,7 +15,7 @@ export default function ProductList({
   onDelete,
 }: ProductListProps) {
   return (
-    <div className="space-y-4">
+    <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
       {products.map((product) => (
         <ProductItem
           key={product.id}

@@ -59,12 +59,12 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
 
   return (
     <FormikProvider value={formik}>
-      <Form className="w-full rounded-2xl border border-gray-200 p-6 space-y-4 bg-white shadow-sm">
+      <Form className="grid w-full gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end sm:p-5">
         {/* Mô tả chi phí */}
         <div className="flex flex-col gap-2 w-full">
           <Label
             variant="secondary"
-            className="text-green-1! text-11px font-bold"
+            className="text-xs font-medium text-slate-600"
           >
             Mô tả chi phí
           </Label>
@@ -74,7 +74,7 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
             placeholder="Nhập chi phí"
             name="name"
             variant="default"
-            className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+            className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
           />
         </div>
 
@@ -83,7 +83,7 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
           <div className="flex flex-col gap-2 w-full">
             <Label
               variant="secondary"
-              className="text-green-1! text-11px font-bold"
+              className="text-xs font-medium text-slate-600"
             >
               Số tiền (VND)
             </Label>
@@ -95,26 +95,26 @@ export default function FormAddExpense({ reload }: { reload: () => void }) {
                   placeholder="0"
                   name="amount"
                   variant="default"
-                  className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+                  className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
                   pattern="^\d+(\.\d*)?$"
                 />
               </div>
-
-              <Button
-                type="submit"
-                disabled={isSubmitting || !dirty}
-                className="shadow-sm! h-14! w-30! flex items-center gap-2 rounded-xl bg-green-9 hover:bg-green-9/80 text-base text-white font-bold"
-              >
-                {isSubmitting ? (
-                  <Loader2 className="animate-spin w-3.5 h-3.5 text-white" />
-                ) : (
-                  <Plus className="w-3.5 h-3.5 text-white" />
-                )}
-                Thêm
-              </Button>
             </div>
           </div>
         </div>
+        <Button
+          type="submit"
+          variant="adminPrimary"
+          disabled={isSubmitting || !dirty}
+          className="h-10 w-full rounded-lg sm:w-auto"
+        >
+          {isSubmitting ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Plus className="size-4" />
+          )}
+          Thêm
+        </Button>
       </Form>
     </FormikProvider>
   );

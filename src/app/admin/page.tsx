@@ -1,14 +1,10 @@
 import { Suspense } from "react";
 import HomeContainer from "@/container/HomeContainer";
-import Navbar from "@/components/common/Navbar";
 
 export default function AdminHome() {
   return (
-    <>
-      <Suspense>
-        <HomeContainer />
-      </Suspense>
-      <Navbar />
-    </>
+    <Suspense>
+      <HomeContainer />
+    </Suspense>
   );
 }

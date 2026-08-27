@@ -1,123 +1,36 @@
 "use client";
 
-import AutoCompleteField from "@/components/common/CustomFields/AutoCompleteField";
 import CustomSelect from "@/components/common/CustomFields/CustomSelect";
+import { SoldProductGroupRow } from "@/components/DailyDetail/SoldProductGroup";
+import { updateExpandedGroupKeys } from "@/components/DailyDetail/sold-product-expanded-state";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { NumericInput } from "@/components/ui/numberInput";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
-import { toast } from "@/hook/use-toast";
-import { CustomInputProps, CustomSelectProps } from "@/interface/Field";
-import { DailyDetailResponse } from "@/interface/financeAPI";
-import { ProductApiItem } from "@/interface/product";
+import { formatCurrencyVND } from "@/helper/convertCurrency";
+import type {
+  DailyDetailResponse,
+  DailySoldProductGroupListResponse,
+  SoldProductSourceValue,
+} from "@/interface/financeAPI";
+import type { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
 import {
-  FieldArray,
-  Form,
-  FormikProvider,
-  getIn,
-  setIn,
-  useFormik,
-} from "formik";
-import {
-  AlertTriangle,
-  Box,
-  ChevronDown,
-  ChevronUp,
-  ImageOff,
-  Minus,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
   PackageCheck,
-  Plus,
+  ReceiptText,
+  RotateCcw,
   Search,
-  Trash2,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
-import * as Yup from "yup";
-
-type InventoryProduct = {
-  id: number;
-  title: string;
-  imageUrl: string;
-  categoryName: string;
-  importPrice: number;
-  sellPrice: number;
-  quantity: number;
-};
-
-type SaleEntryFormValue = {
-  quantity: string;
-  sellPrice: string;
-};
-
-type ProductSaleFormValue = {
-  productId: string;
-  sales: SaleEntryFormValue[];
-};
-
-type ProductSalesFormValues = {
-  soldProducts: ProductSaleFormValue[];
-};
-
-type DeleteSaleTarget = {
-  productIndex: number;
-  saleIndex: number;
-  shouldDeleteProduct: boolean;
-} | null;
-
-const createDefaultSale = (): SaleEntryFormValue => ({
-  quantity: "1",
-  sellPrice: "",
-});
-
-const createDefaultRow = (): ProductSaleFormValue => ({
-  productId: "",
-  sales: [createDefaultSale()],
-});
-
-const validationSchema = Yup.object({
-  soldProducts: Yup.array()
-    .of(
-      Yup.object({
-        productId: Yup.string().required("Vui lòng chọn sản phẩm"),
-        sales: Yup.array()
-          .of(
-            Yup.object({
-              quantity: Yup.number()
-                .typeError("Vui lòng nhập số lượng")
-                .integer("Số lượng phải là số nguyên")
-                .min(1, "Số lượng phải lớn hơn 0")
-                .required("Vui lòng nhập số lượng"),
-              sellPrice: Yup.number()
-                .typeError("Vui lòng nhập giá bán")
-                .min(0, "Giá bán không được âm")
-                .required("Vui lòng nhập giá bán"),
-            }),
-          )
-          .min(1, "Vui lòng nhập ít nhất một mức giá"),
-      }),
-    )
-    .test(
-      "unique-product",
-      "Mỗi sản phẩm chỉ nên chọn một lần",
-      (value = []) => {
-        const selectedProductIds = value
-          .map((item) => item.productId)
-          .filter(Boolean);
-
-        return selectedProductIds.length === new Set(selectedProductIds).size;
-      },
-    ),
-});
+import {
+  type ComponentType,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 interface FormProductsProps {
   data: DailyDetailResponse | undefined;
@@ -126,1149 +39,383 @@ interface FormProductsProps {
   onReload: () => void;
 }
 
-const mapProductFromApi = (product: ProductApiItem): InventoryProduct => ({
-  id: product.id,
-  title: product.title,
-  imageUrl: product.imageUrl,
-  categoryName: product.category.name,
-  importPrice: Number(product.importPrice),
-  sellPrice: Number(product.sellPrice),
-  quantity: product.quantity,
-});
-
-const formatCurrency = (value: number) => `${value.toLocaleString("vi-VN")}`;
-
-const getFormikErrorsFromYup = async (values: ProductSalesFormValues) => {
-  try {
-    await validationSchema.validate(values, { abortEarly: false });
-    return {};
-  } catch (error) {
-    if (error instanceof Yup.ValidationError) {
-      return error.inner.reduce<Record<string, string>>((acc, currentError) => {
-        if (currentError.path) {
-          acc[currentError.path] = currentError.message;
-        }
-
-        return acc;
-      }, {});
-    }
-
-    return {};
-  }
+type SourceFilter = "ALL" | SoldProductSourceValue;
+type SelectOption = { value: string; label: string; disabled?: boolean };
+type RuntimeSelectProps = {
+  field: FieldInputProps<string>;
+  form: FormikProps<Record<string, string>>;
+  meta: FieldMetaProps<string>;
+  optionValue: SelectOption[];
+  placeholder: string;
+  searchable?: boolean;
+  className?: string;
+  inputClassName?: string;
+  lblClassName?: string;
+  popoverTrgVariant?: { variant?: string };
+  onManualSelect?: (value?: string) => void;
 };
 
-function ProductImagePreview({
-  imageUrl,
-  title,
+const RuntimeCustomSelect =
+  CustomSelect as unknown as ComponentType<RuntimeSelectProps>;
+
+const SOURCE_OPTIONS: SelectOption[] = [
+  { value: "ALL", label: "Tất cả nguồn" },
+  { value: "OFFLINE", label: "Tại shop" },
+  { value: "ONLINE", label: "Online" },
+  { value: "LEGACY_MANUAL", label: "Dữ liệu cũ" },
+];
+
+const EMPTY_RESPONSE: DailySoldProductGroupListResponse = {
+  items: [],
+  summary: {
+    totalGroups: 0,
+    totalQuantity: 0,
+    totalAmount: 0,
+    totalProfit: null,
+  },
+  pagination: { page: 1, limit: 10, totalGroups: 0, totalPages: 1 },
+};
+
+const formatMoney = (value: number) => `${formatCurrencyVND(value)}đ`;
+
+function SourceSelect({
+  value,
+  onChange,
 }: {
-  imageUrl: string;
-  title: string;
+  value: SourceFilter;
+  onChange: (value: SourceFilter) => void;
 }) {
-  const [showImage, setShowImage] = useState(Boolean(imageUrl));
-
-  useEffect(() => {
-    setShowImage(Boolean(imageUrl));
-  }, [imageUrl]);
-
-  if (!showImage) {
-    return (
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] bg-slate-50 text-slate-400">
-        <ImageOff className="size-4" />
-      </div>
-    );
-  }
+  const form = useMemo(
+    () =>
+      ({
+        errors: {},
+        touched: {},
+        setFieldValue: () => Promise.resolve(),
+      }) as unknown as FormikProps<Record<string, string>>,
+    [],
+  );
 
   return (
-    <div className="h-14 w-14 shrink-0 rounded-[14px] bg-slate-100 overflow-hidden">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imageUrl}
-        alt={title}
-        className="h-full w-full object-cover"
-        onError={() => setShowImage(false)}
-      />
-    </div>
+    <RuntimeCustomSelect
+      field={
+        {
+          name: "soldProductSource",
+          value,
+          onChange: () => undefined,
+          onBlur: () => undefined,
+        } as FieldInputProps<string>
+      }
+      form={form}
+      meta={{} as FieldMetaProps<string>}
+      optionValue={SOURCE_OPTIONS}
+      placeholder="Tất cả nguồn"
+      searchable={false}
+      className="w-full! min-w-0! sm:w-full!"
+      inputClassName="h-11! w-full! min-w-0! rounded-2xl! border-slate-100! bg-slate-50! px-3! text-sm!"
+      lblClassName="text-sm font-bold"
+      onManualSelect={(nextValue) => onChange(nextValue as SourceFilter)}
+    />
   );
 }
 
-const getRowQuantity = (sales: SaleEntryFormValue[]) =>
-  sales.reduce((sum, sale) => sum + Number(sale.quantity || 0), 0);
-
-const getRowEstimatedProfit = (
-  sales: SaleEntryFormValue[],
-  importPrice: number,
-) =>
-  sales.reduce((sum, sale) => {
-    const quantity = Number(sale.quantity || 0);
-    const sellPrice = Number(sale.sellPrice || 0);
-
-    return sum + (sellPrice - importPrice) * quantity;
-  }, 0);
-
-const getRowRevenue = (sales: SaleEntryFormValue[]) =>
-  sales.reduce((sum, sale) => {
-    const quantity = Number(sale.quantity || 0);
-    const sellPrice = Number(sale.sellPrice || 0);
-
-    return sum + sellPrice * quantity;
-  }, 0);
-
-export default function FormProducts(props: FormProductsProps) {
-  const { data, isLoading, reload, onReload } = props;
-  const params = useParams();
-  const id = Number(params.id);
-  const [inventoryProducts, setInventoryProducts] = useState<
-    InventoryProduct[]
-  >([]);
-  const [isInventoryLoading, setIsInventoryLoading] = useState(true);
-  const [deleteTargetIndex, setDeleteTargetIndex] = useState<number | null>(
-    null,
+export default function FormProducts({
+  data,
+  isLoading,
+  reload,
+}: FormProductsProps) {
+  const dailyId = data?.id;
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [source, setSource] = useState<SourceFilter>("ALL");
+  const [page, setPage] = useState(1);
+  const [result, setResult] =
+    useState<DailySoldProductGroupListResponse | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
+    () => new Set(),
   );
-  const [deleteSaleTarget, setDeleteSaleTarget] =
-    useState<DeleteSaleTarget>(null);
-  const [collapsedProductIds, setCollapsedProductIds] = useState<string[]>([]);
-  const [soldProductSearch, setSoldProductSearch] = useState("");
-  const [isSummaryExpanded, setIsSummaryExpanded] = useState(false);
-  const savedImportPriceMap = useMemo(
-    () =>
-      new Map(
-        (data?.soldProducts ?? []).map((item) => [
-          item.productId,
-          item.importPrice,
-        ]),
-      ),
-    [data?.soldProducts],
-  );
-
-  const serverInitialValues = useMemo<ProductSalesFormValues>(
-    () => ({
-      soldProducts:
-        data?.soldProducts.map((item) => ({
-          productId: String(item.productId),
-          sales: item.sales.map((sale) => ({
-            quantity: String(sale.quantity),
-            sellPrice: String(sale.sellPrice),
-          })),
-        })) ?? [],
-    }),
-    [data?.soldProducts],
-  );
-  const [stableInitialValues, setStableInitialValues] =
-    useState<ProductSalesFormValues>(serverInitialValues);
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
-    setStableInitialValues(serverInitialValues);
-  }, [serverInitialValues]);
+    const timeout = window.setTimeout(
+      () => setDebouncedSearch(search.trim()),
+      250,
+    );
 
-  const initialSoldProductMap = useMemo(
-    () =>
-      stableInitialValues.soldProducts.reduce((map, item) => {
-        const productId = Number(item.productId);
-
-        if (!productId) return map;
-
-        map.set(
-          productId,
-          (map.get(productId) ?? 0) + getRowQuantity(item.sales),
-        );
-        return map;
-      }, new Map<number, number>()),
-    [stableInitialValues],
-  );
-  const initialSalesCountMap = useMemo(
-    () =>
-      stableInitialValues.soldProducts.reduce((map, item) => {
-        const productId = Number(item.productId);
-
-        if (!productId) return map;
-
-        map.set(productId, item.sales.length);
-        return map;
-      }, new Map<number, number>()),
-    [stableInitialValues],
-  );
+    return () => window.clearTimeout(timeout);
+  }, [search]);
 
   useEffect(() => {
-    const fetchInventoryProducts = async () => {
-      if (inventoryProducts.length === 0) {
-        setIsInventoryLoading(true);
-      }
+    setSearch("");
+    setDebouncedSearch("");
+    setSource("ALL");
+    setPage(1);
+    setResult(null);
+    setExpandedGroups(new Set());
+  }, [dailyId]);
 
-      const res = await financeAPI.getProductList({
-        page: 1,
-        limit: 1000,
-      });
+  useEffect(() => {
+    if (!dailyId || isLoading) {
+      return;
+    }
 
-      if (res.code === RESPONSE_CODES.success && res.data) {
-        setInventoryProducts(res.data.data.map(mapProductFromApi));
-      } else {
-        toast({
-          title: "Không tải được danh sách sản phẩm",
-          className: "bg-red-1 text-white text-sm font-medium w-fit",
-          duration: 3000,
-        });
-      }
+    const requestId = ++requestIdRef.current;
+    setIsFetching(true);
+    setError("");
 
-      setIsInventoryLoading(false);
-    };
+    void financeAPI
+      .getDailySoldProductGroups(dailyId, {
+        search: debouncedSearch || undefined,
+        source,
+        page,
+        limit: 10,
+      })
+      .then((response) => {
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
 
-    fetchInventoryProducts();
-  }, [reload, inventoryProducts.length]);
+        if (response.code !== RESPONSE_CODES.success || !response.data) {
+          setError("Không thể tải danh sách sản phẩm đã bán.");
+          return;
+        }
 
-  const formik = useFormik<ProductSalesFormValues>({
-    initialValues: stableInitialValues,
-    enableReinitialize: true,
-    validate: async (values) => {
-      let nextErrors = await getFormikErrorsFromYup(values);
-
-      values.soldProducts.forEach((item, index) => {
-        if (!item.productId) return;
-
-        const selectedProduct = inventoryProducts.find(
-          (product) => String(product.id) === item.productId,
-        );
-        const initialQuantity =
-          initialSoldProductMap.get(Number(item.productId)) ?? 0;
-        const maxAvailable = selectedProduct
-          ? selectedProduct.quantity + initialQuantity
-          : 0;
-        const totalQuantity = getRowQuantity(item.sales);
-
-        if (totalQuantity > maxAvailable) {
-          nextErrors = setIn(
-            nextErrors,
-            `soldProducts[${index}].sales`,
-            `Tổng số lượng không được lớn hơn ${maxAvailable.toLocaleString("vi-VN")}`,
-          );
+        setResult(response.data);
+        if (response.data.pagination.page !== page) {
+          setPage(response.data.pagination.page);
+        }
+      })
+      .finally(() => {
+        if (requestId === requestIdRef.current) {
+          setIsFetching(false);
         }
       });
+  }, [dailyId, debouncedSearch, source, page, reload, isLoading, retryCount]);
 
-      return nextErrors;
-    },
+  const currentResult = result ?? EMPTY_RESPONSE;
+  const hasFilters = Boolean(search || source !== "ALL");
+  const showInitialLoading = isLoading || (!result && isFetching);
 
-    onSubmit: async (values, actions) => {
-      const payload = values.soldProducts.map((item) => ({
-        productId: Number(item.productId),
-        sales: item.sales.map((sale) => ({
-          quantity: Number(sale.quantity),
-          sellPrice: Number(sale.sellPrice),
-        })),
-      }));
+  const resetFilters = () => {
+    setSearch("");
+    setDebouncedSearch("");
+    setSource("ALL");
+    setPage(1);
+  };
 
-      const res = await financeAPI.putDailySoldProducts(id, {
-        soldProducts: payload,
-      });
+  const changeSource = (nextSource: SourceFilter) => {
+    setSource(nextSource);
+    setPage(1);
+  };
 
-      if (res.code === RESPONSE_CODES.success) {
-        toast({
-          title: "Cập nhật sản phẩm bán thành công",
-          className: "bg-green-16 text-white text-sm font-medium w-fit",
-          duration: 3500,
-        });
-        setStableInitialValues(values);
-        actions.resetForm({ values });
-        onReload();
-        return;
-      }
-
-      const errorMessage =
-        (res.data as { message?: string } | undefined)?.message ||
-        "Vui lòng kiểm tra lại số lượng tồn kho rồi thử lại.";
-
-      toast({
-        title: errorMessage,
-        className: "bg-red-1 text-white text-sm font-medium",
-        duration: 3500,
-      });
-    },
-  });
-
-  const { values, isSubmitting, dirty, errors, submitForm, validateField } =
-    formik;
-  const hasPendingDraftRow = values.soldProducts.some(
-    (item) => !item.productId,
-  );
-
-  const totalSoldCount = values.soldProducts.reduce(
-    (sum, item) => sum + getRowQuantity(item.sales),
-    0,
-  );
-  const totalRecordedRevenue = values.soldProducts.reduce(
-    (sum, item) => sum + getRowRevenue(item.sales),
-    0,
-  );
-  const totalEstimatedProfit = values.soldProducts.reduce((sum, item) => {
-    const selectedProduct = inventoryProducts.find(
-      (product) => String(product.id) === item.productId,
+  const toggleGroup = (groupKey: string, open: boolean) => {
+    setExpandedGroups((current) =>
+      updateExpandedGroupKeys(current, groupKey, open),
     );
-
-    if (!selectedProduct) return sum;
-
-    const effectiveImportPrice =
-      savedImportPriceMap.get(Number(item.productId)) ??
-      selectedProduct.importPrice;
-
-    return (
-      sum +
-      item.sales.reduce((rowSum, sale) => {
-        const quantity = Number(sale.quantity || 0);
-        const unitSellPrice = Number(sale.sellPrice || 0);
-        const unitProfit = unitSellPrice - effectiveImportPrice;
-
-        return rowSum + unitProfit * quantity;
-      }, 0)
-    );
-  }, 0);
-  const normalizedSoldProductSearch = soldProductSearch.trim().toLowerCase();
-  const filteredSoldProducts = values.soldProducts
-    .map((item, index) => {
-      const selectedProduct = inventoryProducts.find(
-        (product) => String(product.id) === item.productId,
-      );
-      const searchText = [
-        selectedProduct?.title,
-        selectedProduct?.categoryName,
-        item.productId ? `#${item.productId}` : "",
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return {
-        item,
-        index,
-        selectedProduct,
-        matches:
-          normalizedSoldProductSearch.length === 0 ||
-          searchText.includes(normalizedSoldProductSearch),
-      };
-    })
-    .filter((row) => row.matches);
-  const displayedSoldProducts = [...filteredSoldProducts].reverse();
+  };
 
   return (
-    <FormikProvider value={formik}>
-      <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-5 bg-white shadow-sm">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-green-14 p-2">
-              <PackageCheck className="size-4 text-green-13" />
-            </div>
-            <div>
-              <p className="text-13px font-bold uppercase text-gray-3">
-                Sản phẩm bán trong ngày
-              </p>
-            </div>
+    <section className="w-full max-w-full min-w-0 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="shrink-0 rounded-full bg-blue-50 p-2.5">
+            <PackageCheck className="size-4 text-blue-2" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[13px] font-bold uppercase text-gray-3">
+              Sản phẩm đã bán
+            </p>
+            <p className="mt-1 text-xs font-semibold text-slate-400">
+              Tổng hợp tự động từ các đơn hàng hợp lệ.
+            </p>
+          </div>
+          {isFetching && result ? (
+            <Loader2 className="size-4 shrink-0 animate-spin text-blue-2" />
+          ) : null}
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:min-w-90 sm:grid-cols-3">
+          <div className="rounded-xl bg-slate-50 px-3 py-2">
+            <p className="text-[10px] font-bold uppercase text-slate-400">
+              Số lượng
+            </p>
+            <p className="text-base font-extrabold text-slate-800">
+              {currentResult.summary.totalQuantity.toLocaleString("vi-VN")}
+            </p>
+          </div>
+          <div className="rounded-xl bg-green-50 px-3 py-2">
+            <p className="text-[10px] font-bold uppercase text-green-2">
+              Doanh thu
+            </p>
+            <p className="truncate text-base font-extrabold text-green-2">
+              {formatMoney(currentResult.summary.totalAmount)}
+            </p>
+          </div>
+          <div className="col-span-2 rounded-xl bg-emerald-50 px-3 py-2 sm:col-span-1">
+            <p className="text-[10px] font-bold uppercase text-emerald-600">
+              Lợi nhuận
+            </p>
+            <p
+              className={`truncate text-base font-extrabold ${
+                (currentResult.summary.totalProfit ?? 0) < 0
+                  ? "text-red-600"
+                  : "text-emerald-700"
+              }`}
+            >
+              {currentResult.summary.totalProfit === null
+                ? "-"
+                : formatMoney(currentResult.summary.totalProfit)}
+            </p>
           </div>
         </div>
+      </div>
 
-        {isLoading || isInventoryLoading ? (
-          <div className="space-y-4">
-            <Skeleton className="h-26! w-full rounded-[24px]!" />
-            <Skeleton className="h-26! w-full rounded-[24px]!" />
-          </div>
-        ) : (
-          <FieldArray
-            name="soldProducts"
-            render={(arrayHelpers) => (
-              <div className="space-y-4">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="h-12 w-full rounded-3xl border border-dashed border-green-15 bg-green-14 text-sm font-semibold text-green-13 hover:bg-green-14"
-                  onClick={() => arrayHelpers.push(createDefaultRow())}
-                  disabled={
-                    isSubmitting ||
-                    isLoading ||
-                    reload ||
-                    inventoryProducts.length === 0 ||
-                    hasPendingDraftRow
-                  }
-                >
-                  <Plus className="size-4" />
-                  Thêm sản phẩm đã bán
-                </Button>
-
-                {values.soldProducts.length > 0 ? (
-                  <div className="rounded-[20px] border border-slate-100 bg-white p-3 shadow-[0_10px_24px_rgba(148,163,184,0.08)]">
-                    <div className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-3">
-                      <Search className="size-4 shrink-0 text-slate-400" />
-                      <input
-                        type="text"
-                        value={soldProductSearch}
-                        onChange={(e) => setSoldProductSearch(e.target.value)}
-                        placeholder="Tìm sản phẩm đã bán"
-                        className="h-11 w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-                        disabled={isSubmitting || isLoading || reload}
-                      />
-                      {soldProductSearch ? (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          className="h-8 w-8 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                          onClick={() => setSoldProductSearch("")}
-                        >
-                          <X className="size-4" />
-                        </Button>
-                      ) : null}
-                    </div>
-                    <p className="mt-2 text-xs text-slate-400">
-                      Hiển thị {filteredSoldProducts.length}/
-                      {values.soldProducts.length} sản phẩm khớp tìm kiếm.
-                    </p>
-                  </div>
-                ) : null}
-
-                {values.soldProducts.length > 0 ? (
-                  displayedSoldProducts.length > 0 ? (
-                    displayedSoldProducts.map(
-                      ({ item, index, selectedProduct }) => {
-                        const selectedIds = values.soldProducts
-                          .map((row) => row.productId)
-                          .filter(
-                            (productId, rowIndex) =>
-                              productId && rowIndex !== index,
-                          );
-                        const initialQuantity = item.productId
-                          ? (initialSoldProductMap.get(
-                              Number(item.productId),
-                            ) ?? 0)
-                          : 0;
-                        const effectiveImportPrice =
-                          savedImportPriceMap.get(Number(item.productId)) ??
-                          selectedProduct?.importPrice ??
-                          0;
-                        const productEstimatedProfit = getRowEstimatedProfit(
-                          item.sales,
-                          effectiveImportPrice,
-                        );
-                        const maxAvailable = selectedProduct
-                          ? selectedProduct.quantity + initialQuantity
-                          : 0;
-                        const isSavedProduct = item.productId
-                          ? initialSoldProductMap.has(Number(item.productId))
-                          : false;
-                        const isOutOfStock = Boolean(
-                          selectedProduct && maxAvailable === 0,
-                        );
-                        const isCollapsed = item.productId
-                          ? collapsedProductIds.includes(item.productId)
-                          : false;
-
-                        const optionValue = inventoryProducts.map(
-                          (product) => ({
-                            label:
-                              product.quantity === 0
-                                ? `${product.title} • ${product.categoryName} • Hết hàng`
-                                : `${product.title} • ${product.categoryName}`,
-                            value: String(product.id),
-                            disabled: selectedIds.includes(String(product.id)),
-                            // || (product.quantity === 0 &&
-                            //   !initialSoldProductMap.has(product.id)),
-                          }),
-                        );
-
-                        return (
-                          <div
-                            key={`${item.productId || "new"}-${index}`}
-                            className="rounded-[20px] border border-slate-100 bg-slate-50/70 p-3 shadow-[0_10px_24px_rgba(148,163,184,0.08)]"
-                          >
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="text-sm font-bold uppercase tracking-[0.06em] text-slate-700">
-                                  Sản phẩm #{index + 1}
-                                </p>
-                              </div>
-
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon-sm"
-                                className="h-9 w-9 rounded-full bg-white text-rose-400 hover:bg-rose-50 hover:text-rose-500"
-                                onClick={() => setDeleteTargetIndex(index)}
-                                disabled={isSubmitting || isLoading || reload}
-                              >
-                                <Trash2 className="size-4" />
-                              </Button>
-                            </div>
-
-                            <div className="mt-3 grid grid-cols-1 gap-2.5">
-                              <div className="flex flex-col gap-2">
-                                <Label
-                                  variant="secondary"
-                                  className="text-slate-700! text-xs font-bold"
-                                >
-                                  Tên sản phẩm
-                                </Label>
-                                <AutoCompleteField<CustomSelectProps>
-                                  component={CustomSelect}
-                                  version="field"
-                                  name={`soldProducts[${index}].productId`}
-                                  placeholder="Chọn sản phẩm đã bán"
-                                  optionValue={optionValue}
-                                  className="h-12! w-full! min-w-full!"
-                                  inputClassName="!h-12 !rounded-xl !bg-white !text-[15px] !font-semibold !text-slate-800"
-                                  lblClassName="text-[15px] font-semibold text-slate-800"
-                                  arrow={
-                                    <ChevronDown
-                                      className="h-5! w-5! text-slate-500"
-                                      style={{ paddingBottom: "2px" }}
-                                    />
-                                  }
-                                  searchable
-                                  popoverTrgVariant={{
-                                    variant: "search-box--lgray",
-                                  }}
-                                  onManualSelect={(v) => {
-                                    const nextProduct = inventoryProducts.find(
-                                      (product) => String(product.id) === v,
-                                    );
-
-                                    formik.setFieldValue(
-                                      `soldProducts[${index}].sales[0].sellPrice`,
-                                      nextProduct
-                                        ? String(nextProduct.sellPrice)
-                                        : "",
-                                    );
-
-                                    setTimeout(() => {
-                                      if (v) {
-                                        void submitForm();
-                                      }
-                                    }, 0);
-                                  }}
-                                  disabled={
-                                    isSubmitting ||
-                                    isLoading ||
-                                    reload ||
-                                    isSavedProduct
-                                  }
-                                />
-                              </div>
-                            </div>
-
-                            {selectedProduct ? (
-                              <div className="mt-3 flex flex-col gap-2.5 rounded-[16px] bg-white p-2.5">
-                                <div className="flex w-full items-start justify-between gap-2">
-                                  <div className="flex gap-2 w-full">
-                                    <ProductImagePreview
-                                      imageUrl={selectedProduct.imageUrl}
-                                      title={selectedProduct.title}
-                                    />
-                                    <div className="flex flex-col w-full">
-                                      <p className="line-clamp-2 text-base font-extrabold leading-6 text-slate-700">
-                                        {selectedProduct.title}
-                                      </p>
-                                      <p className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-400">
-                                        {selectedProduct.categoryName}
-                                      </p>
-                                      {isOutOfStock ? (
-                                        <div className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2 py-1 text-11px font-bold uppercase tracking-[0.08em] text-rose-600">
-                                          <AlertTriangle className="size-3.5" />
-                                          Hết hàng
-                                        </div>
-                                      ) : null}
-                                    </div>
-                                  </div>
-
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon-sm"
-                                    className="cursor-pointer h-9 w-9 shrink-0 rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
-                                    onClick={() => {
-                                      if (!item.productId) return;
-
-                                      setCollapsedProductIds((prev) =>
-                                        prev.includes(item.productId)
-                                          ? prev.filter(
-                                              (productId) =>
-                                                productId !== item.productId,
-                                            )
-                                          : [...prev, item.productId],
-                                      );
-                                    }}
-                                  >
-                                    {isCollapsed ? (
-                                      <ChevronDown className="size-4" />
-                                    ) : (
-                                      <ChevronUp className="size-4" />
-                                    )}
-                                  </Button>
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <div className="mt-2 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
-                                    <div className="rounded-xl bg-slate-50 px-2 py-1.5">
-                                      <p className="font-bold text-slate-400">
-                                        Giá bán
-                                      </p>
-                                      <p className="mt-1 text-sm font-extrabold text-slate-700">
-                                        {formatCurrency(
-                                          selectedProduct.sellPrice,
-                                        )}
-                                      </p>
-                                    </div>
-                                    <div className="rounded-xl bg-slate-50 px-2 py-1.5">
-                                      <p className="font-bold text-slate-400">
-                                        Giá nhập
-                                      </p>
-                                      <p className="mt-1 text-sm font-extrabold text-slate-700">
-                                        {formatCurrency(effectiveImportPrice)}
-                                      </p>
-                                    </div>
-                                    <div
-                                      className={`rounded-xl px-2 py-1.5 ${
-                                        isOutOfStock
-                                          ? "bg-rose-50"
-                                          : "bg-slate-50"
-                                      }`}
-                                    >
-                                      <p className="font-bold text-slate-400">
-                                        Trong kho
-                                      </p>
-                                      <p
-                                        className={`mt-1 text-sm font-extrabold ${
-                                          isOutOfStock
-                                            ? "text-rose-500"
-                                            : "text-slate-700"
-                                        }`}
-                                      >
-                                        {selectedProduct.quantity.toLocaleString(
-                                          "vi-VN",
-                                        )}
-                                      </p>
-                                    </div>
-                                    <div className="rounded-xl bg-slate-50 px-2 py-1.5">
-                                      <p className="font-bold text-slate-400">
-                                        Tổng lợi nhuận
-                                      </p>
-                                      <p
-                                        className={`mt-1 text-sm font-extrabold ${
-                                          productEstimatedProfit < 0
-                                            ? "text-red-1"
-                                            : "text-green-13"
-                                        }`}
-                                      >
-                                        {formatCurrency(productEstimatedProfit)}
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  {/* <p className="mt-2 text-11px text-slate-400">
-                                Khả dụng cho ngày này:{" "}
-                                <span className="font-semibold text-slate-600">
-                                  {maxAvailable.toLocaleString("vi-VN")}
-                                </span>
-                              </p> */}
-
-                                  {!isCollapsed ? (
-                                    <FieldArray
-                                      name={`soldProducts[${index}].sales`}
-                                      render={(salesHelpers) => (
-                                        <div className="mt-3 space-y-2.5">
-                                          {item.sales.map((sale, saleIndex) => {
-                                            const currentQuantity = Number(
-                                              sale.quantity || 0,
-                                            );
-                                            const totalOtherQuantity =
-                                              getRowQuantity(item.sales) -
-                                              currentQuantity;
-                                            const maxAvailableForSale =
-                                              Math.max(
-                                                maxAvailable -
-                                                  totalOtherQuantity,
-                                                0,
-                                              );
-
-                                            return (
-                                              <div
-                                                key={`sale-${index}-${saleIndex}`}
-                                                className="rounded-xl bg-slate-50 px-2 py-2"
-                                              >
-                                                <div className="mb-2 flex items-center justify-between">
-                                                  <p className="text-xs font-bold text-slate-500">
-                                                    Mức giá #{saleIndex + 1}
-                                                  </p>
-                                                  <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon-sm"
-                                                    className="h-8 w-8 rounded-full bg-white text-rose-400 hover:bg-rose-50 hover:text-rose-500"
-                                                    onClick={() =>
-                                                      setDeleteSaleTarget({
-                                                        productIndex: index,
-                                                        saleIndex,
-                                                        shouldDeleteProduct:
-                                                          item.sales.length ===
-                                                          1,
-                                                      })
-                                                    }
-                                                    disabled={
-                                                      isSubmitting ||
-                                                      isLoading ||
-                                                      reload
-                                                    }
-                                                  >
-                                                    <Trash2 className="size-4" />
-                                                  </Button>
-                                                </div>
-
-                                                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                                                  <div className="flex flex-col gap-2 w-full">
-                                                    <Label
-                                                      variant="secondary"
-                                                      className="text-green-1! text-xs font-bold"
-                                                    >
-                                                      Số lượng đã bán
-                                                    </Label>
-                                                    <div className="flex items-start gap-2">
-                                                      <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="icon-sm"
-                                                        className="mt-0.5 h-12 w-12 shrink-0 rounded-xl border border-slate-100 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                                                        disabled={
-                                                          isSubmitting ||
-                                                          isLoading ||
-                                                          reload ||
-                                                          currentQuantity <= 1
-                                                        }
-                                                        onClick={() => {
-                                                          const nextQuantity =
-                                                            String(
-                                                              Math.max(
-                                                                currentQuantity -
-                                                                  1,
-                                                                1,
-                                                              ),
-                                                            );
-
-                                                          formik.setFieldValue(
-                                                            `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                            nextQuantity,
-                                                          );
-                                                          formik.setFieldTouched(
-                                                            `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                            true,
-                                                            false,
-                                                          );
-                                                          void validateField(
-                                                            `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                          );
-                                                          setTimeout(() => {
-                                                            void submitForm();
-                                                          }, 0);
-                                                        }}
-                                                      >
-                                                        <Minus className="size-4" />
-                                                      </Button>
-
-                                                      <div className="flex flex-col w-full flex-1">
-                                                        <AutoCompleteField<CustomInputProps>
-                                                          component={
-                                                            NumericInput
-                                                          }
-                                                          version="field"
-                                                          name={`soldProducts[${index}].sales[${saleIndex}].quantity`}
-                                                          placeholder="0"
-                                                          className="text-sm! bg-white! h-12! rounded-xl! border-slate-100 min-w-full! max-w-32 py-2 pl-3 text-gray-17 border font-normal !placeholder:font-normal"
-                                                          pattern="^\d+(\.\d*)?$"
-                                                          disabled={
-                                                            isSubmitting ||
-                                                            isLoading ||
-                                                            reload
-                                                          }
-                                                          onBlur={() => {
-                                                            if (!dirty) return;
-                                                            formik.setFieldTouched(
-                                                              `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                              true,
-                                                            );
-                                                            void validateField(
-                                                              `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                            );
-                                                            setTimeout(() => {
-                                                              void submitForm();
-                                                            }, 0);
-                                                          }}
-                                                        />
-                                                      </div>
-
-                                                      <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="icon-sm"
-                                                        className="mt-0.5 h-12 w-12 shrink-0 rounded-xl border border-slate-100 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                                                        disabled={
-                                                          isSubmitting ||
-                                                          isLoading ||
-                                                          reload ||
-                                                          currentQuantity >=
-                                                            maxAvailableForSale
-                                                        }
-                                                        onClick={() => {
-                                                          const nextQuantity =
-                                                            String(
-                                                              Math.min(
-                                                                currentQuantity +
-                                                                  1,
-                                                                maxAvailableForSale,
-                                                              ),
-                                                            );
-
-                                                          formik.setFieldValue(
-                                                            `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                            nextQuantity,
-                                                          );
-                                                          formik.setFieldTouched(
-                                                            `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                            true,
-                                                            false,
-                                                          );
-                                                          void validateField(
-                                                            `soldProducts[${index}].sales[${saleIndex}].quantity`,
-                                                          );
-                                                          setTimeout(() => {
-                                                            void submitForm();
-                                                          }, 0);
-                                                        }}
-                                                      >
-                                                        <Plus className="size-4" />
-                                                      </Button>
-                                                    </div>
-                                                  </div>
-
-                                                  <div className="flex flex-col gap-2 w-full">
-                                                    <Label
-                                                      variant="secondary"
-                                                      className="text-green-1! text-xs font-bold"
-                                                    >
-                                                      Giá bán thực tế
-                                                    </Label>
-                                                    <AutoCompleteField<CustomInputProps>
-                                                      component={NumericInput}
-                                                      version="field"
-                                                      name={`soldProducts[${index}].sales[${saleIndex}].sellPrice`}
-                                                      placeholder="0"
-                                                      className="text-sm! bg-white! h-12! rounded-xl! border-slate-100 min-w-full! py-2 pl-3 text-gray-17 border font-normal !placeholder:font-normal"
-                                                      pattern="^\d+(\.\d*)?$"
-                                                      disabled={
-                                                        isSubmitting ||
-                                                        isLoading ||
-                                                        reload
-                                                      }
-                                                      onBlur={() => {
-                                                        if (!dirty) return;
-                                                        formik.setFieldTouched(
-                                                          `soldProducts[${index}].sales[${saleIndex}].sellPrice`,
-                                                          true,
-                                                        );
-                                                        void validateField(
-                                                          `soldProducts[${index}].sales[${saleIndex}].sellPrice`,
-                                                        );
-                                                        setTimeout(() => {
-                                                          void submitForm();
-                                                        }, 0);
-                                                      }}
-                                                    />
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            );
-                                          })}
-
-                                          <Button
-                                            type="button"
-                                            variant="ghost"
-                                            className="h-11 w-full rounded-2xl border border-dashed border-green-15 bg-green-14 text-sm font-semibold text-green-13 hover:bg-green-14"
-                                            onClick={() =>
-                                              salesHelpers.push({
-                                                quantity: "1",
-                                                sellPrice: String(
-                                                  selectedProduct.sellPrice,
-                                                ),
-                                              })
-                                            }
-                                            disabled={
-                                              isSubmitting ||
-                                              isLoading ||
-                                              reload
-                                            }
-                                          >
-                                            <Plus className="size-4" />
-                                            Thêm mức giá
-                                          </Button>
-                                        </div>
-                                      )}
-                                    />
-                                  ) : null}
-
-                                  {typeof getIn(
-                                    errors,
-                                    `soldProducts[${index}].sales`,
-                                  ) === "string" ? (
-                                    <p className="mt-2 text-red-1 text-sm">
-                                      {String(
-                                        getIn(
-                                          errors,
-                                          `soldProducts[${index}].sales`,
-                                        ),
-                                      )}
-                                    </p>
-                                  ) : null}
-
-                                  {isOutOfStock ? (
-                                    <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-rose-500">
-                                      <AlertTriangle className="size-3.5" />
-                                      Sản phẩm này đã hết hàng và không thể thêm
-                                      mới vào danh sách bán.
-                                    </p>
-                                  ) : null}
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="mt-4 flex items-center gap-2 rounded-[20px] border border-dashed border-slate-200 bg-white/70 px-4 py-3 text-sm text-slate-400">
-                                <Box className="size-4" />
-                                Chọn sản phẩm để xem nhanh tồn kho và giá bán.
-                              </div>
-                            )}
-                          </div>
-                        );
-                      },
-                    )
-                  ) : (
-                    <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 px-5 py-6 text-center">
-                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
-                        <Search className="size-5 text-slate-400" />
-                      </div>
-                      <p className="mt-4 text-sm font-bold text-slate-600">
-                        Không tìm thấy sản phẩm phù hợp
-                      </p>
-                      <p className="mt-2 text-sm text-slate-400">
-                        Thử nhập lại tên sản phẩm hoặc danh mục để lọc nhanh
-                        hơn.
-                      </p>
-                    </div>
-                  )
-                ) : (
-                  <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 px-5 py-6 text-center">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
-                      <PackageCheck className="size-5 text-slate-400" />
-                    </div>
-                    <p className="mt-4 text-sm font-bold text-slate-600">
-                      Hôm nay chưa ghi nhận sản phẩm nào
-                    </p>
-                    <p className="mt-2 text-sm text-slate-400">
-                      Thêm sản phẩm đã bán để theo dõi số lượng và tồn kho ngay
-                      tại đây.
-                    </p>
-                  </div>
-                )}
-
-                {typeof errors.soldProducts === "string" ? (
-                  <p className="text-red-1 text-sm">{errors.soldProducts}</p>
-                ) : null}
-
-                <Dialog
-                  open={deleteTargetIndex !== null}
-                  onOpenChange={(open) => {
-                    if (!open) {
-                      setDeleteTargetIndex(null);
-                    }
-                  }}
-                >
-                  <DialogContent className="w-[calc(100%-24px)] max-w-102.5 overflow-hidden rounded-[32px] border-none bg-transparent p-0 shadow-none">
-                    <div className="rounded-[32px] bg-white px-6 py-8 text-center shadow-[0_30px_80px_rgba(15,23,42,0.24)]">
-                      <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
-                        Xác nhận xóa
-                      </DialogTitle>
-                      <DialogDescription className="mx-auto mt-4 max-w-64 text-sm leading-7 text-slate-400">
-                        Bạn có chắc chắn muốn xóa sản phẩm đã bán này?
-                      </DialogDescription>
-
-                      <div className="mt-8 space-y-3">
-                        <Button
-                          type="button"
-                          className="h-14 w-full rounded-3xl bg-red-6 text-sm font-semibold text-red-4 hover:bg-red-5"
-                          onClick={() => {
-                            if (deleteTargetIndex === null) return;
-
-                            arrayHelpers.remove(deleteTargetIndex);
-                            setDeleteTargetIndex(null);
-                            setTimeout(() => {
-                              void submitForm();
-                            }, 0);
-                          }}
-                        >
-                          Xóa
-                        </Button>
-                        <DialogClose asChild>
-                          <Button type="button" variant="close">
-                            Đóng
-                          </Button>
-                        </DialogClose>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-
-                <Dialog
-                  open={deleteSaleTarget !== null}
-                  onOpenChange={(open) => {
-                    if (!open) {
-                      setDeleteSaleTarget(null);
-                    }
-                  }}
-                >
-                  <DialogContent className="w-[calc(100%-24px)] max-w-102.5 overflow-hidden rounded-[32px] border-none bg-transparent p-0 shadow-none">
-                    <div className="rounded-[32px] bg-white px-6 py-8 text-center shadow-[0_30px_80px_rgba(15,23,42,0.24)]">
-                      <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
-                        Xác nhận xóa mức giá
-                      </DialogTitle>
-                      <DialogDescription className="mx-auto mt-4 max-w-72 text-sm leading-7 text-slate-400">
-                        {deleteSaleTarget?.shouldDeleteProduct
-                          ? "Đây là mức giá cuối cùng của sản phẩm này. Nếu xóa, sản phẩm cũng sẽ bị gỡ khỏi danh sách đã bán."
-                          : "Bạn có chắc chắn muốn xóa mức giá này không?"}
-                      </DialogDescription>
-
-                      <div className="mt-8 space-y-3">
-                        <Button
-                          type="button"
-                          className="h-14 w-full rounded-3xl bg-red-6 text-sm font-semibold text-red-4 hover:bg-red-5"
-                          onClick={() => {
-                            if (!deleteSaleTarget) return;
-
-                            const targetProductId = Number(
-                              values.soldProducts[deleteSaleTarget.productIndex]
-                                ?.productId,
-                            );
-                            const initialSalesCount = targetProductId
-                              ? (initialSalesCountMap.get(targetProductId) ?? 0)
-                              : 0;
-                            const shouldCallApi =
-                              deleteSaleTarget.saleIndex < initialSalesCount;
-
-                            if (deleteSaleTarget.shouldDeleteProduct) {
-                              arrayHelpers.remove(
-                                deleteSaleTarget.productIndex,
-                              );
-                            } else {
-                              const nextSales = [
-                                ...values.soldProducts[
-                                  deleteSaleTarget.productIndex
-                                ].sales,
-                              ];
-
-                              nextSales.splice(deleteSaleTarget.saleIndex, 1);
-                              formik.setFieldValue(
-                                `soldProducts[${deleteSaleTarget.productIndex}].sales`,
-                                nextSales,
-                              );
-                            }
-
-                            setDeleteSaleTarget(null);
-                            if (shouldCallApi) {
-                              setTimeout(() => {
-                                void submitForm();
-                              }, 0);
-                            }
-                          }}
-                        >
-                          Xóa mức giá
-                        </Button>
-                        <DialogClose asChild>
-                          <Button type="button" variant="close">
-                            Đóng
-                          </Button>
-                        </DialogClose>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            )}
+      <div className="mt-5 grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_180px_auto]">
+        <div className="flex min-w-0 items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-3">
+          <Search className="size-4 shrink-0 text-slate-400" />
+          <input
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setPage(1);
+            }}
+            placeholder="Tìm sản phẩm, phân loại, SKU hoặc mã đơn"
+            className="h-11 min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400"
           />
-        )}
-
-        <button disabled={!dirty} type="submit" className="hidden" />
-
-        {!isLoading && !isInventoryLoading ? (
-          <div
-            className="mt-auto sticky bottom-0 z-10 rounded-4xl bg-white p-3"
-            style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
-          >
-            <button
+          {search ? (
+            <Button
               type="button"
-              onClick={() => setIsSummaryExpanded((prev) => !prev)}
-              className="cursor-pointer flex w-full items-center justify-between gap-3 rounded-2xl bg-slate-50 px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100"
-              aria-expanded={isSummaryExpanded}
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-full text-slate-400 hover:bg-slate-100"
+              onClick={() => {
+                setSearch("");
+                setPage(1);
+              }}
+              aria-label="Xóa nội dung tìm kiếm"
             >
-              <p className="truncate text-sm font-bold text-slate-700">
-                Tổng kết sản phẩm
-              </p>
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-slate-500 shadow-sm">
-                <ChevronDown
-                  className={`size-4 transition-transform duration-200 ease-out ${
-                    isSummaryExpanded ? "rotate-180" : "rotate-0"
-                  }`}
-                />
-              </div>
-            </button>
+              <X className="size-4" />
+            </Button>
+          ) : null}
+        </div>
+        <div className="min-w-0">
+          <SourceSelect value={source} onChange={changeSource} />
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-11 justify-center rounded-2xl px-3 text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed sm:justify-start"
+          onClick={resetFilters}
+          disabled={!hasFilters}
+        >
+          <RotateCcw className="size-4" />
+          Xóa lọc
+        </Button>
+      </div>
 
+      {showInitialLoading ? (
+        <div className="mt-5 space-y-3">
+          {[0, 1, 2].map((item) => (
             <div
-              className={`grid overflow-hidden transition-[grid-template-rows,opacity,margin] duration-200 ease-out ${
-                isSummaryExpanded
-                  ? "mt-3 grid-rows-[1fr] opacity-100"
-                  : "mt-0 grid-rows-[0fr] opacity-0"
-              }`}
-              aria-hidden={!isSummaryExpanded}
+              key={item}
+              className="flex items-center gap-3 rounded-2xl border border-slate-100 p-3"
             >
-              <div className="min-h-0">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-green-100 bg-linear-to-br from-green-14 to-white px-4 py-3.5 shadow-[0_10px_30px_rgba(22,163,74,0.08)]">
-                    <p className="text-10px font-bold uppercase tracking-[0.08em] text-green-1">
-                      Tổng số lượng
-                    </p>
-                    <p className="mt-2 text-2xl font-black leading-none text-green-13">
-                      {totalSoldCount.toLocaleString("vi-VN")}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      Sản phẩm đã bán hôm nay
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-sky-100 bg-linear-to-br from-sky-50 to-white px-4 py-3.5 shadow-[0_10px_28px_rgba(14,165,233,0.12)]">
-                    <p className="text-10px font-bold uppercase tracking-[0.08em] text-sky-600">
-                      Doanh thu tạm tính
-                    </p>
-                    <p className="mt-2 text-2xl font-black leading-none text-sky-700">
-                      {formatCurrency(totalRecordedRevenue)}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      Cộng theo giá bán thực tế
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_10px_28px_rgba(100,116,139,0.1)]">
-                    <p className="text-10px font-bold uppercase tracking-[0.08em] text-slate-500">
-                      Lợi nhuận dự kiến
-                    </p>
-                    <p
-                      className={`mt-2 text-2xl font-black leading-none ${totalEstimatedProfit < 0 ? "text-red-1" : "text-green-13"}`}
-                    >
-                      {formatCurrency(totalEstimatedProfit)}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      Tạm tính theo giá vốn và giá bán thực tế
-                    </p>
-                  </div>
-                </div>
+              <Skeleton className="size-12 shrink-0 rounded-xl" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-4 w-2/5 rounded-md" />
+                <Skeleton className="h-3 w-3/5 rounded-md" />
               </div>
+              <Skeleton className="h-5 w-20 rounded-md" />
             </div>
+          ))}
+        </div>
+      ) : error && !result ? (
+        <div className="mt-5 rounded-2xl border border-red-100 bg-red-50 p-6 text-center">
+          <p className="text-sm font-bold text-red-700">{error}</p>
+          <Button
+            type="button"
+            variant="ghost"
+            className="mt-2 text-red-700 hover:bg-red-100"
+            onClick={() => setRetryCount((current) => current + 1)}
+          >
+            Thử lại
+          </Button>
+        </div>
+      ) : currentResult.items.length === 0 ? (
+        <div className="mt-5 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+          <ReceiptText className="mx-auto size-9 text-slate-300" />
+          <p className="mt-3 text-base font-extrabold text-slate-600">
+            {hasFilters
+              ? "Không tìm thấy sản phẩm phù hợp"
+              : "Chưa có sản phẩm nào được bán trong ngày này"}
+          </p>
+          <p className="mt-1 text-sm font-semibold text-slate-400">
+            {hasFilters
+              ? "Hãy thử từ khóa hoặc nguồn bán khác."
+              : "Sản phẩm sẽ xuất hiện khi có đơn tại shop hoặc đơn online đã giao."}
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="mt-5 hidden grid-cols-[minmax(0,1fr)_72px_112px_28px] gap-3 px-4 pb-2 text-[10px] font-extrabold uppercase text-slate-400 sm:grid lg:grid-cols-[minmax(0,1.5fr)_64px_66px_118px_100px_100px_28px]">
+            <span>Sản phẩm</span>
+            <span className="text-right">Đã bán</span>
+            <span className="hidden text-right lg:block">Lượt bán</span>
+            <span className="hidden text-right lg:block">Giá bán</span>
+            <span className="text-right">Thành tiền</span>
+            <span className="hidden text-right lg:block">Lợi nhuận</span>
+            <span aria-hidden="true" />
           </div>
-        ) : null}
-      </Form>
-    </FormikProvider>
+          <div className="grid min-w-0 gap-2">
+            {currentResult.items.map((group) => (
+              <SoldProductGroupRow
+                key={group.groupKey}
+                group={group}
+                open={expandedGroups.has(group.groupKey)}
+                onOpenChange={(open) => toggleGroup(group.groupKey, open)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {currentResult.pagination.totalPages > 1 ? (
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+          <p className="text-xs font-semibold text-slate-400">
+            Trang {currentResult.pagination.page}/
+            {currentResult.pagination.totalPages} ·{" "}
+            {currentResult.pagination.totalGroups.toLocaleString("vi-VN")} sản
+            phẩm
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-xl border border-slate-100 text-slate-600 hover:bg-slate-50"
+              disabled={page <= 1 || isFetching}
+              onClick={() => setPage((current) => Math.max(current - 1, 1))}
+              aria-label="Trang sản phẩm trước"
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-xl border border-slate-100 text-slate-600 hover:bg-slate-50"
+              disabled={
+                page >= currentResult.pagination.totalPages || isFetching
+              }
+              onClick={() => setPage((current) => current + 1)}
+              aria-label="Trang sản phẩm tiếp theo"
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </section>
   );
 }

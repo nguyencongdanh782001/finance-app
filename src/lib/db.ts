@@ -25,8 +25,18 @@ const getDatabaseUrl = () => {
 };
 
 const getPrismaClient = () => {
-  if (globalForPrisma.prisma) {
-    return globalForPrisma.prisma;
+  const cachedPrisma = globalForPrisma.prisma;
+  const cachedRuntime = cachedPrisma as unknown as
+    | Record<string, unknown>
+    | undefined;
+
+  if (cachedPrisma && cachedRuntime?.dailySoldProductContribution) {
+    return cachedPrisma;
+  }
+
+  if (cachedPrisma) {
+    void cachedPrisma.$disconnect().catch(() => undefined);
+    globalForPrisma.prisma = undefined;
   }
 
   const adapter = new PrismaPg({

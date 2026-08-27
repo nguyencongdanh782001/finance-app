@@ -140,22 +140,22 @@ export default function ChartMonthlyProductProfit() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="uppercase text-sm text-gray-2 font-extrabold sm:text-base">
+        <p className="text-base font-semibold text-slate-800">
           Lợi nhuận theo ngày
         </p>
-        <p className="shrink-0 rounded-full bg-white px-3 py-1.5 text-sm! font-bold uppercase text-green-2">
+        <p className="shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-primary">
           Tháng {month}, {year}
         </p>
       </div>
 
-      <div className="rounded-[32px] bg-white p-4 shadow-sm sm:rounded-[40px] sm:p-5">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         {isLoading ? (
-          <Skeleton className="h-72 w-full rounded-[28px] sm:rounded-[32px]" />
+          <Skeleton className="h-72 w-full rounded-lg" />
         ) : (
           <>
             <div className="mb-6 flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-sm font-bold uppercase text-green-4">
+                <h3 className="text-sm font-semibold text-slate-500">
                   Lợi nhuận sản phẩm theo ngày
                 </h3>
                 <p
@@ -168,7 +168,7 @@ export default function ChartMonthlyProductProfit() {
                   Tổng lợi nhuận trong tháng
                 </p>
               </div>
-              <p className="shrink-0 text-xs font-bold uppercase text-green-4 sm:text-sm">
+              <p className="shrink-0 text-xs font-medium text-slate-400 sm:text-sm">
                 Đơn vị: VND
               </p>
             </div>

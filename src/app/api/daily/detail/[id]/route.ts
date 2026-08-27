@@ -1,10 +1,6 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
-
-type SaleSnapshot = {
-  quantity: number;
-  sellPrice: number;
-};
+import { getDailySoldProducts } from "@/lib/sold-products/daily-sold-products";
 
 const isDailySoldProductSchemaError = (error: unknown) =>
   error instanceof Error &&
@@ -22,81 +18,27 @@ export async function GET(
     return NextResponse.json({ message: "Invalid daily id" }, { status: 400 });
   }
 
-  let daily:
-    | Awaited<ReturnType<typeof prisma.dailyFinance.findUnique>>
-    | null = null;
-  const soldProducts: {
-    productId: number;
-    productTitle: string;
-    productImageUrl: string;
-    categoryName: string;
-    importPrice: number;
-    currentStock: number;
-    availableStock: number;
-    sales: {
-      quantity: number;
-      sellPrice: number;
-    }[];
-  }[] = [];
-
-  try {
-    const dailyWithProducts = await prisma.dailyFinance.findUnique({
-      where: { id: dailyId },
-      include: {
-        soldProducts: {
-          orderBy: {
-            createdAt: "asc",
-          },
-          include: {
-            product: {
-              include: {
-                category: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    daily = dailyWithProducts;
-    dailyWithProducts?.soldProducts.forEach((item) => {
-      const parsedSales = Array.isArray(item.sales)
-        ? (item.sales as unknown as SaleSnapshot[]).map((sale) => ({
-            quantity: Number(sale.quantity),
-            sellPrice: Number(sale.sellPrice),
-          }))
-        : [];
-      const totalQuantity = parsedSales.reduce(
-        (sum, sale) => sum + sale.quantity,
-        0,
-      );
-
-      soldProducts.push({
-        productId: item.productId,
-        productTitle: item.product.title,
-        productImageUrl: item.product.imageUrl,
-        categoryName: item.product.category.name,
-        importPrice: Number(item.importPrice),
-        currentStock: item.product.quantity,
-        availableStock: item.product.quantity + totalQuantity,
-        sales: parsedSales,
-      });
-    });
-  } catch (error) {
-    if (!isDailySoldProductSchemaError(error)) {
-      throw error;
-    }
-
-    daily = await prisma.dailyFinance.findUnique({
-      where: { id: dailyId },
-    });
-  }
+  const daily = await prisma.dailyFinance.findUnique({
+    where: { id: dailyId },
+  });
+  const soldProducts: NonNullable<
+    Awaited<ReturnType<typeof getDailySoldProducts>>
+  >["items"] = [];
 
   if (!daily) {
     return NextResponse.json(
       { message: "Daily finance not found" },
       { status: 404 },
     );
+  }
+
+  try {
+    const soldProductsResult = await getDailySoldProducts(prisma, dailyId);
+    soldProducts.push(...(soldProductsResult?.items ?? []));
+  } catch (error) {
+    if (!isDailySoldProductSchemaError(error)) {
+      throw error;
+    }
   }
 
   const [previousDay, nextDay] = await Promise.all([
