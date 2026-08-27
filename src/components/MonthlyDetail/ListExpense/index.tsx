@@ -41,7 +41,7 @@ const ListExpense = (props: ListExpenseProps) => {
       {groupExpensesByDate.length > 0 ? (
         groupExpensesByDate?.map((item) => (
           <div key={item.date} className="flex flex-col gap-4">
-            <p className="text-sm text-blue-6 font-medium bg-white px-5 py-2.5 rounded-sm shadow-sm">
+            <p className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">
               {item.date}
             </p>
             {item.data.map((expenseItem) => (
@@ -54,7 +54,7 @@ const ListExpense = (props: ListExpenseProps) => {
           </div>
         ))
       ) : (
-        <div className="w-full rounded-2xl border border-gray-200 p-6 space-y-4 bg-white shadow-sm">
+        <div className="w-full space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           <p className="text-base text-gray-2 font-bold">Không có chi tiêu</p>
         </div>
       )}

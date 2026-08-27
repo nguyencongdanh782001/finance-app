@@ -67,13 +67,13 @@ export default function FormCapital(props: FormCapitalProps) {
 
   return (
     <FormikProvider value={formik}>
-      <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-4 bg-white shadow-sm">
+      <Form className="flex w-full flex-col gap-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full bg-gray-1">
-            <WalletIcon className="size-4 text-gray-2" />
+          <div className="rounded-lg bg-primary/10 p-2">
+            <WalletIcon className="size-4 text-primary" />
           </div>
-          <p className="text-13px text-gray-2 font-bold uppercase">
-            Tiền Vốn Đầu Ngày
+          <p className="text-sm font-semibold text-slate-800">
+            Tiền vốn đầu ngày
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export default function FormCapital(props: FormCapitalProps) {
         <div className="flex flex-col gap-2 w-full">
           <Label
             variant="secondary"
-            className="text-green-1! text-11px font-bold"
+            className="text-xs font-medium text-slate-600"
           >
             Vốn tiền mặt
           </Label>
@@ -94,7 +94,7 @@ export default function FormCapital(props: FormCapitalProps) {
               placeholder="0"
               name="capitalCash"
               variant="default"
-              className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+              className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
               onBlur={() => {
@@ -108,7 +108,7 @@ export default function FormCapital(props: FormCapitalProps) {
         <div className="flex flex-col gap-2 w-full">
           <Label
             variant="secondary"
-            className="text-green-1! text-11px font-bold"
+            className="text-xs font-medium text-slate-600"
           >
             Vốn chuyển khoản
           </Label>
@@ -121,7 +121,7 @@ export default function FormCapital(props: FormCapitalProps) {
               placeholder="0"
               name="capitalBank"
               variant="default"
-              className="bg-gray-1! h-14! rounded-xl! border-gray-1! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+              className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
               pattern="^\d+(\.\d*)?$"
               disabled={isSubmitting || isLoading || reload}
               onBlur={() => {

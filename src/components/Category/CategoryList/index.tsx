@@ -15,7 +15,7 @@ export default function CategoryList({
   onDelete,
 }: CategoryListProps) {
   return (
-    <div className="space-y-4">
+    <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
       {categories.map((category) => (
         <CategoryItem
           key={category.id}

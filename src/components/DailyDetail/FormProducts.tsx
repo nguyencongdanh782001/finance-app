@@ -186,22 +186,13 @@ export default function FormProducts({
         if (response.data.pagination.page !== page) {
           setPage(response.data.pagination.page);
         }
-
       })
       .finally(() => {
         if (requestId === requestIdRef.current) {
           setIsFetching(false);
         }
       });
-  }, [
-    dailyId,
-    debouncedSearch,
-    source,
-    page,
-    reload,
-    isLoading,
-    retryCount,
-  ]);
+  }, [dailyId, debouncedSearch, source, page, reload, isLoading, retryCount]);
 
   const currentResult = result ?? EMPTY_RESPONSE;
   const hasFilters = Boolean(search || source !== "ALL");
@@ -226,7 +217,7 @@ export default function FormProducts({
   };
 
   return (
-    <section className="w-full max-w-full min-w-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+    <section className="w-full max-w-full min-w-0 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <div className="shrink-0 rounded-full bg-blue-50 p-2.5">
@@ -253,11 +244,11 @@ export default function FormProducts({
               {currentResult.summary.totalQuantity.toLocaleString("vi-VN")}
             </p>
           </div>
-          <div className="rounded-xl bg-blue-50 px-3 py-2">
-            <p className="text-[10px] font-bold uppercase text-blue-600">
+          <div className="rounded-xl bg-green-50 px-3 py-2">
+            <p className="text-[10px] font-bold uppercase text-green-2">
               Doanh thu
             </p>
-            <p className="truncate text-base font-extrabold text-blue-2">
+            <p className="truncate text-base font-extrabold text-green-2">
               {formatMoney(currentResult.summary.totalAmount)}
             </p>
           </div>

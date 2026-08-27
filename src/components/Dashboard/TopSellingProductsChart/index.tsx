@@ -105,28 +105,28 @@ export default function TopSellingProductsChart() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="uppercase text-sm text-gray-2 font-extrabold sm:text-base">
+      <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <p className="text-base font-semibold text-slate-800">
           Sản phẩm bán chạy
         </p>
-        <p className="shrink-0 rounded-full bg-white px-3 py-1.5 text-sm font-bold uppercase text-green-2 sm:text-sm">
+        <p className="shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-primary">
           Tháng {month}, {year}
         </p>
       </div>
 
-      <div className="rounded-[32px] bg-white p-4 shadow-sm sm:rounded-[40px] sm:p-5">
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-3 sm:p-5">
         {isLoading ? (
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:gap-5">
-            <Skeleton className="h-64 w-full rounded-[28px] sm:h-72 sm:rounded-[32px]" />
+          <div className="grid w-full min-w-0 max-w-full gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:gap-5">
+            <Skeleton className="h-64 w-full rounded-lg sm:h-72" />
             <div className="flex flex-col gap-3">
-              <Skeleton className="h-18 w-full rounded-[24px]" />
-              <Skeleton className="h-18 w-full rounded-[24px]" />
-              <Skeleton className="h-18 w-full rounded-[24px]" />
+              <Skeleton className="h-18 w-full rounded-lg" />
+              <Skeleton className="h-18 w-full rounded-lg" />
+              <Skeleton className="h-18 w-full rounded-lg" />
             </div>
           </div>
         ) : hasData ? (
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:gap-5">
-            <div className="rounded-[28px] bg-linear-to-br from-green-12 via-white to-orange-1/15 p-3 sm:rounded-[32px] sm:p-4">
+          <div className="grid w-full min-w-0 max-w-full gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:gap-5">
+            <div className="w-full min-w-0 max-w-full rounded-lg bg-slate-50 p-3 sm:p-4">
               <ChartContainer
                 className="mx-auto h-60 w-full max-w-[320px] sm:h-72 sm:max-w-105"
                 config={{
@@ -204,7 +204,7 @@ export default function TopSellingProductsChart() {
               </ChartContainer>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex w-full min-w-0 max-w-full flex-col gap-3">
               {chartData.map((item, index) => {
                 const percent = totalQuantity
                   ? ((item.quantity / totalQuantity) * 100).toFixed(1)
@@ -213,10 +213,10 @@ export default function TopSellingProductsChart() {
                 return index < chartData.length - 1 ? (
                   <div
                     key={item.productTitle}
-                    className="rounded-[20px] border border-gray-200 bg-linear-to-r from-white to-slate-50 px-3 py-3 shadow-sm sm:rounded-[24px] sm:px-4"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-3 sm:px-4"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
+                    <div className="flex items-start justify-between gap-2 sm:gap-3">
+                      <div className="flex min-w-0 flex-1 items-start gap-3">
                         <span
                           className="mt-1 h-3.5 w-3.5 shrink-0 rounded-full"
                           style={{ backgroundColor: item.fill }}
@@ -230,23 +230,23 @@ export default function TopSellingProductsChart() {
                           </p>
                         </div>
                       </div>
-                      <p className="shrink-0 rounded-full bg-green-12 px-2.5 py-1 text-xs font-bold text-green-2">
+                      <p className="shrink-0 whitespace-nowrap rounded-full bg-green-12 px-2 py-1 text-11px font-bold text-green-2 sm:px-2.5 sm:text-xs">
                         {percent}%
                       </p>
                     </div>
                   </div>
                 ) : (
                   <div
-                    className="rounded-4xl bg-white p-2"
+                    className="rounded-lg bg-white p-1.5 sm:p-2"
                     style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
                     onClick={() => setIsExpanded((prev) => !prev)}
                   >
                     <div
                       key={item.productTitle}
-                      className="cursor-pointer! rounded-[20px] border border-gray-200 bg-linear-to-r from-white to-slate-50 px-3 py-3 shadow-sm sm:rounded-[24px] sm:px-4"
+                      className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-3 sm:px-4"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
+                      <div className="flex items-start justify-between gap-2 sm:gap-3">
+                        <div className="flex min-w-0 flex-1 items-start gap-3">
                           <span
                             className="mt-1 h-3.5 w-3.5 shrink-0 rounded-full"
                             style={{ backgroundColor: item.fill }}
@@ -260,7 +260,7 @@ export default function TopSellingProductsChart() {
                             </p>
                           </div>
                         </div>
-                        <p className="shrink-0 rounded-full bg-green-12 px-2.5 py-1 text-xs font-bold text-green-2">
+                        <p className="shrink-0 whitespace-nowrap rounded-full bg-green-12 px-2 py-1 text-11px font-bold text-green-2 sm:px-2.5 sm:text-xs">
                           {percent}%
                         </p>
                       </div>
@@ -284,10 +284,10 @@ export default function TopSellingProductsChart() {
                         return (
                           <div
                             key={itemOrder.productTitle}
-                            className="rounded-[20px] border border-gray-200 bg-linear-to-r from-white to-slate-50 px-3 py-3 shadow-sm sm:rounded-[24px] sm:px-4"
+                            className="rounded-lg border border-slate-200 bg-white px-3 py-3 sm:px-4"
                           >
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="flex items-start gap-3">
+                            <div className="flex items-start justify-between gap-2 sm:gap-3">
+                              <div className="flex min-w-0 flex-1 items-start gap-3">
                                 <div className="min-w-0 flex flex-col">
                                   <p className="text-sm font-extrabold text-gray-2 wrap-break-word">
                                     #{indexOrder + 1} {itemOrder.productTitle}
@@ -297,7 +297,7 @@ export default function TopSellingProductsChart() {
                                   </p>
                                 </div>
                               </div>
-                              <p className="shrink-0 rounded-full bg-green-12 px-2.5 py-1 text-xs font-bold text-green-2">
+                              <p className="shrink-0 whitespace-nowrap rounded-full bg-green-12 px-2 py-1 text-11px font-bold text-green-2 sm:px-2.5 sm:text-xs">
                                 {percentOrder}%
                               </p>
                             </div>
@@ -311,7 +311,7 @@ export default function TopSellingProductsChart() {
             </div>
           </div>
         ) : (
-          <div className="flex min-h-64 flex-col items-center justify-center rounded-[28px] bg-linear-to-br from-slate-50 to-white px-5 text-center sm:min-h-72 sm:rounded-[32px] sm:px-6">
+          <div className="flex min-h-64 flex-col items-center justify-center rounded-lg bg-slate-50 px-5 text-center sm:min-h-72 sm:px-6">
             <p className="text-base font-extrabold uppercase text-gray-2">
               Chưa có dữ liệu bán sản phẩm
             </p>

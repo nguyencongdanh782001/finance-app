@@ -1,6 +1,9 @@
 "use client";
 
-import Header from "@/components/common/Header";
+import {
+  AdminPageContainer,
+  AdminPageHeader,
+} from "@/components/Admin/AdminPage";
 import BlockBankProfit from "@/components/DailyDetail/BlockCashBank";
 import BlockCashProfit from "@/components/DailyDetail/BlockCashProfit";
 import FormCapital from "@/components/DailyDetail/FormCapital";
@@ -9,7 +12,6 @@ import FormNote from "@/components/DailyDetail/FormNote";
 import FormProducts from "@/components/DailyDetail/FormProducts";
 import FormRevenue from "@/components/DailyDetail/FormRevenue";
 import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
 import { RESPONSE_CODES } from "@/constant/codes";
@@ -28,6 +30,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const DailyDetail = () => {
@@ -93,63 +96,72 @@ const DailyDetail = () => {
   };
 
   return (
-    <div className="sm:max-w-191.25 mx-auto relative w-full max-w-full min-w-0">
+    <AdminPageContainer>
       <Toaster />
-      <Header compact={isLoading ? false : undefined}>
-        <div className="sm:max-w-191.25 mx-auto w-full max-w-full min-w-0">
-          <div className="grid w-full max-w-full min-w-0 grid-cols-3 rounded-full border border-slate-200 bg-slate-50 p-1">
-            <button
-              type="button"
-              onClick={() => setActiveTab("revenue")}
-              className={`cursor-pointer flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
-                activeTab === "revenue"
-                  ? "bg-white text-slate-700 shadow-sm"
-                  : "text-slate-400 hover:text-slate-600"
-              }`}
-            >
-              <TrendingUp
-                className={`size-3.5 ${
-                  activeTab === "revenue" ? "text-green-13" : "text-slate-400"
-                }`}
-              />
-              Doanh thu
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("orders")}
-              className={`cursor-pointer flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
-                activeTab === "orders"
-                  ? "bg-white text-slate-700 shadow-sm"
-                  : "text-slate-400 hover:text-slate-600"
-              }`}
-            >
-              <ReceiptText
-                className={`size-3.5 ${
-                  activeTab === "orders" ? "text-green-13" : "text-slate-400"
-                }`}
-              />
-              Đơn hàng
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("products")}
-              className={`cursor-pointer flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
-                activeTab === "products"
-                  ? "bg-white text-slate-700 shadow-sm"
-                  : "text-slate-400 hover:text-slate-600"
-              }`}
-            >
-              <PackageCheck
-                className={`size-3.5 ${
-                  activeTab === "products" ? "text-green-13" : "text-slate-400"
-                }`}
-              />
-              Sản phẩm
-            </button>
-          </div>
-        </div>
-      </Header>
-      <Container className="gap-8 py-6 min-h-[calc(100svh-117px)]! w-full max-w-full min-w-0">
+      <AdminPageHeader
+        title="Chi tiết ngày"
+        description="Cập nhật doanh thu, đơn hàng và sản phẩm bán trong ngày."
+        breadcrumb={
+          <span className="flex items-center gap-1.5">
+            <Link href="/admin" className="text-primary hover:underline">
+              Tổng quan
+            </Link>
+            <span aria-hidden="true">/</span>
+            <span>Chi tiết ngày</span>
+          </span>
+        }
+      />
+      <div className="grid w-full min-w-0 grid-cols-3 rounded-lg border border-slate-200 bg-white p-1 sm:w-fit">
+        <button
+          type="button"
+          onClick={() => setActiveTab("revenue")}
+          className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:min-w-30 ${
+            activeTab === "revenue"
+              ? "bg-primary text-white"
+              : "text-slate-400 hover:text-slate-600"
+          }`}
+        >
+          <TrendingUp
+            className={`size-3.5 ${
+              activeTab === "revenue" ? "text-white" : "text-slate-400"
+            }`}
+          />
+          Doanh thu
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("orders")}
+          className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:min-w-30 ${
+            activeTab === "orders"
+              ? "bg-primary text-white"
+              : "text-slate-400 hover:text-slate-600"
+          }`}
+        >
+          <ReceiptText
+            className={`size-3.5 ${
+              activeTab === "orders" ? "text-white" : "text-slate-400"
+            }`}
+          />
+          Đơn hàng
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("products")}
+          className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:min-w-30 ${
+            activeTab === "products"
+              ? "bg-primary text-white"
+              : "text-slate-400 hover:text-slate-600"
+          }`}
+        >
+          <PackageCheck
+            className={`size-3.5 ${
+              activeTab === "products" ? "text-white" : "text-slate-400"
+            }`}
+          />
+          Sản phẩm
+        </button>
+      </div>
+      <div className="flex min-w-0 flex-col gap-5">
         {isLoading ? (
           <div className="grid grid-cols-[40px_1fr_40px] items-center gap-2.5">
             <Skeleton className="h-10 w-10 rounded-full" />
@@ -172,22 +184,22 @@ const DailyDetail = () => {
                 )
               }
               disabled={!canNavigatePrevious}
-              className="h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-800"
+              className="h-10 w-10 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-800"
               aria-label="Chuyển về ngày trước"
             >
               <ChevronLeft className="size-4" />
             </Button>
 
             <div className="min-w-0 text-center">
-              <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-400">
+              <p className="text-xs font-medium text-slate-400">
                 Ngày hiện tại
               </p>
-              <h3 className="mt-1 text-blue-2 text-xl font-extrabold capitalize">
+              <h2 className="mt-1 text-xl font-bold capitalize text-slate-900">
                 {formatTZ(
                   dailyDetailData?.date || "",
                   TZ_TEMPLATE.date_day_month,
                 )}
-              </h3>
+              </h2>
             </div>
 
             <Button
@@ -201,7 +213,7 @@ const DailyDetail = () => {
                 )
               }
               // disabled={!canNavigateNext}
-              className="h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-800"
+              className="h-10 w-10 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-800"
               aria-label="Chuyển tới ngày kế tiếp"
             >
               <ChevronRight className="size-4" />
@@ -231,24 +243,21 @@ const DailyDetail = () => {
               reload={reload}
               onReload={() => setReload(true)}
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <BlockCashProfit data={dailyDetailData} isLoading={isLoading} />
               <BlockBankProfit data={dailyDetailData} isLoading={isLoading} />
             </div>
 
-            <div
-              className="mt-auto sticky bottom-0 flex items-center justify-between bg-white p-6 rounded-4xl"
-              style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
-            >
+            <div className="sticky bottom-3 z-20 mt-auto flex items-center justify-between rounded-xl border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur sm:p-5">
               <div>
-                <p className="text-base text-green-1 font-bold uppercase">
+                <p className="text-sm font-medium text-slate-500">
                   Tổng doanh thu ngày
                 </p>
                 {isLoading ? (
                   <Skeleton className="h-8 w-60 rounded-2 mt-1" />
                 ) : (
                   <p
-                    className={`text-xl ${dailyDetailData?.totalProfit && dailyDetailData?.totalProfit < 0 ? "text-red-1" : "text-green-13"} font-extrabold`}
+                    className={`text-xl font-bold ${dailyDetailData?.totalProfit && dailyDetailData?.totalProfit < 0 ? "text-red-600" : "text-primary"}`}
                   >
                     {dailyDetailData?.totalProfit &&
                     dailyDetailData?.totalProfit > 0
@@ -260,12 +269,12 @@ const DailyDetail = () => {
               </div>
               {dailyDetailData?.totalProfit ? (
                 <div
-                  className={`p-5.5 rounded-3xl  ${dailyDetailData?.totalProfit < 0 ? "bg-red-100" : "bg-green-14"}`}
+                  className={`rounded-lg p-3 ${dailyDetailData?.totalProfit < 0 ? "bg-red-50" : "bg-primary/10"}`}
                 >
                   {dailyDetailData?.totalProfit < 0 ? (
                     <TrendingDown className={`size-5 text-red-1`} />
                   ) : (
-                    <TrendingUp className={`size-5 text-green-13`} />
+                    <TrendingUp className="size-5 text-primary" />
                   )}
                 </div>
               ) : (
@@ -288,8 +297,8 @@ const DailyDetail = () => {
             onReload={() => setReload(true)}
           />
         )}
-      </Container>
-    </div>
+      </div>
+    </AdminPageContainer>
   );
 };
 

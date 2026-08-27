@@ -83,9 +83,9 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
   const todayKey = toLocalDateKey(new Date());
 
   return (
-    <div className="rounded-[40px] bg-white p-4 shadow-sm">
+    <div className="w-full min-w-0 rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
       {/* Weekday header */}
-      <div className="mb-3 grid grid-cols-7 gap-1 text-center text-xs font-bold uppercase text-green-4">
+      <div className="mb-2 grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400">
         {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((d) => (
           <div key={d}>{d}</div>
         ))}
@@ -117,13 +117,13 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
                 }
               }}
               className={
-                "rounded-[5px] p-2 text-center text-xs transition relative " +
+                "relative min-w-0 rounded-md p-1.5 text-center text-xs transition sm:p-2 " +
                 "cursor-pointer" +
                 // (isFutureDay
                 //   ? "opacity-50 cursor-not-allowed"
                 //   : "cursor-pointer")
                 (isPositive
-                  ? " bg-green-3"
+                  ? " bg-emerald-50"
                   : isNegative
                     ? " bg-white-2"
                     : " bg-slate-50")
@@ -140,8 +140,8 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
                   (isPositive
                     ? "text-green-1"
                     : isNegative
-                      ? "text-red-2"
-                      : "text-green-1")
+                      ? "text-red-500"
+                      : "text-slate-400")
                 }
               >
                 {cell.dayNumber}
@@ -152,10 +152,10 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
                 className={
                   "text-10px font-extrabold " +
                   (isPositive
-                    ? "text-green-2"
+                    ? "text-emerald-700"
                     : isNegative
                       ? "text-red-1"
-                      : "text-green-1")
+                      : "text-slate-400")
                 }
               >
                 {formatCompactNumber(profit)}

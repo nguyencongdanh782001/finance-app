@@ -1,10 +1,12 @@
 "use client";
 
-import Header from "@/components/common/Header";
+import {
+  AdminPageContainer,
+  AdminPageHeader,
+} from "@/components/Admin/AdminPage";
 import FormAddExpense from "@/components/MonthlyDetail/FormAddExpense";
 import ListExpense from "@/components/MonthlyDetail/ListExpense";
 import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
 import { RESPONSE_CODES } from "@/constant/codes";
@@ -14,6 +16,7 @@ import { toast } from "@/hook/use-toast";
 import { MonthlyDetailResponse } from "@/interface/financeAPI";
 import { Download, Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const escapeCsvValue = (value: string | number) => {
@@ -208,138 +211,122 @@ const MonthDetail = () => {
   };
 
   return (
-    <div className="sm:max-w-191.25 mx-auto">
+    <AdminPageContainer>
       <Toaster />
-      <Header compact={false} />
-      <Container className="gap-8 py-8 min-h-[calc(100svh-117px)]!">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {isLoading ? (
-            <Skeleton className="h-7 w-60 rounded-2 mb-2" />
-          ) : (
-            <h3 className="text-blue-2 text-3xl font-extrabold">
-              Tháng {monthlyDetailData?.month}, {monthlyDetailData?.year}
-            </h3>
-          )}
-
-          {isLoading ? (
-            <Skeleton className="h-11 w-40 rounded-xl" />
-          ) : (
+      {isLoading ? (
+        <Skeleton className="h-16 w-full rounded-lg" />
+      ) : (
+        <AdminPageHeader
+          title={`Tháng ${monthlyDetailData?.month}, ${monthlyDetailData?.year}`}
+          description="Quản lý chi phí và tổng hợp kết quả kinh doanh trong tháng."
+          breadcrumb={
+            <span className="flex items-center gap-1.5">
+              <Link href="/admin" className="text-primary hover:underline">
+                Tổng quan
+              </Link>
+              <span aria-hidden="true">/</span>
+              <span>Chi tiết tháng</span>
+            </span>
+          }
+          actions={
             <Button
               type="button"
+              variant="adminPrimary"
               onClick={handleExportCsv}
               disabled={isExporting || !hasSoldProducts}
-              className="h-11 rounded-xl bg-blue-2 px-4 text-sm font-bold text-white hover:bg-blue-2/90 disabled:cursor-not-allowed"
+              className="h-10 rounded-lg px-4"
             >
               {isExporting ? (
-                <Loader2 className="h-4 w-4 animate-spin text-white" />
+                <Loader2 className="size-4 animate-spin" />
               ) : (
-                <Download className="h-4 w-4 text-white" />
+                <Download className="size-4" />
               )}
               Xuất CSV sản phẩm bán
             </Button>
-          )}
-        </div>
+          }
+        />
+      )}
 
-        {/* <div className="rounded-[40px] bg-green-50 p-8 border border-gray-200 shadow-sm">
-          <p className="text-13px text-green-9 uppercase font-bold">
-            Tổng lợi nhuận
-          </p>
+      <section className="flex min-w-0 flex-col gap-3">
+        <h2 className="text-base font-semibold text-slate-800">Thêm chi phí</h2>
+        <FormAddExpense reload={() => setReload(true)} />
+      </section>
+
+      <section className="flex min-w-0 flex-col gap-3">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-base font-semibold text-slate-800">
+            Chi phí trong tháng
+          </h2>
+
           {isLoading ? (
-            <Skeleton className="h-7 w-60 rounded-2 mb-2" />
+            <Skeleton className="h-6 w-30 rounded-2" />
           ) : (
-            <p className="text-[28px] text-blue-2 font-extrabold">
-              {formatCompactNumber(monthlyDetailData?.totalRevenue || 0)} VND
+            <p className="text-xs font-medium text-slate-500">
+              {monthlyDetailData?.expenses.length} hạng mục
             </p>
           )}
-        </div> */}
-
-        <div className="flex flex-col gap-5">
-          <p className="text-md text-blue-2 uppercase font-bold">
-            Thêm chi phí
-          </p>
-          <FormAddExpense reload={() => setReload(true)} />
         </div>
 
-        <div className="flex flex-col gap-5">
-          <div className="flex justify-between items-center gap-10">
-            <p className="text-md text-blue-2 uppercase font-bold">
-              Chi phí trong tháng
-            </p>
+        {isLoading ? (
+          <div className="flex flex-col gap-2 rounded-lg bg-slate-50 p-4">
+            <Skeleton className="h-7 w-60 rounded-2" />
+            <Skeleton className="h-6 w-60 rounded-2" />
+            <Skeleton className="h-7 w-60 rounded-2" />
+          </div>
+        ) : (
+          <ListExpense
+            data={monthlyDetailData?.expenses}
+            reload={() => setReload(true)}
+          />
+        )}
+      </section>
 
+      <div className="sticky bottom-3 z-20 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur sm:p-5">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-0.75">
+            <p className="text-sm font-medium text-orange-3">Tổng chi phí</p>
             {isLoading ? (
               <Skeleton className="h-6 w-30 rounded-2" />
             ) : (
-              <p className="text-green-1 text-xs font-bold uppercase">
-                {monthlyDetailData?.expenses.length} hạng mục
+              <p className="text-base font-bold text-orange-3">
+                {formatCurrencyVND(
+                  Number(monthlyDetailData?.totalExpense || 0),
+                )}
               </p>
             )}
           </div>
 
-          {isLoading ? (
-            <div className="flex flex-col bg-white shadow-md p-5 rounded-[32px] gap-2">
-              <Skeleton className="h-7 w-60 rounded-2" />
-              <Skeleton className="h-6 w-60 rounded-2" />
-              <Skeleton className="h-7 w-60 rounded-2" />
-            </div>
-          ) : (
-            <ListExpense
-              data={monthlyDetailData?.expenses}
-              reload={() => setReload(true)}
-            />
-          )}
-        </div>
-
-        <div
-          className="mt-auto sticky bottom-0 flex flex-col bg-white p-5 rounded-[32px] gap-5"
-          style={{ boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px" }}
-        >
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex flex-col gap-0.75">
-              <p className="text-green-1 text-sm font-extrabold uppercase">
-                Tổng chi phí
-              </p>
-              {isLoading ? (
-                <Skeleton className="h-6 w-30 rounded-2" />
-              ) : (
-                <p className="text-gray-3 text-base font-bold uppercase">
-                  {formatCurrencyVND(
-                    Number(monthlyDetailData?.totalExpense || 0),
-                  )}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col items-end gap-0.75">
-              <p className="text-green-1 text-sm font-extrabold uppercase">
+          <div className="flex flex-col items-end gap-0.75">
+              <p className="text-sm font-medium text-orange-3">
                 Phần trăm chi tiêu
               </p>
-              {isLoading ? (
-                <Skeleton className="h-6 w-30 rounded-2" />
-              ) : (
-                <p className="text-orange-1 text-base font-bold text-right">
-                  {!revenue && expense > 0 ? 100 : expensePercent || 0}%
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center justify-between gap-4 px-6 py-4 border border-green-11 bg-green-12 rounded-[24px]">
-            <div className="flex flex-col">
-              <p className="text-green-9 text-sm font-bold">Doanh Thu</p>
-              {/* <p className="text-green-10 text-sm font-medium">(còn lại)</p> */}
-            </div>
             {isLoading ? (
               <Skeleton className="h-6 w-30 rounded-2" />
             ) : (
-              <p
-                className={`${monthlyDetailData?.profit && monthlyDetailData?.profit < 0 ? "text-red-1" : "text-green-9"}  text-base font-extrabold`}
-              >
-                {formatCurrencyVND(Number(monthlyDetailData?.profit || 0))}
+              <p className="text-orange-1 text-base font-bold text-right">
+                {!revenue && expense > 0 ? 100 : expensePercent || 0}%
               </p>
             )}
           </div>
         </div>
-      </Container>
-    </div>
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+          <div className="flex flex-col">
+            <p className="text-sm font-semibold text-green-2">
+              Doanh thu còn lại
+            </p>
+          </div>
+          {isLoading ? (
+            <Skeleton className="h-6 w-30 rounded-2" />
+          ) : (
+            <p
+              className={`${monthlyDetailData?.profit && monthlyDetailData?.profit < 0 ? "text-red-600" : "text-green-2"} text-base font-bold`}
+            >
+              {formatCurrencyVND(Number(monthlyDetailData?.profit || 0))}
+            </p>
+          )}
+        </div>
+      </div>
+    </AdminPageContainer>
   );
 };
 

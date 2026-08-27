@@ -85,12 +85,12 @@ export default function FormNote(props: FormNoteProps) {
 
   return (
     <FormikProvider value={formik}>
-      <Form className="w-full flex flex-col rounded-2xl border border-gray-200 p-6 gap-y-4 bg-white shadow-sm">
+      <Form className="flex w-full flex-col gap-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full bg-gray-1">
-            <Text className="size-4 text-gray-2" />
+          <div className="rounded-lg bg-primary/10 p-2">
+            <Text className="size-4 text-primary" />
           </div>
-          <p className="text-13px text-gray-2 font-bold uppercase">Ghi chú</p>
+          <p className="text-sm font-semibold text-slate-800">Ghi chú</p>
         </div>
 
         <div className="flex flex-col w-full">
@@ -104,7 +104,7 @@ export default function FormNote(props: FormNoteProps) {
               name="note"
               variant="default"
               ref={textareaRef}
-              className="min-h-25 max-h-75 rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border font-normal !placeholder:font-normal"
+              className="min-h-25 max-h-75 w-full rounded-lg! border-slate-200 px-3 py-2.5 text-sm"
               onInput={(e) => resizeTextarea(e.currentTarget)}
               disabled={isSubmitting || isLoading || reload}
               onBlur={() => {

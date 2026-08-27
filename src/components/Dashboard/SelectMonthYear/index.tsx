@@ -30,10 +30,10 @@ const SelectMontYear = (props: SelectMontYearProps) => {
 
   return (
     <div>
-      <div className="bg-white rounded-full h-9 py-1.5 px-3 w-fit flex items-center gap-1.5">
+      <div className="flex h-9 w-fit items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5">
         <Button
           variant="ghost"
-          className="p-0! text-green-2 font-bold h-fit cursor-pointer"
+          className="h-fit cursor-pointer p-0! font-semibold text-primary"
           onClick={openModal}
         >
           Tháng {month}, {year}
@@ -44,7 +44,7 @@ const SelectMontYear = (props: SelectMontYearProps) => {
             if (id) router.push(`/admin/monthly-detail/${id}`);
           }}
           variant="ghost"
-          className={`p-0! gap-0.5! text-green-1 font-bold h-fit ${id ? "cursor-pointer" : "cursor-not-allowed"}`}
+          className={`h-fit gap-0.5! p-0! font-semibold text-slate-600 ${id ? "cursor-pointer" : "cursor-not-allowed"}`}
         >
           Xem chi tiết <ArrowRightIcon className="size-4" />
         </Button>

@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   CATEGORY_COLOR_OPTIONS,
@@ -58,7 +57,7 @@ function IconOption({
       onClick={onClick}
       className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-all cursor-pointer ${
         active
-          ? "border-green-16 bg-green-16 text-white shadow-[0_12px_24px_rgba(52,211,153,0.28)]"
+          ? "border-primary bg-primary text-white"
           : "border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200 hover:bg-white"
       }`}
     >
@@ -106,122 +105,122 @@ export default function CategoryFormDialog({
         }
       }}
     >
-      <DialogContent className="w-[calc(100%-24px)] max-w-107.5 overflow-hidden rounded-[32px] border-none bg-transparent p-0 shadow-none">
-        <Card className="gap-0 rounded-[32px] border-none bg-white py-0 shadow-[0_30px_80px_rgba(15,23,42,0.22)]">
-          <CardContent className="px-5 py-6 sm:px-6">
-            <FormikProvider value={formik}>
-              <Form className="space-y-5">
-                <div className="text-center">
-                  <DialogTitle className="text-13px font-extrabold uppercase text-gray-3">
-                    {mode === "create"
-                      ? "Thêm danh mục mới"
-                      : "Chỉnh sửa danh mục"}
-                  </DialogTitle>
-                </div>
+      <DialogContent className="w-[calc(100%-24px)] max-w-lg overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-xl">
+        <div className="px-5 py-6 sm:px-6">
+          <FormikProvider value={formik}>
+            <Form className="space-y-5">
+              <div className="text-center">
+                <DialogTitle className="text-base font-semibold text-slate-900">
+                  {mode === "create"
+                    ? "Thêm danh mục mới"
+                    : "Chỉnh sửa danh mục"}
+                </DialogTitle>
+              </div>
 
-                <div className="space-y-2">
-                  <Label className="text-11px font-bold text-slate-500">
-                    Tên danh mục
-                  </Label>
-                  <AutoCompleteField<CustomInputProps>
-                    component={Input}
-                    version="field"
-                    name="name"
-                    placeholder="Ví dụ: Đồ gia dụng, Phụ kiện..."
-                    className="h-12 rounded-[14px]! border-slate-100 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 placeholder:text-slate-300"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label className="text-11px font-bold text-slate-500">
+                  Tên danh mục
+                </Label>
+                <AutoCompleteField<CustomInputProps>
+                  component={Input}
+                  version="field"
+                  name="name"
+                  placeholder="Ví dụ: Đồ gia dụng, Phụ kiện..."
+                  className="h-10 rounded-lg! border-slate-200 bg-white px-3 text-sm text-slate-700"
+                />
+              </div>
 
-                <div className="space-y-2.5">
-                  <Label className="text-11px font-bold text-slate-500">
-                    Chọn màu sắc
-                  </Label>
-                  <div className="flex items-center gap-3">
-                    {CATEGORY_COLOR_OPTIONS.map((option) => {
-                      const active = values.color === option.value;
+              <div className="space-y-2.5">
+                <Label className="text-11px font-bold text-slate-500">
+                  Chọn màu sắc
+                </Label>
+                <div className="flex items-center gap-3">
+                  {CATEGORY_COLOR_OPTIONS.map((option) => {
+                    const active = values.color === option.value;
 
-                      return (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={() => setFieldValue("color", option.value)}
-                          className={`flex h-10 w-10 items-center justify-center rounded-full transition-all cursor-pointer ${
-                            active ? `ring-4 ${option.ringClassName}` : ""
-                          } ${option.className}`}
-                        >
-                          {active && (
-                            <Check className="size-4 text-white drop-shadow-[0_1px_2px_rgba(15,23,42,0.24)]" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="space-y-2.5">
-                  <Label className="text-11px font-bold text-slate-500">
-                    Biểu tượng
-                  </Label>
-                  <div className="grid grid-cols-6 gap-2.5">
-                    {CATEGORY_ICON_OPTIONS.map((option) => (
-                      <IconOption
+                    return (
+                      <button
                         key={option.value}
-                        option={option}
-                        active={values.icon === option.value}
-                        onClick={() => setFieldValue("icon", option.value)}
-                      />
-                    ))}
-                  </div>
+                        type="button"
+                        onClick={() => setFieldValue("color", option.value)}
+                        className={`flex h-10 w-10 items-center justify-center rounded-full transition-all cursor-pointer ${
+                          active ? `ring-4 ${option.ringClassName}` : ""
+                        } ${option.className}`}
+                      >
+                        {active && (
+                          <Check className="size-4 text-white drop-shadow-[0_1px_2px_rgba(15,23,42,0.24)]" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
+              </div>
 
-                <div className="space-y-3 pt-1">
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="h-12 w-full rounded-3xl bg-green-17 text-sm font-bold text-green-15 hover:bg-green-17/90"
-                  >
-                    {isSubmitting && (
-                      <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-green-15" />
-                    )}
-                    {mode === "create" ? (
-                      <>
-                        {!isSubmitting && <PlusCircle className="size-4" />}
-                        Tạo danh mục
-                      </>
-                    ) : (
-                      "Lưu thay đổi"
-                    )}
-                  </Button>
+              <div className="space-y-2.5">
+                <Label className="text-11px font-bold text-slate-500">
+                  Biểu tượng
+                </Label>
+                <div className="grid grid-cols-6 gap-2.5">
+                  {CATEGORY_ICON_OPTIONS.map((option) => (
+                    <IconOption
+                      key={option.value}
+                      option={option}
+                      active={values.icon === option.value}
+                      onClick={() => setFieldValue("icon", option.value)}
+                    />
+                  ))}
+                </div>
+              </div>
 
-                  {mode === "edit" && onDelete && (
-                    <Button
-                      type="button"
-                      onClick={onDelete}
-                      disabled={isDeleting}
-                      className="h-12 w-full rounded-3xl bg-red-6 text-sm font-semibold text-red-4 hover:bg-red-5"
-                    >
-                      {isDeleting ? (
-                        <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-red-4" />
-                      ) : (
-                        <Trash2 className="size-4" />
-                      )}
-                      Xóa danh mục
-                    </Button>
+              <div className="space-y-3 pt-1">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  variant="adminPrimary"
+                  className="h-10 w-full rounded-lg"
+                >
+                  {isSubmitting && (
+                    <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-green-15" />
                   )}
+                  {mode === "create" ? (
+                    <>
+                      {!isSubmitting && <PlusCircle className="size-4" />}
+                      Tạo danh mục
+                    </>
+                  ) : (
+                    "Lưu thay đổi"
+                  )}
+                </Button>
 
-                  <DialogClose
-                    asChild
-                    className="flex justify-items-center items-center w-full"
+                {mode === "edit" && onDelete && (
+                  <Button
+                    type="button"
+                    onClick={onDelete}
+                    disabled={isDeleting}
+                    variant="adminDanger"
+                    className="h-10 w-full rounded-lg"
                   >
-                    <Button variant="close" type="button">
-                      Đóng
-                    </Button>
-                  </DialogClose>
-                </div>
-              </Form>
-            </FormikProvider>
-          </CardContent>
-        </Card>
+                    {isDeleting ? (
+                      <Loader2 className="mr-1.25 h-3.5 w-3.5 animate-spin text-red-4" />
+                    ) : (
+                      <Trash2 className="size-4" />
+                    )}
+                    Xóa danh mục
+                  </Button>
+                )}
+
+                <DialogClose
+                  asChild
+                  className="flex justify-items-center items-center w-full"
+                >
+                  <Button variant="close" type="button">
+                    Đóng
+                  </Button>
+                </DialogClose>
+              </div>
+            </Form>
+          </FormikProvider>
+        </div>
       </DialogContent>
     </Dialog>
   );

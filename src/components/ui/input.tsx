@@ -77,6 +77,7 @@ const Input = React.forwardRef<HTMLInputElement, FieldProps & InputProps>(
         {icon}
         <div className="w-full relative">
           <input
+            data-slot="input"
             type={type}
             className={`${inputClasses}${showError && !hiddenErr ? "border! border-red-1!" : ""}`}
             ref={ref}

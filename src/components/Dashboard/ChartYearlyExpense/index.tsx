@@ -30,10 +30,10 @@ const ChartYearlyExpense = ({ isLoading }: { isLoading: boolean }) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p className="uppercase text-base text-gray-2 font-extrabold">
+        <p className="text-base font-semibold text-slate-800">
           Chi tiêu các tháng
         </p>
-        <p className="px-3 py-1.5 rounded-full bg-white text-sm text-green-2 font-bold uppercase">
+        <p className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-primary">
           Năm {defaultYear}
         </p>
       </div>

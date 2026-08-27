@@ -13,7 +13,7 @@ interface BlockBankProfitProps {
 const BlockBankProfit = (props: BlockBankProfitProps) => {
   const { data, isLoading } = props;
   return (
-    <div className="flex flex-col p-6 rounded-4xl shadow-[0_10px_30px_-10px_rgba(14,165,233,0.45)] bg-white">
+    <div className="flex flex-col rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
       <div className="flex items-center gap-3 mb-3">
         <Landmark className="size-5 text-blue-5" />
         <p className="text-green-1 text-13px font-bold uppercase">Ngân hàng</p>

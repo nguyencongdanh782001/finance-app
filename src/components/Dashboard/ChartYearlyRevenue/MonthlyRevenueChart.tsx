@@ -111,14 +111,14 @@ export default function MonthlyRevenueChart({ data, isLoading }: Props) {
   };
 
   return (
-    <div className="rounded-[32px] bg-white p-4 shadow-sm sm:rounded-[40px] sm:p-5">
+    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
       {isLoading ? (
-        <Skeleton className="h-72 w-full rounded-[28px] sm:rounded-[32px]" />
+        <Skeleton className="h-72 w-full rounded-lg" />
       ) : (
         <>
           <div className="mb-6 flex items-start justify-between gap-3">
             <div>
-              <h3 className="uppercase text-sm font-bold text-green-4">
+              <h3 className="text-sm font-semibold text-slate-500">
                 Doanh thu theo tháng
               </h3>
               <p className="mt-2 text-md font-black leading-none text-green-2">
@@ -128,7 +128,7 @@ export default function MonthlyRevenueChart({ data, isLoading }: Props) {
                 Tổng doanh thu trong năm
               </p>
             </div>
-            <p className="shrink-0 uppercase text-xs font-bold text-green-4 sm:text-sm">
+            <p className="shrink-0 text-xs font-medium text-slate-400 sm:text-sm">
               Đơn vị: VND
             </p>
           </div>

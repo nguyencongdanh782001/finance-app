@@ -128,9 +128,13 @@ function SaleCompactRow({ sale }: { sale: DailySoldProductSale }) {
           </p>
           <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-400">
             <SourceBadge source={sale.source} />
-            <span className="truncate">{sale.orderCode ?? "Không có mã đơn"}</span>
+            <span className="truncate">
+              {sale.orderCode ?? "Không có mã đơn"}
+            </span>
             <span aria-hidden="true">·</span>
-            <span className="whitespace-nowrap">{formatTime(sale.soldAt, true)}</span>
+            <span className="whitespace-nowrap">
+              {formatTime(sale.soldAt, true)}
+            </span>
           </div>
         </div>
         {sale.sku ? (
@@ -182,7 +186,10 @@ export function SoldProductGroupRow({
             aria-label={`${open ? "Thu gọn" : "Mở rộng"} ${group.productName}`}
           >
             <div className="flex w-full min-w-0 items-center gap-3 sm:hidden">
-              <ProductImage imageUrl={group.imageUrl} title={group.productName} />
+              <ProductImage
+                imageUrl={group.imageUrl}
+                title={group.productName}
+              />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-extrabold text-slate-800">
                   {group.productName}
@@ -210,7 +217,10 @@ export function SoldProductGroupRow({
 
             <div className="hidden w-full min-w-0 grid-cols-[minmax(0,1fr)_72px_112px_28px] items-center gap-3 sm:grid lg:grid-cols-[minmax(0,1.5fr)_64px_66px_118px_100px_100px_28px]">
               <div className="flex min-w-0 items-center gap-3">
-                <ProductImage imageUrl={group.imageUrl} title={group.productName} />
+                <ProductImage
+                  imageUrl={group.imageUrl}
+                  title={group.productName}
+                />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-extrabold text-slate-800">
                     {group.productName}
@@ -275,7 +285,9 @@ export function SoldProductGroupRow({
             </div>
             <div className="flex flex-wrap items-center justify-end gap-x-2 border-t border-slate-200 px-4 py-3 text-xs font-bold text-slate-500">
               <span>Tổng:</span>
-              <span>{group.totalQuantity.toLocaleString("vi-VN")} sản phẩm</span>
+              <span>
+                {group.totalQuantity.toLocaleString("vi-VN")} sản phẩm
+              </span>
               <span aria-hidden="true">·</span>
               <span className="whitespace-nowrap text-blue-2">
                 {formatMoney(group.totalAmount)}

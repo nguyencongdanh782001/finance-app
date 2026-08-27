@@ -31,6 +31,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { formatCurrencyVND } from "@/helper/convertCurrency";
@@ -574,14 +580,14 @@ function OrderFilters({
         </Button>
       </div>
 
-      <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-        <DialogContent className="max-w-[calc(100vw-32px)] rounded-2xl bg-white p-4 sm:max-w-sm">
-          <DialogTitle className="text-lg font-extrabold text-slate-800">
+      <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+        <SheetContent side="right" className="w-[min(92vw,380px)] p-5 pt-14">
+          <SheetTitle className="text-lg font-semibold text-slate-800">
             Bộ lọc đơn hàng
-          </DialogTitle>
-          <DialogDescription className="text-sm font-medium text-slate-500">
+          </SheetTitle>
+          <SheetDescription className="mt-1 text-sm text-slate-500">
             Chọn trạng thái và phương thức để thu gọn danh sách.
-          </DialogDescription>
+          </SheetDescription>
           <div className="mt-3 grid gap-3">{renderFilterControls(true)}</div>
           <Button
             type="button"
@@ -591,8 +597,8 @@ function OrderFilters({
           >
             Áp dụng
           </Button>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
@@ -822,7 +828,7 @@ function OrderFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92svh] max-w-3xl rounded-[28px] bg-white p-0">
+      <DialogContent className="max-h-[92svh] max-w-3xl rounded-xl border-slate-200 bg-white p-0 shadow-xl">
         <div className="sticky top-0 z-10 border-b border-slate-100 bg-white p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -926,7 +932,7 @@ function OrderFormDialog({
               <PopoverContent
                 align="start"
                 sideOffset={6}
-                className="z-60 w-(--radix-popover-trigger-width) max-w-[calc(100vw-40px)] rounded-2xl border-slate-100 bg-white p-0 shadow-[0_18px_44px_rgba(15,23,42,0.16)]"
+                className="z-60 w-(--radix-popover-trigger-width) max-w-[calc(100vw-40px)] rounded-lg border-slate-200 bg-white p-0 shadow-lg"
                 onWheel={(event) => event.stopPropagation()}
                 onTouchMove={(event) => event.stopPropagation()}
               >
@@ -974,8 +980,9 @@ function OrderFormDialog({
                                 {product.sku ? ` • ${product.sku}` : ""}
                               </p>
                               <p className="mt-1 text-xs font-bold text-slate-500">
-                                Tồn: {product.availableStock.toLocaleString("vi-VN")} ·
-                                Giá: {formatMoney(product.originalUnitPrice)}
+                                Tồn:{" "}
+                                {product.availableStock.toLocaleString("vi-VN")}{" "}
+                                · Giá: {formatMoney(product.originalUnitPrice)}
                               </p>
                             </div>
                             <span
@@ -1004,7 +1011,7 @@ function OrderFormDialog({
 
           <div className="space-y-3">
             {form.items.length === 0 ? (
-              <div className="rounded-[20px] border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+              <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
                 <PackageCheck className="mx-auto size-8 text-slate-300" />
                 <p className="mt-3 text-sm font-bold text-slate-500">
                   Chưa chọn sản phẩm nào
@@ -1020,7 +1027,7 @@ function OrderFormDialog({
                 return (
                   <div
                     key={getItemKey(item)}
-                    className="rounded-[20px] border border-slate-100 bg-white p-3 shadow-[0_10px_24px_rgba(148,163,184,0.08)]"
+                    className="rounded-lg border border-slate-200 bg-white p-3"
                   >
                     <div className="flex items-start gap-3">
                       <ProductImage
@@ -1136,7 +1143,7 @@ function OrderFormDialog({
             )}
           </div>
 
-          <div className="sticky bottom-0 rounded-[22px] border border-slate-100 bg-white p-4 shadow-[0_-10px_30px_rgba(148,163,184,0.12)]">
+          <div className="sticky bottom-0 rounded-lg border border-slate-200 bg-white p-4 shadow-md">
             <div className="grid gap-2 text-sm font-semibold text-slate-500 sm:grid-cols-2">
               <p>
                 Tổng số lượng: {totals.totalQuantity.toLocaleString("vi-VN")}
@@ -1205,7 +1212,7 @@ function OrderDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92svh] max-w-2xl rounded-[28px] bg-white p-0">
+      <DialogContent className="max-h-[92svh] max-w-2xl rounded-xl border-slate-200 bg-white p-0 shadow-xl">
         <div className="sticky top-0 z-10 border-b border-slate-100 bg-white p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -1231,7 +1238,7 @@ function OrderDetailDialog({
           </div>
         </div>
         <div className="space-y-4 p-5">
-          <div className="grid gap-2 rounded-[18px] bg-slate-50 p-4 text-sm font-semibold text-slate-600 sm:grid-cols-2">
+          <div className="grid gap-2 rounded-lg bg-slate-50 p-4 text-sm font-semibold text-slate-600 sm:grid-cols-2">
             <p>Nguồn đơn: {ORDER_SOURCE_LABELS[order.source]}</p>
             <p>
               Phương thức:{" "}
@@ -1250,7 +1257,7 @@ function OrderDetailDialog({
           </div>
 
           {order.source === "ONLINE" && order.receiver ? (
-            <div className="rounded-[18px] border border-slate-100 p-4">
+            <div className="rounded-lg border border-slate-200 p-4">
               <p className="text-sm font-extrabold text-slate-700">
                 Thông tin giao hàng
               </p>
@@ -1272,7 +1279,7 @@ function OrderDetailDialog({
             {order.items.map((item) => (
               <div
                 key={item.id}
-                className="rounded-[18px] border border-slate-100 bg-white p-3"
+                className="rounded-lg border border-slate-200 bg-white p-3"
               >
                 <div className="flex gap-3">
                   <ProductImage
@@ -1321,7 +1328,7 @@ function CancelDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-[28px] bg-white p-5">
+      <DialogContent className="max-w-md rounded-xl border-slate-200 bg-white p-5 shadow-xl">
         <DialogTitle className="text-xl font-extrabold text-slate-800">
           Hủy đơn tại shop
         </DialogTitle>
@@ -1338,7 +1345,7 @@ function CancelDialog({
         <div className="mt-5 flex gap-2">
           <Button
             type="button"
-            variant="dangerSoft"
+            variant="adminDanger"
             className="h-11 flex-1 rounded-2xl"
             onClick={onConfirm}
             disabled={isSubmitting}

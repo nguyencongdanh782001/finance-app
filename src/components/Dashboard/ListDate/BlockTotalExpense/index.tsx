@@ -18,14 +18,14 @@ const BlockTotalExpense = (props: BlockTotalExpenseProps) => {
   const defaultMonth = urlMonth || now.getMonth() + 1;
 
   return (
-    <div className="flex flex-col gap-1 rounded-[40px] px-4 py-5 border border-white shadow-sm bg-linear-to-tr from-orange-2 to-orange-5">
-      <p className="text-green-1 text-13px font-bold uppercase">
+    <div className="flex min-w-0 flex-col gap-1 rounded-xl border border-slate-200 bg-white px-4 py-4">
+      <p className="text-sm font-medium text-orange-3">
         chi tiêu tháng {defaultMonth}
       </p>
       {isLoading ? (
         <Skeleton className="h-7 w-full rounded-1 mb-2" />
       ) : (
-        <p className="text-orange-3 text-base font-extrabold uppercase">
+        <p className="truncate text-lg font-bold text-orange-3">
           {formatCurrencyVND(totalExpense || 0)}
         </p>
       )}
