@@ -4,6 +4,7 @@ import Header from "@/components/common/Header";
 import BlockBankProfit from "@/components/DailyDetail/BlockCashBank";
 import BlockCashProfit from "@/components/DailyDetail/BlockCashProfit";
 import FormCapital from "@/components/DailyDetail/FormCapital";
+import DailyOrderSection from "@/components/DailyDetail/DailyOrderSection";
 import FormNote from "@/components/DailyDetail/FormNote";
 import FormProducts from "@/components/DailyDetail/FormProducts";
 import FormRevenue from "@/components/DailyDetail/FormRevenue";
@@ -22,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   PackageCheck,
+  ReceiptText,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
@@ -39,7 +41,9 @@ const DailyDetail = () => {
   >(undefined);
   const [reload, setReload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"revenue" | "products">("revenue");
+  const [activeTab, setActiveTab] = useState<"revenue" | "orders" | "products">(
+    "revenue",
+  );
 
   const fetchData = async (showLoading = true) => {
     try {
@@ -89,11 +93,11 @@ const DailyDetail = () => {
   };
 
   return (
-    <div className="sm:max-w-191.25 mx-auto relative">
+    <div className="sm:max-w-191.25 mx-auto relative w-full max-w-full min-w-0">
       <Toaster />
       <Header compact={isLoading ? false : undefined}>
-        <div className="sm:max-w-191.25 mx-auto">
-          <div className="grid w-full grid-cols-2 rounded-full border border-slate-200 bg-slate-50 p-1">
+        <div className="sm:max-w-191.25 mx-auto w-full max-w-full min-w-0">
+          <div className="grid w-full max-w-full min-w-0 grid-cols-3 rounded-full border border-slate-200 bg-slate-50 p-1">
             <button
               type="button"
               onClick={() => setActiveTab("revenue")}
@@ -109,6 +113,22 @@ const DailyDetail = () => {
                 }`}
               />
               Doanh thu
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("orders")}
+              className={`cursor-pointer flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-all ${
+                activeTab === "orders"
+                  ? "bg-white text-slate-700 shadow-sm"
+                  : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              <ReceiptText
+                className={`size-3.5 ${
+                  activeTab === "orders" ? "text-green-13" : "text-slate-400"
+                }`}
+              />
+              Đơn hàng
             </button>
             <button
               type="button"
@@ -129,7 +149,7 @@ const DailyDetail = () => {
           </div>
         </div>
       </Header>
-      <Container className="gap-8 py-6 min-h-[calc(100svh-117px)]!">
+      <Container className="gap-8 py-6 min-h-[calc(100svh-117px)]! w-full max-w-full min-w-0">
         {isLoading ? (
           <div className="grid grid-cols-[40px_1fr_40px] items-center gap-2.5">
             <Skeleton className="h-10 w-10 rounded-full" />
@@ -253,6 +273,13 @@ const DailyDetail = () => {
               )}
             </div>
           </>
+        ) : activeTab === "orders" ? (
+          <DailyOrderSection
+            data={dailyDetailData}
+            isLoading={isLoading}
+            reload={reload}
+            onReload={() => setReload(true)}
+          />
         ) : (
           <FormProducts
             data={dailyDetailData}

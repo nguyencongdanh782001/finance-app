@@ -10,13 +10,24 @@ export async function GET(
   const id = Number(rawId);
 
   if (!id || isNaN(id)) {
-    return NextResponse.json({ message: "Invalid product id" }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid product id" },
+      { status: 400 },
+    );
   }
 
   const product = await prisma.product.findUnique({
     where: { id },
     include: {
       category: true,
+      variants: {
+        where: {
+          isActive: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
   });
 
@@ -36,7 +47,10 @@ export async function PUT(
   const id = Number(rawId);
 
   if (!id || isNaN(id)) {
-    return NextResponse.json({ message: "Invalid product id" }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid product id" },
+      { status: 400 },
+    );
   }
 
   const product = await prisma.product.findUnique({
@@ -88,7 +102,10 @@ export async function DELETE(
   const id = Number(rawId);
 
   if (!id || isNaN(id)) {
-    return NextResponse.json({ message: "Invalid product id" }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid product id" },
+      { status: 400 },
+    );
   }
 
   const product = await prisma.product.findUnique({

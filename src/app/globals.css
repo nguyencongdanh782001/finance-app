@@ -189,6 +189,66 @@
   }
 }
 
+@layer components {
+  .order-management-section {
+    container-type: inline-size;
+  }
+
+  .order-management-table {
+    display: none;
+  }
+
+  .order-management-cards {
+    display: grid;
+  }
+
+  .order-filter-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .order-filter-search,
+  .order-filter-control,
+  .order-filter-reset {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  @container (min-width: 520px) {
+    .order-management-section .order-filter-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .order-management-section .order-filter-search {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @container (min-width: 980px) {
+    .order-management-section .order-filter-grid {
+      grid-template-columns:
+        minmax(220px, 1.5fr) repeat(3, minmax(140px, 1fr))
+        minmax(104px, max-content);
+    }
+
+    .order-management-section .order-filter-search,
+    .order-management-section .order-filter-control,
+    .order-management-section .order-filter-reset {
+      grid-column: auto;
+    }
+  }
+
+  @container (min-width: 980px) {
+    .order-management-section .order-management-table {
+      display: block;
+    }
+
+    .order-management-section .order-management-cards {
+      display: none;
+    }
+  }
+}
+
 body.scrolling--hidden::-webkit-scrollbar {
   touch-action: none;
   display: none;

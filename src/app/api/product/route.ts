@@ -43,6 +43,14 @@ export async function GET(req: Request) {
       orderBy,
       include: {
         category: true,
+        variants: {
+          where: {
+            isActive: true,
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
       },
     }),
     prisma.product.count({ where }),

@@ -391,6 +391,7 @@ export const ModelName = {
   Brand: 'Brand',
   Product: 'Product',
   DailySoldProduct: 'DailySoldProduct',
+  DailySoldProductContribution: 'DailySoldProductContribution',
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
@@ -446,7 +447,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "user" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -965,6 +966,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.DailySoldProductCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.DailySoldProductCountAggregateOutputType> | number
+        }
+      }
+    }
+    DailySoldProductContribution: {
+      payload: Prisma.$DailySoldProductContributionPayload<ExtArgs>
+      fields: Prisma.DailySoldProductContributionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DailySoldProductContributionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DailySoldProductContributionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>
+        }
+        findFirst: {
+          args: Prisma.DailySoldProductContributionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DailySoldProductContributionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>
+        }
+        findMany: {
+          args: Prisma.DailySoldProductContributionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>[]
+        }
+        create: {
+          args: Prisma.DailySoldProductContributionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>
+        }
+        createMany: {
+          args: Prisma.DailySoldProductContributionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DailySoldProductContributionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>[]
+        }
+        delete: {
+          args: Prisma.DailySoldProductContributionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>
+        }
+        update: {
+          args: Prisma.DailySoldProductContributionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>
+        }
+        deleteMany: {
+          args: Prisma.DailySoldProductContributionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DailySoldProductContributionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DailySoldProductContributionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>[]
+        }
+        upsert: {
+          args: Prisma.DailySoldProductContributionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailySoldProductContributionPayload>
+        }
+        aggregate: {
+          args: Prisma.DailySoldProductContributionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDailySoldProductContribution>
+        }
+        groupBy: {
+          args: Prisma.DailySoldProductContributionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailySoldProductContributionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DailySoldProductContributionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailySoldProductContributionCountAggregateOutputType> | number
         }
       }
     }
@@ -4098,6 +4173,23 @@ export const DailySoldProductScalarFieldEnum = {
 export type DailySoldProductScalarFieldEnum = (typeof DailySoldProductScalarFieldEnum)[keyof typeof DailySoldProductScalarFieldEnum]
 
 
+export const DailySoldProductContributionScalarFieldEnum = {
+  id: 'id',
+  dailyFinanceId: 'dailyFinanceId',
+  dailySoldProductId: 'dailySoldProductId',
+  orderId: 'orderId',
+  orderItemId: 'orderItemId',
+  productId: 'productId',
+  variantId: 'variantId',
+  quantity: 'quantity',
+  sellPrice: 'sellPrice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailySoldProductContributionScalarFieldEnum = (typeof DailySoldProductContributionScalarFieldEnum)[keyof typeof DailySoldProductContributionScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
   phone: 'phone',
@@ -4361,7 +4453,10 @@ export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[k
 export const OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
+  idempotencyKey: 'idempotencyKey',
   userId: 'userId',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
   shippingAddressId: 'shippingAddressId',
   billingAddressId: 'billingAddressId',
   status: 'status',
@@ -4370,6 +4465,8 @@ export const OrderScalarFieldEnum = {
   discountAmount: 'discountAmount',
   shippingFee: 'shippingFee',
   taxAmount: 'taxAmount',
+  totalCost: 'totalCost',
+  profit: 'profit',
   totalAmount: 'totalAmount',
   paidAmount: 'paidAmount',
   remainingAmount: 'remainingAmount',
@@ -4388,6 +4485,8 @@ export const OrderScalarFieldEnum = {
   longitude: 'longitude',
   note: 'note',
   placedAt: 'placedAt',
+  completedAt: 'completedAt',
+  deliveredAt: 'deliveredAt',
   cancelledAt: 'cancelledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -4402,14 +4501,21 @@ export const OrderItemScalarFieldEnum = {
   productId: 'productId',
   variantId: 'variantId',
   productTitle: 'productTitle',
+  productImageUrl: 'productImageUrl',
   sku: 'sku',
   size: 'size',
   color: 'color',
   variantOptionsSnapshot: 'variantOptionsSnapshot',
   quantity: 'quantity',
+  originalUnitPrice: 'originalUnitPrice',
   unitPrice: 'unitPrice',
+  unitCost: 'unitCost',
   totalPrice: 'totalPrice',
-  createdAt: 'createdAt'
+  lineSubtotal: 'lineSubtotal',
+  lineCost: 'lineCost',
+  lineProfit: 'lineProfit',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
@@ -4417,6 +4523,7 @@ export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof t
 
 export const InventoryTransactionScalarFieldEnum = {
   id: 'id',
+  productId: 'productId',
   variantId: 'variantId',
   type: 'type',
   quantity: 'quantity',
@@ -5292,6 +5399,7 @@ export type GlobalOmitConfig = {
   brand?: Prisma.BrandOmit
   product?: Prisma.ProductOmit
   dailySoldProduct?: Prisma.DailySoldProductOmit
+  dailySoldProductContribution?: Prisma.DailySoldProductContributionOmit
   user?: Prisma.UserOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   userSession?: Prisma.UserSessionOmit

@@ -156,13 +156,13 @@ const CustomSelect = React.forwardRef<
               name={name}
               className={`truncate! text-left text-11px disabled:opacity-50 bg-slate-50! rounded-[14px]! text-slate-700! hover:bg-slate-50! shadow-none! ${showError ? "border-red-1!" : "border-slate-100!"} ${inputClassName} ${(multipliable && (value.length === 0 || value[0] === "")) || !value ? "text-slate-300!" : ""} grid`}
               style={{
-                gridTemplateColumns: "1fr auto",
+                gridTemplateColumns: "minmax(0, 1fr) auto",
               }}
               disabled={disabled}
             >
-              <div className="flex items-center gap-1.5 truncate">
+              <div className="flex min-w-0 items-center gap-1.5 truncate">
                 {startIcon}
-                <p className={`label truncate min-w-8 h-5 ${lblClassName}`}>
+                <p className={`label h-5 min-w-0 truncate ${lblClassName}`}>
                   {multipliable && renderMultiLbl()}
                   {!multipliable &&
                     (value
