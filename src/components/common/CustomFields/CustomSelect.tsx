@@ -203,7 +203,7 @@ const CustomSelect = React.forwardRef<
               <Command className="max-h-50 xs:max-h-[300px]">
                 {searchable && (
                   <div
-                    className={`h-10 rounded-[12px] border border-slate-100 bg-slate-50 ${searchClsx} `}
+                    className={`h-10 rounded-2xl border border-slate-100 bg-slate-50 ${searchClsx} `}
                   >
                     <CommandInput
                       className="h-10 text-sm text-slate-600 placeholder:text-slate-300"
