@@ -278,7 +278,7 @@ export default function ProductFormDialog({
                       placeholder="Chọn danh mục sản phẩm"
                       optionValue={categoryOptions}
                       className="h-10! w-full! min-w-full! rounded-lg! text-sm text-slate-700"
-                      inputClassName="h-10! w-full! rounded-lg! border-slate-200! bg-white! text-sm! font-medium! text-slate-700!"
+                      inputClassName="!placeholder-green-1 h-10! w-full! rounded-lg! border-slate-200! bg-white! text-sm! font-medium! text-slate-700!"
                       popoverTrgVariant={{ variant: "search-box--lgray" }}
                       searchable
                     />

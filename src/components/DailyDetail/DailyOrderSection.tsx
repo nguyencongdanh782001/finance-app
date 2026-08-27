@@ -932,7 +932,7 @@ function OrderFormDialog({
               <PopoverContent
                 align="start"
                 sideOffset={6}
-                className="z-60 w-(--radix-popover-trigger-width) max-w-[calc(100vw-40px)] rounded-lg border-slate-200 bg-white p-0 shadow-lg"
+                className="z-90 w-(--radix-popover-trigger-width) max-w-[calc(100vw-40px)] rounded-lg border-slate-200 bg-white p-0 shadow-lg"
                 onWheel={(event) => event.stopPropagation()}
                 onTouchMove={(event) => event.stopPropagation()}
               >
@@ -1951,7 +1951,7 @@ export default function DailyOrderSection({
               >
                 <div
                   className={`w-full ${
-                    activeTab === "ONLINE" ? "min-w-[920px]" : "min-w-[760px]"
+                    activeTab === "ONLINE" ? "min-w-230" : "min-w-190"
                   }`}
                 >
                   <div
