@@ -505,11 +505,11 @@ export default function ProductContainer() {
           desktopClassName="sm:grid-cols-[minmax(220px,1fr)_minmax(160px,220px)_minmax(140px,160px)_auto]"
         />
 
-        <div className="mt-5 flex items-center justify-between gap-3 border-t border-[var(--admin-border)] pt-4">
-          <h2 className="text-base font-semibold text-[var(--admin-text)]">
+        <div className="mt-5 flex items-center justify-between gap-3 border-t border-(--admin-border) pt-4">
+          <h2 className="text-base font-semibold text-(--admin-text)">
             Danh sách sản phẩm
           </h2>
-          <p className="whitespace-nowrap text-sm text-[var(--admin-text-secondary)]">
+          <p className="whitespace-nowrap text-sm text-(--admin-text-secondary)">
             {products.length} sản phẩm
           </p>
         </div>

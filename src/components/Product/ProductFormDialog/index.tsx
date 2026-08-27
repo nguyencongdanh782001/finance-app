@@ -267,7 +267,7 @@ export default function ProductFormDialog({
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 w-full">
                     <Label className="text-11px font-bold text-slate-500">
                       Danh mục
                     </Label>
@@ -277,8 +277,8 @@ export default function ProductFormDialog({
                       name="categoryId"
                       placeholder="Chọn danh mục sản phẩm"
                       optionValue={categoryOptions}
-                      className="h-10! w-full! min-w-0! rounded-lg! text-sm text-slate-700"
-                      inputClassName="text-sm font-medium text-slate-700"
+                      className="h-10! w-full! min-w-full! rounded-lg! text-sm text-slate-700"
+                      inputClassName="h-10! w-full! rounded-lg! border-slate-200! bg-white! text-sm! font-medium! text-slate-700!"
                       popoverTrgVariant={{ variant: "search-box--lgray" }}
                       searchable
                     />
