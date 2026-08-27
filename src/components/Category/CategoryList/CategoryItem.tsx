@@ -30,24 +30,24 @@ export default function CategoryItem({
   const color = getCategoryColor(category.color);
 
   return (
-    <div className="group rounded-4xl border border-[#edf2f7] bg-white p-4 shadow-[0_12px_30px_rgba(148,163,184,0.08)]">
+    <div className="admin-surface group rounded-2xl p-4 transition-colors duration-150 hover:border-[var(--admin-primary-border)]">
       <div className="flex items-center gap-4">
         <Link
           href={`/admin/products?categoryId=${category.id}`}
           className="flex min-w-0 flex-1 items-center gap-4"
         >
           <div
-            className="flex size-12 shrink-0 items-center justify-center rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]"
+            className="flex size-11 shrink-0 items-center justify-center rounded-lg"
             style={{ backgroundColor: `${category.color}26` }}
           >
             <Icon className="size-5" style={{ color: color.value }} />
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-base font-bold text-gray-7">
+            <p className="truncate text-base font-semibold text-[var(--admin-text)]">
               {category.name}
             </p>
-            <p className="mt-px text-sm font-medium text-green-1">
+            <p className="mt-0.5 text-sm font-medium text-[var(--admin-text-secondary)]">
               {category.productCount.toLocaleString("vi-VN")} sản phẩm
             </p>
           </div>
@@ -60,6 +60,7 @@ export default function CategoryItem({
               variant="ghost"
               size="icon-sm"
               className="h-9 w-9 rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              aria-label={`Mở thao tác cho ${category.name}`}
             >
               <EllipsisVertical className="size-4" />
             </Button>

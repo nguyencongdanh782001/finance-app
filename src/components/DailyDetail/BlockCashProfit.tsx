@@ -13,7 +13,7 @@ interface BlockCashProfitProps {
 const BlockCashProfit = (props: BlockCashProfitProps) => {
   const { data, isLoading } = props;
   return (
-    <div className="flex flex-col p-6 rounded-4xl shadow-[0_10px_30px_-10px_rgba(139,92,246,0.45)] bg-white">
+    <div className="flex flex-col rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
       <div className="flex items-center gap-3 mb-3">
         <Banknote className="size-5 text-purple-4" />
         <p className="text-green-1 text-13px font-bold uppercase">Tiền mặt</p>

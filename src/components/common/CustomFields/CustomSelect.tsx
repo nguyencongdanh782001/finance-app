@@ -132,7 +132,7 @@ const CustomSelect = React.forwardRef<
     };
 
     return (
-      <div>
+      <div data-admin-select>
         <ScrollTrigger onScroll={onScroll} />
 
         <Popover
@@ -151,6 +151,7 @@ const CustomSelect = React.forwardRef<
             disabled={disabled}
           >
             <Button
+              data-admin-select-trigger
               type="button"
               variant="input"
               name={name}
@@ -186,6 +187,7 @@ const CustomSelect = React.forwardRef<
           </PopoverTrigger>
 
           <PopoverContent
+            data-admin-select-content
             className="left-0 translate-x-0! min-w-(--radix-popover-trigger-width) w-(--radix-popover-trigger-width) rounded-xl! border-slate-100! bg-white p-0 shadow-[0_18px_40px_rgba(15,23,42,0.12)]"
             onOpenAutoFocus={(e) => {
               e.preventDefault();
@@ -262,6 +264,8 @@ const CustomSelect = React.forwardRef<
 
                       return (
                         <CommandItem
+                          data-admin-select-option
+                          data-selected={value === opt.value}
                           key={opt.value}
                           value={opt.label}
                           className={`grid grid-cols-[1fr_auto] justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 data-[selected=true]:bg-slate-50 data-[selected=true]:text-slate-700 ${opt.disabled && "hidden"}`}

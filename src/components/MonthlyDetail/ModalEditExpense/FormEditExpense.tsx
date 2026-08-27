@@ -73,7 +73,7 @@ export default function FormEditExpense({
         <div className="flex flex-col gap-2 w-full">
           <Label
             variant="secondary"
-            className="text-green-1! text-11px font-bold"
+            className="text-xs font-medium text-slate-600"
           >
             Mô tả chi phí
           </Label>
@@ -83,7 +83,7 @@ export default function FormEditExpense({
             placeholder="Ví dụ: Văn phòng phẩm"
             name="name"
             variant="default"
-            className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+            className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
           />
         </div>
 
@@ -92,7 +92,7 @@ export default function FormEditExpense({
           <div className="flex flex-col gap-2 w-full">
             <Label
               variant="secondary"
-              className="text-green-1! text-11px font-bold"
+              className="text-xs font-medium text-slate-600"
             >
               Số tiền
             </Label>
@@ -103,7 +103,7 @@ export default function FormEditExpense({
                 placeholder="0"
                 name="amount"
                 variant="default"
-                className="bg-gray-1! h-14! rounded-xl! w-full py-2.5 pl-3.5 text-sm text-gray-17 border border-gray-8 font-normal !placeholder:font-normal"
+                className="h-10! w-full rounded-lg! border-slate-200 bg-white px-3 text-sm"
                 pattern="^\d+(\.\d*)?$"
               />
             </div>
@@ -113,7 +113,8 @@ export default function FormEditExpense({
         <Button
           type="submit"
           disabled={isSubmitting || !dirty}
-          className="mt-8 shadow-sm! h-13.75! w-full flex items-center gap-2 rounded-xl bg-green-9 hover:bg-green-9/80 text-base text-white font-bold"
+          variant="adminPrimary"
+          className="mt-6 h-10 w-full rounded-lg"
         >
           {isSubmitting && (
             <Loader2 className="animate-spin w-3.5 h-3.5 text-white" />

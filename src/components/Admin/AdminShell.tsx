@@ -1,0 +1,174 @@
+"use client";
+
+import AdminAccountMenu from "@/components/Auth/AdminAccountMenu";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { FolderTree, LayoutDashboard, Menu, Package } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { ComponentType, ReactNode } from "react";
+
+type AdminNavItem = {
+  href: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  matches: (pathname: string) => boolean;
+};
+
+const ADMIN_NAV_ITEMS: AdminNavItem[] = [
+  {
+    href: "/admin",
+    label: "Tổng quan",
+    icon: LayoutDashboard,
+    matches: (pathname) =>
+      pathname === "/admin" ||
+      pathname.startsWith("/admin/daily-detail/") ||
+      pathname.startsWith("/admin/monthly-detail/"),
+  },
+  {
+    href: "/admin/products",
+    label: "Sản phẩm",
+    icon: Package,
+    matches: (pathname) => pathname.startsWith("/admin/products"),
+  },
+  {
+    href: "/admin/categories",
+    label: "Danh mục",
+    icon: FolderTree,
+    matches: (pathname) => pathname.startsWith("/admin/categories"),
+  },
+];
+
+const getPageTitle = (pathname: string) => {
+  if (pathname.startsWith("/admin/products")) return "Sản phẩm";
+  if (pathname.startsWith("/admin/categories")) return "Danh mục";
+  if (pathname.startsWith("/admin/daily-detail/")) return "Chi tiết ngày";
+  if (pathname.startsWith("/admin/monthly-detail/")) return "Chi tiết tháng";
+  return "Tổng quan";
+};
+
+function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
+  const pathname = usePathname();
+
+  return (
+    <nav aria-label="Điều hướng quản trị" className="space-y-1 px-3">
+      <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400/75">
+        Quản lý cửa hàng
+      </p>
+      {ADMIN_NAV_ITEMS.map((item) => {
+        const Icon = item.icon;
+        const active = item.matches(pathname);
+        const link = (
+          <Link
+            href={item.href}
+            className={cn(
+              "flex h-10 min-w-0 items-center gap-3 rounded-lg border-l-2 px-3 text-sm font-medium outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-primary/40",
+              active
+                ? "border-primary bg-[var(--admin-sidebar-hover)] text-white shadow-[inset_0_1px_0_rgb(255_255_255_/_0.06)]"
+                : "border-transparent text-slate-300 hover:bg-[var(--admin-sidebar-hover)] hover:text-white",
+            )}
+          >
+            <Icon className="size-4 shrink-0" />
+            <span className="truncate">{item.label}</span>
+          </Link>
+        );
+
+        return mobile ? (
+          <SheetClose asChild key={item.href}>
+            {link}
+          </SheetClose>
+        ) : (
+          <div key={item.href}>{link}</div>
+        );
+      })}
+    </nav>
+  );
+}
+
+function AdminBrand() {
+  return (
+    <Link href="/admin" className="flex min-w-0 items-center gap-3 px-4">
+      <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-white">
+        <Image
+          src="/logo-quynh-nhi-store-mark.svg"
+          alt="Quỳnh Nhi Store"
+          width={36}
+          height={36}
+          className="size-9 object-contain"
+        />
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-semibold text-white">
+          Quỳnh Nhi Store
+        </span>
+        <span className="block text-xs font-medium text-slate-400">
+          Khu vực quản trị
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+export default function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
+  return (
+    <div className="admin-shell min-h-svh bg-[var(--admin-background)] text-[var(--admin-text)]">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 border-r border-white/5 bg-[var(--admin-sidebar)] lg:flex lg:flex-col">
+        <div className="flex h-16 items-center border-b border-white/8">
+          <AdminBrand />
+        </div>
+        <div className="flex-1 py-5">
+          <AdminNavigation />
+        </div>
+      </aside>
+
+      <div className="min-w-0 lg:pl-60">
+        <header className="sticky top-0 z-40 flex h-15 items-center justify-between gap-3 border-b border-[var(--admin-border)] bg-white/95 px-4 backdrop-blur sm:px-5 lg:px-6">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] text-[var(--admin-text-secondary)] hover:bg-[var(--admin-primary-soft)] hover:text-primary lg:hidden"
+                  aria-label="Mở menu quản trị"
+                >
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="flex flex-col bg-[var(--admin-sidebar)] p-0 text-white [&>button]:text-slate-300 [&>button:hover]:bg-white/10 [&>button:hover]:text-white">
+                <SheetTitle className="sr-only">Menu quản trị</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Điều hướng các trang quản trị của cửa hàng
+                </SheetDescription>
+                <div className="flex h-16 items-center border-b border-white/8 pr-12">
+                  <AdminBrand />
+                </div>
+                <div className="flex-1 py-5">
+                  <AdminNavigation mobile />
+                </div>
+              </SheetContent>
+            </Sheet>
+            <p className="truncate text-sm font-semibold text-[var(--admin-text-secondary)]">
+              {getPageTitle(pathname)}
+            </p>
+          </div>
+          <AdminAccountMenu />
+        </header>
+
+        <main className="w-full max-w-full min-w-0">{children}</main>
+      </div>
+    </div>
+  );
+}

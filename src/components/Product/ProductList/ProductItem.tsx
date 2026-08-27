@@ -41,12 +41,12 @@ export default function ProductItem({
 
   return (
     <div
-      className={`rounded-[24px] bg-white px-4 py-4 shadow-[0_16px_40px_rgba(148,163,184,0.10)] ${
-        isOutOfStock ? "ring-1 ring-rose-100 bg-rose-50/30" : ""
+      className={`admin-surface rounded-2xl p-4 transition-colors duration-150 hover:border-[var(--admin-primary-border)] ${
+        isOutOfStock ? "border-rose-200 bg-rose-50/30" : ""
       }`}
     >
       <div className="flex items-start gap-3">
-        <div className="h-23 w-23 shrink-0 overflow-hidden rounded-[24px] bg-slate-100">
+        <div className="size-20 shrink-0 overflow-hidden rounded-lg bg-slate-100">
           {showImage ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -68,14 +68,14 @@ export default function ProductItem({
         <div className="min-w-0 flex-1 pt-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="line-clamp-1 text-[15px] font-extrabold text-slate-700">
+              <p className="line-clamp-1 text-[15px] font-semibold text-[var(--admin-text)]">
                 {product.title}
               </p>
-              <p className="mt-1 text-10px font-bold uppercase tracking-[0.08em] text-slate-300">
+              <p className="mt-1 text-xs font-medium text-[var(--admin-text-muted)]">
                 {product.categoryName}
               </p>
               {isOutOfStock ? (
-                <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-rose-600">
+                <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-rose-100 px-2 py-1 text-[11px] font-semibold text-rose-700">
                   <AlertTriangle className="size-3.5" />
                   Hết hàng
                 </div>
@@ -89,6 +89,7 @@ export default function ProductItem({
                   variant="ghost"
                   size="icon-sm"
                   className="h-8 w-8 rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                  aria-label={`Mở thao tác cho ${product.title}`}
                 >
                   <EllipsisVertical className="size-4" />
                 </Button>
@@ -114,18 +115,18 @@ export default function ProductItem({
 
           <div className="mt-3 flex items-start gap-6">
             <div>
-              <p className="text-[9px] font-bold uppercase text-slate-300">
+              <p className="text-[11px] font-medium text-[var(--admin-text-muted)]">
                 Giá nhập
               </p>
-              <p className="mt-1 text-13px font-extrabold text-slate-700">
+              <p className="mt-1 text-13px font-semibold tabular-nums text-[var(--admin-text)]">
                 {formatCurrency(product.importPrice)}
               </p>
             </div>
             <div>
-              <p className="text-[9px] font-bold uppercase text-slate-300">
+              <p className="text-[11px] font-medium text-[var(--admin-text-muted)]">
                 Giá bán
               </p>
-              <p className="mt-1 text-13px font-extrabold text-emerald-500">
+              <p className="mt-1 text-13px font-semibold tabular-nums text-[var(--admin-text)]">
                 {formatCurrency(product.sellPrice)}
               </p>
             </div>
@@ -133,9 +134,9 @@ export default function ProductItem({
         </div>
       </div>
 
-      <div className="mt-4 border-t border-slate-100 pt-3 flex justify-between items-center">
+      <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
         <div>
-          <p className="text-10px font-bold text-slate-300">
+          <p className="text-10px font-medium text-[var(--admin-text-muted)]">
             Số lượng trong kho
           </p>
           {isOutOfStock ? (
@@ -146,7 +147,7 @@ export default function ProductItem({
         </div>
         <p
           className={`mt-1 text-sm font-extrabold ${
-            isOutOfStock ? "text-rose-500" : "text-slate-600"
+            isOutOfStock ? "text-rose-600" : "text-[var(--admin-text-secondary)]"
           }`}
         >
           {product.quantity.toLocaleString("vi-VN")}
