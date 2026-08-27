@@ -314,6 +314,7 @@ export type DailyFinanceWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
   monthlyFinance?: Prisma.XOR<Prisma.MonthlyFinanceScalarRelationFilter, Prisma.MonthlyFinanceWhereInput>
   soldProducts?: Prisma.DailySoldProductListRelationFilter
+  dailySoldContributions?: Prisma.DailySoldProductContributionListRelationFilter
 }
 
 export type DailyFinanceOrderByWithRelationInput = {
@@ -332,6 +333,7 @@ export type DailyFinanceOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   monthlyFinance?: Prisma.MonthlyFinanceOrderByWithRelationInput
   soldProducts?: Prisma.DailySoldProductOrderByRelationAggregateInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionOrderByRelationAggregateInput
 }
 
 export type DailyFinanceWhereUniqueInput = Prisma.AtLeast<{
@@ -353,6 +355,7 @@ export type DailyFinanceWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"DailyFinance"> | Date | string
   monthlyFinance?: Prisma.XOR<Prisma.MonthlyFinanceScalarRelationFilter, Prisma.MonthlyFinanceWhereInput>
   soldProducts?: Prisma.DailySoldProductListRelationFilter
+  dailySoldContributions?: Prisma.DailySoldProductContributionListRelationFilter
 }, "id" | "date">
 
 export type DailyFinanceOrderByWithAggregationInput = {
@@ -409,6 +412,7 @@ export type DailyFinanceCreateInput = {
   updatedAt?: Date | string
   monthlyFinance: Prisma.MonthlyFinanceCreateNestedOneWithoutDaysInput
   soldProducts?: Prisma.DailySoldProductCreateNestedManyWithoutDailyFinanceInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionCreateNestedManyWithoutDailyFinanceInput
 }
 
 export type DailyFinanceUncheckedCreateInput = {
@@ -426,6 +430,7 @@ export type DailyFinanceUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   soldProducts?: Prisma.DailySoldProductUncheckedCreateNestedManyWithoutDailyFinanceInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedCreateNestedManyWithoutDailyFinanceInput
 }
 
 export type DailyFinanceUpdateInput = {
@@ -442,6 +447,7 @@ export type DailyFinanceUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   monthlyFinance?: Prisma.MonthlyFinanceUpdateOneRequiredWithoutDaysNestedInput
   soldProducts?: Prisma.DailySoldProductUpdateManyWithoutDailyFinanceNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUpdateManyWithoutDailyFinanceNestedInput
 }
 
 export type DailyFinanceUncheckedUpdateInput = {
@@ -459,6 +465,7 @@ export type DailyFinanceUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   soldProducts?: Prisma.DailySoldProductUncheckedUpdateManyWithoutDailyFinanceNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedUpdateManyWithoutDailyFinanceNestedInput
 }
 
 export type DailyFinanceCreateManyInput = {
@@ -674,6 +681,20 @@ export type DailyFinanceUpdateOneRequiredWithoutSoldProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DailyFinanceUpdateToOneWithWhereWithoutSoldProductsInput, Prisma.DailyFinanceUpdateWithoutSoldProductsInput>, Prisma.DailyFinanceUncheckedUpdateWithoutSoldProductsInput>
 }
 
+export type DailyFinanceCreateNestedOneWithoutDailySoldContributionsInput = {
+  create?: Prisma.XOR<Prisma.DailyFinanceCreateWithoutDailySoldContributionsInput, Prisma.DailyFinanceUncheckedCreateWithoutDailySoldContributionsInput>
+  connectOrCreate?: Prisma.DailyFinanceCreateOrConnectWithoutDailySoldContributionsInput
+  connect?: Prisma.DailyFinanceWhereUniqueInput
+}
+
+export type DailyFinanceUpdateOneRequiredWithoutDailySoldContributionsNestedInput = {
+  create?: Prisma.XOR<Prisma.DailyFinanceCreateWithoutDailySoldContributionsInput, Prisma.DailyFinanceUncheckedCreateWithoutDailySoldContributionsInput>
+  connectOrCreate?: Prisma.DailyFinanceCreateOrConnectWithoutDailySoldContributionsInput
+  upsert?: Prisma.DailyFinanceUpsertWithoutDailySoldContributionsInput
+  connect?: Prisma.DailyFinanceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DailyFinanceUpdateToOneWithWhereWithoutDailySoldContributionsInput, Prisma.DailyFinanceUpdateWithoutDailySoldContributionsInput>, Prisma.DailyFinanceUncheckedUpdateWithoutDailySoldContributionsInput>
+}
+
 export type DailyFinanceCreateWithoutMonthlyFinanceInput = {
   date: Date | string
   capitalCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -687,6 +708,7 @@ export type DailyFinanceCreateWithoutMonthlyFinanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   soldProducts?: Prisma.DailySoldProductCreateNestedManyWithoutDailyFinanceInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionCreateNestedManyWithoutDailyFinanceInput
 }
 
 export type DailyFinanceUncheckedCreateWithoutMonthlyFinanceInput = {
@@ -703,6 +725,7 @@ export type DailyFinanceUncheckedCreateWithoutMonthlyFinanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   soldProducts?: Prisma.DailySoldProductUncheckedCreateNestedManyWithoutDailyFinanceInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedCreateNestedManyWithoutDailyFinanceInput
 }
 
 export type DailyFinanceCreateOrConnectWithoutMonthlyFinanceInput = {
@@ -763,6 +786,7 @@ export type DailyFinanceCreateWithoutSoldProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   monthlyFinance: Prisma.MonthlyFinanceCreateNestedOneWithoutDaysInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionCreateNestedManyWithoutDailyFinanceInput
 }
 
 export type DailyFinanceUncheckedCreateWithoutSoldProductsInput = {
@@ -779,6 +803,7 @@ export type DailyFinanceUncheckedCreateWithoutSoldProductsInput = {
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedCreateNestedManyWithoutDailyFinanceInput
 }
 
 export type DailyFinanceCreateOrConnectWithoutSoldProductsInput = {
@@ -810,6 +835,7 @@ export type DailyFinanceUpdateWithoutSoldProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   monthlyFinance?: Prisma.MonthlyFinanceUpdateOneRequiredWithoutDaysNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUpdateManyWithoutDailyFinanceNestedInput
 }
 
 export type DailyFinanceUncheckedUpdateWithoutSoldProductsInput = {
@@ -826,6 +852,89 @@ export type DailyFinanceUncheckedUpdateWithoutSoldProductsInput = {
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedUpdateManyWithoutDailyFinanceNestedInput
+}
+
+export type DailyFinanceCreateWithoutDailySoldContributionsInput = {
+  date: Date | string
+  capitalCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  capitalBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  monthlyFinance: Prisma.MonthlyFinanceCreateNestedOneWithoutDaysInput
+  soldProducts?: Prisma.DailySoldProductCreateNestedManyWithoutDailyFinanceInput
+}
+
+export type DailyFinanceUncheckedCreateWithoutDailySoldContributionsInput = {
+  id?: number
+  date: Date | string
+  monthlyFinanceId: number
+  capitalCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  capitalBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitCash?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitBank?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalProfit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  soldProducts?: Prisma.DailySoldProductUncheckedCreateNestedManyWithoutDailyFinanceInput
+}
+
+export type DailyFinanceCreateOrConnectWithoutDailySoldContributionsInput = {
+  where: Prisma.DailyFinanceWhereUniqueInput
+  create: Prisma.XOR<Prisma.DailyFinanceCreateWithoutDailySoldContributionsInput, Prisma.DailyFinanceUncheckedCreateWithoutDailySoldContributionsInput>
+}
+
+export type DailyFinanceUpsertWithoutDailySoldContributionsInput = {
+  update: Prisma.XOR<Prisma.DailyFinanceUpdateWithoutDailySoldContributionsInput, Prisma.DailyFinanceUncheckedUpdateWithoutDailySoldContributionsInput>
+  create: Prisma.XOR<Prisma.DailyFinanceCreateWithoutDailySoldContributionsInput, Prisma.DailyFinanceUncheckedCreateWithoutDailySoldContributionsInput>
+  where?: Prisma.DailyFinanceWhereInput
+}
+
+export type DailyFinanceUpdateToOneWithWhereWithoutDailySoldContributionsInput = {
+  where?: Prisma.DailyFinanceWhereInput
+  data: Prisma.XOR<Prisma.DailyFinanceUpdateWithoutDailySoldContributionsInput, Prisma.DailyFinanceUncheckedUpdateWithoutDailySoldContributionsInput>
+}
+
+export type DailyFinanceUpdateWithoutDailySoldContributionsInput = {
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capitalCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  capitalBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  monthlyFinance?: Prisma.MonthlyFinanceUpdateOneRequiredWithoutDaysNestedInput
+  soldProducts?: Prisma.DailySoldProductUpdateManyWithoutDailyFinanceNestedInput
+}
+
+export type DailyFinanceUncheckedUpdateWithoutDailySoldContributionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  monthlyFinanceId?: Prisma.IntFieldUpdateOperationsInput | number
+  capitalCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  capitalBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  revenueBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitCash?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  profitBank?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalProfit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  soldProducts?: Prisma.DailySoldProductUncheckedUpdateManyWithoutDailyFinanceNestedInput
 }
 
 export type DailyFinanceCreateManyMonthlyFinanceInput = {
@@ -856,6 +965,7 @@ export type DailyFinanceUpdateWithoutMonthlyFinanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   soldProducts?: Prisma.DailySoldProductUpdateManyWithoutDailyFinanceNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUpdateManyWithoutDailyFinanceNestedInput
 }
 
 export type DailyFinanceUncheckedUpdateWithoutMonthlyFinanceInput = {
@@ -872,6 +982,7 @@ export type DailyFinanceUncheckedUpdateWithoutMonthlyFinanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   soldProducts?: Prisma.DailySoldProductUncheckedUpdateManyWithoutDailyFinanceNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedUpdateManyWithoutDailyFinanceNestedInput
 }
 
 export type DailyFinanceUncheckedUpdateManyWithoutMonthlyFinanceInput = {
@@ -896,10 +1007,12 @@ export type DailyFinanceUncheckedUpdateManyWithoutMonthlyFinanceInput = {
 
 export type DailyFinanceCountOutputType = {
   soldProducts: number
+  dailySoldContributions: number
 }
 
 export type DailyFinanceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   soldProducts?: boolean | DailyFinanceCountOutputTypeCountSoldProductsArgs
+  dailySoldContributions?: boolean | DailyFinanceCountOutputTypeCountDailySoldContributionsArgs
 }
 
 /**
@@ -919,6 +1032,13 @@ export type DailyFinanceCountOutputTypeCountSoldProductsArgs<ExtArgs extends run
   where?: Prisma.DailySoldProductWhereInput
 }
 
+/**
+ * DailyFinanceCountOutputType without action
+ */
+export type DailyFinanceCountOutputTypeCountDailySoldContributionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DailySoldProductContributionWhereInput
+}
+
 
 export type DailyFinanceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -936,6 +1056,7 @@ export type DailyFinanceSelect<ExtArgs extends runtime.Types.Extensions.Internal
   updatedAt?: boolean
   monthlyFinance?: boolean | Prisma.MonthlyFinanceDefaultArgs<ExtArgs>
   soldProducts?: boolean | Prisma.DailyFinance$soldProductsArgs<ExtArgs>
+  dailySoldContributions?: boolean | Prisma.DailyFinance$dailySoldContributionsArgs<ExtArgs>
   _count?: boolean | Prisma.DailyFinanceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dailyFinance"]>
 
@@ -993,6 +1114,7 @@ export type DailyFinanceOmit<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type DailyFinanceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   monthlyFinance?: boolean | Prisma.MonthlyFinanceDefaultArgs<ExtArgs>
   soldProducts?: boolean | Prisma.DailyFinance$soldProductsArgs<ExtArgs>
+  dailySoldContributions?: boolean | Prisma.DailyFinance$dailySoldContributionsArgs<ExtArgs>
   _count?: boolean | Prisma.DailyFinanceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DailyFinanceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1010,6 +1132,7 @@ export type $DailyFinancePayload<ExtArgs extends runtime.Types.Extensions.Intern
      * SOLD PRODUCTS
      */
     soldProducts: Prisma.$DailySoldProductPayload<ExtArgs>[]
+    dailySoldContributions: Prisma.$DailySoldProductContributionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1436,6 +1559,7 @@ export interface Prisma__DailyFinanceClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   monthlyFinance<T extends Prisma.MonthlyFinanceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MonthlyFinanceDefaultArgs<ExtArgs>>): Prisma.Prisma__MonthlyFinanceClient<runtime.Types.Result.GetResult<Prisma.$MonthlyFinancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   soldProducts<T extends Prisma.DailyFinance$soldProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DailyFinance$soldProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailySoldProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  dailySoldContributions<T extends Prisma.DailyFinance$dailySoldContributionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DailyFinance$dailySoldContributionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailySoldProductContributionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1895,6 +2019,30 @@ export type DailyFinance$soldProductsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.DailySoldProductScalarFieldEnum | Prisma.DailySoldProductScalarFieldEnum[]
+}
+
+/**
+ * DailyFinance.dailySoldContributions
+ */
+export type DailyFinance$dailySoldContributionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DailySoldProductContribution
+   */
+  select?: Prisma.DailySoldProductContributionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DailySoldProductContribution
+   */
+  omit?: Prisma.DailySoldProductContributionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DailySoldProductContributionInclude<ExtArgs> | null
+  where?: Prisma.DailySoldProductContributionWhereInput
+  orderBy?: Prisma.DailySoldProductContributionOrderByWithRelationInput | Prisma.DailySoldProductContributionOrderByWithRelationInput[]
+  cursor?: Prisma.DailySoldProductContributionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DailySoldProductContributionScalarFieldEnum | Prisma.DailySoldProductContributionScalarFieldEnum[]
 }
 
 /**

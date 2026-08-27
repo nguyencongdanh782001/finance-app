@@ -11,6 +11,8 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         ghost: "",
+        adminPrimary:
+          "bg-blue-2 text-white font-bold hover:bg-blue-2/90 focus-visible:ring-blue-5/30",
         brand: "bg-[#D96C8A] text-white font-extrabold hover:bg-[#C55778]",
         google:
           "border border-[#E9E2E5] bg-white text-[#1C1A1B] font-extrabold shadow-[0_10px_28px_rgba(28,26,27,0.08)] hover:border-[#D96C8A]/45 hover:bg-[#FFFCFA] hover:shadow-[0_14px_34px_rgba(122,41,68,0.12)]",

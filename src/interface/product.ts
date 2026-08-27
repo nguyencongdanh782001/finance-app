@@ -10,6 +10,20 @@ export interface ProductApiItem {
   sellPrice: number | string;
   quantity: number;
   category: CategoryApiItem;
+  variants?: ProductVariantApiItem[];
+}
+
+export interface ProductVariantApiItem {
+  id: number;
+  sku: string;
+  size: string | null;
+  color: string | null;
+  price?: number | string | null;
+  sellPrice: number | string;
+  importPrice: number | string;
+  quantity: number;
+  reservedQuantity?: number;
+  isActive: boolean;
 }
 
 export interface ProductListResponse {

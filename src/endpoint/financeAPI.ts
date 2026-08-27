@@ -3,10 +3,12 @@ import {
   CreateMonthlyExpenseRequest,
   MonthlyProductProfitResponse,
   DailyDetailResponse,
+  DailyOrder,
+  DailyOrderListResponse,
+  DailySoldProductGroupListResponse,
   MonthlyDetailResponse,
   MonthlyResponse,
-  UpdateDailySoldProductsRequest,
-  UpdateDailySoldProductsResponse,
+  OfflineOrderPayload,
   UpdateDailyRequest,
   UploadImageResponse,
   TopSellingProductsResponse,
@@ -98,11 +100,52 @@ export const financeAPI = {
   ): Promise<IAPIResponse<unknown>> => {
     return appAxios.put(API_ROUTES.putDailyDetailData(id), payload);
   },
-  putDailySoldProducts: (
+  getDailyOrders: (
     id: number,
-    payload: UpdateDailySoldProductsRequest,
-  ): Promise<IAPIResponse<UpdateDailySoldProductsResponse>> => {
-    return appAxios.put(API_ROUTES.putDailySoldProducts(id), payload);
+    params?: {
+      search?: string;
+      source?: string;
+      status?: string;
+      paymentStatus?: string;
+      paymentMethod?: string;
+    },
+  ): Promise<IAPIResponse<DailyOrderListResponse>> => {
+    return appAxios.get(API_ROUTES.getDailyOrders(id), { params });
+  },
+  getDailySoldProductGroups: (
+    id: number,
+    params?: {
+      search?: string;
+      source?: string;
+      page?: number;
+      limit?: number;
+    },
+  ): Promise<IAPIResponse<DailySoldProductGroupListResponse>> => {
+    return appAxios.get(API_ROUTES.getDailySoldProductGroups(id), { params });
+  },
+  createDailyOrder: (
+    id: number,
+    payload: OfflineOrderPayload,
+  ): Promise<IAPIResponse<DailyOrder>> => {
+    return appAxios.post(API_ROUTES.createDailyOrder(id), payload);
+  },
+  updateOrder: (
+    id: number,
+    payload: OfflineOrderPayload,
+  ): Promise<IAPIResponse<DailyOrder>> => {
+    return appAxios.patch(API_ROUTES.updateOrder(id), payload);
+  },
+  updateOrderStatus: (
+    id: number,
+    payload: { status: string },
+  ): Promise<IAPIResponse<DailyOrder>> => {
+    return appAxios.patch(API_ROUTES.updateOrder(id), payload);
+  },
+  getOrderDetail: (id: number): Promise<IAPIResponse<DailyOrder>> => {
+    return appAxios.get(API_ROUTES.getOrderDetail(id));
+  },
+  cancelOrder: (id: number): Promise<IAPIResponse<DailyOrder>> => {
+    return appAxios.post(API_ROUTES.cancelOrder(id));
   },
   getCategoryList: (): Promise<IAPIResponse<CategoryApiItem[]>> => {
     return appAxios.get(API_ROUTES.getCategoryList);

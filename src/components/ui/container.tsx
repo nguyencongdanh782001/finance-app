@@ -2,7 +2,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const containerVariants = cva("mx-auto sm:max-w-[765px]", {
+const containerVariants = cva("mx-auto max-w-full min-w-0 sm:max-w-[765px]", {
   variants: {
     variant: {
       default: "flex flex-col w-full min-h-screen px-[20px]",

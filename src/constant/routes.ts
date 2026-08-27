@@ -24,8 +24,13 @@ export const API_ROUTES = {
     APP_API_URL(`monthly/detail/${id}/expense/${expenseId}`),
   getDailyDetailData: (id: number) => APP_API_URL(`daily/detail/${id}`),
   putDailyDetailData: (id: number) => APP_API_URL(`daily/detail/${id}`),
-  putDailySoldProducts: (id: number) =>
+  getDailyOrders: (id: number) => APP_API_URL(`daily/detail/${id}/orders`),
+  getDailySoldProductGroups: (id: number) =>
     APP_API_URL(`daily/detail/${id}/products`),
+  createDailyOrder: (id: number) => APP_API_URL(`daily/detail/${id}/orders`),
+  getOrderDetail: (id: number) => APP_API_URL(`order/${id}`),
+  updateOrder: (id: number) => APP_API_URL(`order/${id}`),
+  cancelOrder: (id: number) => APP_API_URL(`order/${id}/cancel`),
   getCategoryList: APP_API_URL("category"),
   createCategory: APP_API_URL("category"),
   getCategoryDetail: (id: number) => APP_API_URL(`category/${id}`),

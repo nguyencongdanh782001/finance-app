@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { getDailySoldProducts } from "@/lib/sold-products/daily-sold-products";
 import { NextResponse } from "next/server";
 
 type SaleSnapshot = {
@@ -9,6 +10,8 @@ type SaleSnapshot = {
 type NumericLike = number | string | { toString(): string } | null;
 
 type MonthlyDaySummary = {
+  id: number;
+  date: Date;
   profitBank: NumericLike;
   profitCash: NumericLike;
 };
@@ -28,11 +31,6 @@ type MonthlyDetailRecord = {
   expenses: MonthlyExpenseItem[];
   days: MonthlyDaySummary[];
 };
-
-const isDailySoldProductSchemaError = (error: unknown) =>
-  error instanceof Error &&
-  (error.message.includes("daily_sold_product") ||
-    error.message.includes("soldProducts"));
 
 export async function GET(
   _req: Request,
@@ -62,80 +60,27 @@ export async function GET(
     }[];
   }[] = [];
 
-  try {
-    const monthlyWithSoldProducts = await prisma.monthlyFinance.findUnique({
-      where: { id: monthlyId },
-      include: {
-        expenses: {
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
-        days: {
-          orderBy: {
-            date: "asc",
-          },
-          include: {
-            soldProducts: {
-              orderBy: {
-                createdAt: "asc",
-              },
-              include: {
-                product: {
-                  include: {
-                    category: true,
-                  },
-                },
-              },
-            },
-          },
+  monthly = await prisma.monthlyFinance.findUnique({
+    where: { id: monthlyId },
+    include: {
+      expenses: {
+        orderBy: {
+          createdAt: "desc",
         },
       },
-    });
-
-    monthly = monthlyWithSoldProducts;
-    soldProductsByDay =
-      monthlyWithSoldProducts?.days.map((day) => ({
-        dailyId: day.id,
-        date: day.date,
-        soldProducts: day.soldProducts.map((item) => ({
-          productId: item.productId,
-          productTitle: item.product.title,
-          categoryName: item.product.category.name,
-          importPrice: Number(item.importPrice),
-          sales: Array.isArray(item.sales)
-            ? (item.sales as unknown as SaleSnapshot[]).map((sale) => ({
-                quantity: Number(sale.quantity),
-                sellPrice: Number(sale.sellPrice),
-              }))
-            : [],
-        })),
-      })) ?? [];
-  } catch (error) {
-    if (!isDailySoldProductSchemaError(error)) {
-      throw error;
-    }
-
-    monthly = await prisma.monthlyFinance.findUnique({
-      where: { id: monthlyId },
-      include: {
-        expenses: {
-          orderBy: {
-            createdAt: "desc",
-          },
+      days: {
+        orderBy: {
+          date: "asc",
         },
-        days: {
-          orderBy: {
-            date: "asc",
-          },
-          select: {
-            profitBank: true,
-            profitCash: true,
-          },
+        select: {
+          id: true,
+          date: true,
+          profitBank: true,
+          profitCash: true,
         },
       },
-    });
-  }
+    },
+  });
 
   if (!monthly) {
     return NextResponse.json(
@@ -148,6 +93,27 @@ export async function GET(
     (acc, d) => acc + Number(d.profitBank || 0) + Number(d.profitCash || 0),
     0,
   );
+  const dailySoldProductResults = await Promise.all(
+    monthly.days.map((day) => getDailySoldProducts(prisma, day.id)),
+  );
+
+  soldProductsByDay = monthly.days.map((day, index) => ({
+    dailyId: day.id,
+    date: day.date,
+    soldProducts:
+      dailySoldProductResults[index]?.items.map((item) => ({
+        productId: item.productId ?? 0,
+        productTitle: item.productName,
+        categoryName: item.categoryName ?? "Không phân loại",
+        importPrice: item.unitCost ?? 0,
+        sales: [
+          {
+            quantity: item.quantity,
+            sellPrice: item.unitPrice,
+          },
+        ],
+      })) ?? [],
+  }));
 
   return NextResponse.json({
     id: monthly.id,
