@@ -35,15 +35,15 @@ export function AdminPageHeader({
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
         {breadcrumb ? (
-          <div className="mb-1.5 text-xs font-medium text-[var(--admin-text-muted)]">
+          <div className="mb-1.5 text-xs font-medium text-(--admin-text-muted)">
             {breadcrumb}
           </div>
         ) : null}
-        <h1 className="text-xl font-semibold tracking-tight text-[var(--admin-text)] sm:text-2xl">
+        <h1 className="text-xl font-semibold tracking-tight text-(--admin-text) sm:text-2xl">
           {title}
         </h1>
         {description ? (
-          <p className="mt-1 text-sm leading-6 text-[var(--admin-text-secondary)]">{description}</p>
+          <p className="mt-1 text-sm leading-6 text-(--admin-text-secondary)">{description}</p>
         ) : null}
       </div>
       {actions ? (

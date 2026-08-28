@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.ts'
+export type * from './prismaNamespace.ts'
 
 export const Decimal = runtime.Decimal
 
@@ -60,6 +60,7 @@ export const ModelName = {
   DailySoldProduct: 'DailySoldProduct',
   DailySoldProductContribution: 'DailySoldProductContribution',
   User: 'User',
+  ProductDraft: 'ProductDraft',
   PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
@@ -292,6 +293,24 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ProductDraftScalarFieldEnum = {
+  id: 'id',
+  mode: 'mode',
+  status: 'status',
+  originalProductId: 'originalProductId',
+  createdById: 'createdById',
+  currentStep: 'currentStep',
+  data: 'data',
+  version: 'version',
+  appliedAt: 'appliedAt',
+  discardedAt: 'discardedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductDraftScalarFieldEnum = (typeof ProductDraftScalarFieldEnum)[keyof typeof ProductDraftScalarFieldEnum]
 
 
 export const PasswordResetTokenScalarFieldEnum = {

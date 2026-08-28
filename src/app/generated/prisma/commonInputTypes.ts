@@ -10,8 +10,8 @@
  */
 
 import type * as runtime from "@prisma/client/runtime/client"
-import * as $Enums from "./enums"
-import type * as Prisma from "./internal/prismaNamespace"
+import * as $Enums from "./enums.ts"
+import type * as Prisma from "./internal/prismaNamespace.ts"
 
 
 export type IntFilter<$PrismaModel = never> = {
@@ -475,6 +475,40 @@ export type EnumUserGenderNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumUserGenderNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumUserGenderNullableFilter<$PrismaModel>
+}
+
+export type EnumProductDraftModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftMode | Prisma.EnumProductDraftModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftModeFilter<$PrismaModel> | $Enums.ProductDraftMode
+}
+
+export type EnumProductDraftStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftStatus | Prisma.EnumProductDraftStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftStatusFilter<$PrismaModel> | $Enums.ProductDraftStatus
+}
+
+export type EnumProductDraftModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftMode | Prisma.EnumProductDraftModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftModeWithAggregatesFilter<$PrismaModel> | $Enums.ProductDraftMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProductDraftModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProductDraftModeFilter<$PrismaModel>
+}
+
+export type EnumProductDraftStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftStatus | Prisma.EnumProductDraftStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProductDraftStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProductDraftStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProductDraftStatusFilter<$PrismaModel>
 }
 
 export type EnumOtpPurposeFilter<$PrismaModel = never> = {
@@ -1186,6 +1220,40 @@ export type NestedEnumUserGenderNullableWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumUserGenderNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumUserGenderNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumProductDraftModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftMode | Prisma.EnumProductDraftModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftModeFilter<$PrismaModel> | $Enums.ProductDraftMode
+}
+
+export type NestedEnumProductDraftStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftStatus | Prisma.EnumProductDraftStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftStatusFilter<$PrismaModel> | $Enums.ProductDraftStatus
+}
+
+export type NestedEnumProductDraftModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftMode | Prisma.EnumProductDraftModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftMode[] | Prisma.ListEnumProductDraftModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftModeWithAggregatesFilter<$PrismaModel> | $Enums.ProductDraftMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProductDraftModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProductDraftModeFilter<$PrismaModel>
+}
+
+export type NestedEnumProductDraftStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProductDraftStatus | Prisma.EnumProductDraftStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProductDraftStatus[] | Prisma.ListEnumProductDraftStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProductDraftStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProductDraftStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProductDraftStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProductDraftStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumOtpPurposeFilter<$PrismaModel = never> = {

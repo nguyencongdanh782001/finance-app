@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.ts"
+import type * as Prisma from "../internal/prismaNamespace.ts"
 
 /**
  * Model User
@@ -392,6 +392,7 @@ export type UserWhereInput = {
   notifications?: Prisma.NotificationListRelationFilter
   searchHistories?: Prisma.SearchHistoryListRelationFilter
   recentlyViewedProducts?: Prisma.RecentlyViewedProductListRelationFilter
+  productDrafts?: Prisma.ProductDraftListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -434,6 +435,7 @@ export type UserOrderByWithRelationInput = {
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   searchHistories?: Prisma.SearchHistoryOrderByRelationAggregateInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductOrderByRelationAggregateInput
+  productDrafts?: Prisma.ProductDraftOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -479,6 +481,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   searchHistories?: Prisma.SearchHistoryListRelationFilter
   recentlyViewedProducts?: Prisma.RecentlyViewedProductListRelationFilter
+  productDrafts?: Prisma.ProductDraftListRelationFilter
 }, "id" | "phone" | "email" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
@@ -579,6 +582,7 @@ export type UserCreateInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -620,6 +624,7 @@ export type UserUncheckedCreateInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUpdateInput = {
@@ -660,6 +665,7 @@ export type UserUpdateInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -701,6 +707,7 @@ export type UserUncheckedUpdateInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -907,6 +914,20 @@ export type EnumUserStatusFieldUpdateOperationsInput = {
 
 export type NullableEnumUserGenderFieldUpdateOperationsInput = {
   set?: $Enums.UserGender | null
+}
+
+export type UserCreateNestedOneWithoutProductDraftsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductDraftsInput, Prisma.UserUncheckedCreateWithoutProductDraftsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductDraftsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProductDraftsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductDraftsInput, Prisma.UserUncheckedCreateWithoutProductDraftsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductDraftsInput
+  upsert?: Prisma.UserUpsertWithoutProductDraftsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProductDraftsInput, Prisma.UserUpdateWithoutProductDraftsInput>, Prisma.UserUncheckedUpdateWithoutProductDraftsInput>
 }
 
 export type UserCreateNestedOneWithoutPasswordResetTokensInput = {
@@ -1183,6 +1204,184 @@ export type UserUpdateOneRequiredWithoutRecentlyViewedProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRecentlyViewedProductsInput, Prisma.UserUpdateWithoutRecentlyViewedProductsInput>, Prisma.UserUncheckedUpdateWithoutRecentlyViewedProductsInput>
 }
 
+export type UserCreateWithoutProductDraftsInput = {
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProductDraftsInput = {
+  id?: number
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  membershipId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProductDraftsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductDraftsInput, Prisma.UserUncheckedCreateWithoutProductDraftsInput>
+}
+
+export type UserUpsertWithoutProductDraftsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProductDraftsInput, Prisma.UserUncheckedUpdateWithoutProductDraftsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductDraftsInput, Prisma.UserUncheckedCreateWithoutProductDraftsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProductDraftsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProductDraftsInput, Prisma.UserUncheckedUpdateWithoutProductDraftsInput>
+}
+
+export type UserUpdateWithoutProductDraftsInput = {
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProductDraftsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutPasswordResetTokensInput = {
   phone?: string | null
   email?: string | null
@@ -1220,6 +1419,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -1260,6 +1460,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -1315,6 +1516,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -1355,6 +1557,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1394,6 +1597,7 @@ export type UserCreateWithoutSessionsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1434,6 +1638,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1489,6 +1694,7 @@ export type UserUpdateWithoutSessionsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1529,6 +1735,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutMembershipInput = {
@@ -1568,6 +1775,7 @@ export type UserCreateWithoutMembershipInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutMembershipInput = {
@@ -1608,6 +1816,7 @@ export type UserUncheckedCreateWithoutMembershipInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutMembershipInput = {
@@ -1702,6 +1911,7 @@ export type UserCreateWithoutOtpsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOtpsInput = {
@@ -1742,6 +1952,7 @@ export type UserUncheckedCreateWithoutOtpsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOtpsInput = {
@@ -1797,6 +2008,7 @@ export type UserUpdateWithoutOtpsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpsInput = {
@@ -1837,6 +2049,7 @@ export type UserUncheckedUpdateWithoutOtpsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -1876,6 +2089,7 @@ export type UserCreateWithoutAddressesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -1916,6 +2130,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -1971,6 +2186,7 @@ export type UserUpdateWithoutAddressesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -2011,6 +2227,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutCartsInput = {
@@ -2050,6 +2267,7 @@ export type UserCreateWithoutCartsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutCartsInput = {
@@ -2090,6 +2308,7 @@ export type UserUncheckedCreateWithoutCartsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutCartsInput = {
@@ -2145,6 +2364,7 @@ export type UserUpdateWithoutCartsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCartsInput = {
@@ -2185,6 +2405,7 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutWishlistsInput = {
@@ -2224,6 +2445,7 @@ export type UserCreateWithoutWishlistsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutWishlistsInput = {
@@ -2264,6 +2486,7 @@ export type UserUncheckedCreateWithoutWishlistsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutWishlistsInput = {
@@ -2319,6 +2542,7 @@ export type UserUpdateWithoutWishlistsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistsInput = {
@@ -2359,6 +2583,7 @@ export type UserUncheckedUpdateWithoutWishlistsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutWishlistItemsInput = {
@@ -2398,6 +2623,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
@@ -2438,6 +2664,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutWishlistItemsInput = {
@@ -2493,6 +2720,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
@@ -2533,6 +2761,7 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -2572,6 +2801,7 @@ export type UserCreateWithoutOrdersInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -2612,6 +2842,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -2656,6 +2887,7 @@ export type UserCreateWithoutCreatedOrdersInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedOrdersInput = {
@@ -2696,6 +2928,7 @@ export type UserUncheckedCreateWithoutCreatedOrdersInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedOrdersInput = {
@@ -2740,6 +2973,7 @@ export type UserCreateWithoutUpdatedOrdersInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutUpdatedOrdersInput = {
@@ -2780,6 +3014,7 @@ export type UserUncheckedCreateWithoutUpdatedOrdersInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutUpdatedOrdersInput = {
@@ -2835,6 +3070,7 @@ export type UserUpdateWithoutOrdersInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -2875,6 +3111,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutCreatedOrdersInput = {
@@ -2925,6 +3162,7 @@ export type UserUpdateWithoutCreatedOrdersInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
@@ -2965,6 +3203,7 @@ export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutUpdatedOrdersInput = {
@@ -3015,6 +3254,7 @@ export type UserUpdateWithoutUpdatedOrdersInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUpdatedOrdersInput = {
@@ -3055,6 +3295,7 @@ export type UserUncheckedUpdateWithoutUpdatedOrdersInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutOrderStatusChangesInput = {
@@ -3094,6 +3335,7 @@ export type UserCreateWithoutOrderStatusChangesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOrderStatusChangesInput = {
@@ -3134,6 +3376,7 @@ export type UserUncheckedCreateWithoutOrderStatusChangesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOrderStatusChangesInput = {
@@ -3189,6 +3432,7 @@ export type UserUpdateWithoutOrderStatusChangesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
@@ -3229,6 +3473,7 @@ export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -3268,6 +3513,7 @@ export type UserCreateWithoutReviewsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -3308,6 +3554,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -3363,6 +3610,7 @@ export type UserUpdateWithoutReviewsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -3403,6 +3651,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -3442,6 +3691,7 @@ export type UserCreateWithoutNotificationsInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -3482,6 +3732,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -3537,6 +3788,7 @@ export type UserUpdateWithoutNotificationsInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -3577,6 +3829,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutSearchHistoriesInput = {
@@ -3616,6 +3869,7 @@ export type UserCreateWithoutSearchHistoriesInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSearchHistoriesInput = {
@@ -3656,6 +3910,7 @@ export type UserUncheckedCreateWithoutSearchHistoriesInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSearchHistoriesInput = {
@@ -3711,6 +3966,7 @@ export type UserUpdateWithoutSearchHistoriesInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
@@ -3751,6 +4007,7 @@ export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutRecentlyViewedProductsInput = {
@@ -3790,6 +4047,7 @@ export type UserCreateWithoutRecentlyViewedProductsInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutRecentlyViewedProductsInput = {
@@ -3830,6 +4088,7 @@ export type UserUncheckedCreateWithoutRecentlyViewedProductsInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutRecentlyViewedProductsInput = {
@@ -3885,6 +4144,7 @@ export type UserUpdateWithoutRecentlyViewedProductsInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
@@ -3925,6 +4185,7 @@ export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManyMembershipInput = {
@@ -3989,6 +4250,7 @@ export type UserUpdateWithoutMembershipInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipInput = {
@@ -4029,6 +4291,7 @@ export type UserUncheckedUpdateWithoutMembershipInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
   recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutMembershipInput = {
@@ -4077,6 +4340,7 @@ export type UserCountOutputType = {
   notifications: number
   searchHistories: number
   recentlyViewedProducts: number
+  productDrafts: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4095,6 +4359,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   searchHistories?: boolean | UserCountOutputTypeCountSearchHistoriesArgs
   recentlyViewedProducts?: boolean | UserCountOutputTypeCountRecentlyViewedProductsArgs
+  productDrafts?: boolean | UserCountOutputTypeCountProductDraftsArgs
 }
 
 /**
@@ -4212,6 +4477,13 @@ export type UserCountOutputTypeCountRecentlyViewedProductsArgs<ExtArgs extends r
   where?: Prisma.RecentlyViewedProductWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProductDraftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductDraftWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4253,6 +4525,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   searchHistories?: boolean | Prisma.User$searchHistoriesArgs<ExtArgs>
   recentlyViewedProducts?: boolean | Prisma.User$recentlyViewedProductsArgs<ExtArgs>
+  productDrafts?: boolean | Prisma.User$productDraftsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4354,6 +4627,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   searchHistories?: boolean | Prisma.User$searchHistoriesArgs<ExtArgs>
   recentlyViewedProducts?: boolean | Prisma.User$recentlyViewedProductsArgs<ExtArgs>
+  productDrafts?: boolean | Prisma.User$productDraftsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4382,6 +4656,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     searchHistories: Prisma.$SearchHistoryPayload<ExtArgs>[]
     recentlyViewedProducts: Prisma.$RecentlyViewedProductPayload<ExtArgs>[]
+    productDrafts: Prisma.$ProductDraftPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -4817,6 +5092,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   searchHistories<T extends Prisma.User$searchHistoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$searchHistoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SearchHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recentlyViewedProducts<T extends Prisma.User$recentlyViewedProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$recentlyViewedProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecentlyViewedProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  productDrafts<T extends Prisma.User$productDraftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$productDraftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductDraftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5641,6 +5917,30 @@ export type User$recentlyViewedProductsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.RecentlyViewedProductScalarFieldEnum | Prisma.RecentlyViewedProductScalarFieldEnum[]
+}
+
+/**
+ * User.productDrafts
+ */
+export type User$productDraftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductDraft
+   */
+  select?: Prisma.ProductDraftSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductDraft
+   */
+  omit?: Prisma.ProductDraftOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductDraftInclude<ExtArgs> | null
+  where?: Prisma.ProductDraftWhereInput
+  orderBy?: Prisma.ProductDraftOrderByWithRelationInput | Prisma.ProductDraftOrderByWithRelationInput[]
+  cursor?: Prisma.ProductDraftWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductDraftScalarFieldEnum | Prisma.ProductDraftScalarFieldEnum[]
 }
 
 /**

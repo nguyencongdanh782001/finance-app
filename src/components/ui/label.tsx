@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const LabelVariants = cva("text-left", {
   variants: {
     variant: {
-      default: "text-gray-11 text-[11px] font-bold",
+      default: "text-gray-11 text-11px font-bold",
       secondary: "text-gray-16 text-xs font-bold",
     },
   },

@@ -22,9 +22,11 @@ import {
   ProductApiItem,
   ProductFormValues,
   ProductItemData,
+  ProductStatus,
 } from "@/interface/product";
+import { ProductImageDraft } from "@/components/Product/ProductFormDialog";
 import { Plus } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
@@ -59,6 +61,14 @@ const DEFAULT_FORM_VALUES: ProductFormValues = {
   importPrice: "",
   sellPrice: "",
   quantity: "1",
+  slug: "",
+  description: "",
+  gender: "",
+  productStatus: "DRAFT",
+  visibility: "PUBLIC",
+  seoTitle: "",
+  seoDescription: "",
+  variants: [],
 };
 
 const mapCategoryFromApi = (category: CategoryApiItem): CategoryItemData => ({
@@ -80,6 +90,7 @@ const mapProductFromApi = (product: ProductApiItem): ProductItemData => ({
   importPrice: Number(product.importPrice),
   sellPrice: Number(product.sellPrice),
   quantity: product.quantity,
+  productStatus: product.productStatus || "DRAFT",
 });
 
 export default function ProductContainer() {
@@ -101,9 +112,15 @@ export default function ProductContainer() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [updatingStatusIds, setUpdatingStatusIds] = useState<Set<number>>(
+    () => new Set(),
+  );
   const [selectedProduct, setSelectedProduct] =
     useState<ProductItemData | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
+  const [productDetail, setProductDetail] = useState<ProductApiItem | null>(
+    null,
+  );
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const limit = 12;
@@ -255,20 +272,90 @@ export default function ProductContainer() {
   ]);
 
   const handleOpenCreate = () => {
-    setFormMode("create");
-    setSelectedProduct(null);
-    setIsFormOpen(true);
+    router.push("/admin/products/new");
   };
 
   const handleOpenEdit = (product: ProductItemData) => {
-    setFormMode("edit");
-    setSelectedProduct(product);
-    setIsFormOpen(true);
+    router.push(`/admin/products/${product.id}/edit`);
   };
 
   const handleDeleteClick = (product: ProductItemData) => {
     setSelectedProduct(product);
     setIsDeleteOpen(true);
+  };
+
+  const handleStatusChange = async (
+    product: ProductItemData,
+    productStatus: ProductStatus,
+  ) => {
+    if (
+      product.productStatus === productStatus ||
+      updatingStatusIds.has(product.id)
+    ) {
+      return;
+    }
+
+    const previousStatus = product.productStatus;
+    setUpdatingStatusIds((current) => new Set(current).add(product.id));
+    setProducts((current) =>
+      current.map((item) =>
+        item.id === product.id ? { ...item, productStatus } : item,
+      ),
+    );
+
+    const rollbackStatus = () =>
+      setProducts((current) =>
+        current.map((item) =>
+          item.id === product.id
+            ? { ...item, productStatus: previousStatus }
+            : item,
+        ),
+      );
+
+    const showUpdateError = () =>
+      toast({
+        title: "Không thể đổi trạng thái sản phẩm",
+        description: `Trạng thái của “${product.title}” đã được hoàn tác.`,
+        className: "bg-red-1 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
+
+    try {
+      const response = await financeAPI.updateProductStatus(
+        product.id,
+        productStatus,
+      );
+
+      if (response.code !== RESPONSE_CODES.success || !response.data) {
+        rollbackStatus();
+        showUpdateError();
+        return;
+      }
+
+      const confirmedStatus = response.data.productStatus;
+      setProducts((current) =>
+        current.map((item) =>
+          item.id === product.id
+            ? { ...item, productStatus: confirmedStatus }
+            : item,
+        ),
+      );
+      toast({
+        title: "Đã cập nhật trạng thái sản phẩm",
+        description: `Thay đổi cho “${product.title}” đã được lưu.`,
+        className: "bg-green-16 text-white text-sm font-medium w-fit",
+        duration: 2500,
+      });
+    } catch {
+      rollbackStatus();
+      showUpdateError();
+    } finally {
+      setUpdatingStatusIds((current) => {
+        const next = new Set(current);
+        next.delete(product.id);
+        return next;
+      });
+    }
   };
 
   const handleDeleteFromForm = () => {
@@ -282,31 +369,41 @@ export default function ProductContainer() {
 
   const handleSubmit = async (
     values: ProductFormValues,
-    imageFile?: File | null,
+    imageFiles: File[],
+    imageDrafts: ProductImageDraft[],
   ) => {
     const isCreating = formMode === "create";
     const productTitle = values.title;
     let imageUrl = selectedProduct?.imageUrl || "";
     let imagePublicId = selectedProduct?.imagePublicId || "";
-    let uploadedImagePublicId: string | undefined;
+    const uploadedImagePublicIds: string[] = [];
 
     const cleanupUploadedImage = async () => {
-      if (!uploadedImagePublicId) {
+      if (!uploadedImagePublicIds.length) {
         return;
       }
 
       try {
-        await financeAPI.deleteUploadedImage(uploadedImagePublicId);
+        await Promise.all(
+          uploadedImagePublicIds.map((publicId) =>
+            financeAPI.deleteUploadedImage(publicId),
+          ),
+        );
       } catch (error) {
         console.error("Cleanup uploaded product image failed", {
-          publicId: uploadedImagePublicId,
+          publicIds: uploadedImagePublicIds,
           error,
         });
       }
     };
 
-    if (imageFile) {
-      const uploadRes = await financeAPI.uploadImage(imageFile);
+    const uploadedDrafts: ProductImageDraft[] = [];
+    for (const draft of imageDrafts) {
+      if (!draft.file) {
+        uploadedDrafts.push(draft);
+        continue;
+      }
+      const uploadRes = await financeAPI.uploadImage(draft.file);
 
       if (
         uploadRes.code !== RESPONSE_CODES.success ||
@@ -321,13 +418,23 @@ export default function ProductContainer() {
           className: "bg-red-1 text-white text-sm font-medium w-fit",
           duration: 3000,
         });
+        await cleanupUploadedImage();
         return false;
       }
 
-      imageUrl = uploadRes.data.url;
-      imagePublicId = uploadRes.data.publicId;
-      uploadedImagePublicId = uploadRes.data.publicId;
+      uploadedDrafts.push({
+        ...draft,
+        url: uploadRes.data.url,
+        publicId: uploadRes.data.publicId,
+        file: undefined,
+      });
+      uploadedImagePublicIds.push(uploadRes.data.publicId);
     }
+
+    const primary =
+      uploadedDrafts.find((image) => image.isPrimary) || uploadedDrafts[0];
+    imageUrl = primary?.url || imageUrl;
+    imagePublicId = primary?.publicId || imagePublicId;
 
     const payload = {
       title: values.title,
@@ -337,6 +444,30 @@ export default function ProductContainer() {
       importPrice: Number(values.importPrice),
       sellPrice: Number(values.sellPrice),
       quantity: Number(values.quantity),
+      slug: values.slug || undefined,
+      description: values.description || undefined,
+      productStatus: values.productStatus,
+      visibility: values.visibility,
+      gender: values.gender || undefined,
+      seoTitle: values.seoTitle || undefined,
+      seoDescription: values.seoDescription || undefined,
+      images: uploadedDrafts.map((image, position) => ({
+        id: image.id,
+        url: image.url,
+        publicId: image.publicId,
+        isPrimary: image.isPrimary,
+        position,
+      })),
+      variants: values.variants.map((variant) => ({
+        id: variant.id,
+        sku: variant.sku,
+        size: variant.size,
+        color: variant.color,
+        price: Number(variant.price),
+        importPrice: Number(variant.importPrice),
+        quantity: Number(variant.quantity),
+        isActive: variant.isActive,
+      })),
     };
 
     if (formMode === "create") {
@@ -373,6 +504,7 @@ export default function ProductContainer() {
 
     setIsFormOpen(false);
     setSelectedProduct(null);
+    setProductDetail(null);
     await fetchProducts(1);
     await fetchCategories();
     toast({
@@ -403,9 +535,11 @@ export default function ProductContainer() {
     if (res.code !== RESPONSE_CODES.success) {
       toast({
         title: "Xóa sản phẩm thất bại",
-        description: deletedProductTitle
-          ? `Không thể xóa "${deletedProductTitle}". Vui lòng thử lại.`
-          : "Không thể xóa sản phẩm. Vui lòng thử lại.",
+        description:
+          res.data?.message ||
+          (deletedProductTitle
+            ? `Không thể xóa "${deletedProductTitle}". Vui lòng thử lại.`
+            : "Không thể xóa sản phẩm. Vui lòng thử lại."),
         className: "bg-red-1 text-white text-sm font-medium w-fit",
         duration: 3000,
       });
@@ -437,8 +571,37 @@ export default function ProductContainer() {
           importPrice: String(selectedProduct.importPrice),
           sellPrice: String(selectedProduct.sellPrice),
           quantity: String(selectedProduct.quantity),
+          slug: productDetail?.slug || "",
+          description: productDetail?.description || "",
+          gender: (productDetail?.gender || "") as ProductFormValues["gender"],
+          productStatus: productDetail?.productStatus || "DRAFT",
+          visibility: productDetail?.visibility || "PUBLIC",
+          seoTitle: productDetail?.seoTitle || "",
+          seoDescription: productDetail?.seoDescription || "",
+          variants: (productDetail?.variants || []).map((variant) => ({
+            id: variant.id,
+            clientId: String(variant.id),
+            sku: variant.sku,
+            size: variant.size || "",
+            color: variant.color || "",
+            price: String(variant.sellPrice ?? variant.price ?? 0),
+            importPrice: String(variant.importPrice),
+            quantity: String(variant.quantity),
+            isActive: variant.isActive,
+          })),
         }
       : DEFAULT_FORM_VALUES;
+  const initialImages = useMemo(
+    () =>
+      (productDetail?.images || []).map((image) => ({
+        id: image.id,
+        url: image.url,
+        publicId: image.publicId || undefined,
+        isPrimary: image.isPrimary,
+        position: image.position,
+      })),
+    [productDetail?.images],
+  );
 
   return (
     <AdminPageContainer>
@@ -532,6 +695,8 @@ export default function ProductContainer() {
                 products={products}
                 onEdit={handleOpenEdit}
                 onDelete={handleDeleteClick}
+                onStatusChange={handleStatusChange}
+                updatingStatusIds={updatingStatusIds}
               />
               <div ref={loadMoreRef} className="h-0 w-full" />
               {isFetchingMore ? (
@@ -551,7 +716,7 @@ export default function ProductContainer() {
         mode={formMode}
         categories={categories}
         initialValues={initialValues}
-        initialImageUrl={selectedProduct?.imageUrl}
+        initialImages={initialImages}
         isDeleting={isDeleting}
         onOpenChange={setIsFormOpen}
         onSubmit={handleSubmit}

@@ -86,7 +86,7 @@ export function AdminSearchInput({
   placeholder: string;
 }) {
   return (
-    <div className="flex h-10 min-w-0 items-center gap-2 rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] px-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10">
+    <div className="flex h-10 min-w-0 items-center gap-2 rounded-lg border border-(--admin-border) bg-(--admin-surface) px-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10">
       <Search className="size-4 shrink-0 text-slate-400" />
       <input
         data-slot="input"
@@ -94,7 +94,7 @@ export function AdminSearchInput({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="min-w-0 flex-1 border-0! bg-transparent text-sm text-[var(--admin-text)] outline-none placeholder:text-[var(--admin-text-muted)]"
+        className="min-w-0 flex-1 border-0! bg-transparent text-sm text-(--admin-text) outline-none placeholder:text-(--admin-text-muted)"
       />
       {value ? (
         <Button

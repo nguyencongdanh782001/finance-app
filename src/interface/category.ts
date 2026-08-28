@@ -36,10 +36,18 @@ export interface CategoryApiItem {
   _count?: {
     products: number;
   };
+  parentId?: number | null;
+  parent?: { id: number; name: string } | null;
+  children?: CategoryApiItem[];
+  isActive?: boolean;
+  slug?: string | null;
 }
 
 export interface CategoryPayload {
   name: string;
   color: string;
   icon: string;
+  slug?: string;
+  parentId?: number | null;
+  description?: string;
 }

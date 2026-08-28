@@ -84,6 +84,23 @@ export const ProductVisibility = {
 export type ProductVisibility = (typeof ProductVisibility)[keyof typeof ProductVisibility]
 
 
+export const ProductDraftMode = {
+  CREATE: 'CREATE',
+  EDIT: 'EDIT'
+} as const
+
+export type ProductDraftMode = (typeof ProductDraftMode)[keyof typeof ProductDraftMode]
+
+
+export const ProductDraftStatus = {
+  ACTIVE: 'ACTIVE',
+  APPLIED: 'APPLIED',
+  DISCARDED: 'DISCARDED'
+} as const
+
+export type ProductDraftStatus = (typeof ProductDraftStatus)[keyof typeof ProductDraftStatus]
+
+
 export const AddressType = {
   SHIPPING: 'SHIPPING',
   BILLING: 'BILLING',

@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models"
-import { type PrismaClient } from "./class"
+import type * as Prisma from "../models.ts"
+import { type PrismaClient } from "./class.ts"
 
-export type * from '../models'
+export type * from '../models.ts'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -393,6 +393,7 @@ export const ModelName = {
   DailySoldProduct: 'DailySoldProduct',
   DailySoldProductContribution: 'DailySoldProductContribution',
   User: 'User',
+  ProductDraft: 'ProductDraft',
   PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
@@ -447,7 +448,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1114,6 +1115,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProductDraft: {
+      payload: Prisma.$ProductDraftPayload<ExtArgs>
+      fields: Prisma.ProductDraftFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductDraftFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductDraftFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductDraftFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductDraftFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>
+        }
+        findMany: {
+          args: Prisma.ProductDraftFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>[]
+        }
+        create: {
+          args: Prisma.ProductDraftCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>
+        }
+        createMany: {
+          args: Prisma.ProductDraftCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductDraftCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductDraftDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>
+        }
+        update: {
+          args: Prisma.ProductDraftUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductDraftDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductDraftUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductDraftUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductDraftUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductDraftPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductDraftAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductDraft>
+        }
+        groupBy: {
+          args: Prisma.ProductDraftGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductDraftGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductDraftCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductDraftCountAggregateOutputType> | number
         }
       }
     }
@@ -4219,6 +4294,24 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const ProductDraftScalarFieldEnum = {
+  id: 'id',
+  mode: 'mode',
+  status: 'status',
+  originalProductId: 'originalProductId',
+  createdById: 'createdById',
+  currentStep: 'currentStep',
+  data: 'data',
+  version: 'version',
+  appliedAt: 'appliedAt',
+  discardedAt: 'discardedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductDraftScalarFieldEnum = (typeof ProductDraftScalarFieldEnum)[keyof typeof ProductDraftScalarFieldEnum]
+
+
 export const PasswordResetTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -5075,6 +5168,34 @@ export type ListEnumUserGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'ProductDraftMode'
+ */
+export type EnumProductDraftModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductDraftMode'>
+    
+
+
+/**
+ * Reference to a field of type 'ProductDraftMode[]'
+ */
+export type ListEnumProductDraftModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductDraftMode[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ProductDraftStatus'
+ */
+export type EnumProductDraftStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductDraftStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ProductDraftStatus[]'
+ */
+export type ListEnumProductDraftStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductDraftStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'OtpPurpose'
  */
 export type EnumOtpPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OtpPurpose'>
@@ -5401,6 +5522,7 @@ export type GlobalOmitConfig = {
   dailySoldProduct?: Prisma.DailySoldProductOmit
   dailySoldProductContribution?: Prisma.DailySoldProductContributionOmit
   user?: Prisma.UserOmit
+  productDraft?: Prisma.ProductDraftOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   userSession?: Prisma.UserSessionOmit
   membership?: Prisma.MembershipOmit

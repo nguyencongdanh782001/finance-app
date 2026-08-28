@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
     "start": "next start",
-    "test": "node --no-warnings --test --experimental-strip-types src/lib/sold-products/sold-products.test.ts",
+    "test": "node --no-warnings --test --experimental-strip-types src/lib/sold-products/sold-products.test.ts src/lib/products/product-draft-validation.test.ts",
     "type-check": "tsc --noEmit"
   },
   "lint-staged": {

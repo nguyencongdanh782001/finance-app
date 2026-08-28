@@ -64,6 +64,17 @@ enum ProductVisibility {
   PRIVATE
 }
 
+enum ProductDraftMode {
+  CREATE
+  EDIT
+}
+
+enum ProductDraftStatus {
+  ACTIVE
+  APPLIED
+  DISCARDED
+}
+
 enum AddressType {
   SHIPPING
   BILLING
@@ -376,6 +387,7 @@ model Product {
   homepageFeaturedProducts HomepageFeaturedProduct[]
   homepageSectionProducts  HomepageSectionProduct[]
   recentlyViewedBy         RecentlyViewedProduct[]
+  drafts                   ProductDraft[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -490,6 +502,7 @@ model User {
   notifications          Notification[]
   searchHistories        SearchHistory[]
   recentlyViewedProducts RecentlyViewedProduct[]
+  productDrafts          ProductDraft[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -504,6 +517,32 @@ model User {
   @@index([totalOrders])
   @@index([rewardPoints])
   @@map("user")
+}
+
+model ProductDraft {
+  id Int @id @default(autoincrement())
+
+  mode   ProductDraftMode
+  status ProductDraftStatus @default(ACTIVE)
+
+  originalProductId Int?
+  originalProduct   Product? @relation(fields: [originalProductId], references: [id], onDelete: Cascade)
+
+  createdById Int
+  createdBy   User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  currentStep String?
+  data        Json
+  version     Int     @default(1)
+
+  appliedAt   DateTime?
+  discardedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([createdById, status])
+  @@index([originalProductId, status])
+  @@map("product_draft")
 }
 
 model PasswordResetToken {

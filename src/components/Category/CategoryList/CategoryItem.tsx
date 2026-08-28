@@ -30,7 +30,7 @@ export default function CategoryItem({
   const color = getCategoryColor(category.color);
 
   return (
-    <div className="admin-surface group rounded-2xl p-4 transition-colors duration-150 hover:border-[var(--admin-primary-border)]">
+    <div className="admin-surface group rounded-2xl p-4 transition-colors duration-150 hover:border-(--admin-primary-border)">
       <div className="flex items-center gap-4">
         <Link
           href={`/admin/products?categoryId=${category.id}`}
@@ -44,10 +44,10 @@ export default function CategoryItem({
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-base font-semibold text-[var(--admin-text)]">
+            <p className="truncate text-base font-semibold text-(--admin-text)">
               {category.name}
             </p>
-            <p className="mt-0.5 text-sm font-medium text-[var(--admin-text-secondary)]">
+            <p className="mt-0.5 text-sm font-medium text-(--admin-text-secondary)">
               {category.productCount.toLocaleString("vi-VN")} sản phẩm
             </p>
           </div>
