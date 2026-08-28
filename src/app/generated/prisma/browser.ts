@@ -68,6 +68,11 @@ export type User = Prisma.UserModel
  */
 export type ProductDraft = Prisma.ProductDraftModel
 /**
+ * Model ProductImportJob
+ * 
+ */
+export type ProductImportJob = Prisma.ProductImportJobModel
+/**
  * Model PasswordResetToken
  * 
  */

@@ -97,6 +97,7 @@ type ProductOption = {
   originalUnitPrice: number;
   unitCost: number;
   availableStock: number;
+  productStatus: "PUBLIC" | "PRIVATE";
 };
 type EditableOrderItem = {
   productId: number;
@@ -109,6 +110,7 @@ type EditableOrderItem = {
   originalUnitPrice: number;
   unitCost: number;
   availableStock: number;
+  productStatus: "PUBLIC" | "PRIVATE";
   unitPrice: string;
   quantity: string;
 };
@@ -227,40 +229,45 @@ const getVariantLabel = (variant: ProductVariantApiItem) =>
   "Biến thể";
 
 const mapProductOptions = (products: ProductApiItem[]): ProductOption[] =>
-  products.flatMap<ProductOption>((product) => {
-    const baseOption = {
-      productId: product.id,
-      title: product.title,
-      imageUrl: product.imageUrl,
+  products
+    .filter((product) => product.productStatus !== "DISCONTINUED")
+    .flatMap<ProductOption>((product) => {
+      const baseOption = {
+        productId: product.id,
+        title: product.title,
+        imageUrl: product.imageUrl,
       categoryName: product.category.name,
-    };
-    const variants =
-      product.variants?.filter((variant) => variant.isActive) ?? [];
+      productStatus: (product.productStatus === "PRIVATE"
+        ? "PRIVATE"
+        : "PUBLIC") as ProductOption["productStatus"],
+      };
+      const variants =
+        product.variants?.filter((variant) => variant.isActive) ?? [];
 
-    if (variants.length === 0) {
-      return [
-        {
-          ...baseOption,
-          variantId: null,
-          sku: null,
-          variantLabel: "",
-          originalUnitPrice: toNumber(product.sellPrice),
-          unitCost: toNumber(product.importPrice),
-          availableStock: product.quantity,
-        },
-      ];
-    }
+      if (variants.length === 0) {
+        return [
+          {
+            ...baseOption,
+            variantId: null,
+            sku: null,
+            variantLabel: "",
+            originalUnitPrice: toNumber(product.sellPrice),
+            unitCost: toNumber(product.importPrice),
+            availableStock: product.quantity,
+          },
+        ];
+      }
 
-    return variants.map((variant) => ({
-      ...baseOption,
-      variantId: variant.id,
-      sku: variant.sku,
-      variantLabel: getVariantLabel(variant),
-      originalUnitPrice: toNumber(variant.sellPrice || product.sellPrice),
-      unitCost: toNumber(variant.importPrice || product.importPrice),
-      availableStock: variant.quantity,
-    }));
-  });
+      return variants.map((variant) => ({
+        ...baseOption,
+        variantId: variant.id,
+        sku: variant.sku,
+        variantLabel: getVariantLabel(variant),
+        originalUnitPrice: toNumber(variant.sellPrice || product.sellPrice),
+        unitCost: toNumber(variant.importPrice || product.importPrice),
+        availableStock: variant.quantity,
+      }));
+    });
 
 const getItemKey = (item: { productId: number; variantId: number | null }) =>
   `${item.productId}:${item.variantId ?? "product"}`;
@@ -696,6 +703,7 @@ function OrderFormDialog({
             originalUnitPrice: item.originalUnitPrice,
             unitCost: item.unitCost,
             availableStock: item.quantity,
+            productStatus: "PUBLIC",
             unitPrice: String(item.unitPrice),
             quantity: String(item.quantity),
           })),
@@ -984,6 +992,12 @@ function OrderFormDialog({
                                 {product.availableStock.toLocaleString("vi-VN")}{" "}
                                 · Giá: {formatMoney(product.originalUnitPrice)}
                               </p>
+                              {product.productStatus === "PRIVATE" ? (
+                                <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-(--admin-primary-soft) px-1.5 py-0.5 text-xs font-semibold text-(--admin-primary)">
+                                  <AlertTriangle className="size-3" /> Riêng tư
+                                  · chỉ dùng cho đơn tại shop
+                                </p>
+                              ) : null}
                             </div>
                             <span
                               className={`flex size-7 shrink-0 items-center justify-center rounded-full ${
@@ -1042,6 +1056,11 @@ function OrderFormDialog({
                           {item.variantLabel || item.categoryName}
                           {item.sku ? ` • ${item.sku}` : ""}
                         </p>
+                        {item.productStatus === "PRIVATE" ? (
+                          <p className="mt-1 text-xs font-semibold normal-case tracking-normal text-(--admin-primary)">
+                            Sản phẩm Riêng tư — chỉ bán trong đơn tại shop.
+                          </p>
+                        ) : null}
                       </div>
                       <Button
                         type="button"

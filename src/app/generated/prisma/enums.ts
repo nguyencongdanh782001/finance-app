@@ -45,11 +45,20 @@ export const OtpPurpose = {
 export type OtpPurpose = (typeof OtpPurpose)[keyof typeof OtpPurpose]
 
 
-export const ProductStatus = {
+export const LegacyProductStatus = {
   DRAFT: 'DRAFT',
   ACTIVE: 'ACTIVE',
   ARCHIVED: 'ARCHIVED',
   OUT_OF_STOCK: 'OUT_OF_STOCK'
+} as const
+
+export type LegacyProductStatus = (typeof LegacyProductStatus)[keyof typeof LegacyProductStatus]
+
+
+export const ProductStatus = {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE',
+  DISCONTINUED: 'DISCONTINUED'
 } as const
 
 export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus]
@@ -75,13 +84,33 @@ export const UserGender = {
 export type UserGender = (typeof UserGender)[keyof typeof UserGender]
 
 
-export const ProductVisibility = {
+export const LegacyProductVisibility = {
   PUBLIC: 'PUBLIC',
   HIDDEN: 'HIDDEN',
   PRIVATE: 'PRIVATE'
 } as const
 
-export type ProductVisibility = (typeof ProductVisibility)[keyof typeof ProductVisibility]
+export type LegacyProductVisibility = (typeof LegacyProductVisibility)[keyof typeof LegacyProductVisibility]
+
+
+export const ProductImportStatus = {
+  UPLOADED: 'UPLOADED',
+  VALIDATING: 'VALIDATING',
+  READY: 'READY',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  PARTIALLY_COMPLETED: 'PARTIALLY_COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type ProductImportStatus = (typeof ProductImportStatus)[keyof typeof ProductImportStatus]
+
+
+export const ProductImportMode = {
+  CREATE_ONLY: 'CREATE_ONLY'
+} as const
+
+export type ProductImportMode = (typeof ProductImportMode)[keyof typeof ProductImportMode]
 
 
 export const ProductDraftMode = {

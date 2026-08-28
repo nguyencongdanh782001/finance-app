@@ -297,9 +297,9 @@ const MonthDetail = () => {
           </div>
 
           <div className="flex flex-col items-end gap-0.75">
-              <p className="text-sm font-medium text-orange-3">
-                Phần trăm chi tiêu
-              </p>
+            <p className="text-sm font-medium text-orange-3">
+              Phần trăm chi tiêu
+            </p>
             {isLoading ? (
               <Skeleton className="h-6 w-30 rounded-2" />
             ) : (
@@ -311,9 +311,7 @@ const MonthDetail = () => {
         </div>
         <div className="flex items-center justify-between gap-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
           <div className="flex flex-col">
-            <p className="text-sm font-semibold text-green-2">
-              Doanh thu còn lại
-            </p>
+            <p className="text-sm font-semibold text-green-2">Tổng doanh thu</p>
           </div>
           {isLoading ? (
             <Skeleton className="h-6 w-30 rounded-2" />

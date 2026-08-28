@@ -8,6 +8,15 @@ import {
   validateProductFinal,
   type ProductValidationError,
 } from "@/lib/products/product-draft-validation";
+import {
+  legacyFieldsForStatus,
+  normalizeProductStatus,
+} from "@/lib/products/product-status";
+import {
+  flattenColorGroups,
+  normalizedVariantKey,
+} from "@/lib/products/variant-groups";
+import { planVariantRemovals } from "@/lib/products/variant-removal";
 
 type DraftData = ProductFormValues & { images: ProductImageDraftValue[] };
 const slugify = (value: string) =>
@@ -50,7 +59,18 @@ export async function POST(
   const importPrice = Number(data.importPrice);
   const quantity = Number(data.quantity);
   const images = Array.isArray(data.images) ? data.images : [];
-  const variants = Array.isArray(data.variants) ? data.variants : [];
+  const legacyVariants = Array.isArray(data.variants) ? data.variants : [];
+  const flattenedVariants = Array.isArray(data.colorGroups)
+    ? flattenColorGroups(data.colorGroups, {
+        productPrice: data.sellPrice,
+        productCost: data.importPrice,
+        generalImages: images,
+        includeGeneralImageFallback: false,
+      })
+    : legacyVariants;
+  const variants = flattenedVariants.filter(
+    (variant) => variant.isActive || Boolean(variant.id),
+  );
   const fieldErrors = validateProductFinal({ ...data, images, variants });
   if (fieldErrors.length)
     return invalid(
@@ -60,7 +80,11 @@ export async function POST(
       fieldErrors,
     );
   const skus = variants.map((variant) => variant.sku.trim()).filter(Boolean);
-  if (skus.length !== variants.length || new Set(skus).size !== skus.length)
+  const normalizedSkus = skus.map((sku) => sku.toLocaleUpperCase("vi"));
+  if (
+    skus.length !== variants.length ||
+    new Set(normalizedSkus).size !== normalizedSkus.length
+  )
     return invalid("SKU biến thể bị thiếu hoặc trùng", "variants", 400, [
       {
         path: "variants",
@@ -69,7 +93,8 @@ export async function POST(
       },
     ]);
   const combinations = variants.map(
-    (variant) => `${variant.color.trim()}|${variant.size.trim()}`,
+    (variant) =>
+      `${normalizedVariantKey(variant.color)}|${normalizedVariantKey(variant.size)}`,
   );
   if (new Set(combinations).size !== combinations.length)
     return invalid("Tổ hợp biến thể bị trùng", "variants", 400, [
@@ -128,6 +153,7 @@ export async function POST(
     ]);
   try {
     const product = await prisma.$transaction(async (tx) => {
+      const status = normalizeProductStatus(data.productStatus);
       const productData = {
         title,
         slug,
@@ -136,15 +162,17 @@ export async function POST(
         importPrice,
         sellPrice,
         quantity,
-        productStatus: data.productStatus || ("DRAFT" as const),
-        visibility: data.visibility || ("PUBLIC" as const),
+        status,
+        ...legacyFieldsForStatus(status),
+        publishedAt: status === "PUBLIC" ? new Date() : null,
         gender: data.gender || null,
         seoTitle: data.seoTitle || null,
         seoDescription: data.seoDescription || null,
-        imageUrl: images.find((image) => image.isPrimary)?.url || images[0].url,
+        imageUrl:
+          images.find((image) => image.isPrimary)?.url || images[0]?.url || "",
         imagePublicId:
           images.find((image) => image.isPrimary)?.publicId ||
-          images[0].publicId ||
+          images[0]?.publicId ||
           "",
       };
       const saved =
@@ -162,36 +190,53 @@ export async function POST(
           where: { productId: saved.id },
           select: { id: true },
         });
-        for (const variant of old)
-          if (!incomingIds.has(variant.id)) {
-            const used = await tx.orderItem.count({
-              where: { variantId: variant.id },
-            });
-            if (used)
-              await tx.productVariant.update({
-                where: { id: variant.id },
-                data: { isActive: false },
-              });
-            else await tx.productVariant.delete({ where: { id: variant.id } });
-          }
+        const omittedIds = old
+          .map((variant) => variant.id)
+          .filter((variantId) => !incomingIds.has(variantId));
+        const referenced = omittedIds.length
+          ? await tx.orderItem.findMany({
+              where: { variantId: { in: omittedIds } },
+              select: { variantId: true },
+              distinct: ["variantId"],
+            })
+          : [];
+        const removalPlan = planVariantRemovals({
+          existingIds: old.map((variant) => variant.id),
+          incomingIds: [...incomingIds],
+          referencedIds: referenced.flatMap((item) =>
+            item.variantId ? [item.variantId] : [],
+          ),
+        });
+        if (removalPlan.deactivateIds.length)
+          await tx.productVariant.updateMany({
+            where: { id: { in: removalPlan.deactivateIds } },
+            data: { isActive: false },
+          });
+        if (removalPlan.deleteIds.length)
+          await tx.productVariant.deleteMany({
+            where: { id: { in: removalPlan.deleteIds } },
+          });
         await tx.productImage.deleteMany({
           where: { productId: saved.id, variantId: null },
         });
       }
-      await tx.productImage.createMany({
-        data: images.map((image, position) => ({
-          productId: saved.id,
-          url: image.url,
-          publicId: image.publicId || null,
-          position,
-          isPrimary: image.isPrimary || position === 0,
-        })),
-      });
+      if (images.length) {
+        await tx.productImage.createMany({
+          data: images.map((image, position) => ({
+            productId: saved.id,
+            url: image.url,
+            publicId: image.publicId || null,
+            position,
+            isPrimary: image.isPrimary || position === 0,
+          })),
+        });
+      }
       for (const variant of variants) {
         const variantData = {
           sku: variant.sku.trim(),
           size: variant.size || null,
           color: variant.color || null,
+          colorCode: variant.colorCode || null,
           sellPrice: Number(variant.price),
           price: Number(variant.price),
           importPrice: Number(variant.importPrice),

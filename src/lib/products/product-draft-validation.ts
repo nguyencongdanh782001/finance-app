@@ -1,8 +1,15 @@
 import type {
+  ProductColorGroupFormValue,
   ProductFormStep,
   ProductFormValues,
   ProductImageDraftValue,
 } from "@/interface/product";
+import { isProductStatus } from "./product-status.ts";
+import {
+  normalizedVariantKey,
+  resolveSizeCost,
+  resolveSizePrice,
+} from "./variant-groups.ts";
 
 export type ProductValidationError = {
   path: string;
@@ -17,6 +24,81 @@ const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const integer = (value: string) => /^\d+$/.test(value.trim());
 const variantName = (color: string, size: string) =>
   [color, size].filter(Boolean).join(" / ") || "chưa đặt tên";
+const colorPattern = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+
+function validateColorGroups(
+  data: ProductDraftData,
+  add: (path: string, message: string) => void,
+) {
+  const groups = data.colorGroups || [];
+  const activeCount = groups.reduce(
+    (total, group) =>
+      total + group.sizes.filter((size) => size.isActive).length,
+    0,
+  );
+  if (groups.length > 0 && activeCount === 0)
+    add(
+      "colorGroups",
+      "Vui lòng tạo ít nhất một biến thể sản phẩm đang hoạt động.",
+    );
+
+  const colorSeen = new Set<string>();
+  const skuSeen = new Set<string>();
+  groups.forEach((group: ProductColorGroupFormValue) => {
+    const groupBase = `colorGroups.${group.clientId}`;
+    const colorName = group.colorName.trim();
+    const colorKey = normalizedVariantKey(colorName);
+    if (!colorName) add(`${groupBase}.colorName`, "Vui lòng nhập tên màu.");
+    else if (colorSeen.has(colorKey))
+      add(`${groupBase}.colorName`, `Màu “${colorName}” đang bị trùng.`);
+    else colorSeen.add(colorKey);
+    if (group.colorCode.trim() && !colorPattern.test(group.colorCode.trim()))
+      add(
+        `${groupBase}.colorCode`,
+        "Mã màu phải có dạng #RGB hoặc #RRGGBB.",
+      );
+    if (!group.sizes.some((size) => size.isActive))
+      add(
+        `${groupBase}.sizes`,
+        `Màu ${colorName || "chưa đặt tên"} chưa có kích thước đang hoạt động.`,
+      );
+
+    const sizeSeen = new Set<string>();
+    group.sizes.forEach((size) => {
+      const sizeBase = `${groupBase}.sizes.${size.clientId}`;
+      const sizeName = size.sizeName.trim();
+      const name = variantName(colorName, sizeName);
+      const sizeKey = normalizedVariantKey(sizeName);
+      if (sizeName && sizeSeen.has(sizeKey))
+        add(`${sizeBase}.sizeName`, `Size “${sizeName}” đang bị trùng trong màu này.`);
+      else if (sizeName) sizeSeen.add(sizeKey);
+      if (!size.isActive) return;
+      if (!sizeName)
+        add(`${sizeBase}.sizeName`, `Vui lòng nhập size cho ${name}.`);
+
+      const sku = size.sku.trim().toLocaleUpperCase("vi");
+      if (!sku) add(`${sizeBase}.sku`, `Vui lòng nhập SKU cho ${name}.`);
+      else if (skuSeen.has(sku))
+        add(`${sizeBase}.sku`, `SKU “${sku}” đang bị trùng trong sản phẩm.`);
+      else skuSeen.add(sku);
+
+      const price = resolveSizePrice(group, size, data.sellPrice);
+      if (!price.trim() || !integer(price) || Number(price) <= 0)
+        add(`${sizeBase}.price`, `Vui lòng nhập giá bán hợp lệ cho ${name}.`);
+      const cost = resolveSizeCost(group, size, data.importPrice);
+      if (!cost.trim() || !integer(cost))
+        add(`${sizeBase}.cost`, `Vui lòng nhập giá vốn cho ${name}.`);
+      if (!size.stock.trim() || !integer(size.stock))
+        add(`${sizeBase}.stock`, `Vui lòng nhập tồn kho cho ${name}.`);
+      if (
+        [...group.sharedImages, ...size.images].some(
+          (image) => !image.url || !image.publicId,
+        )
+      )
+        add(`${sizeBase}.images`, `Ảnh của ${name} chưa tải lên hoàn tất.`);
+    });
+  });
+}
 
 export function validateProductStep(
   data: ProductDraftData,
@@ -52,24 +134,18 @@ export function validateProductStep(
   }
   if (step === "category") {
     if (!data.categoryId) add("categoryId", "Vui lòng chọn danh mục sản phẩm.");
-    if (
-      !(["DRAFT", "ACTIVE", "ARCHIVED", "OUT_OF_STOCK"] as string[]).includes(
-        data.productStatus,
-      )
-    )
+    if (!isProductStatus(data.productStatus))
       add("productStatus", "Vui lòng chọn trạng thái sản phẩm.");
-    if (
-      !(["PUBLIC", "HIDDEN", "PRIVATE"] as string[]).includes(data.visibility)
-    )
-      add("visibility", "Vui lòng chọn chế độ hiển thị.");
   }
   if (step === "images") {
-    if (!data.images.length)
-      add("images", "Vui lòng thêm ít nhất một hình ảnh sản phẩm.");
     if (data.images.some((image) => !image.url || !image.publicId))
       add("images", "Vui lòng chờ hình ảnh tải lên hoàn tất.");
   }
   if (step === "variants") {
+    if (Array.isArray(data.colorGroups)) {
+      validateColorGroups(data, add);
+      return errors;
+    }
     const active = data.variants.filter((variant) => variant.isActive);
     if (data.variants.length > 0 && active.length === 0)
       add(
@@ -146,5 +222,7 @@ export function validatePartialDraft(value: unknown): string | null {
   }
   if (data.variants !== undefined && !Array.isArray(data.variants))
     return "Danh sách biến thể không đúng cấu trúc.";
+  if (data.colorGroups !== undefined && !Array.isArray(data.colorGroups))
+    return "Danh sách nhóm màu không đúng cấu trúc.";
   return null;
 }

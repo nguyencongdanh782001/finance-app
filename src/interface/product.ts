@@ -1,6 +1,6 @@
 import { CategoryApiItem } from "@/interface/category";
 
-export type ProductStatus = "DRAFT" | "ACTIVE" | "ARCHIVED" | "OUT_OF_STOCK";
+export type ProductStatus = "PUBLIC" | "PRIVATE" | "DISCONTINUED";
 
 export interface ProductApiItem {
   id: number;
@@ -11,12 +11,12 @@ export interface ProductApiItem {
   importPrice: number | string;
   sellPrice: number | string;
   quantity: number;
+  totalAvailableStock?: number;
   category: CategoryApiItem;
   variants?: ProductVariantApiItem[];
   description?: string | null;
   slug?: string | null;
   productStatus?: ProductStatus | null;
-  visibility?: "PUBLIC" | "HIDDEN" | "PRIVATE";
   gender?: "WOMEN" | "MEN" | "UNISEX" | "KIDS" | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
@@ -37,6 +37,7 @@ export interface ProductVariantApiItem {
   sku: string;
   size: string | null;
   color: string | null;
+  colorCode?: string | null;
   price?: number | string | null;
   sellPrice: number | string;
   importPrice: number | string;
@@ -68,7 +69,6 @@ export interface ProductPayload {
   slug?: string;
   description?: string;
   productStatus?: ProductStatus;
-  visibility?: "PUBLIC" | "HIDDEN" | "PRIVATE";
   gender?: "WOMEN" | "MEN" | "UNISEX" | "KIDS";
   seoTitle?: string;
   seoDescription?: string;
@@ -85,6 +85,7 @@ export interface ProductPayload {
     sku: string;
     size?: string;
     color?: string;
+    colorCode?: string;
     price: number;
     importPrice: number;
     quantity: number;
@@ -109,6 +110,7 @@ export interface ProductItemData {
   importPrice: number;
   sellPrice: number;
   quantity: number;
+  totalAvailableStock: number;
   productStatus: ProductStatus;
 }
 
@@ -122,10 +124,36 @@ export interface ProductFormValues {
   description: string;
   gender: "" | "WOMEN" | "MEN" | "UNISEX" | "KIDS";
   productStatus: ProductStatus;
-  visibility: "PUBLIC" | "HIDDEN" | "PRIVATE";
   seoTitle: string;
   seoDescription: string;
   variants: ProductVariantFormValue[];
+  colorGroups?: ProductColorGroupFormValue[];
+}
+
+export interface ProductColorGroupFormValue {
+  clientId: string;
+  colorName: string;
+  colorCode: string;
+  sourceColorName?: string;
+  defaultPrice: string;
+  defaultCost: string;
+  sharedImages: ProductImageDraftValue[];
+  sizes: ProductSizeVariantFormValue[];
+}
+
+export interface ProductSizeVariantFormValue {
+  id?: number;
+  clientId: string;
+  sizeName: string;
+  sku: string;
+  priceOverride: string;
+  costOverride: string;
+  inheritsPrice: boolean;
+  inheritsCost: boolean;
+  stock: string;
+  isActive: boolean;
+  images: ProductImageDraftValue[];
+  removedImageIds?: number[];
 }
 
 export interface ProductVariantFormValue {
@@ -134,6 +162,7 @@ export interface ProductVariantFormValue {
   sku: string;
   size: string;
   color: string;
+  colorCode?: string;
   price: string;
   importPrice: string;
   quantity: string;

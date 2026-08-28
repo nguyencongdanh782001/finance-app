@@ -32,27 +32,21 @@ const PRODUCT_STATUS_OPTIONS: Array<{
   dotClassName: string;
 }> = [
   {
-    value: "DRAFT",
-    label: "Bản nháp",
-    className: "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100",
-    dotClassName: "bg-amber-500",
-  },
-  {
-    value: "ACTIVE",
-    label: "Đang bán",
+    value: "PUBLIC",
+    label: "Công khai",
     className:
       "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
     dotClassName: "bg-emerald-500",
   },
   {
-    value: "OUT_OF_STOCK",
-    label: "Hết hàng",
-    className: "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100",
-    dotClassName: "bg-rose-500",
+    value: "PRIVATE",
+    label: "Riêng tư",
+    className: "border-pink-200 bg-pink-50 text-pink-700 hover:bg-pink-100",
+    dotClassName: "bg-pink-500",
   },
   {
-    value: "ARCHIVED",
-    label: "Đã lưu trữ",
+    value: "DISCONTINUED",
+    label: "Ngừng bán",
     className: "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100",
     dotClassName: "bg-slate-400",
   },
@@ -74,7 +68,7 @@ export default function ProductItem({
   isStatusUpdating,
 }: ProductItemProps) {
   const [showImage, setShowImage] = useState(Boolean(product.imageUrl));
-  const isOutOfStock = product.quantity === 0;
+  const isOutOfStock = product.totalAvailableStock <= 0;
   const statusOption =
     PRODUCT_STATUS_OPTIONS.find(
       (option) => option.value === product.productStatus,
@@ -119,57 +113,59 @@ export default function ProductItem({
               <p className="mt-1 text-xs font-medium text-(--admin-text-muted)">
                 {product.categoryName}
               </p>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="xs"
-                    disabled={isStatusUpdating}
-                    className={`mt-2 rounded-full border px-2.5 font-semibold ${statusOption.className}`}
-                    aria-label={`Đổi trạng thái của ${product.title}`}
-                  >
-                    {isStatusUpdating ? (
-                      <Loader2 className="size-3 animate-spin" />
-                    ) : (
-                      <span
-                        className={`size-2 rounded-full ${statusOption.dotClassName}`}
-                        aria-hidden="true"
-                      />
-                    )}
-                    {isStatusUpdating ? "Đang cập nhật" : statusOption.label}
-                    <ChevronDown className="size-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-44">
-                  <DropdownMenuRadioGroup
-                    value={product.productStatus}
-                    onValueChange={(value) =>
-                      onStatusChange(product, value as ProductStatus)
-                    }
-                  >
-                    {PRODUCT_STATUS_OPTIONS.map((option) => (
-                      <DropdownMenuRadioItem
-                        key={option.value}
-                        value={option.value}
-                        className="cursor-pointer rounded-xl focus:bg-slate-50"
-                      >
+              <div className="flex flex-col items-start sm:items-center gap-2 mt-2 sm:flex-row">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="xs"
+                      disabled={isStatusUpdating}
+                      className={`rounded-full border px-2.5 font-semibold ${statusOption.className}`}
+                      aria-label={`Đổi trạng thái của ${product.title}`}
+                    >
+                      {isStatusUpdating ? (
+                        <Loader2 className="size-3 animate-spin" />
+                      ) : (
                         <span
-                          className={`size-2 rounded-full ${option.dotClassName}`}
+                          className={`size-2 rounded-full ${statusOption.dotClassName}`}
                           aria-hidden="true"
                         />
-                        {option.label}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              {isOutOfStock ? (
-                <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-rose-100 px-2 py-1 text-11px font-semibold text-rose-700">
-                  <AlertTriangle className="size-3.5" />
-                  Hết hàng
-                </div>
-              ) : null}
+                      )}
+                      {isStatusUpdating ? "Đang cập nhật" : statusOption.label}
+                      <ChevronDown className="size-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-44">
+                    <DropdownMenuRadioGroup
+                      value={product.productStatus}
+                      onValueChange={(value) =>
+                        onStatusChange(product, value as ProductStatus)
+                      }
+                    >
+                      {PRODUCT_STATUS_OPTIONS.map((option) => (
+                        <DropdownMenuRadioItem
+                          key={option.value}
+                          value={option.value}
+                          className="cursor-pointer rounded-xl focus:bg-slate-50"
+                        >
+                          <span
+                            className={`size-2 rounded-full ${option.dotClassName}`}
+                            aria-hidden="true"
+                          />
+                          {option.label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {isOutOfStock ? (
+                  <div className="inline-flex items-center gap-1 rounded-md bg-rose-100 px-2 py-1 text-11px font-semibold text-rose-700">
+                    <AlertTriangle className="size-3.5" />
+                    Hết hàng
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             <DropdownMenu>
@@ -237,12 +233,10 @@ export default function ProductItem({
         </div>
         <p
           className={`mt-1 text-sm font-extrabold ${
-            isOutOfStock
-              ? "text-rose-600"
-              : "text-(--admin-text-secondary)"
+            isOutOfStock ? "text-rose-600" : "text-(--admin-text-secondary)"
           }`}
         >
-          {product.quantity.toLocaleString("vi-VN")}
+          {product.totalAvailableStock.toLocaleString("vi-VN")}
         </p>
       </div>
     </div>

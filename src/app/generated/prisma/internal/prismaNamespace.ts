@@ -394,6 +394,7 @@ export const ModelName = {
   DailySoldProductContribution: 'DailySoldProductContribution',
   User: 'User',
   ProductDraft: 'ProductDraft',
+  ProductImportJob: 'ProductImportJob',
   PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
@@ -448,7 +449,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1189,6 +1190,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductDraftCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductDraftCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProductImportJob: {
+      payload: Prisma.$ProductImportJobPayload<ExtArgs>
+      fields: Prisma.ProductImportJobFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductImportJobFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductImportJobFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductImportJobFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductImportJobFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>
+        }
+        findMany: {
+          args: Prisma.ProductImportJobFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>[]
+        }
+        create: {
+          args: Prisma.ProductImportJobCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>
+        }
+        createMany: {
+          args: Prisma.ProductImportJobCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductImportJobCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductImportJobDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>
+        }
+        update: {
+          args: Prisma.ProductImportJobUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductImportJobDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductImportJobUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductImportJobUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductImportJobUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImportJobPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductImportJobAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductImportJob>
+        }
+        groupBy: {
+          args: Prisma.ProductImportJobGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductImportJobGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductImportJobCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductImportJobCountAggregateOutputType> | number
         }
       }
     }
@@ -4209,6 +4284,8 @@ export const ProductScalarFieldEnum = {
   slug: 'slug',
   description: 'description',
   productStatus: 'productStatus',
+  visibility: 'visibility',
+  status: 'status',
   brand: 'brand',
   material: 'material',
   careInstructions: 'careInstructions',
@@ -4217,7 +4294,6 @@ export const ProductScalarFieldEnum = {
   seoDescription: 'seoDescription',
   seoKeywords: 'seoKeywords',
   isFeatured: 'isFeatured',
-  visibility: 'visibility',
   viewCount: 'viewCount',
   soldCount: 'soldCount',
   publishedAt: 'publishedAt',
@@ -4310,6 +4386,34 @@ export const ProductDraftScalarFieldEnum = {
 } as const
 
 export type ProductDraftScalarFieldEnum = (typeof ProductDraftScalarFieldEnum)[keyof typeof ProductDraftScalarFieldEnum]
+
+
+export const ProductImportJobScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  fileName: 'fileName',
+  mode: 'mode',
+  createMissingCategories: 'createMissingCategories',
+  forcePrivate: 'forcePrivate',
+  totalProducts: 'totalProducts',
+  totalVariants: 'totalVariants',
+  totalImages: 'totalImages',
+  processed: 'processed',
+  succeeded: 'succeeded',
+  failed: 'failed',
+  skipped: 'skipped',
+  sourceData: 'sourceData',
+  validationErrors: 'validationErrors',
+  resultData: 'resultData',
+  processingToken: 'processingToken',
+  processingStartedAt: 'processingStartedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+} as const
+
+export type ProductImportJobScalarFieldEnum = (typeof ProductImportJobScalarFieldEnum)[keyof typeof ProductImportJobScalarFieldEnum]
 
 
 export const PasswordResetTokenScalarFieldEnum = {
@@ -4454,6 +4558,7 @@ export const ProductVariantScalarFieldEnum = {
   sku: 'sku',
   size: 'size',
   color: 'color',
+  colorCode: 'colorCode',
   barcode: 'barcode',
   price: 'price',
   importPrice: 'importPrice',
@@ -5056,6 +5161,34 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'LegacyProductStatus'
+ */
+export type EnumLegacyProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LegacyProductStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'LegacyProductStatus[]'
+ */
+export type ListEnumLegacyProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LegacyProductStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LegacyProductVisibility'
+ */
+export type EnumLegacyProductVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LegacyProductVisibility'>
+    
+
+
+/**
+ * Reference to a field of type 'LegacyProductVisibility[]'
+ */
+export type ListEnumLegacyProductVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LegacyProductVisibility[]'>
+    
+
+
+/**
  * Reference to a field of type 'ProductStatus'
  */
 export type EnumProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductStatus'>
@@ -5080,20 +5213,6 @@ export type EnumProductGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'ProductGender[]'
  */
 export type ListEnumProductGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductGender[]'>
-    
-
-
-/**
- * Reference to a field of type 'ProductVisibility'
- */
-export type EnumProductVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductVisibility'>
-    
-
-
-/**
- * Reference to a field of type 'ProductVisibility[]'
- */
-export type ListEnumProductVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductVisibility[]'>
     
 
 
@@ -5192,6 +5311,34 @@ export type EnumProductDraftStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'ProductDraftStatus[]'
  */
 export type ListEnumProductDraftStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductDraftStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ProductImportStatus'
+ */
+export type EnumProductImportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductImportStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ProductImportStatus[]'
+ */
+export type ListEnumProductImportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductImportStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ProductImportMode'
+ */
+export type EnumProductImportModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductImportMode'>
+    
+
+
+/**
+ * Reference to a field of type 'ProductImportMode[]'
+ */
+export type ListEnumProductImportModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductImportMode[]'>
     
 
 
@@ -5523,6 +5670,7 @@ export type GlobalOmitConfig = {
   dailySoldProductContribution?: Prisma.DailySoldProductContributionOmit
   user?: Prisma.UserOmit
   productDraft?: Prisma.ProductDraftOmit
+  productImportJob?: Prisma.ProductImportJobOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   userSession?: Prisma.UserSessionOmit
   membership?: Prisma.MembershipOmit

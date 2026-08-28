@@ -1,6 +1,11 @@
 import prisma from "@/lib/db";
 import type { Prisma } from "@/app/generated/prisma/client";
 import { NextResponse } from "next/server";
+import {
+  legacyFieldsForStatus,
+  normalizeProductStatus,
+  toProductResponse,
+} from "@/lib/products/product-status";
 
 const slugify = (value: string) =>
   value
@@ -47,7 +52,7 @@ export async function GET(req: Request) {
     prisma.product.count({ where }),
   ]);
   return NextResponse.json({
-    data: products,
+    data: products.map(toProductResponse),
     pagination: { page, limit, total, totalPage: Math.ceil(total / limit) },
   });
 }
@@ -60,6 +65,8 @@ export async function POST(req: Request) {
     const importPrice = Number(body.importPrice);
     const sellPrice = Number(body.sellPrice);
     const quantity = Number(body.quantity ?? 0);
+    const productStatus = normalizeProductStatus(body.productStatus);
+    const legacyStatus = legacyFieldsForStatus(productStatus);
     if (
       !title ||
       !categoryId ||
@@ -71,8 +78,6 @@ export async function POST(req: Request) {
       return errorResponse(
         "Thông tin sản phẩm hoặc giá trị tồn kho không hợp lệ",
       );
-    if (!body.imageUrl)
-      return errorResponse("Vui lòng thêm ảnh đại diện sản phẩm");
     if (!(await prisma.category.findUnique({ where: { id: categoryId } })))
       return errorResponse("Danh mục không tồn tại", 404);
     const slug = String(body.slug || slugify(title));
@@ -115,14 +120,15 @@ export async function POST(req: Request) {
           title,
           slug,
           description: body.description || null,
-          imageUrl: body.imageUrl,
+          imageUrl: String(body.imageUrl || ""),
           imagePublicId: body.imagePublicId || "",
           categoryId,
           importPrice,
           sellPrice,
           quantity,
-          productStatus: body.productStatus || "DRAFT",
-          visibility: body.visibility || "PUBLIC",
+          status: productStatus,
+          ...legacyStatus,
+          publishedAt: productStatus === "PUBLIC" ? new Date() : null,
           gender: body.gender || null,
           seoTitle: body.seoTitle || null,
           seoDescription: body.seoDescription || null,
@@ -145,40 +151,55 @@ export async function POST(req: Request) {
             }),
           ),
         });
-      if (variants.length)
-        await tx.productVariant.createMany({
-          data: variants.map(
-            (variant: {
-              sku: string;
-              size?: string;
-              color?: string;
-              price: number;
-              importPrice: number;
-              quantity: number;
-              isActive: boolean;
-            }) => ({
+      for (const variant of variants) {
+        const savedVariant = await tx.productVariant.create({
+          data: {
               productId: created.id,
               sku: variant.sku,
               size: variant.size || null,
               color: variant.color || null,
+              colorCode: variant.colorCode || null,
               price: variant.price,
               sellPrice: variant.price,
               importPrice: variant.importPrice,
               quantity: variant.quantity,
               isActive: variant.isActive,
-            }),
-          ),
+          },
         });
+        if (Array.isArray(variant.images) && variant.images.length)
+          await tx.productVariantImage.createMany({
+            data: variant.images.map(
+              (
+                image: {
+                  url: string;
+                  publicId?: string;
+                  position?: number;
+                  isPrimary?: boolean;
+                },
+                position: number,
+              ) => ({
+                variantId: savedVariant.id,
+                url: image.url,
+                publicId: image.publicId || null,
+                position: image.position ?? position,
+                isPrimary: image.isPrimary || position === 0,
+              }),
+            ),
+          });
+      }
       return tx.product.findUniqueOrThrow({
         where: { id: created.id },
         include: {
           category: true,
           images: { orderBy: { position: "asc" } },
-          variants: { orderBy: { createdAt: "asc" } },
+          variants: {
+            orderBy: { createdAt: "asc" },
+            include: { images: { orderBy: { position: "asc" } } },
+          },
         },
       });
     });
-    return NextResponse.json(product, { status: 201 });
+    return NextResponse.json(toProductResponse(product), { status: 201 });
   } catch (error) {
     console.error("Create product failed", error);
     return errorResponse(

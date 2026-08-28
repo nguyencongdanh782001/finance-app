@@ -69,8 +69,7 @@ const schema = Yup.object({
     .min(0, "Tồn kho không thể âm")
     .required(),
 });
-const inputClass =
-  "h-10 rounded-xl border-(--admin-border) bg-white text-sm";
+const inputClass = "h-10 rounded-xl border-(--admin-border) bg-white text-sm";
 const makeVariant = () => ({
   clientId: `${Date.now()}-${Math.random()}`,
   sku: "",
@@ -127,9 +126,14 @@ export default function ProductFormDialog({
   useEffect(() => {
     imagesRef.current = images;
   }, [images]);
-  useEffect(() => () => imagesRef.current.forEach((image) => {
-    if (image.file && image.url.startsWith("blob:")) URL.revokeObjectURL(image.url);
-  }), []);
+  useEffect(
+    () => () =>
+      imagesRef.current.forEach((image) => {
+        if (image.file && image.url.startsWith("blob:"))
+          URL.revokeObjectURL(image.url);
+      }),
+    [],
+  );
   const categoryOptions = useMemo(
     () =>
       categories.map((category) => ({
@@ -176,11 +180,13 @@ export default function ProductFormDialog({
         isPrimary: images.length === 0 && added.length === 0,
       });
     }
-    setImages((current) => [...current, ...added].map((image, index) => ({
-      ...image,
-      position: index,
-      isPrimary: image.isPrimary || index === 0,
-    })));
+    setImages((current) =>
+      [...current, ...added].map((image, index) => ({
+        ...image,
+        position: index,
+        isPrimary: image.isPrimary || index === 0,
+      })),
+    );
     setConverting(false);
     if (fileRef.current) fileRef.current.value = "";
   };
@@ -386,18 +392,18 @@ export default function ProductFormDialog({
                   <Section title="3. Phân loại sản phẩm">
                     <div className="grid gap-3 sm:grid-cols-2">
                       <Block label="Màu sắc">
-                  <Input
-                    standalone
-                    value={colors}
+                        <Input
+                          standalone
+                          value={colors}
                           onChange={(e) => setColors(e.target.value)}
                           placeholder="Đen, Trắng, Hồng"
                           className={inputClass}
                         />
                       </Block>
                       <Block label="Kích thước">
-                  <Input
-                    standalone
-                    value={sizes}
+                        <Input
+                          standalone
+                          value={sizes}
                           onChange={(e) => setSizes(e.target.value)}
                           placeholder="S, M, L, XL"
                           className={inputClass}
@@ -490,17 +496,17 @@ export default function ProductFormDialog({
                             <div className="flex gap-2">
                               <GripVertical className="mt-3 size-4 shrink-0 text-slate-300" />
                               <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
-                          <Input
-                            standalone
-                            value={[variant.color, variant.size]
+                                <Input
+                                  standalone
+                                  value={[variant.color, variant.size]
                                     .filter(Boolean)
                                     .join(" / ")}
                                   readOnly
                                   className={`${inputClass} bg-slate-50`}
                                 />
-                          <Input
-                            standalone
-                            value={variant.sku}
+                                <Input
+                                  standalone
+                                  value={variant.sku}
                                   onChange={(e) =>
                                     formik.setFieldValue(
                                       `variants[${index}].sku`,
@@ -510,9 +516,9 @@ export default function ProductFormDialog({
                                   placeholder="SKU"
                                   className={inputClass}
                                 />
-                          <Input
-                            standalone
-                            value={variant.price}
+                                <Input
+                                  standalone
+                                  value={variant.price}
                                   onChange={(e) =>
                                     formik.setFieldValue(
                                       `variants[${index}].price`,
@@ -523,9 +529,9 @@ export default function ProductFormDialog({
                                   inputMode="numeric"
                                   className={inputClass}
                                 />
-                          <Input
-                            standalone
-                            value={variant.importPrice}
+                                <Input
+                                  standalone
+                                  value={variant.importPrice}
                                   onChange={(e) =>
                                     formik.setFieldValue(
                                       `variants[${index}].importPrice`,
@@ -536,9 +542,9 @@ export default function ProductFormDialog({
                                   inputMode="numeric"
                                   className={inputClass}
                                 />
-                          <Input
-                            standalone
-                            value={variant.quantity}
+                                <Input
+                                  standalone
+                                  value={variant.quantity}
                                   onChange={(e) =>
                                     formik.setFieldValue(
                                       `variants[${index}].quantity`,
@@ -566,9 +572,9 @@ export default function ProductFormDialog({
                               </button>
                             </div>
                             <label className="mt-2 flex items-center gap-2 pl-6 text-xs text-slate-500">
-                          <Input
-                            standalone
-                            type="checkbox"
+                              <Input
+                                standalone
+                                type="checkbox"
                                 checked={variant.isActive}
                                 onChange={(e) =>
                                   formik.setFieldValue(
@@ -584,8 +590,8 @@ export default function ProductFormDialog({
                       </div>
                     )}
                   </Section>
-                  <Section title="6. Trạng thái và hiển thị">
-                    <div className="grid gap-4 sm:grid-cols-2">
+                  <Section title="6. Trạng thái">
+                    <div className="grid gap-4">
                       <Block label="Trạng thái">
                         <AutoCompleteField<CustomSelectProps>
                           component={CustomSelect}
@@ -593,25 +599,9 @@ export default function ProductFormDialog({
                           name="productStatus"
                           placeholder="Chọn trạng thái"
                           optionValue={[
-                            { value: "DRAFT", label: "Bản nháp" },
-                            { value: "ACTIVE", label: "Đang bán" },
-                            { value: "ARCHIVED", label: "Đã lưu trữ" },
-                            { value: "OUT_OF_STOCK", label: "Hết hàng" },
-                          ]}
-                          className="w-full!"
-                          inputClassName={inputClass}
-                        />
-                      </Block>
-                      <Block label="Hiển thị">
-                        <AutoCompleteField<CustomSelectProps>
-                          component={CustomSelect}
-                          version="field"
-                          name="visibility"
-                          placeholder="Chọn hiển thị"
-                          optionValue={[
                             { value: "PUBLIC", label: "Công khai" },
-                            { value: "HIDDEN", label: "Ẩn khỏi cửa hàng" },
                             { value: "PRIVATE", label: "Riêng tư" },
+                            { value: "DISCONTINUED", label: "Ngừng bán" },
                           ]}
                           className="w-full!"
                           inputClassName={inputClass}
@@ -619,7 +609,8 @@ export default function ProductFormDialog({
                       </Block>
                     </div>
                     <p className="text-xs text-slate-400">
-                      Sản phẩm ẩn vẫn được giữ trong khu vực quản trị.
+                      Công khai cho phép bán; riêng tư chỉ hiển thị trong Admin;
+                      ngừng bán sẽ không thể thêm vào đơn mới.
                     </p>
                   </Section>
                   <Section title="7. SEO" collapsible>
@@ -760,9 +751,9 @@ function Bulk({
   return (
     <div className="flex items-center gap-1 rounded-lg border bg-slate-50 p-1">
       <span className="px-1 text-11px text-slate-500">{label}</span>
-              <Input
-                standalone
-                value={input}
+      <Input
+        standalone
+        value={input}
         onChange={(e) => setInput(e.target.value)}
         className="h-7 w-16 border-0 text-xs"
         inputMode="numeric"

@@ -1,13 +1,9 @@
 import prisma from "@/lib/db";
-import { ProductStatus } from "@/interface/product";
 import { NextResponse } from "next/server";
-
-const PRODUCT_STATUSES = [
-  "DRAFT",
-  "ACTIVE",
-  "ARCHIVED",
-  "OUT_OF_STOCK",
-] as const satisfies readonly ProductStatus[];
+import {
+  isProductStatus,
+  legacyFieldsForStatus,
+} from "@/lib/products/product-status";
 
 export async function PATCH(
   req: Request,
@@ -24,9 +20,9 @@ export async function PATCH(
 
   try {
     const body = await req.json();
-    const productStatus = body.productStatus as ProductStatus;
+    const productStatus = body.productStatus;
 
-    if (!PRODUCT_STATUSES.includes(productStatus)) {
+    if (!isProductStatus(productStatus)) {
       return NextResponse.json(
         { message: "Trạng thái sản phẩm không hợp lệ" },
         { status: 400 },
@@ -35,7 +31,7 @@ export async function PATCH(
 
     const existingProduct = await prisma.product.findUnique({
       where: { id },
-      select: { id: true },
+      select: { id: true, publishedAt: true },
     });
 
     if (!existingProduct) {
@@ -47,11 +43,20 @@ export async function PATCH(
 
     const product = await prisma.product.update({
       where: { id },
-      data: { productStatus },
-      select: { id: true, productStatus: true },
+      data: {
+        status: productStatus,
+        ...legacyFieldsForStatus(productStatus),
+        ...(productStatus === "PUBLIC"
+          ? { publishedAt: existingProduct.publishedAt || new Date() }
+          : {}),
+      },
+      select: { id: true, status: true },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json({
+      id: product.id,
+      productStatus: product.status,
+    });
   } catch (error) {
     console.error("Update product status failed", error);
     return NextResponse.json(

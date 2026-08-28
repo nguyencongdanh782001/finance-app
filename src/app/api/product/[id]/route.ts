@@ -1,5 +1,10 @@
 import prisma from "@/lib/db";
 import { deleteProductImageFromCloudinary } from "@/lib/cloudinary-upload";
+import {
+  legacyFieldsForStatus,
+  normalizeProductStatus,
+  toProductResponse,
+} from "@/lib/products/product-status";
 import { NextResponse } from "next/server";
 const bad = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -23,11 +28,19 @@ export async function GET(
     where: { id },
     include: {
       category: true,
-      images: { orderBy: { position: "asc" } },
-      variants: { orderBy: { createdAt: "asc" } },
+      images: {
+        where: { variantId: null },
+        orderBy: { position: "asc" },
+      },
+      variants: {
+        orderBy: { createdAt: "asc" },
+        include: { images: { orderBy: { position: "asc" } } },
+      },
     },
   });
-  return product ? NextResponse.json(product) : bad("Product not found", 404);
+  return product
+    ? NextResponse.json(toProductResponse(product))
+    : bad("Product not found", 404);
 }
 
 export async function PATCH(
@@ -43,6 +56,11 @@ export async function PATCH(
       include: { variants: { select: { id: true } } },
     });
     if (!current) return bad("Product not found", 404);
+    const productStatus = normalizeProductStatus(
+      body.productStatus,
+      current.status,
+    );
+    const legacyStatus = legacyFieldsForStatus(productStatus);
     const title = String(body.title || "").trim();
     const quantity = Number(body.quantity ?? current.quantity);
     const importPrice = Number(body.importPrice ?? current.importPrice);
@@ -99,8 +117,12 @@ export async function PATCH(
           importPrice,
           sellPrice,
           quantity,
-          productStatus: body.productStatus ?? current.productStatus,
-          visibility: body.visibility ?? current.visibility,
+          status: productStatus,
+          ...legacyStatus,
+          publishedAt:
+            productStatus === "PUBLIC"
+              ? current.publishedAt || new Date()
+              : current.publishedAt,
           gender: body.gender || null,
           seoTitle: body.seoTitle || null,
           seoDescription: body.seoDescription || null,
@@ -126,19 +148,46 @@ export async function PATCH(
           sku: String(v.sku).trim(),
           size: v.size || null,
           color: v.color || null,
+          colorCode: v.colorCode || null,
           price: Number(v.price || 0),
           sellPrice: Number(v.price || 0),
           importPrice: Number(v.importPrice || 0),
           quantity: Number(v.quantity || 0),
           isActive: Boolean(v.isActive),
         };
-        if (v.id)
-          await tx.productVariant.update({
+        const savedVariant = v.id
+          ? await tx.productVariant.update({
             where: { id: Number(v.id), productId: id },
             data,
+          })
+          : await tx.productVariant.create({
+              data: { ...data, productId: id },
+            });
+        if (Array.isArray(v.images)) {
+          await tx.productVariantImage.deleteMany({
+            where: { variantId: savedVariant.id },
           });
-        else
-          await tx.productVariant.create({ data: { ...data, productId: id } });
+          if (v.images.length)
+            await tx.productVariantImage.createMany({
+              data: v.images.map(
+                (
+                  image: {
+                    url: string;
+                    publicId?: string;
+                    position?: number;
+                    isPrimary?: boolean;
+                  },
+                  position: number,
+                ) => ({
+                  variantId: savedVariant.id,
+                  url: image.url,
+                  publicId: image.publicId || null,
+                  position: image.position ?? position,
+                  isPrimary: image.isPrimary || position === 0,
+                }),
+              ),
+            });
+        }
       }
       if (body.images) {
         const kept = new Set<number>(
@@ -147,7 +196,11 @@ export async function PATCH(
             .filter((imageId: number) => Boolean(imageId)),
         );
         await tx.productImage.deleteMany({
-          where: { productId: id, id: { notIn: [...kept] } },
+          where: {
+            productId: id,
+            variantId: null,
+            id: { notIn: [...kept] },
+          },
         });
         for (const image of body.images)
           if (image.id)
@@ -175,12 +228,18 @@ export async function PATCH(
         where: { id },
         include: {
           category: true,
-          images: { orderBy: { position: "asc" } },
-          variants: { orderBy: { createdAt: "asc" } },
+          images: {
+            where: { variantId: null },
+            orderBy: { position: "asc" },
+          },
+          variants: {
+            orderBy: { createdAt: "asc" },
+            include: { images: { orderBy: { position: "asc" } } },
+          },
         },
       });
     });
-    return NextResponse.json(updated);
+    return NextResponse.json(toProductResponse(updated));
   } catch (error) {
     console.error("Update product failed", error);
     return bad("Không thể cập nhật sản phẩm. Vui lòng thử lại.", 500);

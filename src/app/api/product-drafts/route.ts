@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { groupVariantsByColor } from "@/lib/products/variant-groups";
 import { NextResponse } from "next/server";
 
 const userIdFrom = (request: Request) =>
@@ -46,7 +47,10 @@ export async function POST(request: Request) {
         images: { where: { variantId: null }, orderBy: { position: "asc" } },
         variants: {
           orderBy: { createdAt: "asc" },
-          include: { images: { orderBy: { position: "asc" } } },
+          include: {
+            images: { orderBy: { position: "asc" } },
+            productImages: { orderBy: { position: "asc" } },
+          },
         },
       },
     });
@@ -55,6 +59,29 @@ export async function POST(request: Request) {
         { message: "Không tìm thấy sản phẩm" },
         { status: 404 },
       );
+    const variants = product.variants.map((variant) => ({
+      id: variant.id,
+      clientId: `variant-${variant.id}`,
+      sku: variant.sku,
+      size: variant.size || "",
+      color: variant.color || "",
+      colorCode: variant.colorCode || undefined,
+      price: String(variant.sellPrice),
+      importPrice: String(variant.importPrice),
+      quantity: String(variant.quantity),
+      isActive: variant.isActive,
+      images: (variant.images.length
+        ? variant.images
+        : variant.productImages
+      ).map((image) => ({
+        id: image.id,
+        clientId: `variant-image-${image.id}`,
+        url: image.url,
+        publicId: image.publicId || undefined,
+        position: image.position,
+        isPrimary: image.isPrimary,
+      })),
+    }));
     data = {
       title: product.title,
       slug: product.slug || "",
@@ -64,8 +91,7 @@ export async function POST(request: Request) {
       sellPrice: String(product.sellPrice),
       quantity: String(product.quantity),
       gender: product.gender || "",
-      productStatus: product.productStatus || "DRAFT",
-      visibility: product.visibility,
+      productStatus: product.status,
       seoTitle: product.seoTitle || "",
       seoDescription: product.seoDescription || "",
       images: product.images.map((image) => ({
@@ -76,25 +102,8 @@ export async function POST(request: Request) {
         position: image.position,
         isPrimary: image.isPrimary,
       })),
-      variants: product.variants.map((variant) => ({
-        id: variant.id,
-        clientId: `variant-${variant.id}`,
-        sku: variant.sku,
-        size: variant.size || "",
-        color: variant.color || "",
-        price: String(variant.sellPrice),
-        importPrice: String(variant.importPrice),
-        quantity: String(variant.quantity),
-        isActive: variant.isActive,
-        images: variant.images.map((image) => ({
-          id: image.id,
-          clientId: `variant-image-${image.id}`,
-          url: image.url,
-          publicId: image.publicId || undefined,
-          position: image.position,
-          isPrimary: image.isPrimary,
-        })),
-      })),
+      variants,
+      colorGroups: groupVariantsByColor(variants),
     };
   }
   const draft = await prisma.productDraft.create({

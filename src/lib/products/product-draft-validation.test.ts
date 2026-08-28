@@ -16,8 +16,7 @@ const base = (): ProductDraftData => ({
   sellPrice: "100000",
   quantity: "2",
   gender: "",
-  productStatus: "DRAFT",
-  visibility: "PUBLIC",
+  productStatus: "PRIVATE",
   seoTitle: "",
   seoDescription: "",
   images: [
@@ -39,13 +38,22 @@ test("draft autosave rejects invalid structure and entered negatives", () => {
   assert.ok(validatePartialDraft({ variants: "bad" }));
   assert.ok(validatePartialDraft({ sellPrice: "-1" }));
 });
-test("step validation blocks required product, category and image fields", () => {
+test("step validation blocks required product/category but allows no image", () => {
   const data = base();
   data.title = " ";
   assert.equal(validateProductStep(data, "info")[0].path, "title");
   data.categoryId = "";
   assert.equal(validateProductStep(data, "category")[0].path, "categoryId");
   data.images = [];
+  assert.equal(validateProductStep(data, "images").length, 0);
+  data.images = [
+    {
+      clientId: "uploading",
+      url: "blob:pending",
+      isPrimary: true,
+      position: 0,
+    },
+  ];
   assert.equal(validateProductStep(data, "images")[0].path, "images");
 });
 test("active variants require identity and commercial data", () => {
@@ -107,4 +115,79 @@ test("duplicate SKU is case insensitive", () => {
       error.message.includes("trùng"),
     ),
   );
+});
+
+test("nested color groups validate inherited values and active sizes", () => {
+  const data = base();
+  data.colorGroups = [
+    {
+      clientId: "black",
+      colorName: "Đen",
+      colorCode: "#111111",
+      defaultPrice: "120000",
+      defaultCost: "60000",
+      sharedImages: [],
+      sizes: [
+        {
+          clientId: "black-m",
+          sizeName: "M",
+          sku: "AO-DEN-M",
+          priceOverride: "",
+          costOverride: "",
+          inheritsPrice: true,
+          inheritsCost: true,
+          stock: "3",
+          isActive: true,
+          images: [],
+        },
+      ],
+    },
+  ];
+  assert.deepEqual(validateProductStep(data, "variants"), []);
+});
+
+test("nested color groups reject normalized duplicate colors, sizes and SKUs", () => {
+  const data = base();
+  const size = (clientId: string, sizeName: string, sku: string) => ({
+    clientId,
+    sizeName,
+    sku,
+    priceOverride: "100000",
+    costOverride: "50000",
+    inheritsPrice: false,
+    inheritsCost: false,
+    stock: "0",
+    isActive: true,
+    images: [],
+  });
+  data.colorGroups = [
+    {
+      clientId: "black-1",
+      colorName: " Đen ",
+      colorCode: "not-a-color",
+      defaultPrice: "",
+      defaultCost: "",
+      sharedImages: [],
+      sizes: [size("m-1", "M", "SKU-1"), size("m-2", " m ", "SKU-2")],
+    },
+    {
+      clientId: "black-2",
+      colorName: "đen",
+      colorCode: "",
+      defaultPrice: "",
+      defaultCost: "",
+      sharedImages: [],
+      sizes: [size("l", "L", " sku-1 ")],
+    },
+  ];
+  const errors = validateProductStep(data, "variants");
+  assert.ok(errors.some((error) => error.path.endsWith("colorName")));
+  assert.ok(errors.some((error) => error.path.endsWith("colorCode")));
+  assert.ok(errors.some((error) => error.path.endsWith("sizeName")));
+  assert.ok(errors.some((error) => error.path.endsWith("sku")));
+});
+
+test("partial drafts accept nested color groups and reject invalid structure", () => {
+  assert.equal(validatePartialDraft({ colorGroups: [] }), null);
+  assert.ok(validatePartialDraft({ colorGroups: "bad" }));
 });

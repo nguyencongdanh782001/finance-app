@@ -25,7 +25,7 @@ import {
   ProductStatus,
 } from "@/interface/product";
 import { ProductImageDraft } from "@/components/Product/ProductFormDialog";
-import { Plus } from "lucide-react";
+import { FileSpreadsheet, Plus } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -64,8 +64,7 @@ const DEFAULT_FORM_VALUES: ProductFormValues = {
   slug: "",
   description: "",
   gender: "",
-  productStatus: "DRAFT",
-  visibility: "PUBLIC",
+  productStatus: "PRIVATE",
   seoTitle: "",
   seoDescription: "",
   variants: [],
@@ -90,7 +89,8 @@ const mapProductFromApi = (product: ProductApiItem): ProductItemData => ({
   importPrice: Number(product.importPrice),
   sellPrice: Number(product.sellPrice),
   quantity: product.quantity,
-  productStatus: product.productStatus || "DRAFT",
+  totalAvailableStock: product.totalAvailableStock ?? product.quantity,
+  productStatus: product.productStatus || "PRIVATE",
 });
 
 export default function ProductContainer() {
@@ -447,7 +447,6 @@ export default function ProductContainer() {
       slug: values.slug || undefined,
       description: values.description || undefined,
       productStatus: values.productStatus,
-      visibility: values.visibility,
       gender: values.gender || undefined,
       seoTitle: values.seoTitle || undefined,
       seoDescription: values.seoDescription || undefined,
@@ -574,8 +573,7 @@ export default function ProductContainer() {
           slug: productDetail?.slug || "",
           description: productDetail?.description || "",
           gender: (productDetail?.gender || "") as ProductFormValues["gender"],
-          productStatus: productDetail?.productStatus || "DRAFT",
-          visibility: productDetail?.visibility || "PUBLIC",
+          productStatus: productDetail?.productStatus || "PRIVATE",
           seoTitle: productDetail?.seoTitle || "",
           seoDescription: productDetail?.seoDescription || "",
           variants: (productDetail?.variants || []).map((variant) => ({
@@ -609,15 +607,26 @@ export default function ProductContainer() {
         title="Sản phẩm"
         description="Quản lý danh mục hàng hóa, giá bán và tồn kho."
         actions={
-          <Button
-            type="button"
-            variant="adminPrimary"
-            className="h-10 rounded-lg"
-            onClick={handleOpenCreate}
-          >
-            <Plus className="size-4" />
-            Thêm sản phẩm
-          </Button>
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-10 rounded-lg border border-(--admin-primary-border) text-(--admin-primary) hover:bg-(--admin-primary-soft)"
+              onClick={() => router.push("/admin/products/import")}
+            >
+              <FileSpreadsheet className="size-4" />
+              Nhập từ Excel
+            </Button>
+            <Button
+              type="button"
+              variant="adminPrimary"
+              className="h-10 rounded-lg"
+              onClick={handleOpenCreate}
+            >
+              <Plus className="size-4" />
+              Thêm sản phẩm
+            </Button>
+          </>
         }
       />
 

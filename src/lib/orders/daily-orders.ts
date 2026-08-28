@@ -6,7 +6,6 @@ import {
   PaymentMethod,
   PaymentStatus,
   ProductStatus,
-  ProductVisibility,
   Prisma,
 } from "@/app/generated/prisma/client";
 
@@ -188,8 +187,7 @@ const buildOrderItems = async (
   const products = await tx.product.findMany({
     where: {
       id: { in: productIds },
-      productStatus: { not: ProductStatus.ARCHIVED },
-      visibility: { not: ProductVisibility.PRIVATE },
+      status: { not: ProductStatus.DISCONTINUED },
     },
     include: {
       category: true,
@@ -382,9 +380,7 @@ const applyInventoryDelta = async (
         referenceType: "ORDER",
         referenceId: orderId,
         note:
-          diff > 0
-            ? "Tạo/cập nhật đơn tại shop"
-            : "Hoàn tồn kho đơn tại shop",
+          diff > 0 ? "Tạo/cập nhật đơn tại shop" : "Hoàn tồn kho đơn tại shop",
       },
     });
   }
@@ -852,7 +848,9 @@ export async function updateOnlineOrderStatus(
     }
 
     const allowedNextStatus =
-      ONLINE_STATUS_FLOW[existingOrder.status as keyof typeof ONLINE_STATUS_FLOW];
+      ONLINE_STATUS_FLOW[
+        existingOrder.status as keyof typeof ONLINE_STATUS_FLOW
+      ];
 
     if (!allowedNextStatus || nextStatus !== allowedNextStatus) {
       throw new Error("Không thể chuyển trạng thái đơn online theo bước này.");
