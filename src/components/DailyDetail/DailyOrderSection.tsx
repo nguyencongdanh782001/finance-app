@@ -1,15 +1,8 @@
 "use client";
 
+import { OfflineOrderEditor } from "@/components/DailyDetail/OfflineOrderEditor";
 import CustomSelect from "@/components/common/CustomFields/CustomSelect";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   Dialog,
   DialogClose,
@@ -24,12 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { NumericInput } from "@/components/ui/numberInput";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Sheet,
@@ -51,21 +38,17 @@ import type {
   PaymentMethodValue,
   PaymentStatusValue,
 } from "@/interface/financeAPI";
-import type {
-  ProductApiItem,
-  ProductVariantApiItem,
-} from "@/interface/product";
+import {
+  mapShopOrderProducts,
+  type ShopOrderProductOption,
+} from "@/lib/orders/shop-order-products";
 import type { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
 import {
   AlertTriangle,
-  Check,
   CheckCircle2,
-  ChevronsUpDown,
   Eye,
   ImageOff,
   MoreHorizontal,
-  Minus,
-  PackageCheck,
   Pencil,
   Plus,
   ReceiptText,
@@ -86,37 +69,6 @@ import {
 type OrderTabValue = "OFFLINE" | "ONLINE";
 type FilterValue = "ALL";
 type OrderDialogMode = "create" | "edit";
-type ProductOption = {
-  productId: number;
-  variantId: number | null;
-  title: string;
-  imageUrl: string;
-  categoryName: string;
-  sku: string | null;
-  variantLabel: string;
-  originalUnitPrice: number;
-  unitCost: number;
-  availableStock: number;
-};
-type EditableOrderItem = {
-  productId: number;
-  variantId: number | null;
-  title: string;
-  imageUrl: string;
-  categoryName: string;
-  sku: string | null;
-  variantLabel: string;
-  originalUnitPrice: number;
-  unitCost: number;
-  availableStock: number;
-  unitPrice: string;
-  quantity: string;
-};
-type OrderFormState = {
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "MOMO";
-  paymentStatus: "PAID" | "UNPAID";
-  items: EditableOrderItem[];
-};
 type SelectOption = { value: string; label: string; disabled?: boolean };
 type RuntimeSelectProps = {
   field: FieldInputProps<string>;
@@ -130,23 +82,9 @@ type RuntimeSelectProps = {
   lblClassName?: string;
   popoverTrgVariant?: { variant?: string };
 };
-type RuntimeNumericInputProps = {
-  field: FieldInputProps<string>;
-  form: FormikProps<Record<string, string>>;
-  meta: FieldMetaProps<string>;
-  variant?: "default" | "invisible" | "gray" | "border";
-  inputMode?: "numeric";
-  pattern?: string;
-  placeholder?: string;
-  hiddenErr?: boolean;
-  classNameContainer?: string;
-  className?: string;
-};
 
 const RuntimeCustomSelect =
   CustomSelect as unknown as ComponentType<RuntimeSelectProps>;
-const RuntimeNumericInput =
-  NumericInput as unknown as ComponentType<RuntimeNumericInputProps>;
 
 const ORDER_SOURCE_LABELS: Record<OrderSourceValue, string> = {
   OFFLINE: "Tại shop",
@@ -197,73 +135,16 @@ const PAYMENT_METHOD_LABELS: Partial<Record<PaymentMethodValue, string>> = {
   STRIPE: "Stripe",
 };
 
-const createEmptyForm = (): OrderFormState => ({
-  paymentMethod: "CASH",
-  paymentStatus: "PAID",
-  items: [],
-});
-
-const createIdempotencyKey = () => {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-};
-
 const formatMoney = (value: number) => `${formatCurrencyVND(value)}đ`;
 
-const parseMoneyInput = (value: string) => {
-  const numericValue = Number(value.replace(/[^\d]/g, ""));
+const getSnapshotColorCode = (snapshot: unknown) => {
+  if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
+    return "";
+  }
 
-  return Number.isFinite(numericValue) ? numericValue : 0;
+  const colorCode = (snapshot as { colorCode?: unknown }).colorCode;
+  return typeof colorCode === "string" ? colorCode : "";
 };
-
-const toNumber = (value: unknown) => Math.round(Number(value || 0));
-
-const getVariantLabel = (variant: ProductVariantApiItem) =>
-  [variant.size, variant.color].filter(Boolean).join(" / ") ||
-  variant.sku ||
-  "Biến thể";
-
-const mapProductOptions = (products: ProductApiItem[]): ProductOption[] =>
-  products.flatMap<ProductOption>((product) => {
-    const baseOption = {
-      productId: product.id,
-      title: product.title,
-      imageUrl: product.imageUrl,
-      categoryName: product.category.name,
-    };
-    const variants =
-      product.variants?.filter((variant) => variant.isActive) ?? [];
-
-    if (variants.length === 0) {
-      return [
-        {
-          ...baseOption,
-          variantId: null,
-          sku: null,
-          variantLabel: "",
-          originalUnitPrice: toNumber(product.sellPrice),
-          unitCost: toNumber(product.importPrice),
-          availableStock: product.quantity,
-        },
-      ];
-    }
-
-    return variants.map((variant) => ({
-      ...baseOption,
-      variantId: variant.id,
-      sku: variant.sku,
-      variantLabel: getVariantLabel(variant),
-      originalUnitPrice: toNumber(variant.sellPrice || product.sellPrice),
-      unitCost: toNumber(variant.importPrice || product.importPrice),
-      availableStock: variant.quantity,
-    }));
-  });
-
-const getItemKey = (item: { productId: number; variantId: number | null }) =>
-  `${item.productId}:${item.variantId ?? "product"}`;
 
 function ProductImage({
   imageUrl,
@@ -398,46 +279,6 @@ function OrderSelect({
       inputClassName="h-10! w-full! max-w-full! min-w-0! rounded-lg! text-sm! font-semibold!"
       lblClassName="text-sm"
       popoverTrgVariant={{ variant: "search-box--lgray" }}
-    />
-  );
-}
-
-function PriceNumberInput({
-  name,
-  value,
-  onChange,
-}: {
-  name: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  const field = {
-    name,
-    value,
-    onChange: () => undefined,
-    onBlur: () => undefined,
-  } satisfies FieldInputProps<string>;
-  const form = {
-    setFieldValue: (_field: string, nextValue: unknown) => {
-      onChange(String(nextValue));
-      return Promise.resolve();
-    },
-    errors: {},
-    touched: {},
-  } as unknown as FormikProps<Record<string, string>>;
-
-  return (
-    <RuntimeNumericInput
-      field={field}
-      form={form}
-      meta={{} as FieldMetaProps<string>}
-      variant="border"
-      inputMode="numeric"
-      pattern="^\d*$"
-      placeholder="Nhập giá bán"
-      hiddenErr
-      classNameContainer=""
-      className="h-11! rounded-xl! border-slate-200! bg-slate-50! px-3! text-sm! font-extrabold! text-slate-700 focus:border-blue-2!"
     />
   );
 }
@@ -603,600 +444,6 @@ function OrderFilters({
   );
 }
 
-function getFormTotals(items: EditableOrderItem[]) {
-  return items.reduce(
-    (acc, item) => {
-      const quantity = Number(item.quantity || 0);
-      const unitPrice = parseMoneyInput(item.unitPrice);
-      const lineSubtotal = unitPrice * quantity;
-      const lineCost = item.unitCost * quantity;
-
-      acc.totalQuantity += quantity;
-      acc.subtotal += lineSubtotal;
-      acc.totalCost += lineCost;
-      acc.profit += lineSubtotal - lineCost;
-
-      return acc;
-    },
-    { totalQuantity: 0, subtotal: 0, totalCost: 0, profit: 0 },
-  );
-}
-
-function OrderFormDialog({
-  open,
-  mode,
-  products,
-  order,
-  onOpenChange,
-  onSubmit,
-}: {
-  open: boolean;
-  mode: OrderDialogMode;
-  products: ProductOption[];
-  order: DailyOrder | null;
-  onOpenChange: (value: boolean) => void;
-  onSubmit: (
-    payload: OfflineOrderPayload,
-    orderId?: number,
-  ) => Promise<boolean>;
-}) {
-  const [form, setForm] = useState<OrderFormState>(createEmptyForm);
-  const [search, setSearch] = useState("");
-  const [isProductPickerOpen, setIsProductPickerOpen] = useState(false);
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [idempotencyKey, setIdempotencyKey] = useState(createIdempotencyKey);
-  const selectedKeys = new Set(form.items.map(getItemKey));
-  const totals = getFormTotals(form.items);
-  const filteredProducts = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
-
-    if (!normalizedSearch) {
-      return products;
-    }
-
-    return products.filter((product) =>
-      [
-        product.title,
-        product.categoryName,
-        product.sku,
-        product.variantLabel,
-        `#${product.productId}`,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedSearch),
-    );
-  }, [products, search]);
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    if (mode === "edit" && order) {
-      setForm({
-        paymentMethod:
-          order.paymentMethod === "BANK_TRANSFER" ||
-          order.paymentMethod === "MOMO"
-            ? order.paymentMethod
-            : "CASH",
-        paymentStatus: order.paymentStatus === "UNPAID" ? "UNPAID" : "PAID",
-        items: order.items
-          .filter((item) => item.productId)
-          .map((item) => ({
-            productId: item.productId ?? 0,
-            variantId: item.variantId,
-            title: item.productTitle,
-            imageUrl: item.productImageUrl ?? "",
-            categoryName: "",
-            sku: item.sku,
-            variantLabel: [item.size, item.color].filter(Boolean).join(" / "),
-            originalUnitPrice: item.originalUnitPrice,
-            unitCost: item.unitCost,
-            availableStock: item.quantity,
-            unitPrice: String(item.unitPrice),
-            quantity: String(item.quantity),
-          })),
-      });
-    } else {
-      setForm(createEmptyForm());
-      setIdempotencyKey(createIdempotencyKey());
-    }
-
-    setSearch("");
-    setIsProductPickerOpen(false);
-    setError("");
-  }, [mode, open, order]);
-
-  const addProduct = (product: ProductOption) => {
-    setError("");
-    setForm((current) => {
-      const key = getItemKey(product);
-      const existingIndex = current.items.findIndex(
-        (item) => getItemKey(item) === key,
-      );
-
-      if (existingIndex >= 0) {
-        const nextItems = [...current.items];
-        const currentQuantity = Number(nextItems[existingIndex].quantity || 0);
-        const maxQuantity = nextItems[existingIndex].availableStock;
-
-        nextItems[existingIndex] = {
-          ...nextItems[existingIndex],
-          quantity: String(Math.min(currentQuantity + 1, maxQuantity)),
-        };
-
-        return { ...current, items: nextItems };
-      }
-
-      return {
-        ...current,
-        items: [
-          ...current.items,
-          {
-            ...product,
-            unitPrice: String(product.originalUnitPrice),
-            quantity: "1",
-          },
-        ],
-      };
-    });
-  };
-
-  const updateItem = (
-    index: number,
-    patch: Partial<Pick<EditableOrderItem, "unitPrice" | "quantity">>,
-  ) => {
-    setForm((current) => ({
-      ...current,
-      items: current.items.map((item, itemIndex) =>
-        itemIndex === index ? { ...item, ...patch } : item,
-      ),
-    }));
-  };
-
-  const removeItem = (index: number) => {
-    setForm((current) => ({
-      ...current,
-      items: current.items.filter((_, itemIndex) => itemIndex !== index),
-    }));
-  };
-
-  const submit = async () => {
-    setError("");
-
-    if (form.items.length === 0) {
-      setError("Vui lòng chọn ít nhất một sản phẩm.");
-      return;
-    }
-
-    const payloadItems = form.items.map((item) => {
-      const unitPrice = parseMoneyInput(item.unitPrice);
-      const quantity = Number(item.quantity);
-
-      if (!Number.isInteger(quantity) || quantity < 1) {
-        throw new Error("Số lượng phải là số nguyên lớn hơn 0.");
-      }
-
-      if (!Number.isInteger(unitPrice) || unitPrice < 0) {
-        throw new Error("Giá bán phải là số nguyên và không được âm.");
-      }
-
-      if (quantity > item.availableStock) {
-        throw new Error(
-          `"${item.title}" chỉ còn ${item.availableStock.toLocaleString(
-            "vi-VN",
-          )} sản phẩm khả dụng.`,
-        );
-      }
-
-      return {
-        productId: item.productId,
-        variantId: item.variantId,
-        unitPrice,
-        quantity,
-      };
-    });
-
-    try {
-      setIsSubmitting(true);
-      const isSuccess = await onSubmit(
-        {
-          paymentMethod: form.paymentMethod,
-          paymentStatus: form.paymentStatus,
-          idempotencyKey: mode === "create" ? idempotencyKey : undefined,
-          items: payloadItems,
-        },
-        order?.id,
-      );
-
-      if (isSuccess) {
-        onOpenChange(false);
-      }
-    } catch (submitError) {
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "Không thể lưu đơn hàng. Vui lòng thử lại.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92svh] max-w-3xl rounded-xl border-slate-200 bg-white p-0 shadow-xl">
-        <div className="sticky top-0 z-10 border-b border-slate-100 bg-white p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <DialogTitle className="text-xl font-extrabold text-slate-800">
-                {mode === "edit" ? "Sửa đơn tại shop" : "Tạo đơn tại shop"}
-              </DialogTitle>
-              <DialogDescription className="mt-1 text-sm font-medium text-slate-500">
-                Chỉ cần chọn sản phẩm, giá bán và phương thức thanh toán.
-              </DialogDescription>
-            </div>
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                className="rounded-full bg-slate-50 text-slate-500"
-              >
-                <X className="size-4" />
-              </Button>
-            </DialogClose>
-          </div>
-        </div>
-
-        <div className="space-y-4 p-5">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-sm font-bold text-slate-700">
-                Phương thức thanh toán
-              </span>
-              <OrderSelect
-                name="orderPaymentMethod"
-                value={form.paymentMethod}
-                options={[
-                  { value: "CASH", label: "Tiền mặt" },
-                  { value: "BANK_TRANSFER", label: "Chuyển khoản" },
-                  { value: "MOMO", label: "MoMo" },
-                ]}
-                placeholder="Phương thức thanh toán"
-                onChange={(value) =>
-                  setForm((current) => ({
-                    ...current,
-                    paymentMethod: value as OrderFormState["paymentMethod"],
-                  }))
-                }
-              />
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-bold text-slate-700">
-                Trạng thái thanh toán
-              </span>
-              <OrderSelect
-                name="orderPaymentStatus"
-                value={form.paymentStatus}
-                options={[
-                  { value: "PAID", label: "Đã thanh toán" },
-                  { value: "UNPAID", label: "Chưa thanh toán" },
-                ]}
-                placeholder="Trạng thái thanh toán"
-                onChange={(value) =>
-                  setForm((current) => ({
-                    ...current,
-                    paymentStatus: value as OrderFormState["paymentStatus"],
-                  }))
-                }
-              />
-            </label>
-          </div>
-
-          <div>
-            <span className="mb-2 block text-sm font-bold text-slate-700">
-              Thêm sản phẩm
-            </span>
-            <Popover
-              open={isProductPickerOpen}
-              onOpenChange={(nextOpen) => {
-                setIsProductPickerOpen(nextOpen);
-                if (!nextOpen) {
-                  setSearch("");
-                }
-              }}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  role="combobox"
-                  aria-expanded={isProductPickerOpen}
-                  className="h-11 w-full min-w-0 justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-600 hover:border-blue-2 hover:bg-slate-50 focus-visible:ring-blue-2/25"
-                >
-                  <span className="flex min-w-0 items-center gap-2">
-                    <Search className="size-4 shrink-0 text-slate-400" />
-                    <span className="truncate">
-                      {form.items.length > 0
-                        ? `Tìm thêm sản phẩm · Đã chọn ${form.items.length}`
-                        : "Tìm sản phẩm hoặc SKU"}
-                    </span>
-                  </span>
-                  <ChevronsUpDown className="size-4 shrink-0 text-slate-400" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="start"
-                sideOffset={6}
-                className="z-90 w-(--radix-popover-trigger-width) max-w-[calc(100vw-40px)] rounded-lg border-slate-200 bg-white p-0 shadow-lg"
-                onWheel={(event) => event.stopPropagation()}
-                onTouchMove={(event) => event.stopPropagation()}
-              >
-                <Command shouldFilter={false} className="rounded-2xl">
-                  <div className="border-b border-slate-100 p-2">
-                    <CommandInput
-                      value={search}
-                      onValueChange={setSearch}
-                      placeholder="Nhập tên sản phẩm hoặc SKU"
-                      icon={<Search className="size-4 text-slate-400" />}
-                      className="h-10 text-sm text-slate-700 placeholder:text-slate-400"
-                    />
-                  </div>
-                  <CommandList className="max-h-72 p-1.5">
-                    <CommandEmpty className="px-3 py-8 text-center text-sm font-semibold text-slate-400">
-                      Không tìm thấy sản phẩm phù hợp
-                    </CommandEmpty>
-                    <CommandGroup className="p-0">
-                      {filteredProducts.map((product) => {
-                        const productKey = getItemKey(product);
-                        const isSelected = selectedKeys.has(productKey);
-
-                        return (
-                          <CommandItem
-                            key={productKey}
-                            value={productKey}
-                            disabled={product.availableStock <= 0}
-                            onSelect={() => {
-                              addProduct(product);
-                              setIsProductPickerOpen(false);
-                              setSearch("");
-                            }}
-                            className="min-w-0 cursor-pointer gap-3 rounded-xl p-2 data-[selected=true]:bg-blue-50"
-                          >
-                            <ProductImage
-                              imageUrl={product.imageUrl}
-                              title={product.title}
-                            />
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-extrabold text-slate-700">
-                                {product.title}
-                              </p>
-                              <p className="mt-1 truncate text-xs font-semibold text-slate-400">
-                                {product.variantLabel || product.categoryName}
-                                {product.sku ? ` • ${product.sku}` : ""}
-                              </p>
-                              <p className="mt-1 text-xs font-bold text-slate-500">
-                                Tồn:{" "}
-                                {product.availableStock.toLocaleString("vi-VN")}{" "}
-                                · Giá: {formatMoney(product.originalUnitPrice)}
-                              </p>
-                            </div>
-                            <span
-                              className={`flex size-7 shrink-0 items-center justify-center rounded-full ${
-                                isSelected
-                                  ? "bg-blue-2 text-white"
-                                  : "bg-slate-100 text-slate-500"
-                              }`}
-                              aria-label={isSelected ? "Đã chọn" : "Thêm"}
-                            >
-                              {isSelected ? (
-                                <Check className="size-4" />
-                              ) : (
-                                <Plus className="size-4" />
-                              )}
-                            </span>
-                          </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="space-y-3">
-            {form.items.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
-                <PackageCheck className="mx-auto size-8 text-slate-300" />
-                <p className="mt-3 text-sm font-bold text-slate-500">
-                  Chưa chọn sản phẩm nào
-                </p>
-              </div>
-            ) : (
-              form.items.map((item, index) => {
-                const quantity = Number(item.quantity || 0);
-                const unitPrice = parseMoneyInput(item.unitPrice);
-                const lineSubtotal = unitPrice * quantity;
-                const priceChanged = unitPrice !== item.originalUnitPrice;
-
-                return (
-                  <div
-                    key={getItemKey(item)}
-                    className="rounded-lg border border-slate-200 bg-white p-3"
-                  >
-                    <div className="flex items-start gap-3">
-                      <ProductImage
-                        imageUrl={item.imageUrl}
-                        title={item.title}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-base font-extrabold text-slate-700">
-                          {item.title}
-                        </p>
-                        <p className="mt-1 text-xs font-bold uppercase tracking-[0.06em] text-slate-400">
-                          {item.variantLabel || item.categoryName}
-                          {item.sku ? ` • ${item.sku}` : ""}
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-sm"
-                        className="rounded-full bg-rose-50 text-rose-500 hover:bg-rose-100"
-                        onClick={() => removeItem(index)}
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-
-                    <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_150px]">
-                      <label className="block">
-                        <span className="mb-1 block text-xs font-bold text-slate-400">
-                          Giá bán
-                        </span>
-                        <PriceNumberInput
-                          name={`orderItemUnitPrice-${index}`}
-                          value={item.unitPrice}
-                          onChange={(value) =>
-                            updateItem(index, {
-                              unitPrice: value,
-                            })
-                          }
-                        />
-                        <p className="mt-1 text-xs font-semibold text-slate-400">
-                          Giá gốc: {formatMoney(item.originalUnitPrice)}
-                          {priceChanged ? (
-                            <span className="ml-2 text-orange-600">
-                              Đã chỉnh{" "}
-                              {formatMoney(unitPrice - item.originalUnitPrice)}
-                            </span>
-                          ) : null}
-                        </p>
-                      </label>
-                      <div>
-                        <span className="mb-1 block text-xs font-bold text-slate-400">
-                          Số lượng
-                        </span>
-                        <div className="grid grid-cols-[40px_1fr_40px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            className="h-11 rounded-none"
-                            onClick={() =>
-                              updateItem(index, {
-                                quantity: String(Math.max(quantity - 1, 1)),
-                              })
-                            }
-                            disabled={quantity <= 1}
-                          >
-                            <Minus className="size-4" />
-                          </Button>
-                          <input
-                            value={item.quantity}
-                            inputMode="numeric"
-                            onChange={(event) =>
-                              updateItem(index, {
-                                quantity: event.target.value.replace(
-                                  /[^\d]/g,
-                                  "",
-                                ),
-                              })
-                            }
-                            className="h-11 min-w-0 bg-transparent text-center text-sm font-extrabold text-slate-700 outline-none"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            className="h-11 rounded-none"
-                            onClick={() =>
-                              updateItem(index, {
-                                quantity: String(
-                                  Math.min(quantity + 1, item.availableStock),
-                                ),
-                              })
-                            }
-                            disabled={quantity >= item.availableStock}
-                          >
-                            <Plus className="size-4" />
-                          </Button>
-                        </div>
-                        <p className="mt-1 text-xs font-semibold text-slate-400">
-                          Khả dụng:{" "}
-                          {item.availableStock.toLocaleString("vi-VN")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2 text-sm font-bold">
-                      <span className="text-slate-400">Thành tiền</span>
-                      <span className="text-slate-700">
-                        {formatMoney(lineSubtotal)}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-
-          <div className="sticky bottom-0 rounded-lg border border-slate-200 bg-white p-4 shadow-md">
-            <div className="grid gap-2 text-sm font-semibold text-slate-500 sm:grid-cols-2">
-              <p>
-                Tổng số lượng: {totals.totalQuantity.toLocaleString("vi-VN")}
-              </p>
-              <p>Tạm tính: {formatMoney(totals.subtotal)}</p>
-              <p>Giá vốn: {formatMoney(totals.totalCost)}</p>
-              <p
-                className={
-                  totals.profit < 0
-                    ? "font-extrabold text-rose-600"
-                    : "font-extrabold text-green-13"
-                }
-              >
-                Lợi nhuận dự kiến: {formatMoney(totals.profit)}
-              </p>
-            </div>
-            {error ? (
-              <p className="mt-3 rounded-xl bg-rose-50 px-3 py-2 text-sm font-bold text-rose-600">
-                {error}
-              </p>
-            ) : null}
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <Button
-                type="button"
-                variant="adminPrimary"
-                className="h-12 flex-1 rounded-2xl"
-                onClick={() => void submit()}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <RotateCcw className="size-4 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="size-4" />
-                )}
-                {mode === "edit" ? "Lưu đơn" : "Tạo đơn"}
-              </Button>
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="h-12 rounded-2xl border border-slate-100 bg-slate-50"
-                >
-                  Đóng
-                </Button>
-              </DialogClose>
-            </div>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 function OrderDetailDialog({
   order,
   open,
@@ -1290,10 +537,22 @@ function OrderDetailDialog({
                     <p className="line-clamp-2 text-sm font-extrabold text-slate-700">
                       {item.productTitle}
                     </p>
-                    <p className="mt-1 text-xs font-bold text-slate-400">
-                      {[item.size, item.color].filter(Boolean).join(" / ")}
-                      {item.sku ? ` • ${item.sku}` : ""}
-                    </p>
+                    <div className="mt-1 flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-400">
+                      {getSnapshotColorCode(item.variantOptionsSnapshot) ? (
+                        <span
+                          className="size-3 shrink-0 rounded-full border border-black/10"
+                          style={{
+                            backgroundColor: getSnapshotColorCode(
+                              item.variantOptionsSnapshot,
+                            ),
+                          }}
+                        />
+                      ) : null}
+                      <p className="truncate">
+                        {[item.color, item.size].filter(Boolean).join(" / ")}
+                        {item.sku ? ` • ${item.sku}` : ""}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold text-slate-500 sm:grid-cols-4">
@@ -1562,7 +821,7 @@ export default function DailyOrderSection({
 }) {
   const dailyId = data?.id;
   const [orders, setOrders] = useState<DailyOrderListResponse | null>(null);
-  const [products, setProducts] = useState<ProductOption[]>([]);
+  const [products, setProducts] = useState<ShopOrderProductOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
@@ -1650,21 +909,48 @@ export default function DailyOrderSection({
 
   useEffect(() => {
     const fetchProducts = async () => {
-      if (products.length === 0) {
-        setIsProductLoading(true);
-      }
+      setIsProductLoading(true);
+      const firstPage = await financeAPI.getProductList({
+        page: 1,
+        limit: 100,
+      });
 
-      const res = await financeAPI.getProductList({ page: 1, limit: 1000 });
+      if (firstPage.code === RESPONSE_CODES.success && firstPage.data) {
+        const allProducts = [...firstPage.data.data];
+        const totalPages = firstPage.data.pagination.totalPage;
 
-      if (res.code === RESPONSE_CODES.success && res.data) {
-        setProducts(mapProductOptions(res.data.data));
+        for (let page = 2; page <= totalPages; page += 1) {
+          const nextPage = await financeAPI.getProductList({
+            page,
+            limit: 100,
+          });
+
+          if (nextPage.code !== RESPONSE_CODES.success || !nextPage.data) {
+            toast({
+              title: "Không tải đủ danh sách sản phẩm. Vui lòng thử lại.",
+              className: "bg-red-1 text-white text-sm font-medium",
+              duration: 3000,
+            });
+            break;
+          }
+
+          allProducts.push(...nextPage.data.data);
+        }
+
+        setProducts(mapShopOrderProducts(allProducts));
+      } else {
+        toast({
+          title: "Không tải được sản phẩm để tạo đơn tại shop.",
+          className: "bg-red-1 text-white text-sm font-medium",
+          duration: 3000,
+        });
       }
 
       setIsProductLoading(false);
     };
 
     void fetchProducts();
-  }, [reload, products.length]);
+  }, [reload]);
 
   const submitOrder = async (
     payload: OfflineOrderPayload,
@@ -1843,7 +1129,7 @@ export default function DailyOrderSection({
             variant="adminPrimary"
             className="h-10 w-full shrink-0 rounded-lg px-4 sm:w-auto"
             onClick={openCreate}
-            disabled={isDailyLoading || isProductLoading}
+            disabled={isDailyLoading}
           >
             <Plus className="size-4" />
             Tạo đơn tại shop
@@ -2081,10 +1367,11 @@ export default function DailyOrderSection({
         </>
       )}
 
-      <OrderFormDialog
+      <OfflineOrderEditor
         open={isFormOpen}
         mode={formMode}
         products={products}
+        productsLoading={isProductLoading}
         order={selectedOrder}
         onOpenChange={setIsFormOpen}
         onSubmit={submitOrder}

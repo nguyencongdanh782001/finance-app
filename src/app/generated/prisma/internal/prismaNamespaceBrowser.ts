@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.ts'
+export type * from './prismaNamespace.ts'
 
 export const Decimal = runtime.Decimal
 
@@ -60,6 +60,8 @@ export const ModelName = {
   DailySoldProduct: 'DailySoldProduct',
   DailySoldProductContribution: 'DailySoldProductContribution',
   User: 'User',
+  ProductDraft: 'ProductDraft',
+  ProductImportJob: 'ProductImportJob',
   PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
@@ -209,6 +211,8 @@ export const ProductScalarFieldEnum = {
   slug: 'slug',
   description: 'description',
   productStatus: 'productStatus',
+  visibility: 'visibility',
+  status: 'status',
   brand: 'brand',
   material: 'material',
   careInstructions: 'careInstructions',
@@ -217,7 +221,6 @@ export const ProductScalarFieldEnum = {
   seoDescription: 'seoDescription',
   seoKeywords: 'seoKeywords',
   isFeatured: 'isFeatured',
-  visibility: 'visibility',
   viewCount: 'viewCount',
   soldCount: 'soldCount',
   publishedAt: 'publishedAt',
@@ -292,6 +295,52 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ProductDraftScalarFieldEnum = {
+  id: 'id',
+  mode: 'mode',
+  status: 'status',
+  originalProductId: 'originalProductId',
+  createdById: 'createdById',
+  currentStep: 'currentStep',
+  data: 'data',
+  version: 'version',
+  appliedAt: 'appliedAt',
+  discardedAt: 'discardedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductDraftScalarFieldEnum = (typeof ProductDraftScalarFieldEnum)[keyof typeof ProductDraftScalarFieldEnum]
+
+
+export const ProductImportJobScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  fileName: 'fileName',
+  mode: 'mode',
+  createMissingCategories: 'createMissingCategories',
+  forcePrivate: 'forcePrivate',
+  totalProducts: 'totalProducts',
+  totalVariants: 'totalVariants',
+  totalImages: 'totalImages',
+  processed: 'processed',
+  succeeded: 'succeeded',
+  failed: 'failed',
+  skipped: 'skipped',
+  sourceData: 'sourceData',
+  validationErrors: 'validationErrors',
+  resultData: 'resultData',
+  processingToken: 'processingToken',
+  processingStartedAt: 'processingStartedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+} as const
+
+export type ProductImportJobScalarFieldEnum = (typeof ProductImportJobScalarFieldEnum)[keyof typeof ProductImportJobScalarFieldEnum]
 
 
 export const PasswordResetTokenScalarFieldEnum = {
@@ -436,6 +485,7 @@ export const ProductVariantScalarFieldEnum = {
   sku: 'sku',
   size: 'size',
   color: 'color',
+  colorCode: 'colorCode',
   barcode: 'barcode',
   price: 'price',
   importPrice: 'importPrice',

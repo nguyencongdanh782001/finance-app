@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         ghost: "",
         adminPrimary:
-          "bg-primary text-primary-foreground font-semibold shadow-[0_2px_5px_rgb(37_99_235_/_0.22)] hover:bg-primary/90 focus-visible:ring-primary/30",
+          "bg-[#D96C8A] text-white font-semibold shadow-[0_2px_5px_rgba(217,108,138,0.22)] hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/30",
         adminDanger:
           "bg-red-50 text-red-700 font-semibold hover:bg-red-100 hover:text-red-800 focus-visible:ring-red-300",
         brand: "bg-[#D96C8A] text-white font-extrabold hover:bg-[#C55778]",

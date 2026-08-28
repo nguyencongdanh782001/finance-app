@@ -37,11 +37,17 @@ enum OtpPurpose {
   RESET_PASSWORD
 }
 
-enum ProductStatus {
+enum LegacyProductStatus {
   DRAFT
   ACTIVE
   ARCHIVED
   OUT_OF_STOCK
+}
+
+enum ProductStatus {
+  PUBLIC
+  PRIVATE
+  DISCONTINUED
 }
 
 enum ProductGender {
@@ -58,10 +64,35 @@ enum UserGender {
   UNSPECIFIED
 }
 
-enum ProductVisibility {
+enum LegacyProductVisibility {
   PUBLIC
   HIDDEN
   PRIVATE
+}
+
+enum ProductImportStatus {
+  UPLOADED
+  VALIDATING
+  READY
+  PROCESSING
+  COMPLETED
+  PARTIALLY_COMPLETED
+  FAILED
+}
+
+enum ProductImportMode {
+  CREATE_ONLY
+}
+
+enum ProductDraftMode {
+  CREATE
+  EDIT
+}
+
+enum ProductDraftStatus {
+  ACTIVE
+  APPLIED
+  DISCARDED
 }
 
 enum AddressType {
@@ -337,9 +368,11 @@ model Product {
   quantity Int @default(0)
 
   /// E-commerce fields
-  slug             String?           @unique
+  slug             String?                 @unique
   description      String?
-  productStatus    ProductStatus?    @default(DRAFT)
+  productStatus    LegacyProductStatus?    @default(DRAFT)
+  visibility       LegacyProductVisibility @default(PUBLIC)
+  status           ProductStatus           @default(PRIVATE)
   brand            String?
   material         String?
   careInstructions String?
@@ -347,12 +380,11 @@ model Product {
   seoTitle         String?
   seoDescription   String?
   seoKeywords      String?
-  isFeatured       Boolean           @default(false)
-  visibility       ProductVisibility @default(PUBLIC)
-  viewCount        Int               @default(0)
-  soldCount        Int               @default(0)
+  isFeatured       Boolean                 @default(false)
+  viewCount        Int                     @default(0)
+  soldCount        Int                     @default(0)
   publishedAt      DateTime?
-  isPublished      Boolean           @default(false)
+  isPublished      Boolean                 @default(false)
   tags             Json?
   videoUrl         String?
   weight           Decimal?
@@ -376,6 +408,7 @@ model Product {
   homepageFeaturedProducts HomepageFeaturedProduct[]
   homepageSectionProducts  HomepageSectionProduct[]
   recentlyViewedBy         RecentlyViewedProduct[]
+  drafts                   ProductDraft[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -386,7 +419,7 @@ model Product {
   @@index([brand])
   @@index([isFeatured])
   @@index([isPublished])
-  @@index([visibility])
+  @@index([status])
   @@map("product")
 }
 
@@ -490,6 +523,8 @@ model User {
   notifications          Notification[]
   searchHistories        SearchHistory[]
   recentlyViewedProducts RecentlyViewedProduct[]
+  productDrafts          ProductDraft[]
+  productImportJobs      ProductImportJob[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -504,6 +539,62 @@ model User {
   @@index([totalOrders])
   @@index([rewardPoints])
   @@map("user")
+}
+
+model ProductDraft {
+  id Int @id @default(autoincrement())
+
+  mode   ProductDraftMode
+  status ProductDraftStatus @default(ACTIVE)
+
+  originalProductId Int?
+  originalProduct   Product? @relation(fields: [originalProductId], references: [id], onDelete: Cascade)
+
+  createdById Int
+  createdBy   User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  currentStep String?
+  data        Json
+  version     Int     @default(1)
+
+  appliedAt   DateTime?
+  discardedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([createdById, status])
+  @@index([originalProductId, status])
+  @@map("product_draft")
+}
+
+model ProductImportJob {
+  id                      String              @id @default(cuid())
+  status                  ProductImportStatus @default(UPLOADED)
+  fileName                String
+  mode                    ProductImportMode   @default(CREATE_ONLY)
+  createMissingCategories Boolean             @default(false)
+  forcePrivate            Boolean             @default(false)
+  totalProducts           Int                 @default(0)
+  totalVariants           Int                 @default(0)
+  totalImages             Int                 @default(0)
+  processed               Int                 @default(0)
+  succeeded               Int                 @default(0)
+  failed                  Int                 @default(0)
+  skipped                 Int                 @default(0)
+  sourceData              Json?
+  validationErrors        Json?
+  resultData              Json?
+  processingToken         String?
+  processingStartedAt     DateTime?
+  createdById             Int
+  createdBy               User                @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  completedAt             DateTime?
+
+  @@index([createdById, createdAt])
+  @@index([status, updatedAt])
+  @@map("product_import_job")
 }
 
 model PasswordResetToken {
@@ -708,10 +799,11 @@ model ProductVariant {
   productId Int
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  sku     String  @unique
-  size    String?
-  color   String?
-  barcode String? @unique
+  sku       String  @unique
+  size      String?
+  color     String?
+  colorCode String?
+  barcode   String? @unique
 
   price             Decimal?
   importPrice       Decimal  @default(0)
@@ -741,6 +833,7 @@ model ProductVariant {
   @@index([productId])
   @@index([size])
   @@index([color])
+  @@index([colorCode])
   @@index([barcode])
   @@index([isActive])
   @@index([imagePriority])

@@ -23,6 +23,7 @@ import {
   ProductApiItem,
   ProductListResponse,
   ProductPayload,
+  ProductStatus,
 } from "@/interface/product";
 import {
   AuthPurpose,
@@ -187,10 +188,20 @@ export const financeAPI = {
   updateProduct: (
     id: number,
     payload: ProductPayload,
-  ): Promise<IAPIResponse<{ success: boolean }>> => {
-    return appAxios.put(API_ROUTES.updateProduct(id), payload);
+  ): Promise<IAPIResponse<ProductApiItem>> => {
+    return appAxios.patch(API_ROUTES.updateProduct(id), payload);
   },
-  deleteProduct: (id: number): Promise<IAPIResponse<{ success: boolean }>> => {
+  updateProductStatus: (
+    id: number,
+    productStatus: ProductStatus,
+  ): Promise<IAPIResponse<{ id: number; productStatus: ProductStatus }>> => {
+    return appAxios.patch(API_ROUTES.updateProductStatus(id), {
+      productStatus,
+    });
+  },
+  deleteProduct: (
+    id: number,
+  ): Promise<IAPIResponse<{ success?: boolean; message?: string }>> => {
     return appAxios.delete(API_ROUTES.deleteProduct(id));
   },
   register: (payload: {
@@ -299,23 +310,30 @@ export const financeAPI = {
     file: File,
   ): Promise<IAPIResponse<UploadImageResponse>> => {
     const formData = new FormData();
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 70_000);
 
     formData.append("file", file);
-
-    const res = await fetch(API_ROUTES.uploadFileCloudinary, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    return {
-      code: JSON.stringify(res.status),
-      data: {
-        url: data.url,
-        publicId: data.publicId,
-      },
-    };
+    try {
+      const res = await fetch(API_ROUTES.uploadFileCloudinary, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+        signal: controller.signal,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url || !data.publicId) {
+        return { code: res.status.toString(), data: undefined };
+      }
+      return {
+        code: res.status.toString(),
+        data: { url: data.url, publicId: data.publicId },
+      };
+    } catch {
+      return { code: "0", data: undefined };
+    } finally {
+      window.clearTimeout(timeout);
+    }
   },
   deleteUploadedImage: async (
     publicId: string,

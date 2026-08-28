@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.ts"
+import type * as Prisma from "../internal/prismaNamespace.ts"
 
 /**
  * Model Product
@@ -68,7 +68,9 @@ export type ProductMinAggregateOutputType = {
   quantity: number | null
   slug: string | null
   description: string | null
-  productStatus: $Enums.ProductStatus | null
+  productStatus: $Enums.LegacyProductStatus | null
+  visibility: $Enums.LegacyProductVisibility | null
+  status: $Enums.ProductStatus | null
   brand: string | null
   material: string | null
   careInstructions: string | null
@@ -77,7 +79,6 @@ export type ProductMinAggregateOutputType = {
   seoDescription: string | null
   seoKeywords: string | null
   isFeatured: boolean | null
-  visibility: $Enums.ProductVisibility | null
   viewCount: number | null
   soldCount: number | null
   publishedAt: Date | null
@@ -103,7 +104,9 @@ export type ProductMaxAggregateOutputType = {
   quantity: number | null
   slug: string | null
   description: string | null
-  productStatus: $Enums.ProductStatus | null
+  productStatus: $Enums.LegacyProductStatus | null
+  visibility: $Enums.LegacyProductVisibility | null
+  status: $Enums.ProductStatus | null
   brand: string | null
   material: string | null
   careInstructions: string | null
@@ -112,7 +115,6 @@ export type ProductMaxAggregateOutputType = {
   seoDescription: string | null
   seoKeywords: string | null
   isFeatured: boolean | null
-  visibility: $Enums.ProductVisibility | null
   viewCount: number | null
   soldCount: number | null
   publishedAt: Date | null
@@ -139,6 +141,8 @@ export type ProductCountAggregateOutputType = {
   slug: number
   description: number
   productStatus: number
+  visibility: number
+  status: number
   brand: number
   material: number
   careInstructions: number
@@ -147,7 +151,6 @@ export type ProductCountAggregateOutputType = {
   seoDescription: number
   seoKeywords: number
   isFeatured: number
-  visibility: number
   viewCount: number
   soldCount: number
   publishedAt: number
@@ -207,6 +210,8 @@ export type ProductMinAggregateInputType = {
   slug?: true
   description?: true
   productStatus?: true
+  visibility?: true
+  status?: true
   brand?: true
   material?: true
   careInstructions?: true
@@ -215,7 +220,6 @@ export type ProductMinAggregateInputType = {
   seoDescription?: true
   seoKeywords?: true
   isFeatured?: true
-  visibility?: true
   viewCount?: true
   soldCount?: true
   publishedAt?: true
@@ -242,6 +246,8 @@ export type ProductMaxAggregateInputType = {
   slug?: true
   description?: true
   productStatus?: true
+  visibility?: true
+  status?: true
   brand?: true
   material?: true
   careInstructions?: true
@@ -250,7 +256,6 @@ export type ProductMaxAggregateInputType = {
   seoDescription?: true
   seoKeywords?: true
   isFeatured?: true
-  visibility?: true
   viewCount?: true
   soldCount?: true
   publishedAt?: true
@@ -277,6 +282,8 @@ export type ProductCountAggregateInputType = {
   slug?: true
   description?: true
   productStatus?: true
+  visibility?: true
+  status?: true
   brand?: true
   material?: true
   careInstructions?: true
@@ -285,7 +292,6 @@ export type ProductCountAggregateInputType = {
   seoDescription?: true
   seoKeywords?: true
   isFeatured?: true
-  visibility?: true
   viewCount?: true
   soldCount?: true
   publishedAt?: true
@@ -399,7 +405,9 @@ export type ProductGroupByOutputType = {
   quantity: number
   slug: string | null
   description: string | null
-  productStatus: $Enums.ProductStatus | null
+  productStatus: $Enums.LegacyProductStatus | null
+  visibility: $Enums.LegacyProductVisibility
+  status: $Enums.ProductStatus
   brand: string | null
   material: string | null
   careInstructions: string | null
@@ -408,7 +416,6 @@ export type ProductGroupByOutputType = {
   seoDescription: string | null
   seoKeywords: string | null
   isFeatured: boolean
-  visibility: $Enums.ProductVisibility
   viewCount: number
   soldCount: number
   publishedAt: Date | null
@@ -458,7 +465,9 @@ export type ProductWhereInput = {
   quantity?: Prisma.IntFilter<"Product"> | number
   slug?: Prisma.StringNullableFilter<"Product"> | string | null
   description?: Prisma.StringNullableFilter<"Product"> | string | null
-  productStatus?: Prisma.EnumProductStatusNullableFilter<"Product"> | $Enums.ProductStatus | null
+  productStatus?: Prisma.EnumLegacyProductStatusNullableFilter<"Product"> | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFilter<"Product"> | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   brand?: Prisma.StringNullableFilter<"Product"> | string | null
   material?: Prisma.StringNullableFilter<"Product"> | string | null
   careInstructions?: Prisma.StringNullableFilter<"Product"> | string | null
@@ -467,7 +476,6 @@ export type ProductWhereInput = {
   seoDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   seoKeywords?: Prisma.StringNullableFilter<"Product"> | string | null
   isFeatured?: Prisma.BoolFilter<"Product"> | boolean
-  visibility?: Prisma.EnumProductVisibilityFilter<"Product"> | $Enums.ProductVisibility
   viewCount?: Prisma.IntFilter<"Product"> | number
   soldCount?: Prisma.IntFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
@@ -497,6 +505,7 @@ export type ProductWhereInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductListRelationFilter
   homepageSectionProducts?: Prisma.HomepageSectionProductListRelationFilter
   recentlyViewedBy?: Prisma.RecentlyViewedProductListRelationFilter
+  drafts?: Prisma.ProductDraftListRelationFilter
 }
 
 export type ProductOrderByWithRelationInput = {
@@ -512,6 +521,8 @@ export type ProductOrderByWithRelationInput = {
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   productStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   brand?: Prisma.SortOrderInput | Prisma.SortOrder
   material?: Prisma.SortOrderInput | Prisma.SortOrder
   careInstructions?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -520,7 +531,6 @@ export type ProductOrderByWithRelationInput = {
   seoDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   seoKeywords?: Prisma.SortOrderInput | Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
-  visibility?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   soldCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -550,6 +560,7 @@ export type ProductOrderByWithRelationInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductOrderByRelationAggregateInput
   homepageSectionProducts?: Prisma.HomepageSectionProductOrderByRelationAggregateInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductOrderByRelationAggregateInput
+  drafts?: Prisma.ProductDraftOrderByRelationAggregateInput
 }
 
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -567,7 +578,9 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   sellPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFilter<"Product"> | number
   description?: Prisma.StringNullableFilter<"Product"> | string | null
-  productStatus?: Prisma.EnumProductStatusNullableFilter<"Product"> | $Enums.ProductStatus | null
+  productStatus?: Prisma.EnumLegacyProductStatusNullableFilter<"Product"> | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFilter<"Product"> | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   brand?: Prisma.StringNullableFilter<"Product"> | string | null
   material?: Prisma.StringNullableFilter<"Product"> | string | null
   careInstructions?: Prisma.StringNullableFilter<"Product"> | string | null
@@ -576,7 +589,6 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   seoDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   seoKeywords?: Prisma.StringNullableFilter<"Product"> | string | null
   isFeatured?: Prisma.BoolFilter<"Product"> | boolean
-  visibility?: Prisma.EnumProductVisibilityFilter<"Product"> | $Enums.ProductVisibility
   viewCount?: Prisma.IntFilter<"Product"> | number
   soldCount?: Prisma.IntFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
@@ -606,6 +618,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductListRelationFilter
   homepageSectionProducts?: Prisma.HomepageSectionProductListRelationFilter
   recentlyViewedBy?: Prisma.RecentlyViewedProductListRelationFilter
+  drafts?: Prisma.ProductDraftListRelationFilter
 }, "id" | "slug">
 
 export type ProductOrderByWithAggregationInput = {
@@ -621,6 +634,8 @@ export type ProductOrderByWithAggregationInput = {
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   productStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   brand?: Prisma.SortOrderInput | Prisma.SortOrder
   material?: Prisma.SortOrderInput | Prisma.SortOrder
   careInstructions?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -629,7 +644,6 @@ export type ProductOrderByWithAggregationInput = {
   seoDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   seoKeywords?: Prisma.SortOrderInput | Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
-  visibility?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   soldCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -664,7 +678,9 @@ export type ProductScalarWhereWithAggregatesInput = {
   quantity?: Prisma.IntWithAggregatesFilter<"Product"> | number
   slug?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
-  productStatus?: Prisma.EnumProductStatusNullableWithAggregatesFilter<"Product"> | $Enums.ProductStatus | null
+  productStatus?: Prisma.EnumLegacyProductStatusNullableWithAggregatesFilter<"Product"> | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityWithAggregatesFilter<"Product"> | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusWithAggregatesFilter<"Product"> | $Enums.ProductStatus
   brand?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   material?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   careInstructions?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
@@ -673,7 +689,6 @@ export type ProductScalarWhereWithAggregatesInput = {
   seoDescription?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   seoKeywords?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   isFeatured?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
-  visibility?: Prisma.EnumProductVisibilityWithAggregatesFilter<"Product"> | $Enums.ProductVisibility
   viewCount?: Prisma.IntWithAggregatesFilter<"Product"> | number
   soldCount?: Prisma.IntWithAggregatesFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
@@ -697,7 +712,9 @@ export type ProductCreateInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -706,7 +723,6 @@ export type ProductCreateInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -736,6 +752,7 @@ export type ProductCreateInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateInput = {
@@ -750,7 +767,9 @@ export type ProductUncheckedCreateInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -759,7 +778,6 @@ export type ProductUncheckedCreateInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -787,6 +805,7 @@ export type ProductUncheckedCreateInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUpdateInput = {
@@ -798,7 +817,9 @@ export type ProductUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -807,7 +828,6 @@ export type ProductUpdateInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -837,6 +857,7 @@ export type ProductUpdateInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateInput = {
@@ -851,7 +872,9 @@ export type ProductUncheckedUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -860,7 +883,6 @@ export type ProductUncheckedUpdateInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -888,6 +910,7 @@ export type ProductUncheckedUpdateInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateManyInput = {
@@ -902,7 +925,9 @@ export type ProductCreateManyInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -911,7 +936,6 @@ export type ProductCreateManyInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -935,7 +959,9 @@ export type ProductUpdateManyMutationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -944,7 +970,6 @@ export type ProductUpdateManyMutationInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -971,7 +996,9 @@ export type ProductUncheckedUpdateManyInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -980,7 +1007,6 @@ export type ProductUncheckedUpdateManyInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1018,6 +1044,8 @@ export type ProductCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   productStatus?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   brand?: Prisma.SortOrder
   material?: Prisma.SortOrder
   careInstructions?: Prisma.SortOrder
@@ -1026,7 +1054,6 @@ export type ProductCountOrderByAggregateInput = {
   seoDescription?: Prisma.SortOrder
   seoKeywords?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
-  visibility?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   soldCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -1069,6 +1096,8 @@ export type ProductMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   productStatus?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   brand?: Prisma.SortOrder
   material?: Prisma.SortOrder
   careInstructions?: Prisma.SortOrder
@@ -1077,7 +1106,6 @@ export type ProductMaxOrderByAggregateInput = {
   seoDescription?: Prisma.SortOrder
   seoKeywords?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
-  visibility?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   soldCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -1104,6 +1132,8 @@ export type ProductMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   productStatus?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   brand?: Prisma.SortOrder
   material?: Prisma.SortOrder
   careInstructions?: Prisma.SortOrder
@@ -1112,7 +1142,6 @@ export type ProductMinOrderByAggregateInput = {
   seoDescription?: Prisma.SortOrder
   seoKeywords?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
-  visibility?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   soldCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -1235,16 +1264,20 @@ export type ProductUncheckedUpdateManyWithoutBrandRelationNestedInput = {
   deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
 }
 
-export type NullableEnumProductStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ProductStatus | null
+export type NullableEnumLegacyProductStatusFieldUpdateOperationsInput = {
+  set?: $Enums.LegacyProductStatus | null
+}
+
+export type EnumLegacyProductVisibilityFieldUpdateOperationsInput = {
+  set?: $Enums.LegacyProductVisibility
+}
+
+export type EnumProductStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ProductStatus
 }
 
 export type NullableEnumProductGenderFieldUpdateOperationsInput = {
   set?: $Enums.ProductGender | null
-}
-
-export type EnumProductVisibilityFieldUpdateOperationsInput = {
-  set?: $Enums.ProductVisibility
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -1285,6 +1318,22 @@ export type ProductUpdateOneRequiredWithoutDailySoldContributionsNestedInput = {
   upsert?: Prisma.ProductUpsertWithoutDailySoldContributionsInput
   connect?: Prisma.ProductWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutDailySoldContributionsInput, Prisma.ProductUpdateWithoutDailySoldContributionsInput>, Prisma.ProductUncheckedUpdateWithoutDailySoldContributionsInput>
+}
+
+export type ProductCreateNestedOneWithoutDraftsInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutDraftsInput, Prisma.ProductUncheckedCreateWithoutDraftsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutDraftsInput
+  connect?: Prisma.ProductWhereUniqueInput
+}
+
+export type ProductUpdateOneWithoutDraftsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutDraftsInput, Prisma.ProductUncheckedCreateWithoutDraftsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutDraftsInput
+  upsert?: Prisma.ProductUpsertWithoutDraftsInput
+  disconnect?: Prisma.ProductWhereInput | boolean
+  delete?: Prisma.ProductWhereInput | boolean
+  connect?: Prisma.ProductWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutDraftsInput, Prisma.ProductUpdateWithoutDraftsInput>, Prisma.ProductUncheckedUpdateWithoutDraftsInput>
 }
 
 export type ProductCreateNestedOneWithoutImagesInput = {
@@ -1482,7 +1531,9 @@ export type ProductCreateWithoutCategoryInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -1491,7 +1542,6 @@ export type ProductCreateWithoutCategoryInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -1520,6 +1570,7 @@ export type ProductCreateWithoutCategoryInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutCategoryInput = {
@@ -1533,7 +1584,9 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -1542,7 +1595,6 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -1570,6 +1622,7 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutCategoryInput = {
@@ -1613,7 +1666,9 @@ export type ProductScalarWhereInput = {
   quantity?: Prisma.IntFilter<"Product"> | number
   slug?: Prisma.StringNullableFilter<"Product"> | string | null
   description?: Prisma.StringNullableFilter<"Product"> | string | null
-  productStatus?: Prisma.EnumProductStatusNullableFilter<"Product"> | $Enums.ProductStatus | null
+  productStatus?: Prisma.EnumLegacyProductStatusNullableFilter<"Product"> | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFilter<"Product"> | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   brand?: Prisma.StringNullableFilter<"Product"> | string | null
   material?: Prisma.StringNullableFilter<"Product"> | string | null
   careInstructions?: Prisma.StringNullableFilter<"Product"> | string | null
@@ -1622,7 +1677,6 @@ export type ProductScalarWhereInput = {
   seoDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   seoKeywords?: Prisma.StringNullableFilter<"Product"> | string | null
   isFeatured?: Prisma.BoolFilter<"Product"> | boolean
-  visibility?: Prisma.EnumProductVisibilityFilter<"Product"> | $Enums.ProductVisibility
   viewCount?: Prisma.IntFilter<"Product"> | number
   soldCount?: Prisma.IntFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
@@ -1646,7 +1700,9 @@ export type ProductCreateWithoutBrandRelationInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -1655,7 +1711,6 @@ export type ProductCreateWithoutBrandRelationInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -1684,6 +1739,7 @@ export type ProductCreateWithoutBrandRelationInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutBrandRelationInput = {
@@ -1697,7 +1753,9 @@ export type ProductUncheckedCreateWithoutBrandRelationInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -1706,7 +1764,6 @@ export type ProductUncheckedCreateWithoutBrandRelationInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -1734,6 +1791,7 @@ export type ProductUncheckedCreateWithoutBrandRelationInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutBrandRelationInput = {
@@ -1771,7 +1829,9 @@ export type ProductCreateWithoutDailySalesInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -1780,7 +1840,6 @@ export type ProductCreateWithoutDailySalesInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -1809,6 +1868,7 @@ export type ProductCreateWithoutDailySalesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutDailySalesInput = {
@@ -1823,7 +1883,9 @@ export type ProductUncheckedCreateWithoutDailySalesInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -1832,7 +1894,6 @@ export type ProductUncheckedCreateWithoutDailySalesInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -1859,6 +1920,7 @@ export type ProductUncheckedCreateWithoutDailySalesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutDailySalesInput = {
@@ -1886,7 +1948,9 @@ export type ProductUpdateWithoutDailySalesInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1895,7 +1959,6 @@ export type ProductUpdateWithoutDailySalesInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1924,6 +1987,7 @@ export type ProductUpdateWithoutDailySalesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutDailySalesInput = {
@@ -1938,7 +2002,9 @@ export type ProductUncheckedUpdateWithoutDailySalesInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1947,7 +2013,6 @@ export type ProductUncheckedUpdateWithoutDailySalesInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1974,6 +2039,7 @@ export type ProductUncheckedUpdateWithoutDailySalesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutDailySoldContributionsInput = {
@@ -1985,7 +2051,9 @@ export type ProductCreateWithoutDailySoldContributionsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -1994,7 +2062,6 @@ export type ProductCreateWithoutDailySoldContributionsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2023,6 +2090,7 @@ export type ProductCreateWithoutDailySoldContributionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutDailySoldContributionsInput = {
@@ -2037,7 +2105,9 @@ export type ProductUncheckedCreateWithoutDailySoldContributionsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2046,7 +2116,6 @@ export type ProductUncheckedCreateWithoutDailySoldContributionsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2073,6 +2142,7 @@ export type ProductUncheckedCreateWithoutDailySoldContributionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutDailySoldContributionsInput = {
@@ -2100,7 +2170,9 @@ export type ProductUpdateWithoutDailySoldContributionsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2109,7 +2181,6 @@ export type ProductUpdateWithoutDailySoldContributionsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2138,6 +2209,7 @@ export type ProductUpdateWithoutDailySoldContributionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutDailySoldContributionsInput = {
@@ -2152,7 +2224,9 @@ export type ProductUncheckedUpdateWithoutDailySoldContributionsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2161,7 +2235,6 @@ export type ProductUncheckedUpdateWithoutDailySoldContributionsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2188,6 +2261,229 @@ export type ProductUncheckedUpdateWithoutDailySoldContributionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+}
+
+export type ProductCreateWithoutDraftsInput = {
+  title: string
+  imageUrl: string
+  imagePublicId: string
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: number
+  slug?: string | null
+  description?: string | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
+  brand?: string | null
+  material?: string | null
+  careInstructions?: string | null
+  gender?: $Enums.ProductGender | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  isFeatured?: boolean
+  viewCount?: number
+  soldCount?: number
+  publishedAt?: Date | string | null
+  isPublished?: boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: string | null
+  weight?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category: Prisma.CategoryCreateNestedOneWithoutProductsInput
+  brandRelation?: Prisma.BrandCreateNestedOneWithoutProductsInput
+  dailySales?: Prisma.DailySoldProductCreateNestedManyWithoutProductInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
+  variantGroups?: Prisma.VariantGroupCreateNestedManyWithoutProductInput
+  variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
+  inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductInput
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutProductInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
+  couponProducts?: Prisma.CouponProductCreateNestedManyWithoutProductInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductCreateNestedManyWithoutProductInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+}
+
+export type ProductUncheckedCreateWithoutDraftsInput = {
+  id?: number
+  title: string
+  imageUrl: string
+  imagePublicId: string
+  categoryId: number
+  brandId?: number | null
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: number
+  slug?: string | null
+  description?: string | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
+  brand?: string | null
+  material?: string | null
+  careInstructions?: string | null
+  gender?: $Enums.ProductGender | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  isFeatured?: boolean
+  viewCount?: number
+  soldCount?: number
+  publishedAt?: Date | string | null
+  isPublished?: boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: string | null
+  weight?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dailySales?: Prisma.DailySoldProductUncheckedCreateNestedManyWithoutProductInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
+  variantGroups?: Prisma.VariantGroupUncheckedCreateNestedManyWithoutProductInput
+  variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductInput
+  cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutProductInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProductInput
+  couponProducts?: Prisma.CouponProductUncheckedCreateNestedManyWithoutProductInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedCreateNestedManyWithoutProductInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+}
+
+export type ProductCreateOrConnectWithoutDraftsInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutDraftsInput, Prisma.ProductUncheckedCreateWithoutDraftsInput>
+}
+
+export type ProductUpsertWithoutDraftsInput = {
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutDraftsInput, Prisma.ProductUncheckedUpdateWithoutDraftsInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutDraftsInput, Prisma.ProductUncheckedCreateWithoutDraftsInput>
+  where?: Prisma.ProductWhereInput
+}
+
+export type ProductUpdateToOneWithWhereWithoutDraftsInput = {
+  where?: Prisma.ProductWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutDraftsInput, Prisma.ProductUncheckedUpdateWithoutDraftsInput>
+}
+
+export type ProductUpdateWithoutDraftsInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imagePublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+  brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableEnumProductGenderFieldUpdateOperationsInput | $Enums.ProductGender | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  soldCount?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  weight?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
+  brandRelation?: Prisma.BrandUpdateOneWithoutProductsNestedInput
+  dailySales?: Prisma.DailySoldProductUpdateManyWithoutProductNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
+  variantGroups?: Prisma.VariantGroupUpdateManyWithoutProductNestedInput
+  variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductNestedInput
+  cartItems?: Prisma.CartItemUpdateManyWithoutProductNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
+  couponProducts?: Prisma.CouponProductUpdateManyWithoutProductNestedInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductUpdateManyWithoutProductNestedInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutDraftsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imagePublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  brandId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+  brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableEnumProductGenderFieldUpdateOperationsInput | $Enums.ProductGender | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  soldCount?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  weight?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailySales?: Prisma.DailySoldProductUncheckedUpdateManyWithoutProductNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
+  variantGroups?: Prisma.VariantGroupUncheckedUpdateManyWithoutProductNestedInput
+  variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductNestedInput
+  cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutProductNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProductNestedInput
+  couponProducts?: Prisma.CouponProductUncheckedUpdateManyWithoutProductNestedInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedUpdateManyWithoutProductNestedInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutImagesInput = {
@@ -2199,7 +2495,9 @@ export type ProductCreateWithoutImagesInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2208,7 +2506,6 @@ export type ProductCreateWithoutImagesInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2237,6 +2534,7 @@ export type ProductCreateWithoutImagesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutImagesInput = {
@@ -2251,7 +2549,9 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2260,7 +2560,6 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2287,6 +2586,7 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutImagesInput = {
@@ -2314,7 +2614,9 @@ export type ProductUpdateWithoutImagesInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2323,7 +2625,6 @@ export type ProductUpdateWithoutImagesInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2352,6 +2653,7 @@ export type ProductUpdateWithoutImagesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutImagesInput = {
@@ -2366,7 +2668,9 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2375,7 +2679,6 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2402,6 +2705,7 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutVariantGroupsInput = {
@@ -2413,7 +2717,9 @@ export type ProductCreateWithoutVariantGroupsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2422,7 +2728,6 @@ export type ProductCreateWithoutVariantGroupsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2451,6 +2756,7 @@ export type ProductCreateWithoutVariantGroupsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutVariantGroupsInput = {
@@ -2465,7 +2771,9 @@ export type ProductUncheckedCreateWithoutVariantGroupsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2474,7 +2782,6 @@ export type ProductUncheckedCreateWithoutVariantGroupsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2501,6 +2808,7 @@ export type ProductUncheckedCreateWithoutVariantGroupsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutVariantGroupsInput = {
@@ -2528,7 +2836,9 @@ export type ProductUpdateWithoutVariantGroupsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2537,7 +2847,6 @@ export type ProductUpdateWithoutVariantGroupsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2566,6 +2875,7 @@ export type ProductUpdateWithoutVariantGroupsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutVariantGroupsInput = {
@@ -2580,7 +2890,9 @@ export type ProductUncheckedUpdateWithoutVariantGroupsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2589,7 +2901,6 @@ export type ProductUncheckedUpdateWithoutVariantGroupsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2616,6 +2927,7 @@ export type ProductUncheckedUpdateWithoutVariantGroupsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutVariantsInput = {
@@ -2627,7 +2939,9 @@ export type ProductCreateWithoutVariantsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2636,7 +2950,6 @@ export type ProductCreateWithoutVariantsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2665,6 +2978,7 @@ export type ProductCreateWithoutVariantsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutVariantsInput = {
@@ -2679,7 +2993,9 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2688,7 +3004,6 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2715,6 +3030,7 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutVariantsInput = {
@@ -2742,7 +3058,9 @@ export type ProductUpdateWithoutVariantsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2751,7 +3069,6 @@ export type ProductUpdateWithoutVariantsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2780,6 +3097,7 @@ export type ProductUpdateWithoutVariantsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutVariantsInput = {
@@ -2794,7 +3112,9 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2803,7 +3123,6 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2830,6 +3149,7 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutCartItemsInput = {
@@ -2841,7 +3161,9 @@ export type ProductCreateWithoutCartItemsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2850,7 +3172,6 @@ export type ProductCreateWithoutCartItemsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2879,6 +3200,7 @@ export type ProductCreateWithoutCartItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutCartItemsInput = {
@@ -2893,7 +3215,9 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -2902,7 +3226,6 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -2929,6 +3252,7 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutCartItemsInput = {
@@ -2956,7 +3280,9 @@ export type ProductUpdateWithoutCartItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2965,7 +3291,6 @@ export type ProductUpdateWithoutCartItemsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2994,6 +3319,7 @@ export type ProductUpdateWithoutCartItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutCartItemsInput = {
@@ -3008,7 +3334,9 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3017,7 +3345,6 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3044,6 +3371,7 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutWishlistItemsInput = {
@@ -3055,7 +3383,9 @@ export type ProductCreateWithoutWishlistItemsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3064,7 +3394,6 @@ export type ProductCreateWithoutWishlistItemsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3093,6 +3422,7 @@ export type ProductCreateWithoutWishlistItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutWishlistItemsInput = {
@@ -3107,7 +3437,9 @@ export type ProductUncheckedCreateWithoutWishlistItemsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3116,7 +3448,6 @@ export type ProductUncheckedCreateWithoutWishlistItemsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3143,6 +3474,7 @@ export type ProductUncheckedCreateWithoutWishlistItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutWishlistItemsInput = {
@@ -3170,7 +3502,9 @@ export type ProductUpdateWithoutWishlistItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3179,7 +3513,6 @@ export type ProductUpdateWithoutWishlistItemsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3208,6 +3541,7 @@ export type ProductUpdateWithoutWishlistItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
@@ -3222,7 +3556,9 @@ export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3231,7 +3567,6 @@ export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3258,6 +3593,7 @@ export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutOrderItemsInput = {
@@ -3269,7 +3605,9 @@ export type ProductCreateWithoutOrderItemsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3278,7 +3616,6 @@ export type ProductCreateWithoutOrderItemsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3307,6 +3644,7 @@ export type ProductCreateWithoutOrderItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutOrderItemsInput = {
@@ -3321,7 +3659,9 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3330,7 +3670,6 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3357,6 +3696,7 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutOrderItemsInput = {
@@ -3384,7 +3724,9 @@ export type ProductUpdateWithoutOrderItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3393,7 +3735,6 @@ export type ProductUpdateWithoutOrderItemsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3422,6 +3763,7 @@ export type ProductUpdateWithoutOrderItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutOrderItemsInput = {
@@ -3436,7 +3778,9 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3445,7 +3789,6 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3472,6 +3815,7 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutInventoryTransactionsInput = {
@@ -3483,7 +3827,9 @@ export type ProductCreateWithoutInventoryTransactionsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3492,7 +3838,6 @@ export type ProductCreateWithoutInventoryTransactionsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3521,6 +3866,7 @@ export type ProductCreateWithoutInventoryTransactionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutInventoryTransactionsInput = {
@@ -3535,7 +3881,9 @@ export type ProductUncheckedCreateWithoutInventoryTransactionsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3544,7 +3892,6 @@ export type ProductUncheckedCreateWithoutInventoryTransactionsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3571,6 +3918,7 @@ export type ProductUncheckedCreateWithoutInventoryTransactionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutInventoryTransactionsInput = {
@@ -3598,7 +3946,9 @@ export type ProductUpdateWithoutInventoryTransactionsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3607,7 +3957,6 @@ export type ProductUpdateWithoutInventoryTransactionsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3636,6 +3985,7 @@ export type ProductUpdateWithoutInventoryTransactionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutInventoryTransactionsInput = {
@@ -3650,7 +4000,9 @@ export type ProductUncheckedUpdateWithoutInventoryTransactionsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3659,7 +4011,6 @@ export type ProductUncheckedUpdateWithoutInventoryTransactionsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3686,6 +4037,7 @@ export type ProductUncheckedUpdateWithoutInventoryTransactionsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutCouponProductsInput = {
@@ -3697,7 +4049,9 @@ export type ProductCreateWithoutCouponProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3706,7 +4060,6 @@ export type ProductCreateWithoutCouponProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3735,6 +4088,7 @@ export type ProductCreateWithoutCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutCouponProductsInput = {
@@ -3749,7 +4103,9 @@ export type ProductUncheckedCreateWithoutCouponProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3758,7 +4114,6 @@ export type ProductUncheckedCreateWithoutCouponProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3785,6 +4140,7 @@ export type ProductUncheckedCreateWithoutCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutCouponProductsInput = {
@@ -3812,7 +4168,9 @@ export type ProductUpdateWithoutCouponProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3821,7 +4179,6 @@ export type ProductUpdateWithoutCouponProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3850,6 +4207,7 @@ export type ProductUpdateWithoutCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutCouponProductsInput = {
@@ -3864,7 +4222,9 @@ export type ProductUncheckedUpdateWithoutCouponProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3873,7 +4233,6 @@ export type ProductUncheckedUpdateWithoutCouponProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3900,6 +4259,7 @@ export type ProductUncheckedUpdateWithoutCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutExcludedCouponProductsInput = {
@@ -3911,7 +4271,9 @@ export type ProductCreateWithoutExcludedCouponProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3920,7 +4282,6 @@ export type ProductCreateWithoutExcludedCouponProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3949,6 +4310,7 @@ export type ProductCreateWithoutExcludedCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutExcludedCouponProductsInput = {
@@ -3963,7 +4325,9 @@ export type ProductUncheckedCreateWithoutExcludedCouponProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -3972,7 +4336,6 @@ export type ProductUncheckedCreateWithoutExcludedCouponProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -3999,6 +4362,7 @@ export type ProductUncheckedCreateWithoutExcludedCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutExcludedCouponProductsInput = {
@@ -4026,7 +4390,9 @@ export type ProductUpdateWithoutExcludedCouponProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4035,7 +4401,6 @@ export type ProductUpdateWithoutExcludedCouponProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4064,6 +4429,7 @@ export type ProductUpdateWithoutExcludedCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutExcludedCouponProductsInput = {
@@ -4078,7 +4444,9 @@ export type ProductUncheckedUpdateWithoutExcludedCouponProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4087,7 +4455,6 @@ export type ProductUncheckedUpdateWithoutExcludedCouponProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4114,6 +4481,7 @@ export type ProductUncheckedUpdateWithoutExcludedCouponProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutReviewsInput = {
@@ -4125,7 +4493,9 @@ export type ProductCreateWithoutReviewsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4134,7 +4504,6 @@ export type ProductCreateWithoutReviewsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4163,6 +4532,7 @@ export type ProductCreateWithoutReviewsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutReviewsInput = {
@@ -4177,7 +4547,9 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4186,7 +4558,6 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4213,6 +4584,7 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutReviewsInput = {
@@ -4240,7 +4612,9 @@ export type ProductUpdateWithoutReviewsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4249,7 +4623,6 @@ export type ProductUpdateWithoutReviewsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4278,6 +4651,7 @@ export type ProductUpdateWithoutReviewsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutReviewsInput = {
@@ -4292,7 +4666,9 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4301,7 +4677,6 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4328,6 +4703,7 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutRecentlyViewedByInput = {
@@ -4339,7 +4715,9 @@ export type ProductCreateWithoutRecentlyViewedByInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4348,7 +4726,6 @@ export type ProductCreateWithoutRecentlyViewedByInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4377,6 +4754,7 @@ export type ProductCreateWithoutRecentlyViewedByInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductCreateNestedManyWithoutProductInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutRecentlyViewedByInput = {
@@ -4391,7 +4769,9 @@ export type ProductUncheckedCreateWithoutRecentlyViewedByInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4400,7 +4780,6 @@ export type ProductUncheckedCreateWithoutRecentlyViewedByInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4427,6 +4806,7 @@ export type ProductUncheckedCreateWithoutRecentlyViewedByInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedCreateNestedManyWithoutProductInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutRecentlyViewedByInput = {
@@ -4454,7 +4834,9 @@ export type ProductUpdateWithoutRecentlyViewedByInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4463,7 +4845,6 @@ export type ProductUpdateWithoutRecentlyViewedByInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4492,6 +4873,7 @@ export type ProductUpdateWithoutRecentlyViewedByInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUpdateManyWithoutProductNestedInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutRecentlyViewedByInput = {
@@ -4506,7 +4888,9 @@ export type ProductUncheckedUpdateWithoutRecentlyViewedByInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4515,7 +4899,6 @@ export type ProductUncheckedUpdateWithoutRecentlyViewedByInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4542,6 +4925,7 @@ export type ProductUncheckedUpdateWithoutRecentlyViewedByInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedUpdateManyWithoutProductNestedInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutHomepageFeaturedProductsInput = {
@@ -4553,7 +4937,9 @@ export type ProductCreateWithoutHomepageFeaturedProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4562,7 +4948,6 @@ export type ProductCreateWithoutHomepageFeaturedProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4591,6 +4976,7 @@ export type ProductCreateWithoutHomepageFeaturedProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutHomepageFeaturedProductsInput = {
@@ -4605,7 +4991,9 @@ export type ProductUncheckedCreateWithoutHomepageFeaturedProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4614,7 +5002,6 @@ export type ProductUncheckedCreateWithoutHomepageFeaturedProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4641,6 +5028,7 @@ export type ProductUncheckedCreateWithoutHomepageFeaturedProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutHomepageFeaturedProductsInput = {
@@ -4668,7 +5056,9 @@ export type ProductUpdateWithoutHomepageFeaturedProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4677,7 +5067,6 @@ export type ProductUpdateWithoutHomepageFeaturedProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4706,6 +5095,7 @@ export type ProductUpdateWithoutHomepageFeaturedProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutHomepageFeaturedProductsInput = {
@@ -4720,7 +5110,9 @@ export type ProductUncheckedUpdateWithoutHomepageFeaturedProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4729,7 +5121,6 @@ export type ProductUncheckedUpdateWithoutHomepageFeaturedProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4756,6 +5147,7 @@ export type ProductUncheckedUpdateWithoutHomepageFeaturedProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutHomepageSectionProductsInput = {
@@ -4767,7 +5159,9 @@ export type ProductCreateWithoutHomepageSectionProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4776,7 +5170,6 @@ export type ProductCreateWithoutHomepageSectionProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4805,6 +5198,7 @@ export type ProductCreateWithoutHomepageSectionProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductCreateNestedManyWithoutProductInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductUncheckedCreateWithoutHomepageSectionProductsInput = {
@@ -4819,7 +5213,9 @@ export type ProductUncheckedCreateWithoutHomepageSectionProductsInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4828,7 +5224,6 @@ export type ProductUncheckedCreateWithoutHomepageSectionProductsInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -4855,6 +5250,7 @@ export type ProductUncheckedCreateWithoutHomepageSectionProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedCreateNestedManyWithoutProductInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
 }
 
 export type ProductCreateOrConnectWithoutHomepageSectionProductsInput = {
@@ -4882,7 +5278,9 @@ export type ProductUpdateWithoutHomepageSectionProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4891,7 +5289,6 @@ export type ProductUpdateWithoutHomepageSectionProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4920,6 +5317,7 @@ export type ProductUpdateWithoutHomepageSectionProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUpdateManyWithoutProductNestedInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutHomepageSectionProductsInput = {
@@ -4934,7 +5332,9 @@ export type ProductUncheckedUpdateWithoutHomepageSectionProductsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4943,7 +5343,6 @@ export type ProductUncheckedUpdateWithoutHomepageSectionProductsInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4970,6 +5369,7 @@ export type ProductUncheckedUpdateWithoutHomepageSectionProductsInput = {
   excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedUpdateManyWithoutProductNestedInput
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateManyCategoryInput = {
@@ -4983,7 +5383,9 @@ export type ProductCreateManyCategoryInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -4992,7 +5394,6 @@ export type ProductCreateManyCategoryInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -5016,7 +5417,9 @@ export type ProductUpdateWithoutCategoryInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5025,7 +5428,6 @@ export type ProductUpdateWithoutCategoryInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5054,6 +5456,7 @@ export type ProductUpdateWithoutCategoryInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutCategoryInput = {
@@ -5067,7 +5470,9 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5076,7 +5481,6 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5104,6 +5508,7 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateManyWithoutCategoryInput = {
@@ -5117,7 +5522,9 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5126,7 +5533,6 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5152,7 +5558,9 @@ export type ProductCreateManyBrandRelationInput = {
   quantity?: number
   slug?: string | null
   description?: string | null
-  productStatus?: $Enums.ProductStatus | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
   brand?: string | null
   material?: string | null
   careInstructions?: string | null
@@ -5161,7 +5569,6 @@ export type ProductCreateManyBrandRelationInput = {
   seoDescription?: string | null
   seoKeywords?: string | null
   isFeatured?: boolean
-  visibility?: $Enums.ProductVisibility
   viewCount?: number
   soldCount?: number
   publishedAt?: Date | string | null
@@ -5185,7 +5592,9 @@ export type ProductUpdateWithoutBrandRelationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5194,7 +5603,6 @@ export type ProductUpdateWithoutBrandRelationInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5223,6 +5631,7 @@ export type ProductUpdateWithoutBrandRelationInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutBrandRelationInput = {
@@ -5236,7 +5645,9 @@ export type ProductUncheckedUpdateWithoutBrandRelationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5245,7 +5656,6 @@ export type ProductUncheckedUpdateWithoutBrandRelationInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5273,6 +5683,7 @@ export type ProductUncheckedUpdateWithoutBrandRelationInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductUncheckedUpdateManyWithoutBrandRelationInput = {
@@ -5286,7 +5697,9 @@ export type ProductUncheckedUpdateManyWithoutBrandRelationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  productStatus?: Prisma.NullableEnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5295,7 +5708,6 @@ export type ProductUncheckedUpdateManyWithoutBrandRelationInput = {
   seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  visibility?: Prisma.EnumProductVisibilityFieldUpdateOperationsInput | $Enums.ProductVisibility
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   soldCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5331,6 +5743,7 @@ export type ProductCountOutputType = {
   homepageFeaturedProducts: number
   homepageSectionProducts: number
   recentlyViewedBy: number
+  drafts: number
 }
 
 export type ProductCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5349,6 +5762,7 @@ export type ProductCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   homepageFeaturedProducts?: boolean | ProductCountOutputTypeCountHomepageFeaturedProductsArgs
   homepageSectionProducts?: boolean | ProductCountOutputTypeCountHomepageSectionProductsArgs
   recentlyViewedBy?: boolean | ProductCountOutputTypeCountRecentlyViewedByArgs
+  drafts?: boolean | ProductCountOutputTypeCountDraftsArgs
 }
 
 /**
@@ -5466,6 +5880,13 @@ export type ProductCountOutputTypeCountRecentlyViewedByArgs<ExtArgs extends runt
   where?: Prisma.RecentlyViewedProductWhereInput
 }
 
+/**
+ * ProductCountOutputType without action
+ */
+export type ProductCountOutputTypeCountDraftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductDraftWhereInput
+}
+
 
 export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5480,6 +5901,8 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   slug?: boolean
   description?: boolean
   productStatus?: boolean
+  visibility?: boolean
+  status?: boolean
   brand?: boolean
   material?: boolean
   careInstructions?: boolean
@@ -5488,7 +5911,6 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   seoDescription?: boolean
   seoKeywords?: boolean
   isFeatured?: boolean
-  visibility?: boolean
   viewCount?: boolean
   soldCount?: boolean
   publishedAt?: boolean
@@ -5518,6 +5940,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   homepageFeaturedProducts?: boolean | Prisma.Product$homepageFeaturedProductsArgs<ExtArgs>
   homepageSectionProducts?: boolean | Prisma.Product$homepageSectionProductsArgs<ExtArgs>
   recentlyViewedBy?: boolean | Prisma.Product$recentlyViewedByArgs<ExtArgs>
+  drafts?: boolean | Prisma.Product$draftsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
@@ -5534,6 +5957,8 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   slug?: boolean
   description?: boolean
   productStatus?: boolean
+  visibility?: boolean
+  status?: boolean
   brand?: boolean
   material?: boolean
   careInstructions?: boolean
@@ -5542,7 +5967,6 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   seoDescription?: boolean
   seoKeywords?: boolean
   isFeatured?: boolean
-  visibility?: boolean
   viewCount?: boolean
   soldCount?: boolean
   publishedAt?: boolean
@@ -5572,6 +5996,8 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   slug?: boolean
   description?: boolean
   productStatus?: boolean
+  visibility?: boolean
+  status?: boolean
   brand?: boolean
   material?: boolean
   careInstructions?: boolean
@@ -5580,7 +6006,6 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   seoDescription?: boolean
   seoKeywords?: boolean
   isFeatured?: boolean
-  visibility?: boolean
   viewCount?: boolean
   soldCount?: boolean
   publishedAt?: boolean
@@ -5610,6 +6035,8 @@ export type ProductSelectScalar = {
   slug?: boolean
   description?: boolean
   productStatus?: boolean
+  visibility?: boolean
+  status?: boolean
   brand?: boolean
   material?: boolean
   careInstructions?: boolean
@@ -5618,7 +6045,6 @@ export type ProductSelectScalar = {
   seoDescription?: boolean
   seoKeywords?: boolean
   isFeatured?: boolean
-  visibility?: boolean
   viewCount?: boolean
   soldCount?: boolean
   publishedAt?: boolean
@@ -5633,7 +6059,7 @@ export type ProductSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "imageUrl" | "imagePublicId" | "categoryId" | "brandId" | "importPrice" | "sellPrice" | "quantity" | "slug" | "description" | "productStatus" | "brand" | "material" | "careInstructions" | "gender" | "seoTitle" | "seoDescription" | "seoKeywords" | "isFeatured" | "visibility" | "viewCount" | "soldCount" | "publishedAt" | "isPublished" | "tags" | "videoUrl" | "weight" | "length" | "width" | "height" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "imageUrl" | "imagePublicId" | "categoryId" | "brandId" | "importPrice" | "sellPrice" | "quantity" | "slug" | "description" | "productStatus" | "visibility" | "status" | "brand" | "material" | "careInstructions" | "gender" | "seoTitle" | "seoDescription" | "seoKeywords" | "isFeatured" | "viewCount" | "soldCount" | "publishedAt" | "isPublished" | "tags" | "videoUrl" | "weight" | "length" | "width" | "height" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   brandRelation?: boolean | Prisma.Product$brandRelationArgs<ExtArgs>
@@ -5652,6 +6078,7 @@ export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   homepageFeaturedProducts?: boolean | Prisma.Product$homepageFeaturedProductsArgs<ExtArgs>
   homepageSectionProducts?: boolean | Prisma.Product$homepageSectionProductsArgs<ExtArgs>
   recentlyViewedBy?: boolean | Prisma.Product$recentlyViewedByArgs<ExtArgs>
+  drafts?: boolean | Prisma.Product$draftsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5686,6 +6113,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     homepageFeaturedProducts: Prisma.$HomepageFeaturedProductPayload<ExtArgs>[]
     homepageSectionProducts: Prisma.$HomepageSectionProductPayload<ExtArgs>[]
     recentlyViewedBy: Prisma.$RecentlyViewedProductPayload<ExtArgs>[]
+    drafts: Prisma.$ProductDraftPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -5714,7 +6142,9 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
      */
     slug: string | null
     description: string | null
-    productStatus: $Enums.ProductStatus | null
+    productStatus: $Enums.LegacyProductStatus | null
+    visibility: $Enums.LegacyProductVisibility
+    status: $Enums.ProductStatus
     brand: string | null
     material: string | null
     careInstructions: string | null
@@ -5723,7 +6153,6 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     seoDescription: string | null
     seoKeywords: string | null
     isFeatured: boolean
-    visibility: $Enums.ProductVisibility
     viewCount: number
     soldCount: number
     publishedAt: Date | null
@@ -6147,6 +6576,7 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
   homepageFeaturedProducts<T extends Prisma.Product$homepageFeaturedProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$homepageFeaturedProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HomepageFeaturedProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   homepageSectionProducts<T extends Prisma.Product$homepageSectionProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$homepageSectionProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HomepageSectionProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recentlyViewedBy<T extends Prisma.Product$recentlyViewedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$recentlyViewedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecentlyViewedProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  drafts<T extends Prisma.Product$draftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$draftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductDraftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6187,7 +6617,9 @@ export interface ProductFieldRefs {
   readonly quantity: Prisma.FieldRef<"Product", 'Int'>
   readonly slug: Prisma.FieldRef<"Product", 'String'>
   readonly description: Prisma.FieldRef<"Product", 'String'>
-  readonly productStatus: Prisma.FieldRef<"Product", 'ProductStatus'>
+  readonly productStatus: Prisma.FieldRef<"Product", 'LegacyProductStatus'>
+  readonly visibility: Prisma.FieldRef<"Product", 'LegacyProductVisibility'>
+  readonly status: Prisma.FieldRef<"Product", 'ProductStatus'>
   readonly brand: Prisma.FieldRef<"Product", 'String'>
   readonly material: Prisma.FieldRef<"Product", 'String'>
   readonly careInstructions: Prisma.FieldRef<"Product", 'String'>
@@ -6196,7 +6628,6 @@ export interface ProductFieldRefs {
   readonly seoDescription: Prisma.FieldRef<"Product", 'String'>
   readonly seoKeywords: Prisma.FieldRef<"Product", 'String'>
   readonly isFeatured: Prisma.FieldRef<"Product", 'Boolean'>
-  readonly visibility: Prisma.FieldRef<"Product", 'ProductVisibility'>
   readonly viewCount: Prisma.FieldRef<"Product", 'Int'>
   readonly soldCount: Prisma.FieldRef<"Product", 'Int'>
   readonly publishedAt: Prisma.FieldRef<"Product", 'DateTime'>
@@ -6981,6 +7412,30 @@ export type Product$recentlyViewedByArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.RecentlyViewedProductScalarFieldEnum | Prisma.RecentlyViewedProductScalarFieldEnum[]
+}
+
+/**
+ * Product.drafts
+ */
+export type Product$draftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductDraft
+   */
+  select?: Prisma.ProductDraftSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductDraft
+   */
+  omit?: Prisma.ProductDraftOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductDraftInclude<ExtArgs> | null
+  where?: Prisma.ProductDraftWhereInput
+  orderBy?: Prisma.ProductDraftOrderByWithRelationInput | Prisma.ProductDraftOrderByWithRelationInput[]
+  cursor?: Prisma.ProductDraftWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductDraftScalarFieldEnum | Prisma.ProductDraftScalarFieldEnum[]
 }
 
 /**

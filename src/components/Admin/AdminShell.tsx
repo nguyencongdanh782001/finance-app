@@ -61,7 +61,7 @@ function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
 
   return (
     <nav aria-label="Điều hướng quản trị" className="space-y-1 px-3">
-      <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400/75">
+      <p className="mb-3 px-3 text-11px font-semibold uppercase tracking-[0.12em] text-slate-400/75">
         Quản lý cửa hàng
       </p>
       {ADMIN_NAV_ITEMS.map((item) => {
@@ -73,8 +73,8 @@ function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
             className={cn(
               "flex h-10 min-w-0 items-center gap-3 rounded-lg border-l-2 px-3 text-sm font-medium outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-primary/40",
               active
-                ? "border-primary bg-[var(--admin-sidebar-hover)] text-white shadow-[inset_0_1px_0_rgb(255_255_255_/_0.06)]"
-                : "border-transparent text-slate-300 hover:bg-[var(--admin-sidebar-hover)] hover:text-white",
+                ? "border-primary bg-(--admin-sidebar-hover) text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.06)]"
+                : "border-transparent text-slate-300 hover:bg-(--admin-sidebar-hover) hover:text-white",
             )}
           >
             <Icon className="size-4 shrink-0" />
@@ -122,8 +122,8 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="admin-shell min-h-svh bg-[var(--admin-background)] text-[var(--admin-text)]">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 border-r border-white/5 bg-[var(--admin-sidebar)] lg:flex lg:flex-col">
+    <div className="admin-shell min-h-svh bg-(--admin-background) text-(--admin-text)">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 border-r border-white/5 bg-(--admin-sidebar) lg:flex lg:flex-col">
         <div className="flex h-16 items-center border-b border-white/8">
           <AdminBrand />
         </div>
@@ -133,7 +133,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="min-w-0 lg:pl-60">
-        <header className="sticky top-0 z-40 flex h-15 items-center justify-between gap-3 border-b border-[var(--admin-border)] bg-white/95 px-4 backdrop-blur sm:px-5 lg:px-6">
+        <header className="sticky top-0 z-40 flex h-15 items-center justify-between gap-3 border-b border-(--admin-border) bg-white/95 px-4 backdrop-blur sm:px-5 lg:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
             <Sheet>
               <SheetTrigger asChild>
@@ -141,13 +141,13 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] text-[var(--admin-text-secondary)] hover:bg-[var(--admin-primary-soft)] hover:text-primary lg:hidden"
+                  className="rounded-lg border border-(--admin-border) bg-(--admin-surface) text-(--admin-text-secondary) hover:bg-(--admin-primary-soft) hover:text-primary lg:hidden"
                   aria-label="Mở menu quản trị"
                 >
                   <Menu className="size-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent className="flex flex-col bg-[var(--admin-sidebar)] p-0 text-white [&>button]:text-slate-300 [&>button:hover]:bg-white/10 [&>button:hover]:text-white">
+              <SheetContent className="flex flex-col bg-(--admin-sidebar) p-0 text-white [&>button]:text-slate-300 [&>button:hover]:bg-white/10 [&>button:hover]:text-white">
                 <SheetTitle className="sr-only">Menu quản trị</SheetTitle>
                 <SheetDescription className="sr-only">
                   Điều hướng các trang quản trị của cửa hàng
@@ -160,7 +160,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                 </div>
               </SheetContent>
             </Sheet>
-            <p className="truncate text-sm font-semibold text-[var(--admin-text-secondary)]">
+            <p className="truncate text-sm font-semibold text-(--admin-text-secondary)">
               {getPageTitle(pathname)}
             </p>
           </div>

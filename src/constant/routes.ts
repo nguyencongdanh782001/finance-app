@@ -40,6 +40,7 @@ export const API_ROUTES = {
   createProduct: APP_API_URL("product"),
   getProductDetail: (id: number) => APP_API_URL(`product/${id}`),
   updateProduct: (id: number) => APP_API_URL(`product/${id}`),
+  updateProductStatus: (id: number) => APP_API_URL(`product/${id}/status`),
   deleteProduct: (id: number) => APP_API_URL(`product/${id}`),
   uploadFileCloudinary: APP_API_URL("upload/cloudinary"),
   authRegister: APP_API_URL("auth/register"),

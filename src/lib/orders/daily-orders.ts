@@ -6,7 +6,6 @@ import {
   PaymentMethod,
   PaymentStatus,
   ProductStatus,
-  ProductVisibility,
   Prisma,
 } from "@/app/generated/prisma/client";
 
@@ -188,13 +187,17 @@ const buildOrderItems = async (
   const products = await tx.product.findMany({
     where: {
       id: { in: productIds },
-      productStatus: { not: ProductStatus.ARCHIVED },
-      visibility: { not: ProductVisibility.PRIVATE },
+      status: { not: ProductStatus.DISCONTINUED },
     },
     include: {
       category: true,
+      images: {
+        where: { variantId: null },
+        orderBy: { position: "asc" },
+      },
       variants: {
         include: {
+          images: { orderBy: { position: "asc" } },
           options: {
             include: {
               option: true,
@@ -225,6 +228,12 @@ const buildOrderItems = async (
           (productVariant) => productVariant.id === item.variantId,
         )
       : null;
+
+    if (!item.variantId && product.variants.length > 0) {
+      throw new Error(
+        `Vui lòng chọn màu và kích thước cho "${product.title}".`,
+      );
+    }
 
     if (item.variantId && (!variant || !variant.isActive)) {
       throw new Error(`Biến thể của "${product.title}" không còn khả dụng.`);
@@ -258,21 +267,44 @@ const buildOrderItems = async (
     subtotal += lineSubtotal;
     totalCost += lineCost;
 
-    const variantOptionText = variant?.options
-      .map((option) => option.option.value)
-      .filter(Boolean)
+    const variantOptionValues =
+      variant?.options.map((option) => option.option.value).filter(Boolean) ||
+      [];
+    const variantOptionText = [
+      variant?.color,
+      variant?.size,
+      ...variantOptionValues,
+    ]
+      .filter(
+        (value, index, values): value is string =>
+          Boolean(value) && values.indexOf(value) === index,
+      )
       .join(" / ");
+
+    const productImageUrl =
+      variant?.images.find((image) => image.isPrimary)?.url ||
+      variant?.images[0]?.url ||
+      product.images.find((image) => image.isPrimary)?.url ||
+      product.images[0]?.url ||
+      product.imageUrl;
 
     return {
       productId: product.id,
       variantId: variant?.id ?? null,
       productTitle: product.title,
-      productImageUrl: product.imageUrl,
+      productImageUrl,
       sku: variant?.sku ?? null,
       size: variant?.size ?? null,
       color: variant?.color ?? null,
-      variantOptionsSnapshot: variantOptionText
-        ? ({ label: variantOptionText } as Prisma.InputJsonValue)
+      variantOptionsSnapshot: variant
+        ? ({
+            label: variantOptionText || variant.sku,
+            color: variant.color || "",
+            colorCode: variant.colorCode || "",
+            size: variant.size || "",
+            sku: variant.sku,
+            options: variantOptionValues,
+          } as Prisma.InputJsonValue)
         : Prisma.JsonNull,
       quantity: item.quantity,
       originalUnitPrice,
@@ -382,9 +414,7 @@ const applyInventoryDelta = async (
         referenceType: "ORDER",
         referenceId: orderId,
         note:
-          diff > 0
-            ? "Tạo/cập nhật đơn tại shop"
-            : "Hoàn tồn kho đơn tại shop",
+          diff > 0 ? "Tạo/cập nhật đơn tại shop" : "Hoàn tồn kho đơn tại shop",
       },
     });
   }
@@ -852,7 +882,9 @@ export async function updateOnlineOrderStatus(
     }
 
     const allowedNextStatus =
-      ONLINE_STATUS_FLOW[existingOrder.status as keyof typeof ONLINE_STATUS_FLOW];
+      ONLINE_STATUS_FLOW[
+        existingOrder.status as keyof typeof ONLINE_STATUS_FLOW
+      ];
 
     if (!allowedNextStatus || nextStatus !== allowedNextStatus) {
       throw new Error("Không thể chuyển trạng thái đơn online theo bước này.");

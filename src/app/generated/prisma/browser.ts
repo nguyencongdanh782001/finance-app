@@ -6,254 +6,264 @@
 /*
  * This file should be your main import to use Prisma-related types and utilities in a browser. 
  * Use it to get access to models, enums, and input types.
- *
+ * 
  * This file does not contain a `PrismaClient` class, nor several other helpers that are intended as server-side only.
  * See `client.ts` for the standard, server-side entry point.
  *
  * 🟢 You can import this file directly.
  */
 
-import * as Prisma from './internal/prismaNamespaceBrowser'
+import * as Prisma from './internal/prismaNamespaceBrowser.ts'
 export { Prisma }
-export * as $Enums from './enums'
-export * from './enums';
+export * as $Enums from './enums.ts'
+export * from './enums.ts';
 /**
  * Model DailyFinance
- *
+ * 
  */
 export type DailyFinance = Prisma.DailyFinanceModel
 /**
  * Model MonthlyExpense
- *
+ * 
  */
 export type MonthlyExpense = Prisma.MonthlyExpenseModel
 /**
  * Model MonthlyFinance
- *
+ * 
  */
 export type MonthlyFinance = Prisma.MonthlyFinanceModel
 /**
  * Model Category
- *
+ * 
  */
 export type Category = Prisma.CategoryModel
 /**
  * Model Brand
- *
+ * 
  */
 export type Brand = Prisma.BrandModel
 /**
  * Model Product
- *
+ * 
  */
 export type Product = Prisma.ProductModel
 /**
  * Model DailySoldProduct
- *
+ * 
  */
 export type DailySoldProduct = Prisma.DailySoldProductModel
 /**
  * Model DailySoldProductContribution
- *
+ * 
  */
 export type DailySoldProductContribution = Prisma.DailySoldProductContributionModel
 /**
  * Model User
- *
+ * 
  */
 export type User = Prisma.UserModel
 /**
+ * Model ProductDraft
+ * 
+ */
+export type ProductDraft = Prisma.ProductDraftModel
+/**
+ * Model ProductImportJob
+ * 
+ */
+export type ProductImportJob = Prisma.ProductImportJobModel
+/**
  * Model PasswordResetToken
- *
+ * 
  */
 export type PasswordResetToken = Prisma.PasswordResetTokenModel
 /**
  * Model UserSession
- *
+ * 
  */
 export type UserSession = Prisma.UserSessionModel
 /**
  * Model Membership
- *
+ * 
  */
 export type Membership = Prisma.MembershipModel
 /**
  * Model Otp
- *
+ * 
  */
 export type Otp = Prisma.OtpModel
 /**
  * Model UserAddress
- *
+ * 
  */
 export type UserAddress = Prisma.UserAddressModel
 /**
  * Model ProductImage
- *
+ * 
  */
 export type ProductImage = Prisma.ProductImageModel
 /**
  * Model VariantGroup
- *
+ * 
  */
 export type VariantGroup = Prisma.VariantGroupModel
 /**
  * Model VariantOption
- *
+ * 
  */
 export type VariantOption = Prisma.VariantOptionModel
 /**
  * Model ProductVariant
- *
+ * 
  */
 export type ProductVariant = Prisma.ProductVariantModel
 /**
  * Model ProductVariantOption
- *
+ * 
  */
 export type ProductVariantOption = Prisma.ProductVariantOptionModel
 /**
  * Model ProductVariantImage
- *
+ * 
  */
 export type ProductVariantImage = Prisma.ProductVariantImageModel
 /**
  * Model Cart
- *
+ * 
  */
 export type Cart = Prisma.CartModel
 /**
  * Model CartItem
- *
+ * 
  */
 export type CartItem = Prisma.CartItemModel
 /**
  * Model Wishlist
- *
+ * 
  */
 export type Wishlist = Prisma.WishlistModel
 /**
  * Model WishlistItem
- *
+ * 
  */
 export type WishlistItem = Prisma.WishlistItemModel
 /**
  * Model Order
- *
+ * 
  */
 export type Order = Prisma.OrderModel
 /**
  * Model OrderItem
- *
+ * 
  */
 export type OrderItem = Prisma.OrderItemModel
 /**
  * Model InventoryTransaction
- *
+ * 
  */
 export type InventoryTransaction = Prisma.InventoryTransactionModel
 /**
  * Model OrderStatusHistory
- *
+ * 
  */
 export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
 /**
  * Model Warehouse
- *
+ * 
  */
 export type Warehouse = Prisma.WarehouseModel
 /**
  * Model WarehouseInventory
- *
+ * 
  */
 export type WarehouseInventory = Prisma.WarehouseInventoryModel
 /**
  * Model Payment
- *
+ * 
  */
 export type Payment = Prisma.PaymentModel
 /**
  * Model PaymentLog
- *
+ * 
  */
 export type PaymentLog = Prisma.PaymentLogModel
 /**
  * Model Shipping
- *
+ * 
  */
 export type Shipping = Prisma.ShippingModel
 /**
  * Model Coupon
- *
+ * 
  */
 export type Coupon = Prisma.CouponModel
 /**
  * Model CouponProduct
- *
+ * 
  */
 export type CouponProduct = Prisma.CouponProductModel
 /**
  * Model CouponCategory
- *
+ * 
  */
 export type CouponCategory = Prisma.CouponCategoryModel
 /**
  * Model CouponMembership
- *
+ * 
  */
 export type CouponMembership = Prisma.CouponMembershipModel
 /**
  * Model ExcludedCouponProduct
- *
+ * 
  */
 export type ExcludedCouponProduct = Prisma.ExcludedCouponProductModel
 /**
  * Model ExcludedCouponCategory
- *
+ * 
  */
 export type ExcludedCouponCategory = Prisma.ExcludedCouponCategoryModel
 /**
  * Model Review
- *
+ * 
  */
 export type Review = Prisma.ReviewModel
 /**
  * Model ReviewImage
- *
+ * 
  */
 export type ReviewImage = Prisma.ReviewImageModel
 /**
  * Model Notification
- *
+ * 
  */
 export type Notification = Prisma.NotificationModel
 /**
  * Model SearchHistory
- *
+ * 
  */
 export type SearchHistory = Prisma.SearchHistoryModel
 /**
  * Model RecentlyViewedProduct
- *
+ * 
  */
 export type RecentlyViewedProduct = Prisma.RecentlyViewedProductModel
 /**
  * Model HomepageBanner
- *
+ * 
  */
 export type HomepageBanner = Prisma.HomepageBannerModel
 /**
  * Model HomepageFeaturedProduct
- *
+ * 
  */
 export type HomepageFeaturedProduct = Prisma.HomepageFeaturedProductModel
 /**
  * Model HomepageSection
- *
+ * 
  */
 export type HomepageSection = Prisma.HomepageSectionModel
 /**
  * Model HomepageSectionProduct
- *
+ * 
  */
 export type HomepageSectionProduct = Prisma.HomepageSectionProductModel

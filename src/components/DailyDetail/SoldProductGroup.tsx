@@ -73,7 +73,7 @@ function ProductImage({
 function SourceBadge({ source }: { source: SoldProductSourceValue }) {
   return (
     <span
-      className={`inline-flex w-fit whitespace-nowrap rounded-full px-2 py-1 text-[11px] font-bold ${SOURCE_STYLES[source]}`}
+      className={`inline-flex w-fit whitespace-nowrap rounded-full px-2 py-1 text-11px font-bold ${SOURCE_STYLES[source]}`}
     >
       {SOURCE_LABELS[source]}
     </span>
@@ -263,7 +263,7 @@ export function SoldProductGroupRow({
 
         <CollapsibleContent className="duration-150">
           <div className="border-t border-slate-100 bg-slate-50/70">
-            <div className="hidden grid-cols-[minmax(98px,1.2fr)_72px_minmax(76px,0.75fr)_40px_78px_86px_86px_50px] gap-2 px-4 py-2.5 text-[10px] font-extrabold uppercase text-slate-400 lg:grid">
+            <div className="hidden grid-cols-[minmax(98px,1.2fr)_72px_minmax(76px,0.75fr)_40px_78px_86px_86px_50px] gap-2 px-4 py-2.5 text-10px font-extrabold uppercase text-slate-400 lg:grid">
               <span>Phân loại</span>
               <span>Nguồn</span>
               <span>Đơn hàng</span>
