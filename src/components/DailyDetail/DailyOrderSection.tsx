@@ -51,14 +51,19 @@ import type {
   PaymentMethodValue,
   PaymentStatusValue,
 } from "@/interface/financeAPI";
-import type {
-  ProductApiItem,
-  ProductVariantApiItem,
-} from "@/interface/product";
+import {
+  findShopOrderLineOption,
+  findShopOrderProduct,
+  getDefaultShopOrderVariant,
+  getShopOrderColorForVariant,
+  mapShopOrderProducts,
+  type ShopOrderLineOption,
+  type ShopOrderProductOption,
+} from "@/lib/orders/shop-order-products";
 import type { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
 import {
   AlertTriangle,
-  Check,
+  ArrowLeft,
   CheckCircle2,
   ChevronsUpDown,
   Eye,
@@ -86,31 +91,8 @@ import {
 type OrderTabValue = "OFFLINE" | "ONLINE";
 type FilterValue = "ALL";
 type OrderDialogMode = "create" | "edit";
-type ProductOption = {
-  productId: number;
-  variantId: number | null;
-  title: string;
-  imageUrl: string;
-  categoryName: string;
-  sku: string | null;
-  variantLabel: string;
-  originalUnitPrice: number;
-  unitCost: number;
-  availableStock: number;
-  productStatus: "PUBLIC" | "PRIVATE";
-};
-type EditableOrderItem = {
-  productId: number;
-  variantId: number | null;
-  title: string;
-  imageUrl: string;
-  categoryName: string;
-  sku: string | null;
-  variantLabel: string;
-  originalUnitPrice: number;
-  unitCost: number;
-  availableStock: number;
-  productStatus: "PUBLIC" | "PRIVATE";
+type ProductOption = ShopOrderLineOption;
+type EditableOrderItem = ProductOption & {
   unitPrice: string;
   quantity: string;
 };
@@ -221,56 +203,17 @@ const parseMoneyInput = (value: string) => {
   return Number.isFinite(numericValue) ? numericValue : 0;
 };
 
-const toNumber = (value: unknown) => Math.round(Number(value || 0));
-
-const getVariantLabel = (variant: ProductVariantApiItem) =>
-  [variant.size, variant.color].filter(Boolean).join(" / ") ||
-  variant.sku ||
-  "Biến thể";
-
-const mapProductOptions = (products: ProductApiItem[]): ProductOption[] =>
-  products
-    .filter((product) => product.productStatus !== "DISCONTINUED")
-    .flatMap<ProductOption>((product) => {
-      const baseOption = {
-        productId: product.id,
-        title: product.title,
-        imageUrl: product.imageUrl,
-      categoryName: product.category.name,
-      productStatus: (product.productStatus === "PRIVATE"
-        ? "PRIVATE"
-        : "PUBLIC") as ProductOption["productStatus"],
-      };
-      const variants =
-        product.variants?.filter((variant) => variant.isActive) ?? [];
-
-      if (variants.length === 0) {
-        return [
-          {
-            ...baseOption,
-            variantId: null,
-            sku: null,
-            variantLabel: "",
-            originalUnitPrice: toNumber(product.sellPrice),
-            unitCost: toNumber(product.importPrice),
-            availableStock: product.quantity,
-          },
-        ];
-      }
-
-      return variants.map((variant) => ({
-        ...baseOption,
-        variantId: variant.id,
-        sku: variant.sku,
-        variantLabel: getVariantLabel(variant),
-        originalUnitPrice: toNumber(variant.sellPrice || product.sellPrice),
-        unitCost: toNumber(variant.importPrice || product.importPrice),
-        availableStock: variant.quantity,
-      }));
-    });
-
 const getItemKey = (item: { productId: number; variantId: number | null }) =>
   `${item.productId}:${item.variantId ?? "product"}`;
+
+const getSnapshotColorCode = (snapshot: unknown) => {
+  if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
+    return "";
+  }
+
+  const colorCode = (snapshot as { colorCode?: unknown }).colorCode;
+  return typeof colorCode === "string" ? colorCode : "";
+};
 
 function ProductImage({
   imageUrl,
@@ -303,6 +246,316 @@ function ProductImage({
         onError={() => setShowImage(false)}
       />
     </div>
+  );
+}
+
+function ShopOrderProductPicker({
+  products,
+  selectedKeys,
+  onSelect,
+}: {
+  products: ShopOrderProductOption[];
+  selectedKeys: Set<string>;
+  onSelect: (product: ProductOption) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [productId, setProductId] = useState<number | null>(null);
+  const [colorKey, setColorKey] = useState<string | null>(null);
+  const [variantId, setVariantId] = useState<number | null>(null);
+  const selectedProduct = productId
+    ? findShopOrderProduct(products, productId)
+    : null;
+  const selectedColor =
+    selectedProduct?.colors.find((color) => color.key === colorKey) || null;
+  const selectedOption = selectedProduct
+    ? selectedProduct.baseOption ||
+      selectedColor?.variants.find(
+        (variant) => variant.variantId === variantId,
+      ) ||
+      null
+    : null;
+  const normalizedSearch = search.trim().toLocaleLowerCase("vi");
+  const filteredProducts = normalizedSearch
+    ? products.filter((product) =>
+        product.searchableText.includes(normalizedSearch),
+      )
+    : products;
+
+  const resetPicker = () => {
+    setSearch("");
+    setProductId(null);
+    setColorKey(null);
+    setVariantId(null);
+  };
+
+  const chooseProduct = (product: ShopOrderProductOption) => {
+    const defaultOption = getDefaultShopOrderVariant(product);
+    const defaultColor = defaultOption
+      ? getShopOrderColorForVariant(product, defaultOption.variantId)
+      : null;
+
+    setProductId(product.productId);
+    setColorKey(defaultColor?.key || null);
+    setVariantId(defaultOption?.variantId ?? null);
+  };
+
+  const chooseColor = (nextColor: ShopOrderProductOption["colors"][number]) => {
+    const defaultVariant =
+      nextColor.variants.find((variant) => variant.availableStock > 0) ||
+      nextColor.variants[0];
+
+    setColorKey(nextColor.key);
+    setVariantId(defaultVariant?.variantId ?? null);
+  };
+
+  const addSelectedOption = () => {
+    if (!selectedOption || selectedOption.availableStock <= 0) return;
+    onSelect(selectedOption);
+    setOpen(false);
+    resetPicker();
+  };
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) resetPicker();
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          role="combobox"
+          aria-expanded={open}
+          className="h-11 w-full min-w-0 justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-600 hover:border-blue-2 hover:bg-slate-50 focus-visible:ring-blue-2/25"
+        >
+          <span className="flex min-w-0 items-center gap-2">
+            <Search className="size-4 shrink-0 text-slate-400" />
+            <span className="truncate">Tìm sản phẩm, màu, size hoặc SKU</span>
+          </span>
+          <ChevronsUpDown className="size-4 shrink-0 text-slate-400" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        sideOffset={6}
+        className="z-90 w-(--radix-popover-trigger-width) max-w-[calc(100vw-40px)] rounded-lg border-slate-200 bg-white p-0 shadow-lg"
+        onWheel={(event) => event.stopPropagation()}
+        onTouchMove={(event) => event.stopPropagation()}
+      >
+        {selectedProduct ? (
+          <div className="p-3">
+            <div className="flex items-start gap-3 border-b border-slate-100 pb-3">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="rounded-full bg-slate-50 text-slate-500"
+                aria-label="Quay lại danh sách sản phẩm"
+                onClick={() => {
+                  setProductId(null);
+                  setColorKey(null);
+                  setVariantId(null);
+                }}
+              >
+                <ArrowLeft className="size-4" />
+              </Button>
+              <ProductImage
+                imageUrl={selectedOption?.imageUrl || selectedProduct.imageUrl}
+                title={selectedProduct.title}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-2 text-sm font-extrabold text-slate-700">
+                  {selectedProduct.title}
+                </p>
+                <p className="mt-1 text-xs font-semibold text-slate-400">
+                  {selectedProduct.categoryName} · Tồn tổng:{" "}
+                  {selectedProduct.totalAvailableStock.toLocaleString("vi-VN")}
+                </p>
+                {selectedProduct.productStatus === "PRIVATE" ? (
+                  <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-(--admin-primary-soft) px-1.5 py-0.5 text-xs font-semibold text-(--admin-primary)">
+                    <AlertTriangle className="size-3" /> Riêng tư · chỉ dùng tại
+                    shop
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
+            {selectedProduct.colors.length ? (
+              <div className="mt-3 space-y-3">
+                <div>
+                  <p className="mb-2 text-xs font-bold text-slate-500">Màu</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProduct.colors.map((color) => {
+                      const isSelected = color.key === colorKey;
+                      const stock = color.variants.reduce(
+                        (total, variant) => total + variant.availableStock,
+                        0,
+                      );
+
+                      return (
+                        <Button
+                          key={color.key}
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          aria-pressed={isSelected}
+                          className={`rounded-xl border px-3 ${
+                            isSelected
+                              ? "border-(--admin-primary) bg-(--admin-primary-soft) text-(--admin-primary)"
+                              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                          }`}
+                          onClick={() => chooseColor(color)}
+                        >
+                          {color.colorCode ? (
+                            <span
+                              className="size-3 rounded-full border border-black/10"
+                              style={{ backgroundColor: color.colorCode }}
+                            />
+                          ) : null}
+                          {color.label}
+                          <span className="text-[10px] opacity-70">
+                            ({stock})
+                          </span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {selectedColor ? (
+                  <div>
+                    <p className="mb-2 text-xs font-bold text-slate-500">
+                      Kích thước
+                    </p>
+                    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                      {selectedColor.variants.map((variant) => {
+                        const isSelected = variant.variantId === variantId;
+                        const isOutOfStock = variant.availableStock <= 0;
+
+                        return (
+                          <Button
+                            key={variant.variantId}
+                            type="button"
+                            variant="ghost"
+                            aria-pressed={isSelected}
+                            disabled={isOutOfStock}
+                            className={`h-auto min-w-0 flex-col gap-0.5 rounded-xl border px-2 py-2 ${
+                              isSelected
+                                ? "border-(--admin-primary) bg-(--admin-primary-soft) text-(--admin-primary)"
+                                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                            }`}
+                            onClick={() => setVariantId(variant.variantId)}
+                          >
+                            <span className="max-w-full truncate font-extrabold">
+                              {variant.size}
+                            </span>
+                            <span className="text-[10px] font-semibold opacity-70">
+                              {isOutOfStock
+                                ? "Hết hàng"
+                                : `Còn ${variant.availableStock}`}
+                            </span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            <div className="mt-3 rounded-xl bg-slate-50 p-3">
+              {selectedOption ? (
+                <div className="flex items-end justify-between gap-3">
+                  <div className="min-w-0 text-xs font-semibold text-slate-500">
+                    <p className="truncate">
+                      {selectedOption.sku
+                        ? `SKU: ${selectedOption.sku}`
+                        : "Sản phẩm không có biến thể"}
+                    </p>
+                    <p className="mt-1">
+                      Khả dụng:{" "}
+                      {selectedOption.availableStock.toLocaleString("vi-VN")}
+                    </p>
+                  </div>
+                  <p className="shrink-0 text-base font-extrabold text-slate-800">
+                    {formatMoney(selectedOption.originalUnitPrice)}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm font-semibold text-slate-500">
+                  Sản phẩm chưa có biến thể đang hoạt động.
+                </p>
+              )}
+            </div>
+
+            <Button
+              type="button"
+              variant="adminPrimary"
+              className="mt-3 h-11 w-full rounded-xl"
+              disabled={!selectedOption || selectedOption.availableStock <= 0}
+              onClick={addSelectedOption}
+            >
+              <Plus className="size-4" />
+              {selectedOption && selectedKeys.has(getItemKey(selectedOption))
+                ? "Tăng số lượng"
+                : "Thêm vào đơn"}
+            </Button>
+          </div>
+        ) : (
+          <Command shouldFilter={false} className="rounded-2xl">
+            <div className="border-b border-slate-100 p-2">
+              <CommandInput
+                value={search}
+                onValueChange={setSearch}
+                placeholder="Nhập tên sản phẩm, màu, size hoặc SKU"
+                icon={<Search className="size-4 text-slate-400" />}
+                className="h-10 text-sm text-slate-700 placeholder:text-slate-400"
+              />
+            </div>
+            <CommandList className="max-h-80 p-1.5">
+              <CommandEmpty className="px-3 py-8 text-center text-sm font-semibold text-slate-400">
+                Không tìm thấy sản phẩm phù hợp
+              </CommandEmpty>
+              <CommandGroup className="p-0">
+                {filteredProducts.map((product) => (
+                  <CommandItem
+                    key={product.productId}
+                    value={String(product.productId)}
+                    onSelect={() => chooseProduct(product)}
+                    className="min-w-0 cursor-pointer gap-3 rounded-xl p-2 data-[selected=true]:bg-blue-50"
+                  >
+                    <ProductImage
+                      imageUrl={product.imageUrl}
+                      title={product.title}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-extrabold text-slate-700">
+                        {product.title}
+                      </p>
+                      <p className="mt-1 truncate text-xs font-semibold text-slate-400">
+                        {product.categoryName}
+                        {product.colors.length
+                          ? ` · ${product.colors.length} màu`
+                          : " · Không có biến thể"}
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-slate-500">
+                        Tồn tổng:{" "}
+                        {product.totalAvailableStock.toLocaleString("vi-VN")}
+                      </p>
+                    </div>
+                    <ChevronsUpDown className="size-4 -rotate-90 text-slate-400" />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -639,7 +892,7 @@ function OrderFormDialog({
 }: {
   open: boolean;
   mode: OrderDialogMode;
-  products: ProductOption[];
+  products: ShopOrderProductOption[];
   order: DailyOrder | null;
   onOpenChange: (value: boolean) => void;
   onSubmit: (
@@ -648,34 +901,11 @@ function OrderFormDialog({
   ) => Promise<boolean>;
 }) {
   const [form, setForm] = useState<OrderFormState>(createEmptyForm);
-  const [search, setSearch] = useState("");
-  const [isProductPickerOpen, setIsProductPickerOpen] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [idempotencyKey, setIdempotencyKey] = useState(createIdempotencyKey);
   const selectedKeys = new Set(form.items.map(getItemKey));
   const totals = getFormTotals(form.items);
-  const filteredProducts = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
-
-    if (!normalizedSearch) {
-      return products;
-    }
-
-    return products.filter((product) =>
-      [
-        product.title,
-        product.categoryName,
-        product.sku,
-        product.variantLabel,
-        `#${product.productId}`,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedSearch),
-    );
-  }, [products, search]);
 
   useEffect(() => {
     if (!open) {
@@ -692,31 +922,45 @@ function OrderFormDialog({
         paymentStatus: order.paymentStatus === "UNPAID" ? "UNPAID" : "PAID",
         items: order.items
           .filter((item) => item.productId)
-          .map((item) => ({
-            productId: item.productId ?? 0,
-            variantId: item.variantId,
-            title: item.productTitle,
-            imageUrl: item.productImageUrl ?? "",
-            categoryName: "",
-            sku: item.sku,
-            variantLabel: [item.size, item.color].filter(Boolean).join(" / "),
-            originalUnitPrice: item.originalUnitPrice,
-            unitCost: item.unitCost,
-            availableStock: item.quantity,
-            productStatus: "PUBLIC",
-            unitPrice: String(item.unitPrice),
-            quantity: String(item.quantity),
-          })),
+          .map((item) => {
+            const productId = item.productId ?? 0;
+            const liveOption = findShopOrderLineOption(
+              products,
+              productId,
+              item.variantId,
+            );
+            const color = item.color || liveOption?.color || "";
+            const size = item.size || liveOption?.size || "";
+
+            return {
+              productId,
+              variantId: item.variantId,
+              title: item.productTitle,
+              imageUrl: liveOption?.imageUrl || item.productImageUrl || "",
+              categoryName: liveOption?.categoryName || "",
+              sku: item.sku || liveOption?.sku || null,
+              color,
+              colorCode:
+                liveOption?.colorCode ||
+                getSnapshotColorCode(item.variantOptionsSnapshot),
+              size,
+              variantLabel: [color, size].filter(Boolean).join(" / "),
+              originalUnitPrice: item.originalUnitPrice,
+              unitCost: item.unitCost,
+              availableStock: (liveOption?.availableStock ?? 0) + item.quantity,
+              productStatus: liveOption?.productStatus || "PUBLIC",
+              unitPrice: String(item.unitPrice),
+              quantity: String(item.quantity),
+            };
+          }),
       });
     } else {
       setForm(createEmptyForm());
       setIdempotencyKey(createIdempotencyKey());
     }
 
-    setSearch("");
-    setIsProductPickerOpen(false);
     setError("");
-  }, [mode, open, order]);
+  }, [mode, open, order, products]);
 
   const addProduct = (product: ProductOption) => {
     setError("");
@@ -909,118 +1153,16 @@ function OrderFormDialog({
             <span className="mb-2 block text-sm font-bold text-slate-700">
               Thêm sản phẩm
             </span>
-            <Popover
-              open={isProductPickerOpen}
-              onOpenChange={(nextOpen) => {
-                setIsProductPickerOpen(nextOpen);
-                if (!nextOpen) {
-                  setSearch("");
-                }
-              }}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  role="combobox"
-                  aria-expanded={isProductPickerOpen}
-                  className="h-11 w-full min-w-0 justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-600 hover:border-blue-2 hover:bg-slate-50 focus-visible:ring-blue-2/25"
-                >
-                  <span className="flex min-w-0 items-center gap-2">
-                    <Search className="size-4 shrink-0 text-slate-400" />
-                    <span className="truncate">
-                      {form.items.length > 0
-                        ? `Tìm thêm sản phẩm · Đã chọn ${form.items.length}`
-                        : "Tìm sản phẩm hoặc SKU"}
-                    </span>
-                  </span>
-                  <ChevronsUpDown className="size-4 shrink-0 text-slate-400" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="start"
-                sideOffset={6}
-                className="z-90 w-(--radix-popover-trigger-width) max-w-[calc(100vw-40px)] rounded-lg border-slate-200 bg-white p-0 shadow-lg"
-                onWheel={(event) => event.stopPropagation()}
-                onTouchMove={(event) => event.stopPropagation()}
-              >
-                <Command shouldFilter={false} className="rounded-2xl">
-                  <div className="border-b border-slate-100 p-2">
-                    <CommandInput
-                      value={search}
-                      onValueChange={setSearch}
-                      placeholder="Nhập tên sản phẩm hoặc SKU"
-                      icon={<Search className="size-4 text-slate-400" />}
-                      className="h-10 text-sm text-slate-700 placeholder:text-slate-400"
-                    />
-                  </div>
-                  <CommandList className="max-h-72 p-1.5">
-                    <CommandEmpty className="px-3 py-8 text-center text-sm font-semibold text-slate-400">
-                      Không tìm thấy sản phẩm phù hợp
-                    </CommandEmpty>
-                    <CommandGroup className="p-0">
-                      {filteredProducts.map((product) => {
-                        const productKey = getItemKey(product);
-                        const isSelected = selectedKeys.has(productKey);
-
-                        return (
-                          <CommandItem
-                            key={productKey}
-                            value={productKey}
-                            disabled={product.availableStock <= 0}
-                            onSelect={() => {
-                              addProduct(product);
-                              setIsProductPickerOpen(false);
-                              setSearch("");
-                            }}
-                            className="min-w-0 cursor-pointer gap-3 rounded-xl p-2 data-[selected=true]:bg-blue-50"
-                          >
-                            <ProductImage
-                              imageUrl={product.imageUrl}
-                              title={product.title}
-                            />
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-extrabold text-slate-700">
-                                {product.title}
-                              </p>
-                              <p className="mt-1 truncate text-xs font-semibold text-slate-400">
-                                {product.variantLabel || product.categoryName}
-                                {product.sku ? ` • ${product.sku}` : ""}
-                              </p>
-                              <p className="mt-1 text-xs font-bold text-slate-500">
-                                Tồn:{" "}
-                                {product.availableStock.toLocaleString("vi-VN")}{" "}
-                                · Giá: {formatMoney(product.originalUnitPrice)}
-                              </p>
-                              {product.productStatus === "PRIVATE" ? (
-                                <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-(--admin-primary-soft) px-1.5 py-0.5 text-xs font-semibold text-(--admin-primary)">
-                                  <AlertTriangle className="size-3" /> Riêng tư
-                                  · chỉ dùng cho đơn tại shop
-                                </p>
-                              ) : null}
-                            </div>
-                            <span
-                              className={`flex size-7 shrink-0 items-center justify-center rounded-full ${
-                                isSelected
-                                  ? "bg-blue-2 text-white"
-                                  : "bg-slate-100 text-slate-500"
-                              }`}
-                              aria-label={isSelected ? "Đã chọn" : "Thêm"}
-                            >
-                              {isSelected ? (
-                                <Check className="size-4" />
-                              ) : (
-                                <Plus className="size-4" />
-                              )}
-                            </span>
-                          </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+            <ShopOrderProductPicker
+              products={products}
+              selectedKeys={selectedKeys}
+              onSelect={addProduct}
+            />
+            {form.items.length > 0 ? (
+              <p className="mt-1.5 text-xs font-semibold text-slate-400">
+                Đã chọn {form.items.length} sản phẩm/biến thể
+              </p>
+            ) : null}
           </div>
 
           <div className="space-y-3">
@@ -1052,10 +1194,18 @@ function OrderFormDialog({
                         <p className="line-clamp-2 text-base font-extrabold text-slate-700">
                           {item.title}
                         </p>
-                        <p className="mt-1 text-xs font-bold uppercase tracking-[0.06em] text-slate-400">
-                          {item.variantLabel || item.categoryName}
-                          {item.sku ? ` • ${item.sku}` : ""}
-                        </p>
+                        <div className="mt-1 flex min-w-0 items-center gap-1.5 text-xs font-bold uppercase tracking-[0.06em] text-slate-400">
+                          {item.colorCode ? (
+                            <span
+                              className="size-3 shrink-0 rounded-full border border-black/10"
+                              style={{ backgroundColor: item.colorCode }}
+                            />
+                          ) : null}
+                          <p className="truncate">
+                            {item.variantLabel || item.categoryName}
+                            {item.sku ? ` • ${item.sku}` : ""}
+                          </p>
+                        </div>
                         {item.productStatus === "PRIVATE" ? (
                           <p className="mt-1 text-xs font-semibold normal-case tracking-normal text-(--admin-primary)">
                             Sản phẩm Riêng tư — chỉ bán trong đơn tại shop.
@@ -1309,10 +1459,22 @@ function OrderDetailDialog({
                     <p className="line-clamp-2 text-sm font-extrabold text-slate-700">
                       {item.productTitle}
                     </p>
-                    <p className="mt-1 text-xs font-bold text-slate-400">
-                      {[item.size, item.color].filter(Boolean).join(" / ")}
-                      {item.sku ? ` • ${item.sku}` : ""}
-                    </p>
+                    <div className="mt-1 flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-400">
+                      {getSnapshotColorCode(item.variantOptionsSnapshot) ? (
+                        <span
+                          className="size-3 shrink-0 rounded-full border border-black/10"
+                          style={{
+                            backgroundColor: getSnapshotColorCode(
+                              item.variantOptionsSnapshot,
+                            ),
+                          }}
+                        />
+                      ) : null}
+                      <p className="truncate">
+                        {[item.color, item.size].filter(Boolean).join(" / ")}
+                        {item.sku ? ` • ${item.sku}` : ""}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold text-slate-500 sm:grid-cols-4">
@@ -1581,7 +1743,7 @@ export default function DailyOrderSection({
 }) {
   const dailyId = data?.id;
   const [orders, setOrders] = useState<DailyOrderListResponse | null>(null);
-  const [products, setProducts] = useState<ProductOption[]>([]);
+  const [products, setProducts] = useState<ShopOrderProductOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
@@ -1669,21 +1831,48 @@ export default function DailyOrderSection({
 
   useEffect(() => {
     const fetchProducts = async () => {
-      if (products.length === 0) {
-        setIsProductLoading(true);
-      }
+      setIsProductLoading(true);
+      const firstPage = await financeAPI.getProductList({
+        page: 1,
+        limit: 100,
+      });
 
-      const res = await financeAPI.getProductList({ page: 1, limit: 1000 });
+      if (firstPage.code === RESPONSE_CODES.success && firstPage.data) {
+        const allProducts = [...firstPage.data.data];
+        const totalPages = firstPage.data.pagination.totalPage;
 
-      if (res.code === RESPONSE_CODES.success && res.data) {
-        setProducts(mapProductOptions(res.data.data));
+        for (let page = 2; page <= totalPages; page += 1) {
+          const nextPage = await financeAPI.getProductList({
+            page,
+            limit: 100,
+          });
+
+          if (nextPage.code !== RESPONSE_CODES.success || !nextPage.data) {
+            toast({
+              title: "Không tải đủ danh sách sản phẩm. Vui lòng thử lại.",
+              className: "bg-red-1 text-white text-sm font-medium",
+              duration: 3000,
+            });
+            break;
+          }
+
+          allProducts.push(...nextPage.data.data);
+        }
+
+        setProducts(mapShopOrderProducts(allProducts));
+      } else {
+        toast({
+          title: "Không tải được sản phẩm để tạo đơn tại shop.",
+          className: "bg-red-1 text-white text-sm font-medium",
+          duration: 3000,
+        });
       }
 
       setIsProductLoading(false);
     };
 
     void fetchProducts();
-  }, [reload, products.length]);
+  }, [reload]);
 
   const submitOrder = async (
     payload: OfflineOrderPayload,

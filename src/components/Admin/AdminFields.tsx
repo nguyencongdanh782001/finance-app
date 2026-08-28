@@ -94,7 +94,7 @@ export function AdminSearchInput({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="min-w-0 flex-1 border-0! bg-transparent text-sm text-(--admin-text) outline-none placeholder:text-(--admin-text-muted)"
+        className="min-w-0 flex-1 border-0! rounded-none! bg-transparent text-sm text-(--admin-text) outline-none placeholder:text-(--admin-text-muted) focus-visible:outline-none! focus-visible:border-none! focus-visible:shadow-none!"
       />
       {value ? (
         <Button

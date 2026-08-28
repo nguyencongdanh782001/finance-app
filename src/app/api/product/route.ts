@@ -47,7 +47,17 @@ export async function GET(req: Request) {
       skip: (page - 1) * limit,
       take: limit,
       orderBy,
-      include: { category: true, variants: { orderBy: { createdAt: "asc" } } },
+      include: {
+        category: true,
+        images: {
+          where: { variantId: null },
+          orderBy: { position: "asc" },
+        },
+        variants: {
+          orderBy: { createdAt: "asc" },
+          include: { images: { orderBy: { position: "asc" } } },
+        },
+      },
     }),
     prisma.product.count({ where }),
   ]);
@@ -154,16 +164,16 @@ export async function POST(req: Request) {
       for (const variant of variants) {
         const savedVariant = await tx.productVariant.create({
           data: {
-              productId: created.id,
-              sku: variant.sku,
-              size: variant.size || null,
-              color: variant.color || null,
-              colorCode: variant.colorCode || null,
-              price: variant.price,
-              sellPrice: variant.price,
-              importPrice: variant.importPrice,
-              quantity: variant.quantity,
-              isActive: variant.isActive,
+            productId: created.id,
+            sku: variant.sku,
+            size: variant.size || null,
+            color: variant.color || null,
+            colorCode: variant.colorCode || null,
+            price: variant.price,
+            sellPrice: variant.price,
+            importPrice: variant.importPrice,
+            quantity: variant.quantity,
+            isActive: variant.isActive,
           },
         });
         if (Array.isArray(variant.images) && variant.images.length)
