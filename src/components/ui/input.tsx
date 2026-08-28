@@ -7,12 +7,12 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const inputVariants = cva(
-  "focus:outline-none h-full w-full !rounded-[4px] disabled:opacity-50",
+  "focus:outline-none h-full w-full rounded-[4px]! disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "p-[20px] border border-gray-5 rounded-[5px] bg-white text-sm font-medium !placeholder-green-1",
+          "p-[20px] border border-gray-5 rounded-[5px] bg-white text-sm font-medium placeholder-green-1!",
         invisible: "bg-white text-sm font-normal placeholder-gray-8",
         gray: "bg-gray-6 text-sm placeholder-gray-12 rounded-[5px]",
         border:
@@ -35,16 +35,21 @@ export interface InputProps
   onManualChange?: (value: string) => void;
   clearable?: boolean;
   onManualClear?: () => void;
+  standalone?: boolean;
+  innerRef?: React.Ref<HTMLInputElement>;
 }
 
-const Input = React.forwardRef<HTMLInputElement, FieldProps & InputProps>(
+const Input = React.forwardRef<
+  HTMLInputElement,
+  Partial<FieldProps> & InputProps
+>(
   (
     {
       className,
       type,
       variant = "default",
       field,
-      form: { touched, errors, setFieldValue },
+      form,
       icon,
       pattern,
       classNameContainer,
@@ -53,26 +58,39 @@ const Input = React.forwardRef<HTMLInputElement, FieldProps & InputProps>(
       clearable,
       onManualClear,
       disabled,
+      innerRef,
+      standalone: _standalone,
       ...props
     },
     ref,
   ) => {
     const inputClasses = cn(inputVariants({ variant }), className);
-    const { name, value } = field;
-    const showError = Boolean(getIn(errors, name) && getIn(touched, name));
+    const name = field?.name || props.name || "";
+    const value = field?.value ?? props.value ?? "";
+    const showError = Boolean(
+      form && field && getIn(form.errors, name) && getIn(form.touched, name),
+    );
     const regex = pattern ? new RegExp(pattern) : null;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const v = e.target.value;
       if (!regex || regex.test(v) || v === "") {
-        setFieldValue(name, v);
+        if (form && field) {
+          form.setFieldValue(name, v);
+        } else {
+          props.onChange?.(e);
+        }
       }
       onManualChange?.(v);
     };
 
     return (
       <div
-        className={`${icon ? "bg-white gap-1.25 rounded-[5px] overflow-hidden" : ""}${classNameContainer} relative flex items-center`}
+        className={cn(
+          icon && "gap-1.25 overflow-hidden rounded-[5px] bg-white",
+          classNameContainer,
+          "relative flex items-center",
+        )}
       >
         {icon}
         <div className="w-full relative">
@@ -80,21 +98,27 @@ const Input = React.forwardRef<HTMLInputElement, FieldProps & InputProps>(
             data-slot="input"
             type={type}
             className={`${inputClasses}${showError && !hiddenErr ? "border! border-red-1!" : ""}`}
-            ref={ref}
+            ref={ref ?? innerRef}
             disabled={disabled}
             {...field}
             {...props}
             onChange={handleChange}
           />
           {showError && !hiddenErr && (
-            <p className="text-red-1 text-xs mt-1">{getIn(errors, name)}</p>
+            <p className="text-red-1 text-xs mt-1">
+              {getIn(form?.errors, name)}
+            </p>
           )}
           {clearable && !!value && (
             <div className="absolute right-3.75 top-0 bottom-0 flex items-center">
               <Button
                 variant="ghost"
                 onClick={() => {
-                  setFieldValue(name, "");
+                  if (form && field) form.setFieldValue(name, "");
+                  else
+                    props.onChange?.({
+                      target: { value: "" },
+                    } as React.ChangeEvent<HTMLInputElement>);
                   onManualClear?.();
                 }}
               >

@@ -37,6 +37,7 @@ export interface SelectProps extends React.InputHTMLAttributes<HTMLInputElement>
   startIcon?: React.ReactNode;
   onOpenChangeManual?: (open: boolean) => void;
   side?: "bottom" | "top" | "right" | "left";
+  fullWidth?: boolean;
 }
 
 const CustomSelect = React.forwardRef<
@@ -65,6 +66,7 @@ const CustomSelect = React.forwardRef<
       startIcon,
       side,
       onOpenChangeManual,
+      fullWidth = false,
     },
     _ref,
   ) => {
@@ -132,7 +134,10 @@ const CustomSelect = React.forwardRef<
     };
 
     return (
-      <div data-admin-select>
+      <div
+        data-admin-select
+        className={fullWidth ? "w-full min-w-0" : undefined}
+      >
         <ScrollTrigger onScroll={onScroll} />
 
         <Popover
@@ -146,7 +151,7 @@ const CustomSelect = React.forwardRef<
         >
           <PopoverTrigger
             variant={popoverTrgVariant?.variant}
-            className={`grid min-w-22.5! sm:w-27.75! ${disabled ? "cursor-default opacity-50" : "cursor-pointer"} ${className} ${showError ? "border! border-red-1!" : "border-slate-100!"}`}
+            className={`grid ${fullWidth ? "w-full! min-w-0!" : "min-w-22.5! sm:w-27.75!"} ${disabled ? "cursor-default opacity-50" : "cursor-pointer"} ${className} ${showError ? "border! border-red-1!" : "border-slate-100!"}`}
             asChild
             disabled={disabled}
           >
@@ -155,7 +160,7 @@ const CustomSelect = React.forwardRef<
               type="button"
               variant="input"
               name={name}
-              className={`truncate! text-left text-11px disabled:opacity-50 bg-slate-50! rounded-[14px]! text-slate-700! hover:bg-slate-50! shadow-none! ${showError ? "border-red-1!" : "border-slate-100!"} ${inputClassName} ${(multipliable && (value.length === 0 || value[0] === "")) || !value ? "text-slate-300!" : ""} grid`}
+              className={`truncate! text-left text-11px disabled:opacity-50 bg-slate-50! rounded-[14px]! text-slate-700! hover:bg-slate-50! shadow-none! ${fullWidth ? "w-full! min-w-0!" : ""} ${showError ? "border-red-1!" : "border-slate-100!"} ${inputClassName} ${(multipliable && (value.length === 0 || value[0] === "")) || !value ? "text-slate-300!" : ""} grid`}
               style={{
                 gridTemplateColumns: "minmax(0, 1fr) auto",
               }}

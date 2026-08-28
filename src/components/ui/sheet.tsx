@@ -22,10 +22,10 @@ function SheetContent({
 }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-[var(--z-sidebar-overlay)] bg-slate-950/35 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-(--z-sidebar-overlay) bg-slate-950/35 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed inset-y-0 z-[var(--z-sidebar)] h-dvh w-[min(86vw,320px)] max-w-full overflow-y-auto bg-white shadow-xl outline-none transition data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "fixed inset-y-0 z-(--z-sidebar) h-dvh w-[min(86vw,320px)] max-w-full overflow-y-auto bg-white shadow-xl outline-none transition data-[state=open]:animate-in data-[state=closed]:animate-out",
           side === "left"
             ? "left-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
             : "right-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",

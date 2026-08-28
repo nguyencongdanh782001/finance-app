@@ -16,7 +16,7 @@ export const PopoverTriggerVariants = cva(
         "search-box--lgray":
           "border border-gray-8 rounded-[4px] h-[42px] px-[14px] placeholder-gray-3",
         "search-box--lred":
-          "!bg-red-1 !rounded-full border border-gray-8 rounded-[4px] h-[42px] px-[14px] placeholder-white text-white",
+          "bg-red-1! rounded-full! border border-gray-8 rounded-[4px] h-[42px] px-[14px] placeholder-white text-white",
         none: "",
       },
     },

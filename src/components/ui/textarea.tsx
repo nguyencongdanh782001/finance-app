@@ -10,7 +10,7 @@ const TextAreaVariants = cva(
     variants: {
       variant: {
         default:
-          "p-[20px] border border-green-4 rounded-[5px] bg-white text-sm font-medium !placeholder-green-1",
+          "p-[20px] border border-green-4 rounded-[5px] bg-white text-sm font-medium placeholder-green-1!",
         invisible: "bg-white text-sm font-normal placeholder-gray-8",
         gray: "bg-gray-6 text-sm placeholder-gray-12 rounded-[5px]",
       },
@@ -32,14 +32,14 @@ export interface TextAreaProps
 
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,
-  FieldProps & TextAreaProps & { innerRef?: React.Ref<HTMLTextAreaElement> }
+  Partial<FieldProps> & TextAreaProps & { innerRef?: React.Ref<HTMLTextAreaElement> }
 >(
   (
     {
       className,
       variant = "default",
       field,
-      form: { touched, errors },
+      form,
       icon,
       rows,
       classNameContainer,
@@ -51,8 +51,11 @@ const Textarea = React.forwardRef<
     ref,
   ) => {
     const inputClasses = cn(TextAreaVariants({ variant }), className);
-    const { name } = field;
-    const showError = Boolean(getIn(errors, name) && getIn(touched, name));
+    const name = field?.name || props.name || "";
+    const value = field?.value ?? props.value ?? "";
+    const showError = Boolean(
+      form && field && getIn(form.errors, name) && getIn(form.touched, name),
+    );
 
     return (
       <div className={`${classNameContainer} flex items-center h-auto`}>
@@ -66,9 +69,10 @@ const Textarea = React.forwardRef<
             style={{ ...props.style, resize: "none" }}
             {...field}
             {...props}
+            value={value}
           />
           {!hiddenErr && showError && (
-            <p className="text-red-1 text-sm mt-1">{getIn(errors, name)}</p>
+            <p className="text-red-1 text-sm mt-1">{getIn(form?.errors, name)}</p>
           )}
         </div>
       </div>

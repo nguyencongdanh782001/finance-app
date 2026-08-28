@@ -1,5 +1,6 @@
 import cloudinary from "@/lib/cloudinary";
 import { isHeicLikeFile } from "@/lib/image-file";
+import { randomUUID } from "node:crypto";
 
 export type UploadedImage = {
   url: string;
@@ -7,6 +8,9 @@ export type UploadedImage = {
 };
 
 const PRODUCT_IMAGE_FOLDER = "finance-app/products";
+const RECOVERY_LOOKUP_DELAY_MS = 10_000;
+const UPLOAD_TIMEOUT_MS = 45_000;
+const RESOURCE_LOOKUP_TIMEOUT_MS = 8_000;
 
 const getOutputFormat = (file: File) => {
   if (isHeicLikeFile(file)) {
@@ -15,6 +19,25 @@ const getOutputFormat = (file: File) => {
 
   return "webp";
 };
+
+const lookupUploadedImage = (publicId: string) =>
+  new Promise<UploadedImage>((resolve, reject) => {
+    const lookupTimeout = setTimeout(
+      () => reject(new Error("Cloudinary lookup timed out")),
+      RESOURCE_LOOKUP_TIMEOUT_MS,
+    );
+
+    void cloudinary.api
+      .resource(publicId, { resource_type: "image" })
+      .then((result) => {
+        clearTimeout(lookupTimeout);
+        resolve({ url: result.secure_url, publicId: result.public_id });
+      })
+      .catch((error) => {
+        clearTimeout(lookupTimeout);
+        reject(error);
+      });
+  });
 
 export async function uploadImageToCloudinary(
   file: File,
@@ -28,11 +51,41 @@ export async function uploadImageToCloudinary(
 
   const buffer = Buffer.from(bytes);
   const format = getOutputFormat(file);
+  const assetId = randomUUID();
+  const publicId = `${folder}/${assetId}`;
 
-  return new Promise((resolve, reject) => {
+  return new Promise<UploadedImage>((resolve, reject) => {
+    let settled = false;
+    const finish = (result: UploadedImage) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(recoveryTimeout);
+      clearTimeout(timeout);
+      resolve(result);
+    };
+    const fail = (error: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(recoveryTimeout);
+      clearTimeout(timeout);
+      reject(error);
+    };
+    const recoveryTimeout = setTimeout(() => {
+      void lookupUploadedImage(publicId)
+        .then(finish)
+        .catch(() => undefined);
+    }, RECOVERY_LOOKUP_DELAY_MS);
+    const timeout = setTimeout(async () => {
+      try {
+        finish(await lookupUploadedImage(publicId));
+      } catch {
+        fail(new Error("Cloudinary upload timed out"));
+      }
+    }, UPLOAD_TIMEOUT_MS);
     const stream = cloudinary.uploader.upload_stream(
       {
         folder,
+        public_id: assetId,
         resource_type: "image",
         format,
         tags: ["quynh-nhi-store", "product"],
@@ -40,7 +93,7 @@ export async function uploadImageToCloudinary(
           original_filename: file.name,
           uploaded_from: "quynh-nhi-store",
         },
-        unique_filename: true,
+        unique_filename: false,
         use_filename: false,
         overwrite: false,
         transformation: [
@@ -59,21 +112,20 @@ export async function uploadImageToCloudinary(
             error?.message ||
             (typeof error === "string" ? error : undefined) ||
             "Upload image failed";
-          reject(new Error(message));
+          fail(new Error(message));
           return;
         }
 
-        resolve({
-          url: cloudinary.url(result.public_id, {
-            secure: true,
-            fetch_format: "auto",
-            quality: "auto:good",
-          }),
+        finish({
+          url: result.secure_url,
           publicId: result.public_id,
         });
       },
     );
 
+    stream.on("error", (error) =>
+      fail(error instanceof Error ? error : new Error(String(error))),
+    );
     stream.end(buffer);
   });
 }

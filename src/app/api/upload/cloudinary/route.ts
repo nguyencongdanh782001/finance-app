@@ -6,6 +6,7 @@ import { isHeicLikeFile } from "@/lib/image-file";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
@@ -23,6 +24,13 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { message: "Image file is empty" },
         { status: 400 },
+      );
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json(
+        { message: "Hình ảnh không được vượt quá 5MB" },
+        { status: 413 },
       );
     }
 

@@ -224,7 +224,7 @@ export default function FormProducts({
             <PackageCheck className="size-4 text-blue-2" />
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-bold uppercase text-gray-3">
+            <p className="text-13px font-bold uppercase text-gray-3">
               Sản phẩm đã bán
             </p>
             <p className="mt-1 text-xs font-semibold text-slate-400">
@@ -237,7 +237,7 @@ export default function FormProducts({
         </div>
         <div className="grid grid-cols-2 gap-2 sm:min-w-90 sm:grid-cols-3">
           <div className="rounded-xl bg-slate-50 px-3 py-2">
-            <p className="text-[10px] font-bold uppercase text-slate-400">
+            <p className="text-10px font-bold uppercase text-slate-400">
               Số lượng
             </p>
             <p className="text-base font-extrabold text-slate-800">
@@ -245,7 +245,7 @@ export default function FormProducts({
             </p>
           </div>
           <div className="rounded-xl bg-green-50 px-3 py-2">
-            <p className="text-[10px] font-bold uppercase text-green-2">
+            <p className="text-10px font-bold uppercase text-green-2">
               Doanh thu
             </p>
             <p className="truncate text-base font-extrabold text-green-2">
@@ -253,7 +253,7 @@ export default function FormProducts({
             </p>
           </div>
           <div className="col-span-2 rounded-xl bg-emerald-50 px-3 py-2 sm:col-span-1">
-            <p className="text-[10px] font-bold uppercase text-emerald-600">
+            <p className="text-10px font-bold uppercase text-emerald-600">
               Lợi nhuận
             </p>
             <p
@@ -358,7 +358,7 @@ export default function FormProducts({
         </div>
       ) : (
         <>
-          <div className="mt-5 hidden grid-cols-[minmax(0,1fr)_72px_112px_28px] gap-3 px-4 pb-2 text-[10px] font-extrabold uppercase text-slate-400 sm:grid lg:grid-cols-[minmax(0,1.5fr)_64px_66px_118px_100px_100px_28px]">
+          <div className="mt-5 hidden grid-cols-[minmax(0,1fr)_72px_112px_28px] gap-3 px-4 pb-2 text-10px font-extrabold uppercase text-slate-400 sm:grid lg:grid-cols-[minmax(0,1.5fr)_64px_66px_118px_100px_100px_28px]">
             <span>Sản phẩm</span>
             <span className="text-right">Đã bán</span>
             <span className="hidden text-right lg:block">Lượt bán</span>
