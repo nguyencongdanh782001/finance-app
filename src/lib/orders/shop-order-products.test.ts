@@ -102,6 +102,7 @@ test("resolves exact variant id and preserves price, cost and SKU", () => {
         {
           id: 21,
           sku: "RED-M",
+          barcode: "8938505974198",
           size: "M",
           color: "Đỏ",
           sellPrice: 275000,
@@ -115,9 +116,11 @@ test("resolves exact variant id and preserves price, cost and SKU", () => {
   const selected = findShopOrderLineOption(mapped, 10, 21);
 
   assert.equal(selected?.sku, "RED-M");
+  assert.equal(selected?.barcode, "8938505974198");
   assert.equal(selected?.originalUnitPrice, 275000);
   assert.equal(selected?.unitCost, 125000);
   assert.equal(selected?.availableStock, 4);
+  assert.match(mapped[0].searchableText, /8938505974198/);
 });
 
 test("keeps products without variants as a base order option", () => {

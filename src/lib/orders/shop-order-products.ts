@@ -11,6 +11,7 @@ export type ShopOrderLineOption = {
   imageUrl: string;
   categoryName: string;
   sku: string | null;
+  barcode: string | null;
   color: string;
   colorCode: string;
   size: string;
@@ -101,6 +102,7 @@ const toVariantOption = (
   imageUrl: imageUrlFrom(variant.images, productImageUrl),
   categoryName: product.category.name,
   sku: normalizeLabel(variant.sku) || null,
+  barcode: normalizeLabel(variant.barcode) || null,
   color: normalizeLabel(variant.color) || "Mặc định",
   colorCode: normalizeLabel(variant.colorCode),
   size: normalizeLabel(variant.size) || "Mặc định",
@@ -157,6 +159,7 @@ export function mapShopOrderProducts(
             imageUrl: productImageUrl,
             categoryName: product.category.name,
             sku: null,
+            barcode: null,
             color: "",
             colorCode: "",
             size: "",
@@ -173,6 +176,7 @@ export function mapShopOrderProducts(
         `#${product.id}`,
         ...allOptions.flatMap((option) => [
           option.sku,
+          option.barcode,
           option.color,
           option.size,
         ]),

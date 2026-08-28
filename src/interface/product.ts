@@ -35,6 +35,7 @@ export interface ProductImageApiItem {
 export interface ProductVariantApiItem {
   id: number;
   sku: string;
+  barcode?: string | null;
   size: string | null;
   color: string | null;
   colorCode?: string | null;

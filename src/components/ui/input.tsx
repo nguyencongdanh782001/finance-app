@@ -39,7 +39,10 @@ export interface InputProps
   innerRef?: React.Ref<HTMLInputElement>;
 }
 
-const Input = React.forwardRef<HTMLInputElement, Partial<FieldProps> & InputProps>(
+const Input = React.forwardRef<
+  HTMLInputElement,
+  Partial<FieldProps> & InputProps
+>(
   (
     {
       className,
@@ -83,7 +86,11 @@ const Input = React.forwardRef<HTMLInputElement, Partial<FieldProps> & InputProp
 
     return (
       <div
-        className={`${icon ? "bg-white gap-1.25 rounded-[5px] overflow-hidden" : ""}${classNameContainer} relative flex items-center`}
+        className={cn(
+          icon && "gap-1.25 overflow-hidden rounded-[5px] bg-white",
+          classNameContainer,
+          "relative flex items-center",
+        )}
       >
         {icon}
         <div className="w-full relative">
@@ -98,7 +105,9 @@ const Input = React.forwardRef<HTMLInputElement, Partial<FieldProps> & InputProp
             onChange={handleChange}
           />
           {showError && !hiddenErr && (
-            <p className="text-red-1 text-xs mt-1">{getIn(form?.errors, name)}</p>
+            <p className="text-red-1 text-xs mt-1">
+              {getIn(form?.errors, name)}
+            </p>
           )}
           {clearable && !!value && (
             <div className="absolute right-3.75 top-0 bottom-0 flex items-center">
@@ -106,7 +115,10 @@ const Input = React.forwardRef<HTMLInputElement, Partial<FieldProps> & InputProp
                 variant="ghost"
                 onClick={() => {
                   if (form && field) form.setFieldValue(name, "");
-                  else props.onChange?.({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+                  else
+                    props.onChange?.({
+                      target: { value: "" },
+                    } as React.ChangeEvent<HTMLInputElement>);
                   onManualClear?.();
                 }}
               >

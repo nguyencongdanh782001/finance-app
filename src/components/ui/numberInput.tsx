@@ -83,7 +83,11 @@ const NumericInput = React.forwardRef<
 
     return (
       <div
-        className={`${icon ? "bg-white gap-1.25 rounded-[5px] overflow-hidden" : ""}${classNameContainer} relative flex items-center`}
+        className={cn(
+          icon && "gap-1.25 overflow-hidden rounded-[5px] bg-white",
+          classNameContainer,
+          "relative flex items-center",
+        )}
       >
         {icon}
         <div className="w-full relative">
@@ -98,6 +102,10 @@ const NumericInput = React.forwardRef<
             disabled={disabled}
             placeholder={props.placeholder}
             onBlur={props.onBlur}
+            onFocus={props.onFocus}
+            onKeyDown={props.onKeyDown}
+            name={props.name}
+            inputMode={props.inputMode}
             getInputRef={ref ?? innerRef}
             aria-required={props["aria-required"]}
             aria-describedby={props["aria-describedby"]}
