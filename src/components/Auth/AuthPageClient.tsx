@@ -389,9 +389,13 @@ export function AuthDatePicker({
           variant="authField"
           size="authField"
           aria-invalid={hasError}
-          className={hasError ? "border-[#C64040]" : ""}
+          className={`min-w-0 ${hasError ? "border-[#C64040]" : ""}`}
         >
-          <span className={value ? "text-[#1C1A1B]" : "text-[#9B9296]"}>
+          <span
+            className={`min-w-0 truncate text-left ${
+              value ? "text-[#1C1A1B]" : "text-[#9B9296]"
+            }`}
+          >
             {value ? formatBirthdayLabel(value) : placeholder}
           </span>
           <ChevronDown className="size-5 text-[#9B9296]" />

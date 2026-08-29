@@ -107,11 +107,11 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <label className="grid gap-1.5">
-      <span className="text-sm font-semibold text-(--admin-text)">{label}</span>
+    <label className="grid min-w-0 gap-1.5">
+      <span className="min-w-0 text-sm font-semibold text-(--admin-text)">{label}</span>
       {children}
       {hint ? (
-        <span className="text-xs leading-5 text-(--admin-text-muted)">
+        <span className="min-w-0 text-xs leading-5 text-(--admin-text-muted)">
           {hint}
         </span>
       ) : null}
@@ -530,7 +530,7 @@ export default function DiscountsPage() {
                   />
                 </Field>
               ) : null}
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid min-w-0 gap-4 sm:grid-cols-2">
                 <Field label="Ngày bắt đầu" hint="Để trống nếu mã có hiệu lực ngay.">
                   <AuthDatePicker value={form.startsAt} allowFuture onChange={(value) => { updateForm("startsAt", value); if (form.endsAt && form.endsAt < value) updateForm("endsAt", ""); }} placeholder="Chọn ngày bắt đầu" />
                 </Field>
