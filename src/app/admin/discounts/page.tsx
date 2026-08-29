@@ -88,7 +88,8 @@ const randomCode = () => {
   return `QN-${Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join("")}`;
 };
 const money = (value: number) => `${value.toLocaleString("vi-VN")}đ`;
-const dateLabel = (value?: string | null) => value ? new Date(value).toLocaleDateString("vi-VN") : "Không giới hạn";
+const dateLabel = (value?: string | null) =>
+  value ? new Date(value).toLocaleDateString("vi-VN") : "Không giới hạn";
 const discountLabel = (coupon: Coupon) => {
   const base =
     coupon.type === "PERCENTAGE" ? `${coupon.value}%` : money(coupon.value);
@@ -108,7 +109,9 @@ function Field({
 }) {
   return (
     <label className="grid min-w-0 gap-1.5">
-      <span className="min-w-0 text-sm font-semibold text-(--admin-text)">{label}</span>
+      <span className="min-w-0 text-sm font-semibold text-(--admin-text)">
+        {label}
+      </span>
       {children}
       {hint ? (
         <span className="min-w-0 text-xs leading-5 text-(--admin-text-muted)">
@@ -531,11 +534,28 @@ export default function DiscountsPage() {
                 </Field>
               ) : null}
               <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-                <Field label="Ngày bắt đầu" hint="Để trống nếu mã có hiệu lực ngay.">
-                  <AuthDatePicker value={form.startsAt} allowFuture onChange={(value) => { updateForm("startsAt", value); if (form.endsAt && form.endsAt < value) updateForm("endsAt", ""); }} placeholder="Chọn ngày bắt đầu" className={inputClassName} />
+                <Field label="Ngày bắt đầu" hint="">
+                  <AuthDatePicker
+                    value={form.startsAt}
+                    allowFuture
+                    onChange={(value) => {
+                      updateForm("startsAt", value);
+                      if (form.endsAt && form.endsAt < value)
+                        updateForm("endsAt", "");
+                    }}
+                    placeholder="Chọn ngày bắt đầu"
+                    className={inputClassName}
+                  />
                 </Field>
-                <Field label="Ngày kết thúc" hint="Để trống nếu không đặt ngày hết hạn.">
-                  <AuthDatePicker value={form.endsAt} allowFuture minDate={form.startsAt} onChange={(value) => updateForm("endsAt", value)} placeholder="Chọn ngày kết thúc" className={inputClassName} />
+                <Field label="Ngày kết thúc" hint="">
+                  <AuthDatePicker
+                    value={form.endsAt}
+                    allowFuture
+                    minDate={form.startsAt}
+                    onChange={(value) => updateForm("endsAt", value)}
+                    placeholder="Chọn ngày kết thúc"
+                    className={inputClassName}
+                  />
                 </Field>
               </div>
               {memberships.length ? (
@@ -684,7 +704,8 @@ export default function DiscountsPage() {
                           </span>
                         ) : null}
                         <span className="mt-1 block text-xs text-(--admin-text-muted)">
-                          {dateLabel(coupon.startsAt)} – {dateLabel(coupon.endsAt)}
+                          {dateLabel(coupon.startsAt)} –{" "}
+                          {dateLabel(coupon.endsAt)}
                         </span>
                       </td>
                       <td className="p-3">
@@ -759,7 +780,8 @@ export default function DiscountsPage() {
                       </p>
                     ) : null}
                     <p className="mt-2 text-xs text-(--admin-text-muted)">
-                      Hiệu lực: {dateLabel(coupon.startsAt)} – {dateLabel(coupon.endsAt)}
+                      Hiệu lực: {dateLabel(coupon.startsAt)} –{" "}
+                      {dateLabel(coupon.endsAt)}
                     </p>
                     <div className="mt-3">{renderActions(coupon)}</div>
                   </article>
