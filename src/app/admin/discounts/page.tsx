@@ -11,6 +11,7 @@ import { NumericInput } from "@/components/ui/numberInput";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hook/use-toast";
+import { AuthDatePicker } from "@/components/Auth/AuthPageClient";
 import Image from "next/image";
 import QRCode from "qrcode";
 import { X } from "lucide-react";
@@ -39,6 +40,8 @@ type Coupon = {
   source?: "MANUAL" | "BIRTHDAY";
   birthdayYear?: number | null;
   recipientUser?: { displayName: string | null; email: string | null } | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
 };
 type Membership = {
   id: number;
@@ -62,6 +65,8 @@ type DiscountForm = {
   firstOrderOnly: string;
   maxDiscountAmount: string;
   membershipDiscounts: MembershipDiscount[];
+  startsAt: string;
+  endsAt: string;
 };
 const initialForm: DiscountForm = {
   name: "",
@@ -74,6 +79,8 @@ const initialForm: DiscountForm = {
   firstOrderOnly: "false",
   maxDiscountAmount: "",
   membershipDiscounts: [],
+  startsAt: "",
+  endsAt: "",
 };
 const randomCode = () => {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -81,6 +88,7 @@ const randomCode = () => {
   return `QN-${Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join("")}`;
 };
 const money = (value: number) => `${value.toLocaleString("vi-VN")}đ`;
+const dateLabel = (value?: string | null) => value ? new Date(value).toLocaleDateString("vi-VN") : "Không giới hạn";
 const discountLabel = (coupon: Coupon) => {
   const base =
     coupon.type === "PERCENTAGE" ? `${coupon.value}%` : money(coupon.value);
@@ -522,6 +530,14 @@ export default function DiscountsPage() {
                   />
                 </Field>
               ) : null}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Ngày bắt đầu" hint="Để trống nếu mã có hiệu lực ngay.">
+                  <AuthDatePicker value={form.startsAt} allowFuture onChange={(value) => { updateForm("startsAt", value); if (form.endsAt && form.endsAt < value) updateForm("endsAt", ""); }} placeholder="Chọn ngày bắt đầu" />
+                </Field>
+                <Field label="Ngày kết thúc" hint="Để trống nếu không đặt ngày hết hạn.">
+                  <AuthDatePicker value={form.endsAt} allowFuture minDate={form.startsAt} onChange={(value) => updateForm("endsAt", value)} placeholder="Chọn ngày kết thúc" />
+                </Field>
+              </div>
               {memberships.length ? (
                 <div className="rounded-xl border border-(--admin-border) bg-(--admin-background-subtle) p-3 sm:p-4">
                   <div className="mb-3">
@@ -667,6 +683,9 @@ export default function DiscountsPage() {
                             Theo {coupon.membershipDiscounts.length} hạng
                           </span>
                         ) : null}
+                        <span className="mt-1 block text-xs text-(--admin-text-muted)">
+                          {dateLabel(coupon.startsAt)} – {dateLabel(coupon.endsAt)}
+                        </span>
                       </td>
                       <td className="p-3">
                         {coupon.usedCount}
@@ -739,6 +758,9 @@ export default function DiscountsPage() {
                           .join(" · ")}
                       </p>
                     ) : null}
+                    <p className="mt-2 text-xs text-(--admin-text-muted)">
+                      Hiệu lực: {dateLabel(coupon.startsAt)} – {dateLabel(coupon.endsAt)}
+                    </p>
                     <div className="mt-3">{renderActions(coupon)}</div>
                   </article>
                 ))

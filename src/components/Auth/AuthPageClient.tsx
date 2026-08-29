@@ -322,13 +322,19 @@ function DatePickerSelect({
   );
 }
 
-function AuthDatePicker({
+export function AuthDatePicker({
   value,
   hasError,
+  allowFuture = false,
+  minDate,
+  placeholder = "Chọn ngày sinh",
   onChange,
 }: {
   value: string;
   hasError?: boolean;
+  allowFuture?: boolean;
+  minDate?: string;
+  placeholder?: string;
   onChange: (value: string) => void;
 }) {
   const today = new Date();
@@ -348,8 +354,8 @@ function AuthDatePicker({
     ...Array.from({ length: firstDay }, () => null),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
   ];
-  const yearOptions = Array.from({ length: 101 }, (_, index) => {
-    const optionYear = currentYear - index;
+  const yearOptions = Array.from({ length: allowFuture ? 12 : 101 }, (_, index) => {
+    const optionYear = allowFuture ? currentYear - 1 + index : currentYear - index;
 
     return {
       value: String(optionYear),
@@ -386,7 +392,7 @@ function AuthDatePicker({
           className={hasError ? "border-[#C64040]" : ""}
         >
           <span className={value ? "text-[#1C1A1B]" : "text-[#9B9296]"}>
-            {formatBirthdayLabel(value)}
+            {value ? formatBirthdayLabel(value) : placeholder}
           </span>
           <ChevronDown className="size-5 text-[#9B9296]" />
         </Button>
@@ -407,7 +413,7 @@ function AuthDatePicker({
               <ChevronLeft className="size-4" />
             </Button>
             <p className="min-w-0 flex-1 text-center text-sm font-extrabold text-[#1C1A1B]">
-              Chọn ngày sinh
+            {placeholder}
             </p>
             <Button
               type="button"
@@ -449,6 +455,7 @@ function AuthDatePicker({
             const dateValue = toDateValue(date);
             const isSelected = value === dateValue;
             const isFuture = date > today;
+            const isBeforeMinDate = minDate ? date < new Date(minDate) : false;
 
             return (
               <Button
@@ -456,13 +463,13 @@ function AuthDatePicker({
                 type="button"
                 variant={isSelected ? "authTabActive" : "ghost"}
                 size="icon-sm"
-                disabled={isFuture}
+                disabled={(!allowFuture && isFuture) || isBeforeMinDate}
                 onClick={() => {
                   onChange(dateValue);
                   setOpen(false);
                 }}
                 className={`mx-auto size-9 text-sm font-bold ${
-                  isFuture
+                  ((!allowFuture && isFuture) || isBeforeMinDate)
                     ? "cursor-not-allowed text-[#D8C8CE]"
                     : "text-[#1C1A1B] hover:bg-[#FFF3F6]"
                 }`}
