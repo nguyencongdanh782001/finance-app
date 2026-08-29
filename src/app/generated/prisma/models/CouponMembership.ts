@@ -30,30 +30,35 @@ export type CouponMembershipAvgAggregateOutputType = {
   id: number | null
   couponId: number | null
   membershipId: number | null
+  discountRate: runtime.Decimal | null
 }
 
 export type CouponMembershipSumAggregateOutputType = {
   id: number | null
   couponId: number | null
   membershipId: number | null
+  discountRate: runtime.Decimal | null
 }
 
 export type CouponMembershipMinAggregateOutputType = {
   id: number | null
   couponId: number | null
   membershipId: number | null
+  discountRate: runtime.Decimal | null
 }
 
 export type CouponMembershipMaxAggregateOutputType = {
   id: number | null
   couponId: number | null
   membershipId: number | null
+  discountRate: runtime.Decimal | null
 }
 
 export type CouponMembershipCountAggregateOutputType = {
   id: number
   couponId: number
   membershipId: number
+  discountRate: number
   _all: number
 }
 
@@ -62,30 +67,35 @@ export type CouponMembershipAvgAggregateInputType = {
   id?: true
   couponId?: true
   membershipId?: true
+  discountRate?: true
 }
 
 export type CouponMembershipSumAggregateInputType = {
   id?: true
   couponId?: true
   membershipId?: true
+  discountRate?: true
 }
 
 export type CouponMembershipMinAggregateInputType = {
   id?: true
   couponId?: true
   membershipId?: true
+  discountRate?: true
 }
 
 export type CouponMembershipMaxAggregateInputType = {
   id?: true
   couponId?: true
   membershipId?: true
+  discountRate?: true
 }
 
 export type CouponMembershipCountAggregateInputType = {
   id?: true
   couponId?: true
   membershipId?: true
+  discountRate?: true
   _all?: true
 }
 
@@ -179,6 +189,7 @@ export type CouponMembershipGroupByOutputType = {
   id: number
   couponId: number
   membershipId: number
+  discountRate: runtime.Decimal
   _count: CouponMembershipCountAggregateOutputType | null
   _avg: CouponMembershipAvgAggregateOutputType | null
   _sum: CouponMembershipSumAggregateOutputType | null
@@ -208,6 +219,7 @@ export type CouponMembershipWhereInput = {
   id?: Prisma.IntFilter<"CouponMembership"> | number
   couponId?: Prisma.IntFilter<"CouponMembership"> | number
   membershipId?: Prisma.IntFilter<"CouponMembership"> | number
+  discountRate?: Prisma.DecimalFilter<"CouponMembership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   coupon?: Prisma.XOR<Prisma.CouponScalarRelationFilter, Prisma.CouponWhereInput>
   membership?: Prisma.XOR<Prisma.MembershipScalarRelationFilter, Prisma.MembershipWhereInput>
 }
@@ -216,6 +228,7 @@ export type CouponMembershipOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
+  discountRate?: Prisma.SortOrder
   coupon?: Prisma.CouponOrderByWithRelationInput
   membership?: Prisma.MembershipOrderByWithRelationInput
 }
@@ -228,6 +241,7 @@ export type CouponMembershipWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CouponMembershipWhereInput | Prisma.CouponMembershipWhereInput[]
   couponId?: Prisma.IntFilter<"CouponMembership"> | number
   membershipId?: Prisma.IntFilter<"CouponMembership"> | number
+  discountRate?: Prisma.DecimalFilter<"CouponMembership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   coupon?: Prisma.XOR<Prisma.CouponScalarRelationFilter, Prisma.CouponWhereInput>
   membership?: Prisma.XOR<Prisma.MembershipScalarRelationFilter, Prisma.MembershipWhereInput>
 }, "id" | "couponId_membershipId">
@@ -236,6 +250,7 @@ export type CouponMembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
+  discountRate?: Prisma.SortOrder
   _count?: Prisma.CouponMembershipCountOrderByAggregateInput
   _avg?: Prisma.CouponMembershipAvgOrderByAggregateInput
   _max?: Prisma.CouponMembershipMaxOrderByAggregateInput
@@ -250,9 +265,11 @@ export type CouponMembershipScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"CouponMembership"> | number
   couponId?: Prisma.IntWithAggregatesFilter<"CouponMembership"> | number
   membershipId?: Prisma.IntWithAggregatesFilter<"CouponMembership"> | number
+  discountRate?: Prisma.DecimalWithAggregatesFilter<"CouponMembership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipCreateInput = {
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
   coupon: Prisma.CouponCreateNestedOneWithoutApplicableMembershipsInput
   membership: Prisma.MembershipCreateNestedOneWithoutCouponsInput
 }
@@ -261,9 +278,11 @@ export type CouponMembershipUncheckedCreateInput = {
   id?: number
   couponId: number
   membershipId: number
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipUpdateInput = {
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   coupon?: Prisma.CouponUpdateOneRequiredWithoutApplicableMembershipsNestedInput
   membership?: Prisma.MembershipUpdateOneRequiredWithoutCouponsNestedInput
 }
@@ -272,22 +291,25 @@ export type CouponMembershipUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   couponId?: Prisma.IntFieldUpdateOperationsInput | number
   membershipId?: Prisma.IntFieldUpdateOperationsInput | number
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipCreateManyInput = {
   id?: number
   couponId: number
   membershipId: number
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipUpdateManyMutationInput = {
-
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   couponId?: Prisma.IntFieldUpdateOperationsInput | number
   membershipId?: Prisma.IntFieldUpdateOperationsInput | number
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipListRelationFilter = {
@@ -309,30 +331,35 @@ export type CouponMembershipCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
+  discountRate?: Prisma.SortOrder
 }
 
 export type CouponMembershipAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
+  discountRate?: Prisma.SortOrder
 }
 
 export type CouponMembershipMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
+  discountRate?: Prisma.SortOrder
 }
 
 export type CouponMembershipMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
+  discountRate?: Prisma.SortOrder
 }
 
 export type CouponMembershipSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
+  discountRate?: Prisma.SortOrder
 }
 
 export type CouponMembershipCreateNestedManyWithoutMembershipInput = {
@@ -420,12 +447,14 @@ export type CouponMembershipUncheckedUpdateManyWithoutCouponNestedInput = {
 }
 
 export type CouponMembershipCreateWithoutMembershipInput = {
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
   coupon: Prisma.CouponCreateNestedOneWithoutApplicableMembershipsInput
 }
 
 export type CouponMembershipUncheckedCreateWithoutMembershipInput = {
   id?: number
   couponId: number
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipCreateOrConnectWithoutMembershipInput = {
@@ -461,15 +490,18 @@ export type CouponMembershipScalarWhereInput = {
   id?: Prisma.IntFilter<"CouponMembership"> | number
   couponId?: Prisma.IntFilter<"CouponMembership"> | number
   membershipId?: Prisma.IntFilter<"CouponMembership"> | number
+  discountRate?: Prisma.DecimalFilter<"CouponMembership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipCreateWithoutCouponInput = {
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
   membership: Prisma.MembershipCreateNestedOneWithoutCouponsInput
 }
 
 export type CouponMembershipUncheckedCreateWithoutCouponInput = {
   id?: number
   membershipId: number
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipCreateOrConnectWithoutCouponInput = {
@@ -501,39 +533,47 @@ export type CouponMembershipUpdateManyWithWhereWithoutCouponInput = {
 export type CouponMembershipCreateManyMembershipInput = {
   id?: number
   couponId: number
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipUpdateWithoutMembershipInput = {
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   coupon?: Prisma.CouponUpdateOneRequiredWithoutApplicableMembershipsNestedInput
 }
 
 export type CouponMembershipUncheckedUpdateWithoutMembershipInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   couponId?: Prisma.IntFieldUpdateOperationsInput | number
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipUncheckedUpdateManyWithoutMembershipInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   couponId?: Prisma.IntFieldUpdateOperationsInput | number
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipCreateManyCouponInput = {
   id?: number
   membershipId: number
+  discountRate: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipUpdateWithoutCouponInput = {
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   membership?: Prisma.MembershipUpdateOneRequiredWithoutCouponsNestedInput
 }
 
 export type CouponMembershipUncheckedUpdateWithoutCouponInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   membershipId?: Prisma.IntFieldUpdateOperationsInput | number
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type CouponMembershipUncheckedUpdateManyWithoutCouponInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   membershipId?: Prisma.IntFieldUpdateOperationsInput | number
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 
@@ -542,6 +582,7 @@ export type CouponMembershipSelect<ExtArgs extends runtime.Types.Extensions.Inte
   id?: boolean
   couponId?: boolean
   membershipId?: boolean
+  discountRate?: boolean
   coupon?: boolean | Prisma.CouponDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["couponMembership"]>
@@ -550,6 +591,7 @@ export type CouponMembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   couponId?: boolean
   membershipId?: boolean
+  discountRate?: boolean
   coupon?: boolean | Prisma.CouponDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["couponMembership"]>
@@ -558,6 +600,7 @@ export type CouponMembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   couponId?: boolean
   membershipId?: boolean
+  discountRate?: boolean
   coupon?: boolean | Prisma.CouponDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["couponMembership"]>
@@ -566,9 +609,10 @@ export type CouponMembershipSelectScalar = {
   id?: boolean
   couponId?: boolean
   membershipId?: boolean
+  discountRate?: boolean
 }
 
-export type CouponMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "couponId" | "membershipId", ExtArgs["result"]["couponMembership"]>
+export type CouponMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "couponId" | "membershipId" | "discountRate", ExtArgs["result"]["couponMembership"]>
 export type CouponMembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coupon?: boolean | Prisma.CouponDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
@@ -592,6 +636,7 @@ export type $CouponMembershipPayload<ExtArgs extends runtime.Types.Extensions.In
     id: number
     couponId: number
     membershipId: number
+    discountRate: runtime.Decimal
   }, ExtArgs["result"]["couponMembership"]>
   composites: {}
 }
@@ -1020,6 +1065,7 @@ export interface CouponMembershipFieldRefs {
   readonly id: Prisma.FieldRef<"CouponMembership", 'Int'>
   readonly couponId: Prisma.FieldRef<"CouponMembership", 'Int'>
   readonly membershipId: Prisma.FieldRef<"CouponMembership", 'Int'>
+  readonly discountRate: Prisma.FieldRef<"CouponMembership", 'Decimal'>
 }
     
 

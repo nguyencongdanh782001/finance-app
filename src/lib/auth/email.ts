@@ -246,6 +246,70 @@ export async function sendGmailOtp(
   }
 }
 
+export async function sendGmailEmail({
+  to,
+  subject,
+  textBody,
+  htmlBody,
+}: {
+  to: string;
+  subject: string;
+  textBody: string;
+  htmlBody: string;
+}): Promise<SendEmailOtpResult> {
+  const user = process.env.GMAIL_SMTP_USER;
+  const password = process.env.GMAIL_SMTP_APP_PASSWORD;
+  const from = process.env.GMAIL_FROM_EMAIL || user;
+  const host = process.env.GMAIL_SMTP_HOST || "smtp.gmail.com";
+  const port = Number(process.env.GMAIL_SMTP_PORT || 465);
+  if (!user || !password || !from) return { sent: false, skipped: true };
+  const boundary = `qns_email_${Date.now()}`;
+  const message = [
+    `From: ${encodeHeader("Quỳnh Nhi Store")} <${from}>`,
+    `To: ${to}`,
+    `Subject: ${encodeHeader(subject)}`,
+    "MIME-Version: 1.0",
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    "",
+    `--${boundary}`,
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: 8bit",
+    "",
+    textBody,
+    "",
+    `--${boundary}`,
+    "Content-Type: text/html; charset=UTF-8",
+    "Content-Transfer-Encoding: 8bit",
+    "",
+    htmlBody,
+    "",
+    `--${boundary}--`,
+    ".",
+  ].join("\r\n");
+  const socket = tls.connect({ host, port, servername: host });
+  try {
+    await new Promise<void>((resolve, reject) => {
+      socket.once("secureConnect", resolve);
+      socket.once("error", reject);
+    });
+    expectCode(await readResponse(socket), [220]);
+    expectCode(await writeCommand(socket, `EHLO ${host}`), [250]);
+    expectCode(await writeCommand(socket, "AUTH LOGIN"), [334]);
+    expectCode(await writeCommand(socket, encodeBase64(user)), [334]);
+    expectCode(await writeCommand(socket, encodeBase64(password)), [235]);
+    expectCode(await writeCommand(socket, `MAIL FROM:<${from}>`), [250]);
+    expectCode(await writeCommand(socket, `RCPT TO:<${to}>`), [250, 251]);
+    expectCode(await writeCommand(socket, "DATA"), [354]);
+    expectCode(await writeCommand(socket, message), [250]);
+    await writeCommand(socket, "QUIT").catch(() => null);
+    return { sent: true, skipped: false };
+  } catch (error) {
+    return { sent: false, skipped: false, error: error instanceof Error ? error.message : "Unable to send email" };
+  } finally {
+    socket.end();
+  }
+}
+
 export const normalizeEmail = (value: string) => value.trim().toLowerCase();
 
 export const isValidEmail = (value: string) => {
