@@ -328,6 +328,7 @@ export function AuthDatePicker({
   allowFuture = false,
   minDate,
   placeholder = "Chọn ngày sinh",
+  className,
   onChange,
 }: {
   value: string;
@@ -335,6 +336,7 @@ export function AuthDatePicker({
   allowFuture?: boolean;
   minDate?: string;
   placeholder?: string;
+  className?: string;
   onChange: (value: string) => void;
 }) {
   const today = new Date();
@@ -389,7 +391,9 @@ export function AuthDatePicker({
           variant="authField"
           size="authField"
           aria-invalid={hasError}
-          className={`min-w-0 ${hasError ? "border-[#C64040]" : ""}`}
+          className={`min-w-0 ${className || ""} ${
+            hasError ? "border-[#C64040]" : ""
+          }`}
         >
           <span
             className={`min-w-0 truncate text-left ${

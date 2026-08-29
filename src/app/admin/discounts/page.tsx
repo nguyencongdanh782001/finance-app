@@ -532,10 +532,10 @@ export default function DiscountsPage() {
               ) : null}
               <div className="grid min-w-0 gap-4 sm:grid-cols-2">
                 <Field label="Ngày bắt đầu" hint="Để trống nếu mã có hiệu lực ngay.">
-                  <AuthDatePicker value={form.startsAt} allowFuture onChange={(value) => { updateForm("startsAt", value); if (form.endsAt && form.endsAt < value) updateForm("endsAt", ""); }} placeholder="Chọn ngày bắt đầu" />
+                  <AuthDatePicker value={form.startsAt} allowFuture onChange={(value) => { updateForm("startsAt", value); if (form.endsAt && form.endsAt < value) updateForm("endsAt", ""); }} placeholder="Chọn ngày bắt đầu" className={inputClassName} />
                 </Field>
                 <Field label="Ngày kết thúc" hint="Để trống nếu không đặt ngày hết hạn.">
-                  <AuthDatePicker value={form.endsAt} allowFuture minDate={form.startsAt} onChange={(value) => updateForm("endsAt", value)} placeholder="Chọn ngày kết thúc" />
+                  <AuthDatePicker value={form.endsAt} allowFuture minDate={form.startsAt} onChange={(value) => updateForm("endsAt", value)} placeholder="Chọn ngày kết thúc" className={inputClassName} />
                 </Field>
               </div>
               {memberships.length ? (

@@ -30,6 +30,7 @@ import {
   AlertTriangle,
   Check,
   ImageOff,
+  Loader2,
   Minus,
   PackageCheck,
   Plus,
@@ -930,6 +931,7 @@ function CouponSection({
   }, [scannerOpen]);
 
   const apply = async () => {
+    if (loading) return;
     const normalized = code.toUpperCase().replace(/\s+/g, "");
     if (!normalized) return;
     setLoading(true);
@@ -984,10 +986,12 @@ function CouponSection({
       <div className="flex min-w-0 gap-2">
         <div className="relative min-w-0 flex-1">
           <TicketPercent className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#9B8C91]" />
-          <input value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} onKeyDown={(event) => event.key === "Enter" && void apply()} placeholder="Nhập mã giảm giá" className="h-10 w-full min-w-0 rounded-lg border border-[#EAE1E4] bg-white pl-9 pr-3 text-sm uppercase outline-none focus:border-[#D96C8A] focus:ring-2 focus:ring-[#D96C8A]/15" />
+          <input value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} onKeyDown={(event) => event.key === "Enter" && !loading && void apply()} placeholder="Nhập mã giảm giá" className="h-10 w-full min-w-0 rounded-lg border border-[#EAE1E4] bg-white pl-9 pr-3 text-sm uppercase outline-none focus:border-[#D96C8A] focus:ring-2 focus:ring-[#D96C8A]/15" />
         </div>
         <Button type="button" variant="ghost" className="h-10 shrink-0 border border-[#EAE1E4] px-3 text-[#65545B]" onClick={() => setScannerOpen(true)}>Quét QR</Button>
-        <Button type="button" variant="ghost" className="h-10 shrink-0 border border-[#D96C8A] px-3 text-[#A43E5F]" disabled={loading || !code.trim()} onClick={() => void apply()}>{loading ? "..." : "Áp dụng"}</Button>
+        <Button type="button" variant="ghost" className="h-10 min-w-20 shrink-0 border border-[#D96C8A] px-3 text-[#A43E5F]" aria-label={loading ? "Đang áp dụng mã giảm giá" : "Áp dụng mã giảm giá"} disabled={loading || !code.trim()} onClick={() => void apply()}>
+          {loading ? <Loader2 className="size-4 animate-spin" /> : "Áp dụng"}
+        </Button>
       </div>
       {message ? <p className="mt-1.5 text-xs font-medium text-[#B3475E]">{message}</p> : null}
       {scannerOpen ? (
