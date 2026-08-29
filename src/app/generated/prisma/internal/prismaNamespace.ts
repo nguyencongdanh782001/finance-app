@@ -420,6 +420,7 @@ export const ModelName = {
   PaymentLog: 'PaymentLog',
   Shipping: 'Shipping',
   Coupon: 'Coupon',
+  DiscountRedemption: 'DiscountRedemption',
   CouponProduct: 'CouponProduct',
   CouponCategory: 'CouponCategory',
   CouponMembership: 'CouponMembership',
@@ -449,7 +450,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "discountRedemption" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3117,6 +3118,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DiscountRedemption: {
+      payload: Prisma.$DiscountRedemptionPayload<ExtArgs>
+      fields: Prisma.DiscountRedemptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DiscountRedemptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DiscountRedemptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>
+        }
+        findFirst: {
+          args: Prisma.DiscountRedemptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DiscountRedemptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>
+        }
+        findMany: {
+          args: Prisma.DiscountRedemptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>[]
+        }
+        create: {
+          args: Prisma.DiscountRedemptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>
+        }
+        createMany: {
+          args: Prisma.DiscountRedemptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DiscountRedemptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>[]
+        }
+        delete: {
+          args: Prisma.DiscountRedemptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>
+        }
+        update: {
+          args: Prisma.DiscountRedemptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.DiscountRedemptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DiscountRedemptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DiscountRedemptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.DiscountRedemptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountRedemptionPayload>
+        }
+        aggregate: {
+          args: Prisma.DiscountRedemptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDiscountRedemption>
+        }
+        groupBy: {
+          args: Prisma.DiscountRedemptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscountRedemptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DiscountRedemptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscountRedemptionCountAggregateOutputType> | number
+        }
+      }
+    }
     CouponProduct: {
       payload: Prisma.$CouponProductPayload<ExtArgs>
       fields: Prisma.CouponProductFieldRefs
@@ -4459,6 +4534,7 @@ export const MembershipScalarFieldEnum = {
   isActive: 'isActive',
   minSpendAmount: 'minSpendAmount',
   discountRate: 'discountRate',
+  birthdayMaxDiscountAmount: 'birthdayMaxDiscountAmount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -4673,6 +4749,7 @@ export const OrderScalarFieldEnum = {
   isPaid: 'isPaid',
   paidAt: 'paidAt',
   couponId: 'couponId',
+  discountCodeSnapshot: 'discountCodeSnapshot',
   receiverName: 'receiverName',
   receiverPhone: 'receiverPhone',
   receiverAddress: 'receiverAddress',
@@ -4845,6 +4922,8 @@ export type ShippingScalarFieldEnum = (typeof ShippingScalarFieldEnum)[keyof typ
 export const CouponScalarFieldEnum = {
   id: 'id',
   code: 'code',
+  normalizedCode: 'normalizedCode',
+  publicToken: 'publicToken',
   name: 'name',
   description: 'description',
   type: 'type',
@@ -4859,11 +4938,29 @@ export const CouponScalarFieldEnum = {
   startsAt: 'startsAt',
   endsAt: 'endsAt',
   isActive: 'isActive',
+  source: 'source',
+  recipientUserId: 'recipientUserId',
+  birthdayYear: 'birthdayYear',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type CouponScalarFieldEnum = (typeof CouponScalarFieldEnum)[keyof typeof CouponScalarFieldEnum]
+
+
+export const DiscountRedemptionScalarFieldEnum = {
+  id: 'id',
+  couponId: 'couponId',
+  orderId: 'orderId',
+  codeSnapshot: 'codeSnapshot',
+  discountTypeSnapshot: 'discountTypeSnapshot',
+  discountValueSnapshot: 'discountValueSnapshot',
+  discountAmount: 'discountAmount',
+  subtotalSnapshot: 'subtotalSnapshot',
+  redeemedAt: 'redeemedAt'
+} as const
+
+export type DiscountRedemptionScalarFieldEnum = (typeof DiscountRedemptionScalarFieldEnum)[keyof typeof DiscountRedemptionScalarFieldEnum]
 
 
 export const CouponProductScalarFieldEnum = {
@@ -4887,7 +4984,8 @@ export type CouponCategoryScalarFieldEnum = (typeof CouponCategoryScalarFieldEnu
 export const CouponMembershipScalarFieldEnum = {
   id: 'id',
   couponId: 'couponId',
-  membershipId: 'membershipId'
+  membershipId: 'membershipId',
+  discountRate: 'discountRate'
 } as const
 
 export type CouponMembershipScalarFieldEnum = (typeof CouponMembershipScalarFieldEnum)[keyof typeof CouponMembershipScalarFieldEnum]
@@ -5497,6 +5595,20 @@ export type ListEnumCouponTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'CouponSource'
+ */
+export type EnumCouponSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CouponSource'>
+    
+
+
+/**
+ * Reference to a field of type 'CouponSource[]'
+ */
+export type ListEnumCouponSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CouponSource[]'>
+    
+
+
+/**
  * Reference to a field of type 'NotificationType'
  */
 export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType'>
@@ -5696,6 +5808,7 @@ export type GlobalOmitConfig = {
   paymentLog?: Prisma.PaymentLogOmit
   shipping?: Prisma.ShippingOmit
   coupon?: Prisma.CouponOmit
+  discountRedemption?: Prisma.DiscountRedemptionOmit
   couponProduct?: Prisma.CouponProductOmit
   couponCategory?: Prisma.CouponCategoryOmit
   couponMembership?: Prisma.CouponMembershipOmit

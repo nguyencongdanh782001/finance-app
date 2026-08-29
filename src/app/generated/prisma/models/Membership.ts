@@ -32,6 +32,7 @@ export type MembershipAvgAggregateOutputType = {
   priority: number | null
   minSpendAmount: runtime.Decimal | null
   discountRate: runtime.Decimal | null
+  birthdayMaxDiscountAmount: runtime.Decimal | null
 }
 
 export type MembershipSumAggregateOutputType = {
@@ -40,6 +41,7 @@ export type MembershipSumAggregateOutputType = {
   priority: number | null
   minSpendAmount: runtime.Decimal | null
   discountRate: runtime.Decimal | null
+  birthdayMaxDiscountAmount: runtime.Decimal | null
 }
 
 export type MembershipMinAggregateOutputType = {
@@ -53,6 +55,7 @@ export type MembershipMinAggregateOutputType = {
   isActive: boolean | null
   minSpendAmount: runtime.Decimal | null
   discountRate: runtime.Decimal | null
+  birthdayMaxDiscountAmount: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +71,7 @@ export type MembershipMaxAggregateOutputType = {
   isActive: boolean | null
   minSpendAmount: runtime.Decimal | null
   discountRate: runtime.Decimal | null
+  birthdayMaxDiscountAmount: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -84,6 +88,7 @@ export type MembershipCountAggregateOutputType = {
   isActive: number
   minSpendAmount: number
   discountRate: number
+  birthdayMaxDiscountAmount: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -96,6 +101,7 @@ export type MembershipAvgAggregateInputType = {
   priority?: true
   minSpendAmount?: true
   discountRate?: true
+  birthdayMaxDiscountAmount?: true
 }
 
 export type MembershipSumAggregateInputType = {
@@ -104,6 +110,7 @@ export type MembershipSumAggregateInputType = {
   priority?: true
   minSpendAmount?: true
   discountRate?: true
+  birthdayMaxDiscountAmount?: true
 }
 
 export type MembershipMinAggregateInputType = {
@@ -117,6 +124,7 @@ export type MembershipMinAggregateInputType = {
   isActive?: true
   minSpendAmount?: true
   discountRate?: true
+  birthdayMaxDiscountAmount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -132,6 +140,7 @@ export type MembershipMaxAggregateInputType = {
   isActive?: true
   minSpendAmount?: true
   discountRate?: true
+  birthdayMaxDiscountAmount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -148,6 +157,7 @@ export type MembershipCountAggregateInputType = {
   isActive?: true
   minSpendAmount?: true
   discountRate?: true
+  birthdayMaxDiscountAmount?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -251,6 +261,7 @@ export type MembershipGroupByOutputType = {
   isActive: boolean
   minSpendAmount: runtime.Decimal
   discountRate: runtime.Decimal
+  birthdayMaxDiscountAmount: runtime.Decimal | null
   createdAt: Date
   updatedAt: Date
   _count: MembershipCountAggregateOutputType | null
@@ -290,6 +301,7 @@ export type MembershipWhereInput = {
   isActive?: Prisma.BoolFilter<"Membership"> | boolean
   minSpendAmount?: Prisma.DecimalFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.DecimalNullableFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   users?: Prisma.UserListRelationFilter
@@ -308,6 +320,7 @@ export type MembershipOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   minSpendAmount?: Prisma.SortOrder
   discountRate?: Prisma.SortOrder
+  birthdayMaxDiscountAmount?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
@@ -329,6 +342,7 @@ export type MembershipWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"Membership"> | boolean
   minSpendAmount?: Prisma.DecimalFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.DecimalNullableFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   users?: Prisma.UserListRelationFilter
@@ -347,6 +361,7 @@ export type MembershipOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   minSpendAmount?: Prisma.SortOrder
   discountRate?: Prisma.SortOrder
+  birthdayMaxDiscountAmount?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.MembershipCountOrderByAggregateInput
@@ -371,6 +386,7 @@ export type MembershipScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"Membership"> | boolean
   minSpendAmount?: Prisma.DecimalWithAggregatesFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalWithAggregatesFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.DecimalNullableWithAggregatesFilter<"Membership"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Membership"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Membership"> | Date | string
 }
@@ -386,6 +402,7 @@ export type MembershipCreateInput = {
   isActive?: boolean
   minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutMembershipInput
@@ -404,6 +421,7 @@ export type MembershipUncheckedCreateInput = {
   isActive?: boolean
   minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutMembershipInput
@@ -421,6 +439,7 @@ export type MembershipUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutMembershipNestedInput
@@ -439,6 +458,7 @@ export type MembershipUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutMembershipNestedInput
@@ -457,6 +477,7 @@ export type MembershipCreateManyInput = {
   isActive?: boolean
   minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -472,6 +493,7 @@ export type MembershipUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -488,6 +510,7 @@ export type MembershipUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -509,6 +532,7 @@ export type MembershipCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   minSpendAmount?: Prisma.SortOrder
   discountRate?: Prisma.SortOrder
+  birthdayMaxDiscountAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -519,6 +543,7 @@ export type MembershipAvgOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   minSpendAmount?: Prisma.SortOrder
   discountRate?: Prisma.SortOrder
+  birthdayMaxDiscountAmount?: Prisma.SortOrder
 }
 
 export type MembershipMaxOrderByAggregateInput = {
@@ -532,6 +557,7 @@ export type MembershipMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   minSpendAmount?: Prisma.SortOrder
   discountRate?: Prisma.SortOrder
+  birthdayMaxDiscountAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -547,6 +573,7 @@ export type MembershipMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   minSpendAmount?: Prisma.SortOrder
   discountRate?: Prisma.SortOrder
+  birthdayMaxDiscountAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -557,6 +584,7 @@ export type MembershipSumOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   minSpendAmount?: Prisma.SortOrder
   discountRate?: Prisma.SortOrder
+  birthdayMaxDiscountAmount?: Prisma.SortOrder
 }
 
 export type MembershipScalarRelationFilter = {
@@ -605,6 +633,7 @@ export type MembershipCreateWithoutUsersInput = {
   isActive?: boolean
   minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   coupons?: Prisma.CouponMembershipCreateNestedManyWithoutMembershipInput
@@ -622,6 +651,7 @@ export type MembershipUncheckedCreateWithoutUsersInput = {
   isActive?: boolean
   minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   coupons?: Prisma.CouponMembershipUncheckedCreateNestedManyWithoutMembershipInput
@@ -654,6 +684,7 @@ export type MembershipUpdateWithoutUsersInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coupons?: Prisma.CouponMembershipUpdateManyWithoutMembershipNestedInput
@@ -671,6 +702,7 @@ export type MembershipUncheckedUpdateWithoutUsersInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coupons?: Prisma.CouponMembershipUncheckedUpdateManyWithoutMembershipNestedInput
@@ -687,6 +719,7 @@ export type MembershipCreateWithoutCouponsInput = {
   isActive?: boolean
   minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutMembershipInput
@@ -704,6 +737,7 @@ export type MembershipUncheckedCreateWithoutCouponsInput = {
   isActive?: boolean
   minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutMembershipInput
@@ -736,6 +770,7 @@ export type MembershipUpdateWithoutCouponsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutMembershipNestedInput
@@ -753,6 +788,7 @@ export type MembershipUncheckedUpdateWithoutCouponsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutMembershipNestedInput
@@ -810,6 +846,7 @@ export type MembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   isActive?: boolean
   minSpendAmount?: boolean
   discountRate?: boolean
+  birthdayMaxDiscountAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   users?: boolean | Prisma.Membership$usersArgs<ExtArgs>
@@ -829,6 +866,7 @@ export type MembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   isActive?: boolean
   minSpendAmount?: boolean
   discountRate?: boolean
+  birthdayMaxDiscountAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["membership"]>
@@ -845,6 +883,7 @@ export type MembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   isActive?: boolean
   minSpendAmount?: boolean
   discountRate?: boolean
+  birthdayMaxDiscountAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["membership"]>
@@ -861,11 +900,12 @@ export type MembershipSelectScalar = {
   isActive?: boolean
   minSpendAmount?: boolean
   discountRate?: boolean
+  birthdayMaxDiscountAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "level" | "color" | "icon" | "priority" | "benefits" | "isActive" | "minSpendAmount" | "discountRate" | "createdAt" | "updatedAt", ExtArgs["result"]["membership"]>
+export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "level" | "color" | "icon" | "priority" | "benefits" | "isActive" | "minSpendAmount" | "discountRate" | "birthdayMaxDiscountAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["membership"]>
 export type MembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Membership$usersArgs<ExtArgs>
   coupons?: boolean | Prisma.Membership$couponsArgs<ExtArgs>
@@ -892,6 +932,7 @@ export type $MembershipPayload<ExtArgs extends runtime.Types.Extensions.Internal
     isActive: boolean
     minSpendAmount: runtime.Decimal
     discountRate: runtime.Decimal
+    birthdayMaxDiscountAmount: runtime.Decimal | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["membership"]>
@@ -1330,6 +1371,7 @@ export interface MembershipFieldRefs {
   readonly isActive: Prisma.FieldRef<"Membership", 'Boolean'>
   readonly minSpendAmount: Prisma.FieldRef<"Membership", 'Decimal'>
   readonly discountRate: Prisma.FieldRef<"Membership", 'Decimal'>
+  readonly birthdayMaxDiscountAmount: Prisma.FieldRef<"Membership", 'Decimal'>
   readonly createdAt: Prisma.FieldRef<"Membership", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Membership", 'DateTime'>
 }

@@ -35,10 +35,12 @@ import {
   Plus,
   Search,
   ShoppingBag,
+  TicketPercent,
   Trash2,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import QrScanner from "qr-scanner";
 
 export type OfflineOrderEditorMode = "create" | "edit";
 
@@ -51,6 +53,7 @@ type OrderFormState = {
   paymentMethod: "CASH" | "BANK_TRANSFER" | "MOMO";
   paymentStatus: "PAID" | "UNPAID";
   items: EditableOrderItem[];
+  couponCode: string;
 };
 
 type SubmitOrder = (
@@ -87,6 +90,7 @@ const emptyForm = (): OrderFormState => ({
   paymentMethod: "CASH",
   paymentStatus: "PAID",
   items: [],
+  couponCode: "",
 });
 
 const snapshotColorCode = (snapshot: unknown) => {
@@ -866,6 +870,139 @@ function PaymentSection({
   );
 }
 
+type DiscountPreview = {
+  code: string;
+  name: string;
+  discountAmount: number;
+  total: number;
+};
+
+function CouponSection({
+  items,
+  value,
+  onChange,
+  onApplied,
+}: {
+  items: EditableOrderItem[];
+  value: DiscountPreview | null;
+  onChange: (code: string) => void;
+  onApplied: (preview: DiscountPreview | null) => void;
+}) {
+  const [code, setCode] = useState(value?.code || "");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (!scannerOpen || !videoRef.current) return;
+    let scanner: QrScanner | null = null;
+    let cancelled = false;
+    scanner = new QrScanner(
+      videoRef.current,
+      (result) => {
+        if (cancelled) return;
+        const raw = typeof result === "string" ? result : result.data;
+        const tokenMatch = raw.match(/\/voucher\/([^/?#]+)/);
+        setScannerOpen(false);
+        if (tokenMatch) {
+          void fetch(`/api/vouchers/${tokenMatch[1]}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (!data.code) throw new Error("Voucher không hợp lệ.");
+              setCode(data.code);
+              setMessage("Đã nhận voucher từ QR, nhấn Áp dụng để kiểm tra.");
+            })
+            .catch(() => setMessage("Không thể đọc voucher từ QR. Vui lòng nhập mã thủ công."));
+        } else {
+          setCode(raw.trim());
+          setMessage("Đã nhận mã QR, nhấn Áp dụng để kiểm tra.");
+        }
+      },
+      { highlightScanRegion: true, highlightCodeOutline: true },
+    );
+    void scanner.start().catch(() => setMessage("Không thể sử dụng camera. Vui lòng nhập mã thủ công."));
+    return () => {
+      cancelled = true;
+      scanner?.stop();
+      scanner?.destroy();
+    };
+  }, [scannerOpen]);
+
+  const apply = async () => {
+    const normalized = code.toUpperCase().replace(/\s+/g, "");
+    if (!normalized) return;
+    setLoading(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/discounts/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: normalized,
+          items: items.map((item) => ({
+            productId: item.productId,
+            unitPrice: parseMoney(item.unitPrice),
+            quantity: Number(item.quantity),
+          })),
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+      onChange(data.code);
+      onApplied(data);
+    } catch (error) {
+      onApplied(null);
+      setMessage(error instanceof Error ? error.message : "Mã không hợp lệ.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (value) {
+    return (
+      <div className="border-t border-[#EAE1E4] py-3">
+        <div className="flex items-center justify-between gap-3 rounded-lg bg-[#FCEEF3] px-3 py-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <TicketPercent className="size-4 shrink-0 text-[#D96C8A]" />
+            <div className="min-w-0">
+              <p className="truncate text-xs font-bold text-[#A43E5F]">{value.code}</p>
+              <p className="truncate text-10px text-[#8B7A80]">{value.name}</p>
+            </div>
+          </div>
+          <button type="button" className="shrink-0 text-xs font-semibold text-[#A43E5F] hover:underline" onClick={() => { onChange(""); onApplied(null); }}>
+            Xóa
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-t border-[#EAE1E4] py-3">
+      <label className="mb-1.5 block text-xs font-semibold text-[#65545B]">Mã giảm giá</label>
+      <div className="flex min-w-0 gap-2">
+        <div className="relative min-w-0 flex-1">
+          <TicketPercent className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#9B8C91]" />
+          <input value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} onKeyDown={(event) => event.key === "Enter" && void apply()} placeholder="Nhập mã giảm giá" className="h-10 w-full min-w-0 rounded-lg border border-[#EAE1E4] bg-white pl-9 pr-3 text-sm uppercase outline-none focus:border-[#D96C8A] focus:ring-2 focus:ring-[#D96C8A]/15" />
+        </div>
+        <Button type="button" variant="ghost" className="h-10 shrink-0 border border-[#EAE1E4] px-3 text-[#65545B]" onClick={() => setScannerOpen(true)}>Quét QR</Button>
+        <Button type="button" variant="ghost" className="h-10 shrink-0 border border-[#D96C8A] px-3 text-[#A43E5F]" disabled={loading || !code.trim()} onClick={() => void apply()}>{loading ? "..." : "Áp dụng"}</Button>
+      </div>
+      {message ? <p className="mt-1.5 text-xs font-medium text-[#B3475E]">{message}</p> : null}
+      {scannerOpen ? (
+        <div className="fixed inset-0 z-(--z-dialog) flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-4">
+            <div className="flex items-center justify-between"><p className="font-bold text-[#2D2226]">Quét mã QR</p><button type="button" className="p-2 text-[#65545B]" onClick={() => setScannerOpen(false)} aria-label="Đóng quét QR">✕</button></div>
+            <video ref={videoRef} className="mt-3 aspect-square w-full rounded-xl bg-black object-cover" muted playsInline />
+            <p className="mt-3 text-center text-xs text-[#8B7A80]">Đưa mã QR vào khung hình</p>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function OrderCart({
   mode,
   form,
@@ -875,6 +1012,9 @@ function OrderCart({
   onUpdateItem,
   onRemoveItem,
   onSubmit,
+  discountPreview,
+  onCouponChange,
+  onDiscountPreviewChange,
 }: {
   mode: OfflineOrderEditorMode;
   form: OrderFormState;
@@ -887,6 +1027,9 @@ function OrderCart({
   ) => void;
   onRemoveItem: (index: number) => void;
   onSubmit: () => void;
+  discountPreview: DiscountPreview | null;
+  onCouponChange: (code: string) => void;
+  onDiscountPreviewChange: (preview: DiscountPreview | null) => void;
 }) {
   const totals = form.items.reduce(
     (result, item) => {
@@ -959,8 +1102,20 @@ function OrderCart({
       </div>
 
       <div className="shrink-0 border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5">
+        <CouponSection
+          items={form.items}
+          value={discountPreview}
+          onChange={onCouponChange}
+          onApplied={onDiscountPreviewChange}
+        />
         <PaymentSection form={form} onChange={onChange} />
         <div className="space-y-2 pb-4 text-sm">
+          {discountPreview ? (
+            <>
+              <div className="flex items-center justify-between text-[#65545B]"><span>Tạm tính</span><span>{formatMoney(totals.amount)}</span></div>
+              <div className="flex items-center justify-between text-[#397354]"><span>Mã {discountPreview.code}</span><span>-{formatMoney(discountPreview.discountAmount)}</span></div>
+            </>
+          ) : null}
           <div className="flex items-center justify-between text-[#65545B]">
             <span>Tổng số lượng</span>
             <span className="font-bold text-[#2D2226]">
@@ -972,7 +1127,7 @@ function OrderCart({
               Tổng thanh toán
             </span>
             <span className="text-xl font-extrabold tracking-tight text-[#2D2226]">
-              {formatMoney(totals.amount)}
+              {formatMoney(discountPreview?.total ?? totals.amount)}
             </span>
           </div>
         </div>
@@ -993,7 +1148,7 @@ function OrderCart({
               Đang lưu đơn
             </span>
           ) : (
-            `${mode === "edit" ? "Lưu đơn" : "Tạo đơn"} · ${formatMoney(totals.amount)}`
+            `${mode === "edit" ? "Lưu đơn" : "Tạo đơn"} · ${formatMoney(discountPreview?.total ?? totals.amount)}`
           )}
         </Button>
       </div>
@@ -1022,6 +1177,7 @@ export function OfflineOrderEditor({
   const [cartOpen, setCartOpen] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [discountPreview, setDiscountPreview] = useState<DiscountPreview | null>(null);
   const [idempotencyKey, setIdempotencyKey] = useState(createIdempotencyKey);
   const initializedRef = useRef(false);
 
@@ -1030,6 +1186,7 @@ export function OfflineOrderEditor({
       initializedRef.current = false;
       setCartOpen(false);
       setForm(emptyForm());
+      setDiscountPreview(null);
       setError("");
       return;
     }
@@ -1043,6 +1200,7 @@ export function OfflineOrderEditor({
             ? order.paymentMethod
             : "CASH",
         paymentStatus: order.paymentStatus === "UNPAID" ? "UNPAID" : "PAID",
+        couponCode: "",
         items: order.items
           .filter((item) => item.productId)
           .map((item) => {
@@ -1097,6 +1255,8 @@ export function OfflineOrderEditor({
 
   const addItem = (option: ShopOrderLineOption, requestedQuantity = 1) => {
     setError("");
+    setDiscountPreview(null);
+    setForm((current) => ({ ...current, couponCode: "" }));
     setForm((current) => {
       const index = current.items.findIndex(
         (item) => itemKey(item) === itemKey(option),
@@ -1133,13 +1293,16 @@ export function OfflineOrderEditor({
   const updateItem = (
     index: number,
     patch: Partial<Pick<EditableOrderItem, "quantity" | "unitPrice">>,
-  ) =>
+  ) => {
+    setDiscountPreview(null);
+    setForm((current) => ({ ...current, couponCode: "" }));
     setForm((current) => ({
       ...current,
       items: current.items.map((item, itemIndex) =>
         itemIndex === index ? { ...item, ...patch } : item,
       ),
     }));
+  };
 
   const submit = async () => {
     try {
@@ -1172,6 +1335,7 @@ export function OfflineOrderEditor({
           paymentMethod: form.paymentMethod,
           paymentStatus: form.paymentStatus,
           idempotencyKey: mode === "create" ? idempotencyKey : undefined,
+          couponCode: form.couponCode || undefined,
           items,
         },
         order?.id,
@@ -1204,6 +1368,11 @@ export function OfflineOrderEditor({
         }))
       }
       onSubmit={() => void submit()}
+      discountPreview={discountPreview}
+      onCouponChange={(couponCode) =>
+        setForm((current) => ({ ...current, couponCode }))
+      }
+      onDiscountPreviewChange={setDiscountPreview}
     />
   );
 
@@ -1253,12 +1422,13 @@ export function OfflineOrderEditor({
               loading={productsLoading}
               onAdd={addItem}
               onRemoveProduct={(productId) =>
-                setForm((current) => ({
+                (setDiscountPreview(null), setForm((current) => ({
                   ...current,
                   items: current.items.filter(
                     (item) => item.productId !== productId,
                   ),
-                }))
+                  couponCode: "",
+                })))
               }
             />
           </div>

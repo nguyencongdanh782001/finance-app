@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { FolderTree, LayoutDashboard, Menu, Package } from "lucide-react";
+import { FolderTree, LayoutDashboard, Menu, Package, Percent } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,6 +33,12 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
       pathname === "/admin" ||
       pathname.startsWith("/admin/daily-detail/") ||
       pathname.startsWith("/admin/monthly-detail/"),
+  },
+  {
+    href: "/admin/discounts",
+    label: "Mã giảm giá",
+    icon: Percent,
+    matches: (pathname) => pathname.startsWith("/admin/discounts"),
   },
   {
     href: "/admin/products",

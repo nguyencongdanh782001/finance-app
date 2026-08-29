@@ -87,6 +87,7 @@ export const ModelName = {
   PaymentLog: 'PaymentLog',
   Shipping: 'Shipping',
   Coupon: 'Coupon',
+  DiscountRedemption: 'DiscountRedemption',
   CouponProduct: 'CouponProduct',
   CouponCategory: 'CouponCategory',
   CouponMembership: 'CouponMembership',
@@ -386,6 +387,7 @@ export const MembershipScalarFieldEnum = {
   isActive: 'isActive',
   minSpendAmount: 'minSpendAmount',
   discountRate: 'discountRate',
+  birthdayMaxDiscountAmount: 'birthdayMaxDiscountAmount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -600,6 +602,7 @@ export const OrderScalarFieldEnum = {
   isPaid: 'isPaid',
   paidAt: 'paidAt',
   couponId: 'couponId',
+  discountCodeSnapshot: 'discountCodeSnapshot',
   receiverName: 'receiverName',
   receiverPhone: 'receiverPhone',
   receiverAddress: 'receiverAddress',
@@ -772,6 +775,8 @@ export type ShippingScalarFieldEnum = (typeof ShippingScalarFieldEnum)[keyof typ
 export const CouponScalarFieldEnum = {
   id: 'id',
   code: 'code',
+  normalizedCode: 'normalizedCode',
+  publicToken: 'publicToken',
   name: 'name',
   description: 'description',
   type: 'type',
@@ -786,11 +791,29 @@ export const CouponScalarFieldEnum = {
   startsAt: 'startsAt',
   endsAt: 'endsAt',
   isActive: 'isActive',
+  source: 'source',
+  recipientUserId: 'recipientUserId',
+  birthdayYear: 'birthdayYear',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type CouponScalarFieldEnum = (typeof CouponScalarFieldEnum)[keyof typeof CouponScalarFieldEnum]
+
+
+export const DiscountRedemptionScalarFieldEnum = {
+  id: 'id',
+  couponId: 'couponId',
+  orderId: 'orderId',
+  codeSnapshot: 'codeSnapshot',
+  discountTypeSnapshot: 'discountTypeSnapshot',
+  discountValueSnapshot: 'discountValueSnapshot',
+  discountAmount: 'discountAmount',
+  subtotalSnapshot: 'subtotalSnapshot',
+  redeemedAt: 'redeemedAt'
+} as const
+
+export type DiscountRedemptionScalarFieldEnum = (typeof DiscountRedemptionScalarFieldEnum)[keyof typeof DiscountRedemptionScalarFieldEnum]
 
 
 export const CouponProductScalarFieldEnum = {
@@ -814,7 +837,8 @@ export type CouponCategoryScalarFieldEnum = (typeof CouponCategoryScalarFieldEnu
 export const CouponMembershipScalarFieldEnum = {
   id: 'id',
   couponId: 'couponId',
-  membershipId: 'membershipId'
+  membershipId: 'membershipId',
+  discountRate: 'discountRate'
 } as const
 
 export type CouponMembershipScalarFieldEnum = (typeof CouponMembershipScalarFieldEnum)[keyof typeof CouponMembershipScalarFieldEnum]

@@ -164,6 +164,11 @@ enum CouponType {
   FREE_SHIPPING
 }
 
+enum CouponSource {
+  MANUAL
+  BIRTHDAY
+}
+
 enum NotificationType {
   ORDER
   PAYMENT
@@ -525,6 +530,7 @@ model User {
   recentlyViewedProducts RecentlyViewedProduct[]
   productDrafts          ProductDraft[]
   productImportJobs      ProductImportJob[]
+  birthdayCoupons        Coupon[] @relation("BirthdayCoupons")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -653,6 +659,7 @@ model Membership {
 
   minSpendAmount Decimal @default(0)
   discountRate   Decimal @default(0)
+  birthdayMaxDiscountAmount Decimal?
 
   users   User[]
   coupons CouponMembership[]
@@ -995,6 +1002,8 @@ model Order {
 
   couponId Int?
   coupon   Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  discountRedemption DiscountRedemption?
+  discountCodeSnapshot String?
 
   receiverName     String?
   receiverPhone    String?
@@ -1272,6 +1281,8 @@ model Coupon {
   id Int @id @default(autoincrement())
 
   code        String  @unique
+  normalizedCode String  @unique
+  publicToken String  @unique
   name        String
   description String?
 
@@ -1290,8 +1301,13 @@ model Coupon {
   startsAt DateTime?
   endsAt   DateTime?
   isActive Boolean   @default(true)
+  source CouponSource @default(MANUAL)
+  recipientUserId Int?
+  recipientUser User? @relation("BirthdayCoupons", fields: [recipientUserId], references: [id], onDelete: SetNull)
+  birthdayYear Int?
 
   orders                Order[]
+  redemptions           DiscountRedemption[]
   products              CouponProduct[]
   categories            CouponCategory[]
   applicableMemberships CouponMembership[]
@@ -1304,7 +1320,28 @@ model Coupon {
   @@index([code])
   @@index([isActive])
   @@index([firstOrderOnly])
+  @@index([source, birthdayYear])
+  @@unique([recipientUserId, birthdayYear])
   @@map("coupon")
+}
+
+model DiscountRedemption {
+  id Int @id @default(autoincrement())
+
+  couponId Int
+  coupon Coupon @relation(fields: [couponId], references: [id], onDelete: Restrict)
+  orderId Int @unique
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  codeSnapshot String
+  discountTypeSnapshot CouponType
+  discountValueSnapshot Decimal
+  discountAmount Decimal
+  subtotalSnapshot Decimal
+  redeemedAt DateTime @default(now())
+
+  @@index([couponId])
+  @@map("discount_redemption")
 }
 
 model CouponProduct {
@@ -1345,6 +1382,8 @@ model CouponMembership {
 
   membershipId Int
   membership   Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  discountRate Decimal
 
   @@unique([couponId, membershipId])
   @@index([couponId])
