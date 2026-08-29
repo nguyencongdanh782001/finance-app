@@ -111,55 +111,66 @@ const DailyDetail = () => {
           </span>
         }
       />
-      <div className="grid w-full min-w-0 grid-cols-3 rounded-lg border border-slate-200 bg-white p-1 sm:w-fit">
-        <button
-          type="button"
-          onClick={() => setActiveTab("revenue")}
-          className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:min-w-30 ${
-            activeTab === "revenue"
-              ? "bg-primary text-white"
-              : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <TrendingUp
-            className={`size-3.5 ${
-              activeTab === "revenue" ? "text-white" : "text-slate-400"
+      <div className="sticky top-[var(--admin-header-height)] z-(--z-sticky) -ml-4 box-border w-screen max-w-[100vw] min-w-0 overflow-x-hidden border-b border-(--admin-border) bg-(--admin-surface) px-1 py-2 sm:ml-0 sm:w-full sm:max-w-full">
+        <div className="flex w-full max-w-full min-w-0 gap-0 overflow-x-hidden rounded-lg border border-(--admin-border) bg-(--admin-surface) p-1 whitespace-nowrap">
+          <button
+            type="button"
+            onClick={() => setActiveTab("revenue")}
+            aria-current={activeTab === "revenue" ? "page" : undefined}
+            className={`flex h-9 min-w-0 flex-1 shrink cursor-pointer items-center justify-center gap-1.5 rounded-md px-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--admin-primary)/35 sm:px-3 ${
+              activeTab === "revenue"
+                ? "bg-(--admin-primary) text-white"
+                : "text-(--admin-text-muted) hover:text-(--admin-text-secondary)"
             }`}
-          />
-          Doanh thu
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("orders")}
-          className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:min-w-30 ${
-            activeTab === "orders"
-              ? "bg-primary text-white"
-              : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <ReceiptText
-            className={`size-3.5 ${
-              activeTab === "orders" ? "text-white" : "text-slate-400"
+          >
+            <TrendingUp
+              className={`size-3.5 ${
+                activeTab === "revenue"
+                  ? "text-white"
+                  : "text-(--admin-text-muted)"
+              }`}
+            />
+            Doanh thu
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("orders")}
+            aria-current={activeTab === "orders" ? "page" : undefined}
+            className={`flex h-9 min-w-0 flex-1 shrink cursor-pointer items-center justify-center gap-1.5 rounded-md px-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--admin-primary)/35 sm:px-3 ${
+              activeTab === "orders"
+                ? "bg-(--admin-primary) text-white"
+                : "text-(--admin-text-muted) hover:text-(--admin-text-secondary)"
             }`}
-          />
-          Đơn hàng
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("products")}
-          className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:min-w-30 ${
-            activeTab === "products"
-              ? "bg-primary text-white"
-              : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <PackageCheck
-            className={`size-3.5 ${
-              activeTab === "products" ? "text-white" : "text-slate-400"
+          >
+            <ReceiptText
+              className={`size-3.5 ${
+                activeTab === "orders"
+                  ? "text-white"
+                  : "text-(--admin-text-muted)"
+              }`}
+            />
+            Đơn hàng
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("products")}
+            aria-current={activeTab === "products" ? "page" : undefined}
+            className={`flex h-9 min-w-0 flex-1 shrink cursor-pointer items-center justify-center gap-1.5 rounded-md px-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--admin-primary)/35 sm:px-3 ${
+              activeTab === "products"
+                ? "bg-(--admin-primary) text-white"
+                : "text-(--admin-text-muted) hover:text-(--admin-text-secondary)"
             }`}
-          />
-          Sản phẩm
-        </button>
+          >
+            <PackageCheck
+              className={`size-3.5 ${
+                activeTab === "products"
+                  ? "text-white"
+                  : "text-(--admin-text-muted)"
+              }`}
+            />
+            Sản phẩm
+          </button>
+        </div>
       </div>
       <div className="flex min-w-0 flex-col gap-5">
         {isLoading ? (
