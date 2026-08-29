@@ -7,9 +7,10 @@ import { NextResponse } from "next/server";
 const errorResponse = (error: unknown) =>
   NextResponse.json({ message: error instanceof Error ? error.message : "Không thể xử lý mã giảm giá." }, { status: 400 });
 
-const parseDate = (value: unknown) => {
+const parseDate = (value: unknown, endOfDay = false) => {
   if (!value) return null;
-  const date = new Date(String(value));
+  const raw = String(value);
+  const date = new Date(endOfDay && /^\d{4}-\d{2}-\d{2}$/.test(raw) ? `${raw}T23:59:59.999Z` : raw);
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
@@ -37,6 +38,11 @@ const parsePayload = (body: Record<string, unknown>) => {
         return { membershipId, discountRate };
       })
     : [];
+  const startsAt = parseDate(body.startsAt);
+  const endsAt = parseDate(body.endsAt, true);
+  if (body.startsAt && !startsAt) throw new Error("Ngày bắt đầu không hợp lệ.");
+  if (body.endsAt && !endsAt) throw new Error("Ngày kết thúc không hợp lệ.");
+  if (startsAt && endsAt && startsAt > endsAt) throw new Error("Ngày kết thúc phải sau ngày bắt đầu.");
   return {
     name,
     description: String(body.description || "").trim() || null,
@@ -46,8 +52,8 @@ const parsePayload = (body: Record<string, unknown>) => {
     value,
     maxDiscountAmount: body.maxDiscountAmount ? Math.round(Number(body.maxDiscountAmount)) : null,
     minOrderAmount: body.minOrderAmount ? Math.round(Number(body.minOrderAmount)) : null,
-    startsAt: parseDate(body.startsAt),
-    endsAt: parseDate(body.endsAt),
+    startsAt,
+    endsAt,
     usageLimit,
     usageLimitPerUser,
     firstOrderOnly: body.firstOrderOnly === true,
