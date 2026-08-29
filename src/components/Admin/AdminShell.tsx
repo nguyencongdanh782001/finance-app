@@ -133,7 +133,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="min-w-0 lg:pl-60">
-        <header className="sticky top-0 z-40 flex h-15 items-center justify-between gap-3 border-b border-(--admin-border) bg-white/95 px-4 backdrop-blur sm:px-5 lg:px-6">
+        <header className="sticky top-0 z-(--z-header) flex h-[var(--admin-header-height)] items-center justify-between gap-3 border-b border-(--admin-border) bg-white/95 px-4 backdrop-blur sm:px-5 lg:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
             <Sheet>
               <SheetTrigger asChild>

@@ -153,27 +153,46 @@ const getPriceLabel = (product: ShopOrderProductOption) => {
 
 function ProductResultRow({
   product,
+  selectedItems,
   onChoose,
 }: {
   product: ShopOrderProductOption;
+  selectedItems: EditableOrderItem[];
   onChoose: (product: ShopOrderProductOption) => void;
 }) {
   const options = getProductOptions(product);
   const sizes = new Set(options.map((option) => option.size).filter(Boolean));
-  const isUnavailable = product.totalAvailableStock <= 0 || !options.length;
+  const selected = selectedItems.filter(
+    (item) => item.productId === product.productId,
+  );
+  const isUnavailable =
+    (!selected.length && product.totalAvailableStock <= 0) || !options.length;
+  const selectedQuantity = selected.reduce(
+    (total, item) => total + Number(item.quantity || 0),
+    0,
+  );
 
   return (
     <button
       type="button"
       disabled={isUnavailable}
       onClick={() => onChoose(product)}
-      className="group flex min-h-20 w-full min-w-0 items-center gap-3 border-b border-[#EAE1E4] px-2 py-3 text-left outline-none transition last:border-b-0 hover:bg-[#FCFAFB] focus-visible:bg-[#FCEEF3] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D96C8A]/35 disabled:cursor-not-allowed disabled:opacity-50 max-sm:mb-2 max-sm:rounded-xl max-sm:border max-sm:bg-white max-sm:p-3"
+      className={cn(
+        "group flex min-h-20 w-full min-w-0 items-center gap-3 overflow-hidden border-b border-[#EAE1E4] px-2 py-3 text-left outline-none transition last:border-b-0 hover:bg-[#FCFAFB] focus-visible:bg-[#FCEEF3] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D96C8A]/35 disabled:cursor-not-allowed disabled:opacity-50 max-sm:mb-2 max-sm:rounded-xl max-sm:border max-sm:bg-white max-sm:p-3",
+        selected.length && "border-[#D96C8A] bg-[#FCEEF3] hover:bg-[#FCEEF3]",
+      )}
     >
       <ProductThumbnail src={product.imageUrl} alt={product.title} />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-bold text-[#2D2226]">
+        <p className="truncate text-sm font-bold text-[#2D2226]" title={product.title}>
           {product.title}
         </p>
+        {selected.length ? (
+          <p className="mt-1 flex min-w-0 items-center gap-1 text-10px font-bold text-[#A43E5F]">
+            <Check className="size-3 shrink-0" />
+            <span className="truncate">Đã chọn {selectedQuantity} món</span>
+          </p>
+        ) : null}
         <p className="mt-1 text-sm font-semibold text-[#65545B]">
           {getPriceLabel(product)}
         </p>
@@ -190,7 +209,14 @@ function ProductResultRow({
           ) : null}
         </div>
       </div>
-      <span className="shrink-0 rounded-lg px-3 py-2 text-xs font-bold text-[#D96C8A] transition group-hover:bg-[#FCEEF3]">
+      <span
+        className={cn(
+          "flex min-h-10 shrink-0 items-center gap-1 rounded-lg px-3 py-2 text-xs font-bold transition",
+          selected.length
+            ? "bg-white text-[#A43E5F]"
+            : "text-[#D96C8A] group-hover:bg-[#FCEEF3]",
+        )}
+      >
         {isUnavailable ? "Hết hàng" : "Chọn"}
       </span>
     </button>
@@ -212,25 +238,55 @@ function ProductResultSkeleton() {
 
 function VariantPicker({
   product,
+  existingItems,
   onClose,
   onAdd,
 }: {
   product: ShopOrderProductOption | null;
+  existingItems: EditableOrderItem[];
   onClose: () => void;
-  onAdd: (option: ShopOrderLineOption) => void;
+  onAdd: (option: ShopOrderLineOption, quantity: number) => void;
 }) {
   const [colorKey, setColorKey] = useState<string | null>(null);
   const [variantId, setVariantId] = useState<number | null>(null);
+  const [quantity, setQuantity] = useState("1");
   const color = product?.colors.find((item) => item.key === colorKey) || null;
   const selected =
-    color?.variants.find((variant) => variant.variantId === variantId) || null;
+    product?.baseOption ||
+    color?.variants.find((variant) => variant.variantId === variantId) ||
+    null;
 
   useEffect(() => {
-    if (!product) {
-      setColorKey(null);
-      setVariantId(null);
+    if (!product) return;
+    const existing = existingItems.find(
+      (item) => item.productId === product.productId,
+    );
+    const existingColor = product.colors.find((item) =>
+      item.variants.some((variant) => variant.variantId === existing?.variantId),
+    );
+    setColorKey(existingColor?.key || null);
+    setVariantId(existing?.variantId || null);
+    setQuantity(existing?.quantity || "1");
+  }, [existingItems, product]);
+
+  useEffect(() => {
+    if (!selected) {
+      setQuantity("1");
+      return;
     }
-  }, [product]);
+    const existing = existingItems.find(
+      (item) => itemKey(item) === itemKey(selected),
+    );
+    setQuantity(existing?.quantity || "1");
+  }, [existingItems, selected]);
+
+  const parsedQuantity = Number(quantity || 0);
+  const maxQuantity = selected?.availableStock || 0;
+  const canConfirm =
+    Boolean(selected) &&
+    Number.isInteger(parsedQuantity) &&
+    parsedQuantity >= 0 &&
+    parsedQuantity <= maxQuantity;
 
   return (
     <Dialog open={Boolean(product)} onOpenChange={(open) => !open && onClose()}>
@@ -282,6 +338,7 @@ function VariantPicker({
             </div>
           </div>
 
+          {product?.colors.length ? (
           <fieldset className="mt-5">
             <legend className="text-sm font-bold text-[#2D2226]">
               Màu sắc
@@ -318,8 +375,9 @@ function VariantPicker({
               })}
             </div>
           </fieldset>
+          ) : null}
 
-          <fieldset className="mt-5" disabled={!color}>
+          {product?.colors.length ? <fieldset className="mt-5" disabled={!color}>
             <legend className="text-sm font-bold text-[#2D2226]">
               Kích thước
             </legend>
@@ -331,7 +389,11 @@ function VariantPicker({
               <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
                 {color.variants.map((variant) => {
                   const active = variant.variantId === variantId;
-                  const unavailable = variant.availableStock <= 0;
+                  const unavailable =
+                    variant.availableStock <= 0 &&
+                    !existingItems.some(
+                      (item) => itemKey(item) === itemKey(variant),
+                    );
                   return (
                     <Button
                       key={variant.variantId}
@@ -358,7 +420,28 @@ function VariantPicker({
                 })}
               </div>
             )}
-          </fieldset>
+          </fieldset> : null}
+
+          {selected ? (
+            <fieldset className="mt-5">
+              <legend className="text-sm font-bold text-[#2D2226]">
+                Số lượng
+              </legend>
+              <div className="mt-2 flex items-center gap-3">
+                <QuantityControl
+                  value={quantity}
+                  stock={maxQuantity}
+                  onChange={setQuantity}
+                  allowZero
+                />
+                <p className="text-xs leading-5 text-[#8B7A80]">
+                  Hiện tại: <strong className="text-[#65545B]">{quantity} món</strong>
+                  <br />
+                  Tối đa: {maxQuantity} món · đưa về 0 để xóa.
+                </p>
+              </div>
+            </fieldset>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-2 gap-2 border-t border-[#EAE1E4] bg-white px-4 py-3 pb-[max(12px,env(safe-area-inset-bottom))] sm:px-5">
@@ -373,10 +456,12 @@ function VariantPicker({
           <Button
             type="button"
             className="h-11 rounded-lg bg-[#D96C8A] text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
-            disabled={!selected || selected.availableStock <= 0}
-            onClick={() => selected && onAdd(selected)}
+            disabled={!canConfirm}
+            onClick={() => selected && onAdd(selected, parsedQuantity)}
           >
-            Thêm vào đơn
+            {selected && existingItems.some((item) => itemKey(item) === itemKey(selected))
+              ? "Cập nhật"
+              : "Thêm vào đơn"}
           </Button>
         </div>
       </DialogContent>
@@ -386,12 +471,16 @@ function VariantPicker({
 
 function ProductSearchPanel({
   products,
+  selectedItems,
   loading,
   onAdd,
+  onRemoveProduct,
 }: {
   products: ShopOrderProductOption[];
+  selectedItems: EditableOrderItem[];
   loading: boolean;
-  onAdd: (option: ShopOrderLineOption) => void;
+  onAdd: (option: ShopOrderLineOption, quantity?: number) => void;
+  onRemoveProduct: (productId: number) => void;
 }) {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -427,7 +516,18 @@ function ProductSearchPanel({
 
   const chooseProduct = (product: ShopOrderProductOption) => {
     const options = getProductOptions(product);
-    if (options.length === 1 && options[0].availableStock > 0) {
+    const alreadySelected = selectedItems.some(
+      (item) => item.productId === product.productId,
+    );
+    if (alreadySelected) {
+      if (options.length > 1) {
+        setVariantProduct(product);
+        return;
+      }
+      onRemoveProduct(product.productId);
+      return;
+    }
+    if (!alreadySelected && options.length === 1 && options[0].availableStock > 0) {
       onAdd(options[0]);
       return;
     }
@@ -435,7 +535,7 @@ function ProductSearchPanel({
   };
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col bg-white xl:border-r xl:border-[#EAE1E4]">
+    <section className="flex h-full min-h-0 flex-1 flex-col bg-white xl:border-r xl:border-[#EAE1E4]">
       <div className="border-b border-[#EAE1E4] px-4 py-4 sm:px-5">
         <div className="mb-3 flex items-center justify-between">
           <div>
@@ -475,7 +575,7 @@ function ProductSearchPanel({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto bg-white px-2 py-1 sm:px-4 max-sm:bg-[#F8F5F6] max-sm:p-3">
+      <div className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-contain bg-white px-2 py-1 touch-pan-y sm:px-4 max-sm:bg-[#F8F5F6] max-sm:p-3 max-sm:pb-36">
         {loading && !products.length ? (
           Array.from({ length: 6 }, (_, index) => (
             <ProductResultSkeleton key={index} />
@@ -485,6 +585,7 @@ function ProductSearchPanel({
             <ProductResultRow
               key={product.productId}
               product={product}
+              selectedItems={selectedItems}
               onChoose={chooseProduct}
             />
           ))
@@ -504,10 +605,11 @@ function ProductSearchPanel({
       </div>
 
       <VariantPicker
-        product={variantProduct}
-        onClose={() => setVariantProduct(null)}
-        onAdd={(option) => {
-          onAdd(option);
+          product={variantProduct}
+          existingItems={selectedItems}
+          onClose={() => setVariantProduct(null)}
+          onAdd={(option) => {
+            onAdd(option, 1);
           setVariantProduct(null);
         }}
       />
@@ -519,17 +621,20 @@ function QuantityControl({
   value,
   stock,
   onChange,
+  allowZero = false,
 }: {
   value: string;
   stock: number;
   onChange: (value: string) => void;
+  allowZero?: boolean;
 }) {
   const quantity = Number(value || 0);
-  const invalidMinimum = !Number.isInteger(quantity) || quantity < 1;
+  const minimum = allowZero ? 0 : 1;
+  const invalidMinimum = !Number.isInteger(quantity) || quantity < minimum;
   const invalidStock = quantity > stock;
 
   const normalize = () => {
-    if (!Number.isInteger(quantity) || quantity < 1) onChange("1");
+    if (!Number.isInteger(quantity) || quantity < minimum) onChange(String(minimum));
     else if (quantity > stock) onChange(String(stock));
   };
 
@@ -540,8 +645,8 @@ function QuantityControl({
           type="button"
           variant="ghost"
           className="h-9 rounded-none p-0 text-[#65545B] hover:bg-[#F8F5F6]"
-          disabled={quantity <= 1}
-          onClick={() => onChange(String(Math.max(1, quantity - 1)))}
+          disabled={quantity <= minimum}
+          onClick={() => onChange(String(Math.max(minimum, quantity - 1)))}
           aria-label="Giảm số lượng"
         >
           <Minus className="size-3.5" />
@@ -990,30 +1095,34 @@ export function OfflineOrderEditor({
     { quantity: 0, amount: 0 },
   );
 
-  const addItem = (option: ShopOrderLineOption) => {
+  const addItem = (option: ShopOrderLineOption, requestedQuantity = 1) => {
     setError("");
     setForm((current) => {
       const index = current.items.findIndex(
         (item) => itemKey(item) === itemKey(option),
       );
       if (index >= 0) {
+        if (requestedQuantity <= 0) {
+          return {
+            ...current,
+            items: current.items.filter((_, itemIndex) => itemIndex !== index),
+          };
+        }
         const items = [...current.items];
-        const currentQuantity = Number(items[index].quantity || 0);
         items[index] = {
           ...items[index],
-          quantity: String(
-            Math.min(currentQuantity + 1, items[index].availableStock),
-          ),
+          quantity: String(Math.min(requestedQuantity, items[index].availableStock)),
         };
         return { ...current, items };
       }
+      if (requestedQuantity <= 0) return current;
       return {
         ...current,
         items: [
           ...current.items,
           {
             ...option,
-            quantity: "1",
+            quantity: String(Math.min(requestedQuantity, option.availableStock)),
             unitPrice: String(option.originalUnitPrice),
           },
         ],
@@ -1136,30 +1245,42 @@ export function OfflineOrderEditor({
           </DialogClose>
         </header>
 
-        <div className="grid min-h-0 flex-1 xl:grid-cols-[minmax(0,3fr)_minmax(430px,2fr)]">
-          <div className="flex min-h-0 flex-col pb-19 xl:pb-0">
+        <div className="grid h-full min-h-0 flex-1 xl:grid-cols-[minmax(0,3fr)_minmax(430px,2fr)]">
+          <div className="flex h-full min-h-0 flex-col xl:pb-0">
             <ProductSearchPanel
               products={products}
+              selectedItems={form.items}
               loading={productsLoading}
               onAdd={addItem}
+              onRemoveProduct={(productId) =>
+                setForm((current) => ({
+                  ...current,
+                  items: current.items.filter(
+                    (item) => item.productId !== productId,
+                  ),
+                }))
+              }
             />
           </div>
           <div className="hidden min-h-0 xl:block">{cart}</div>
         </div>
 
         <div className="fixed inset-x-0 bottom-0 z-10 border-t border-[#EAE1E4] bg-white px-4 py-3 pb-[max(12px,env(safe-area-inset-bottom))] xl:hidden">
-          <div className="mx-auto flex max-w-3xl items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-[#8B7A80]">
-                {form.items.length} sản phẩm · {totals.quantity} món
+          <div className="mx-auto flex max-w-3xl flex-col gap-2">
+            <div className="flex items-center justify-between gap-3">
+              <p className="truncate text-xs font-semibold text-[#65545B]">
+                {form.items.length
+                  ? `${form.items.length} sản phẩm · ${totals.quantity} món`
+                  : "Chưa chọn sản phẩm"}
               </p>
-              <p className="truncate text-base font-extrabold text-[#2D2226]">
+              <p className="shrink-0 text-base font-extrabold text-[#2D2226]">
                 {formatMoney(totals.amount)}
               </p>
             </div>
             <Button
               type="button"
-              className="h-11 rounded-lg bg-[#D96C8A] px-5 font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
+              className="h-11 w-full rounded-lg bg-[#D96C8A] font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
+              disabled={!form.items.length || submitting}
               onClick={() => setCartOpen(true)}
             >
               <ShoppingBag className="size-4" />
