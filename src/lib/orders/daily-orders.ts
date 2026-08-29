@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import prisma from "@/lib/db";
+import { validateDiscount } from "@/lib/discounts";
 import {
   OrderSource,
   OrderStatus,
@@ -27,6 +28,8 @@ export type OfflineOrderPayload = {
   orderedAt?: string;
   idempotencyKey?: string;
   items?: OfflineOrderItemPayload[];
+  couponCode?: string;
+  userId?: number | null;
 };
 
 const OFFLINE_PAYMENT_METHODS: PaymentMethod[] = [
@@ -676,11 +679,30 @@ export async function createOfflineOrder(
     }
 
     const calculatedOrder = await buildOrderItems(tx, items);
+    const discount = payload.couponCode
+      ? await validateDiscount(payload.couponCode, items, tx, payload.userId)
+      : null;
+    if (discount) {
+      const reserved = await tx.coupon.updateMany({
+        where: {
+          id: discount.coupon.id,
+          isActive: true,
+          OR: [
+            { usageLimit: null },
+            { usageLimit: { gt: discount.coupon.usedCount } },
+          ],
+        },
+        data: { usedCount: { increment: 1 } },
+      });
+      if (!reserved.count) throw new Error("Mã giảm giá đã hết lượt sử dụng.");
+    }
+    const discountAmount = discount?.discountAmount || 0;
+    const totalAmount = Math.max(0, calculatedOrder.subtotal - discountAmount);
     const order = await tx.order.create({
       data: {
         orderNumber: generateOrderNumber(placedAt),
         idempotencyKey: idempotencyKey || null,
-        userId: null,
+        userId: payload.userId ?? null,
         createdById: adminId,
         updatedById: adminId,
         source: OrderSource.OFFLINE,
@@ -692,20 +714,34 @@ export async function createOfflineOrder(
         placedAt,
         completedAt: placedAt,
         subtotal: calculatedOrder.subtotal,
-        discountAmount: 0,
+        discountAmount,
         shippingFee: 0,
         taxAmount: 0,
         totalCost: calculatedOrder.totalCost,
-        totalAmount: calculatedOrder.totalAmount,
+        totalAmount,
         paidAmount:
           paymentStatus === PaymentStatus.PAID
-            ? calculatedOrder.totalAmount
+          ? totalAmount
             : 0,
         remainingAmount:
           paymentStatus === PaymentStatus.PAID
             ? 0
-            : calculatedOrder.totalAmount,
-        profit: calculatedOrder.profit,
+          : totalAmount,
+        profit: totalAmount - calculatedOrder.totalCost,
+        couponId: discount?.coupon.id ?? null,
+        discountCodeSnapshot: discount ? discount.code : null,
+        discountRedemption: discount
+          ? {
+              create: {
+                couponId: discount.coupon.id,
+                codeSnapshot: discount.code,
+                discountTypeSnapshot: discount.coupon.type,
+                discountValueSnapshot: discount.coupon.value,
+                discountAmount,
+                subtotalSnapshot: calculatedOrder.subtotal,
+              },
+            }
+          : undefined,
         items: {
           create: calculatedOrder.items,
         },
@@ -772,6 +808,33 @@ export async function updateOfflineOrder(
     const oldQuantityMap = getExistingOrderQuantityMap(existingOrder);
     const calculatedOrder = await buildOrderItems(tx, items, oldQuantityMap);
 
+    if (existingOrder.couponId) {
+      await tx.coupon.update({
+        where: { id: existingOrder.couponId },
+        data: { usedCount: { decrement: 1 } },
+      });
+      await tx.discountRedemption.deleteMany({ where: { orderId } });
+    }
+    const discount = payload.couponCode
+      ? await validateDiscount(payload.couponCode, items, tx, payload.userId ?? existingOrder.userId)
+      : null;
+    if (discount) {
+      const reserved = await tx.coupon.updateMany({
+        where: {
+          id: discount.coupon.id,
+          isActive: true,
+          OR: [
+            { usageLimit: null },
+            { usageLimit: { gt: discount.coupon.usedCount } },
+          ],
+        },
+        data: { usedCount: { increment: 1 } },
+      });
+      if (!reserved.count) throw new Error("Mã giảm giá đã hết lượt sử dụng.");
+    }
+    const discountAmount = discount?.discountAmount || 0;
+    const totalAmount = Math.max(0, calculatedOrder.subtotal - discountAmount);
+
     await applyInventoryDelta(
       tx,
       oldQuantityMap,
@@ -792,17 +855,32 @@ export async function updateOfflineOrder(
             ? (existingOrder.paidAt ?? new Date())
             : null,
         subtotal: calculatedOrder.subtotal,
+        discountAmount,
         totalCost: calculatedOrder.totalCost,
-        totalAmount: calculatedOrder.totalAmount,
+        totalAmount,
         paidAmount:
           paymentStatus === PaymentStatus.PAID
-            ? calculatedOrder.totalAmount
+          ? totalAmount
             : 0,
         remainingAmount:
           paymentStatus === PaymentStatus.PAID
             ? 0
-            : calculatedOrder.totalAmount,
-        profit: calculatedOrder.profit,
+          : totalAmount,
+        profit: totalAmount - calculatedOrder.totalCost,
+        couponId: discount?.coupon.id ?? null,
+        discountCodeSnapshot: discount ? discount.code : null,
+        discountRedemption: discount
+          ? {
+              create: {
+                couponId: discount.coupon.id,
+                codeSnapshot: discount.code,
+                discountTypeSnapshot: discount.coupon.type,
+                discountValueSnapshot: discount.coupon.value,
+                discountAmount,
+                subtotalSnapshot: calculatedOrder.subtotal,
+              },
+            }
+          : undefined,
         items: {
           create: calculatedOrder.items,
         },
@@ -835,6 +913,14 @@ export async function cancelOfflineOrder(orderId: number, adminId: number) {
 
     const oldQuantityMap = getExistingOrderQuantityMap(existingOrder);
     await applyInventoryDelta(tx, oldQuantityMap, [], orderId);
+
+    if (existingOrder.couponId) {
+      await tx.coupon.updateMany({
+        where: { id: existingOrder.couponId, usedCount: { gt: 0 } },
+        data: { usedCount: { decrement: 1 } },
+      });
+      await tx.discountRedemption.deleteMany({ where: { orderId } });
+    }
 
     const order = await tx.order.update({
       where: { id: orderId },

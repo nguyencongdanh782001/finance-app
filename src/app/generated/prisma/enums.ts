@@ -223,6 +223,14 @@ export const CouponType = {
 export type CouponType = (typeof CouponType)[keyof typeof CouponType]
 
 
+export const CouponSource = {
+  MANUAL: 'MANUAL',
+  BIRTHDAY: 'BIRTHDAY'
+} as const
+
+export type CouponSource = (typeof CouponSource)[keyof typeof CouponSource]
+
+
 export const NotificationType = {
   ORDER: 'ORDER',
   PAYMENT: 'PAYMENT',

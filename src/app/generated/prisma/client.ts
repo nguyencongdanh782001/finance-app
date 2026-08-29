@@ -222,6 +222,11 @@ export type Shipping = Prisma.ShippingModel
  */
 export type Coupon = Prisma.CouponModel
 /**
+ * Model DiscountRedemption
+ * 
+ */
+export type DiscountRedemption = Prisma.DiscountRedemptionModel
+/**
  * Model CouponProduct
  * 
  */

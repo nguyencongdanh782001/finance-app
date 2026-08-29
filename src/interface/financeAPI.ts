@@ -328,6 +328,7 @@ export interface OfflineOrderPayload {
   paymentStatus?: "UNPAID" | "PAID";
   orderedAt?: string;
   idempotencyKey?: string;
+  couponCode?: string;
   items: {
     productId: number;
     variantId?: number | null;
