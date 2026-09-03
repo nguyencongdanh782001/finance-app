@@ -19,6 +19,7 @@ import {
   Package,
   Percent,
   Star,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -68,6 +69,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     matches: (pathname) => pathname === "/admin/memberships",
   },
   {
+    href: "/admin/users",
+    label: "Người dùng",
+    group: "Khách hàng & ưu đãi",
+    icon: Users,
+    matches: (pathname) => pathname.startsWith("/admin/users"),
+  },
+  {
     href: "/admin/products",
     label: "Sản phẩm",
     group: "Quản lý cửa hàng",
@@ -87,6 +95,8 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/memberships/benefits"))
     return "Quyền lợi membership";
   if (pathname === "/admin/memberships") return "Hạng membership";
+  if (pathname.startsWith("/admin/users")) return "Người dùng";
+  if (pathname.startsWith("/admin/profile")) return "Thông tin cá nhân";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";
   if (pathname.startsWith("/admin/categories")) return "Danh mục";
   if (pathname.startsWith("/admin/daily-detail/")) return "Chi tiết ngày";

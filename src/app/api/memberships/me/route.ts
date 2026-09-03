@@ -33,11 +33,13 @@ export async function GET(request: Request) {
       current: {
         ...membership,
         spending: Number(membership.spending),
-        membership: {
-          ...membership.membership,
-          minSpendAmount: Number(membership.membership.minSpendAmount),
-          discountRate: Number(membership.membership.discountRate),
-        },
+        membership: membership.membership
+          ? {
+              ...membership.membership,
+              minSpendAmount: Number(membership.membership.minSpendAmount),
+              discountRate: Number(membership.membership.discountRate),
+            }
+          : null,
       },
       benefits: benefits.map((benefit) => ({
         ...benefit,
