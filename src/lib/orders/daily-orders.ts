@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import prisma from "@/lib/db";
 import { validateDiscount } from "@/lib/discounts";
+import { ensureCurrentMembership } from "@/lib/memberships";
 import {
   OrderSource,
   OrderStatus,
@@ -719,14 +720,8 @@ export async function createOfflineOrder(
         taxAmount: 0,
         totalCost: calculatedOrder.totalCost,
         totalAmount,
-        paidAmount:
-          paymentStatus === PaymentStatus.PAID
-          ? totalAmount
-            : 0,
-        remainingAmount:
-          paymentStatus === PaymentStatus.PAID
-            ? 0
-          : totalAmount,
+        paidAmount: paymentStatus === PaymentStatus.PAID ? totalAmount : 0,
+        remainingAmount: paymentStatus === PaymentStatus.PAID ? 0 : totalAmount,
         profit: totalAmount - calculatedOrder.totalCost,
         couponId: discount?.coupon.id ?? null,
         discountCodeSnapshot: discount ? discount.code : null,
@@ -757,6 +752,10 @@ export async function createOfflineOrder(
     });
 
     await applyInventoryDelta(tx, new Map(), calculatedOrder.items, order.id);
+
+    if (order.userId && order.paymentStatus === PaymentStatus.PAID) {
+      await ensureCurrentMembership(order.userId, order.placedAt, tx);
+    }
 
     return serializeOrder(order);
   });
@@ -816,7 +815,12 @@ export async function updateOfflineOrder(
       await tx.discountRedemption.deleteMany({ where: { orderId } });
     }
     const discount = payload.couponCode
-      ? await validateDiscount(payload.couponCode, items, tx, payload.userId ?? existingOrder.userId)
+      ? await validateDiscount(
+          payload.couponCode,
+          items,
+          tx,
+          payload.userId ?? existingOrder.userId,
+        )
       : null;
     if (discount) {
       const reserved = await tx.coupon.updateMany({
@@ -858,14 +862,8 @@ export async function updateOfflineOrder(
         discountAmount,
         totalCost: calculatedOrder.totalCost,
         totalAmount,
-        paidAmount:
-          paymentStatus === PaymentStatus.PAID
-          ? totalAmount
-            : 0,
-        remainingAmount:
-          paymentStatus === PaymentStatus.PAID
-            ? 0
-          : totalAmount,
+        paidAmount: paymentStatus === PaymentStatus.PAID ? totalAmount : 0,
+        remainingAmount: paymentStatus === PaymentStatus.PAID ? 0 : totalAmount,
         profit: totalAmount - calculatedOrder.totalCost,
         couponId: discount?.coupon.id ?? null,
         discountCodeSnapshot: discount ? discount.code : null,
@@ -887,6 +885,10 @@ export async function updateOfflineOrder(
       },
       include: includeOrderDetail,
     });
+
+    if (order.userId && order.paymentStatus === PaymentStatus.PAID) {
+      await ensureCurrentMembership(order.userId, order.placedAt, tx);
+    }
 
     return serializeOrder(order);
   });

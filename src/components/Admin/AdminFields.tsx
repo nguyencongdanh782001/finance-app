@@ -37,6 +37,7 @@ export function AdminSelect({
   placeholder,
   onChange,
   searchable = false,
+  hasError = false,
 }: {
   name: string;
   value: string;
@@ -44,6 +45,7 @@ export function AdminSelect({
   placeholder: string;
   onChange: (value: string) => void;
   searchable?: boolean;
+  hasError?: boolean;
 }) {
   const field = {
     name,
@@ -69,7 +71,10 @@ export function AdminSelect({
       placeholder={placeholder}
       searchable={searchable}
       className="w-full! max-w-full! min-w-0! sm:w-full!"
-      inputClassName="h-10! w-full! max-w-full! min-w-0! rounded-lg! border-slate-200! bg-white! text-sm! font-medium!"
+      inputClassName={cn(
+        "h-10! w-full! max-w-full! min-w-0! rounded-lg! border-slate-200! bg-white! text-sm! font-medium!",
+        hasError && "border-[#C64040]! focus:border-[#C64040]!",
+      )}
       lblClassName="text-sm"
       popoverTrgVariant={{ variant: "search-box--lgray" }}
     />

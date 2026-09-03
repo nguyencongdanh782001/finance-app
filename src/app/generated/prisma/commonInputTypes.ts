@@ -562,6 +562,40 @@ export type EnumProductImportModeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumProductImportModeFilter<$PrismaModel>
 }
 
+export type EnumMembershipBenefitTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipBenefitType | Prisma.EnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipBenefitTypeFilter<$PrismaModel> | $Enums.MembershipBenefitType
+}
+
+export type EnumMembershipBenefitTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipBenefitType | Prisma.EnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipBenefitTypeWithAggregatesFilter<$PrismaModel> | $Enums.MembershipBenefitType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMembershipBenefitTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMembershipBenefitTypeFilter<$PrismaModel>
+}
+
+export type EnumMembershipResetStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipResetStatus | Prisma.EnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipResetStatusFilter<$PrismaModel> | $Enums.MembershipResetStatus
+}
+
+export type EnumMembershipResetStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipResetStatus | Prisma.EnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipResetStatusWithAggregatesFilter<$PrismaModel> | $Enums.MembershipResetStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMembershipResetStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMembershipResetStatusFilter<$PrismaModel>
+}
+
 export type EnumOtpPurposeFilter<$PrismaModel = never> = {
   equals?: $Enums.OtpPurpose | Prisma.EnumOtpPurposeFieldRefInput<$PrismaModel>
   in?: $Enums.OtpPurpose[] | Prisma.ListEnumOtpPurposeFieldRefInput<$PrismaModel>
@@ -1373,6 +1407,40 @@ export type NestedEnumProductImportModeWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumProductImportModeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumProductImportModeFilter<$PrismaModel>
+}
+
+export type NestedEnumMembershipBenefitTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipBenefitType | Prisma.EnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipBenefitTypeFilter<$PrismaModel> | $Enums.MembershipBenefitType
+}
+
+export type NestedEnumMembershipBenefitTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipBenefitType | Prisma.EnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipBenefitType[] | Prisma.ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipBenefitTypeWithAggregatesFilter<$PrismaModel> | $Enums.MembershipBenefitType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMembershipBenefitTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMembershipBenefitTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumMembershipResetStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipResetStatus | Prisma.EnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipResetStatusFilter<$PrismaModel> | $Enums.MembershipResetStatus
+}
+
+export type NestedEnumMembershipResetStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MembershipResetStatus | Prisma.EnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MembershipResetStatus[] | Prisma.ListEnumMembershipResetStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMembershipResetStatusWithAggregatesFilter<$PrismaModel> | $Enums.MembershipResetStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMembershipResetStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMembershipResetStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumOtpPurposeFilter<$PrismaModel = never> = {

@@ -11,7 +11,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { FolderTree, LayoutDashboard, Menu, Package, Percent } from "lucide-react";
+import {
+  FolderTree,
+  Gift,
+  LayoutDashboard,
+  Menu,
+  Package,
+  Percent,
+  Star,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +28,7 @@ import type { ComponentType, ReactNode } from "react";
 type AdminNavItem = {
   href: string;
   label: string;
+  group: string;
   icon: ComponentType<{ className?: string }>;
   matches: (pathname: string) => boolean;
 };
@@ -28,6 +37,7 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   {
     href: "/admin",
     label: "Tổng quan",
+    group: "Tổng quan",
     icon: LayoutDashboard,
     matches: (pathname) =>
       pathname === "/admin" ||
@@ -37,24 +47,46 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   {
     href: "/admin/discounts",
     label: "Mã giảm giá",
+    group: "Khách hàng & ưu đãi",
     icon: Percent,
     matches: (pathname) => pathname.startsWith("/admin/discounts"),
   },
   {
+    href: "/admin/memberships/benefits",
+    label: "Quyền lợi membership",
+    group: "Khách hàng & ưu đãi",
+    icon: Gift,
+    matches: (pathname) =>
+      pathname === "/admin/memberships/benefits" ||
+      pathname.startsWith("/admin/memberships/benefits/"),
+  },
+  {
+    href: "/admin/memberships",
+    label: "Hạng membership",
+    group: "Khách hàng & ưu đãi",
+    icon: Star,
+    matches: (pathname) => pathname === "/admin/memberships",
+  },
+  {
     href: "/admin/products",
     label: "Sản phẩm",
+    group: "Quản lý cửa hàng",
     icon: Package,
     matches: (pathname) => pathname.startsWith("/admin/products"),
   },
   {
     href: "/admin/categories",
     label: "Danh mục",
+    group: "Quản lý cửa hàng",
     icon: FolderTree,
     matches: (pathname) => pathname.startsWith("/admin/categories"),
   },
 ];
 
 const getPageTitle = (pathname: string) => {
+  if (pathname.startsWith("/admin/memberships/benefits"))
+    return "Quyền lợi membership";
+  if (pathname === "/admin/memberships") return "Hạng membership";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";
   if (pathname.startsWith("/admin/categories")) return "Danh mục";
   if (pathname.startsWith("/admin/daily-detail/")) return "Chi tiết ngày";
@@ -67,12 +99,11 @@ function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
 
   return (
     <nav aria-label="Điều hướng quản trị" className="space-y-1 px-3">
-      <p className="mb-3 px-3 text-11px font-semibold uppercase tracking-[0.12em] text-slate-400/75">
-        Quản lý cửa hàng
-      </p>
-      {ADMIN_NAV_ITEMS.map((item) => {
+      {ADMIN_NAV_ITEMS.map((item, index) => {
         const Icon = item.icon;
         const active = item.matches(pathname);
+        const isFirstInGroup =
+          index === 0 || ADMIN_NAV_ITEMS[index - 1].group !== item.group;
         const link = (
           <Link
             href={item.href}
@@ -88,12 +119,18 @@ function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
           </Link>
         );
 
-        return mobile ? (
-          <SheetClose asChild key={item.href}>
-            {link}
-          </SheetClose>
-        ) : (
-          <div key={item.href}>{link}</div>
+        return (
+          <div
+            key={item.href}
+            className={isFirstInGroup ? "pt-3 first:pt-0" : undefined}
+          >
+            {isFirstInGroup ? (
+              <p className="mb-2 px-3 text-10px font-semibold uppercase tracking-[0.12em] text-slate-400/75">
+                {item.group}
+              </p>
+            ) : null}
+            {mobile ? <SheetClose asChild>{link}</SheetClose> : link}
+          </div>
         );
       })}
     </nav>

@@ -33,6 +33,7 @@ import {
   Loader2,
   Minus,
   PackageCheck,
+  Phone,
   Plus,
   Search,
   ShoppingBag,
@@ -55,6 +56,19 @@ type OrderFormState = {
   paymentStatus: "PAID" | "UNPAID";
   items: EditableOrderItem[];
   couponCode: string;
+  customerPhone: string;
+  userId: number | null;
+};
+
+type Customer = {
+  id: number;
+  phone: string | null;
+  displayName: string | null;
+  membership: {
+    name: string;
+    color: string | null;
+    discountRate: number;
+  } | null;
 };
 
 type SubmitOrder = (
@@ -92,6 +106,8 @@ const emptyForm = (): OrderFormState => ({
   paymentStatus: "PAID",
   items: [],
   couponCode: "",
+  customerPhone: "",
+  userId: null,
 });
 
 const snapshotColorCode = (snapshot: unknown) => {
@@ -176,11 +192,13 @@ function ProductResultRow({
     (total, item) => total + Number(item.quantity || 0),
     0,
   );
+  const isMaxedOut =
+    selected.length > 0 && selectedQuantity >= product.totalAvailableStock;
 
   return (
     <button
       type="button"
-      disabled={isUnavailable}
+      disabled={isUnavailable || isMaxedOut}
       onClick={() => onChoose(product)}
       className={cn(
         "group flex min-h-20 w-full min-w-0 items-center gap-3 overflow-hidden border-b border-[#EAE1E4] px-2 py-3 text-left outline-none transition last:border-b-0 hover:bg-[#FCFAFB] focus-visible:bg-[#FCEEF3] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D96C8A]/35 disabled:cursor-not-allowed disabled:opacity-50 max-sm:mb-2 max-sm:rounded-xl max-sm:border max-sm:bg-white max-sm:p-3",
@@ -189,7 +207,10 @@ function ProductResultRow({
     >
       <ProductThumbnail src={product.imageUrl} alt={product.title} />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-bold text-[#2D2226]" title={product.title}>
+        <p
+          className="truncate text-sm font-bold text-[#2D2226]"
+          title={product.title}
+        >
           {product.title}
         </p>
         {selected.length ? (
@@ -222,7 +243,7 @@ function ProductResultRow({
             : "text-[#D96C8A] group-hover:bg-[#FCEEF3]",
         )}
       >
-        {isUnavailable ? "Hết hàng" : "Chọn"}
+        {isUnavailable ? "Hết hàng" : isMaxedOut ? "Đủ số lượng" : "Chọn"}
       </span>
     </button>
   );
@@ -267,7 +288,9 @@ function VariantPicker({
       (item) => item.productId === product.productId,
     );
     const existingColor = product.colors.find((item) =>
-      item.variants.some((variant) => variant.variantId === existing?.variantId),
+      item.variants.some(
+        (variant) => variant.variantId === existing?.variantId,
+      ),
     );
     setColorKey(existingColor?.key || null);
     setVariantId(existing?.variantId || null);
@@ -344,88 +367,90 @@ function VariantPicker({
           </div>
 
           {product?.colors.length ? (
-          <fieldset className="mt-5">
-            <legend className="text-sm font-bold text-[#2D2226]">
-              Màu sắc
-            </legend>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {product?.colors.map((item) => {
-                const active = item.key === colorKey;
-                return (
-                  <Button
-                    key={item.key}
-                    type="button"
-                    variant="ghost"
-                    aria-pressed={active}
-                    onClick={() => {
-                      setColorKey(item.key);
-                      setVariantId(null);
-                    }}
-                    className={cn(
-                      "h-10 rounded-lg border px-3 focus-visible:ring-[#D96C8A]/30",
-                      active
-                        ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]"
-                        : "border-[#EAE1E4] bg-white text-[#65545B] hover:bg-[#FCFAFB]",
-                    )}
-                  >
-                    {item.colorCode ? (
-                      <span
-                        className="size-3 rounded-full border border-black/10"
-                        style={{ backgroundColor: item.colorCode }}
-                      />
-                    ) : null}
-                    {item.label}
-                  </Button>
-                );
-              })}
-            </div>
-          </fieldset>
-          ) : null}
-
-          {product?.colors.length ? <fieldset className="mt-5" disabled={!color}>
-            <legend className="text-sm font-bold text-[#2D2226]">
-              Kích thước
-            </legend>
-            {!color ? (
-              <p className="mt-2 text-sm text-[#8B7A80]">
-                Chọn màu để xem kích thước phù hợp.
-              </p>
-            ) : (
-              <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
-                {color.variants.map((variant) => {
-                  const active = variant.variantId === variantId;
-                  const unavailable =
-                    variant.availableStock <= 0 &&
-                    !existingItems.some(
-                      (item) => itemKey(item) === itemKey(variant),
-                    );
+            <fieldset className="mt-5">
+              <legend className="text-sm font-bold text-[#2D2226]">
+                Màu sắc
+              </legend>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {product?.colors.map((item) => {
+                  const active = item.key === colorKey;
                   return (
                     <Button
-                      key={variant.variantId}
+                      key={item.key}
                       type="button"
                       variant="ghost"
-                      disabled={unavailable}
                       aria-pressed={active}
-                      onClick={() => setVariantId(variant.variantId)}
+                      onClick={() => {
+                        setColorKey(item.key);
+                        setVariantId(null);
+                      }}
                       className={cn(
-                        "h-auto min-h-12 flex-col gap-0 rounded-lg border px-2 py-2 focus-visible:ring-[#D96C8A]/30",
+                        "h-10 rounded-lg border px-3 focus-visible:ring-[#D96C8A]/30",
                         active
                           ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]"
                           : "border-[#EAE1E4] bg-white text-[#65545B] hover:bg-[#FCFAFB]",
                       )}
                     >
-                      <span className="font-bold">{variant.size}</span>
-                      <span className="text-10px opacity-70">
-                        {unavailable
-                          ? "Hết hàng"
-                          : `Còn ${variant.availableStock}`}
-                      </span>
+                      {item.colorCode ? (
+                        <span
+                          className="size-3 rounded-full border border-black/10"
+                          style={{ backgroundColor: item.colorCode }}
+                        />
+                      ) : null}
+                      {item.label}
                     </Button>
                   );
                 })}
               </div>
-            )}
-          </fieldset> : null}
+            </fieldset>
+          ) : null}
+
+          {product?.colors.length ? (
+            <fieldset className="mt-5" disabled={!color}>
+              <legend className="text-sm font-bold text-[#2D2226]">
+                Kích thước
+              </legend>
+              {!color ? (
+                <p className="mt-2 text-sm text-[#8B7A80]">
+                  Chọn màu để xem kích thước phù hợp.
+                </p>
+              ) : (
+                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                  {color.variants.map((variant) => {
+                    const active = variant.variantId === variantId;
+                    const unavailable =
+                      variant.availableStock <= 0 &&
+                      !existingItems.some(
+                        (item) => itemKey(item) === itemKey(variant),
+                      );
+                    return (
+                      <Button
+                        key={variant.variantId}
+                        type="button"
+                        variant="ghost"
+                        disabled={unavailable}
+                        aria-pressed={active}
+                        onClick={() => setVariantId(variant.variantId)}
+                        className={cn(
+                          "h-auto min-h-12 flex-col gap-0 rounded-lg border px-2 py-2 focus-visible:ring-[#D96C8A]/30",
+                          active
+                            ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]"
+                            : "border-[#EAE1E4] bg-white text-[#65545B] hover:bg-[#FCFAFB]",
+                        )}
+                      >
+                        <span className="font-bold">{variant.size}</span>
+                        <span className="text-10px opacity-70">
+                          {unavailable
+                            ? "Hết hàng"
+                            : `Còn ${variant.availableStock}`}
+                        </span>
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
+            </fieldset>
+          ) : null}
 
           {selected ? (
             <fieldset className="mt-5">
@@ -440,7 +465,8 @@ function VariantPicker({
                   allowZero
                 />
                 <p className="text-xs leading-5 text-[#8B7A80]">
-                  Hiện tại: <strong className="text-[#65545B]">{quantity} món</strong>
+                  Hiện tại:{" "}
+                  <strong className="text-[#65545B]">{quantity} món</strong>
                   <br />
                   Tối đa: {maxQuantity} món · đưa về 0 để xóa.
                 </p>
@@ -464,7 +490,8 @@ function VariantPicker({
             disabled={!canConfirm}
             onClick={() => selected && onAdd(selected, parsedQuantity)}
           >
-            {selected && existingItems.some((item) => itemKey(item) === itemKey(selected))
+            {selected &&
+            existingItems.some((item) => itemKey(item) === itemKey(selected))
               ? "Cập nhật"
               : "Thêm vào đơn"}
           </Button>
@@ -529,10 +556,18 @@ function ProductSearchPanel({
         setVariantProduct(product);
         return;
       }
-      onRemoveProduct(product.productId);
+      const selectedOption = options[0];
+      const currentQuantity = selectedItems
+        .filter((item) => itemKey(item) === itemKey(selectedOption))
+        .reduce((total, item) => total + Number(item.quantity || 0), 0);
+      onAdd(selectedOption, currentQuantity + 1);
       return;
     }
-    if (!alreadySelected && options.length === 1 && options[0].availableStock > 0) {
+    if (
+      !alreadySelected &&
+      options.length === 1 &&
+      options[0].availableStock > 0
+    ) {
       onAdd(options[0]);
       return;
     }
@@ -610,11 +645,11 @@ function ProductSearchPanel({
       </div>
 
       <VariantPicker
-          product={variantProduct}
-          existingItems={selectedItems}
-          onClose={() => setVariantProduct(null)}
-          onAdd={(option) => {
-            onAdd(option, 1);
+        product={variantProduct}
+        existingItems={selectedItems}
+        onClose={() => setVariantProduct(null)}
+        onAdd={(option) => {
+          onAdd(option, 1);
           setVariantProduct(null);
         }}
       />
@@ -639,7 +674,8 @@ function QuantityControl({
   const invalidStock = quantity > stock;
 
   const normalize = () => {
-    if (!Number.isInteger(quantity) || quantity < minimum) onChange(String(minimum));
+    if (!Number.isInteger(quantity) || quantity < minimum)
+      onChange(String(minimum));
     else if (quantity > stock) onChange(String(stock));
   };
 
@@ -914,7 +950,11 @@ function CouponSection({
               setCode(data.code);
               setMessage("Đã nhận voucher từ QR, nhấn Áp dụng để kiểm tra.");
             })
-            .catch(() => setMessage("Không thể đọc voucher từ QR. Vui lòng nhập mã thủ công."));
+            .catch(() =>
+              setMessage(
+                "Không thể đọc voucher từ QR. Vui lòng nhập mã thủ công.",
+              ),
+            );
         } else {
           setCode(raw.trim());
           setMessage("Đã nhận mã QR, nhấn Áp dụng để kiểm tra.");
@@ -922,7 +962,11 @@ function CouponSection({
       },
       { highlightScanRegion: true, highlightCodeOutline: true },
     );
-    void scanner.start().catch(() => setMessage("Không thể sử dụng camera. Vui lòng nhập mã thủ công."));
+    void scanner
+      .start()
+      .catch(() =>
+        setMessage("Không thể sử dụng camera. Vui lòng nhập mã thủ công."),
+      );
     return () => {
       cancelled = true;
       scanner?.stop();
@@ -968,11 +1012,20 @@ function CouponSection({
           <div className="flex min-w-0 items-center gap-2">
             <TicketPercent className="size-4 shrink-0 text-[#D96C8A]" />
             <div className="min-w-0">
-              <p className="truncate text-xs font-bold text-[#A43E5F]">{value.code}</p>
+              <p className="truncate text-xs font-bold text-[#A43E5F]">
+                {value.code}
+              </p>
               <p className="truncate text-10px text-[#8B7A80]">{value.name}</p>
             </div>
           </div>
-          <button type="button" className="shrink-0 text-xs font-semibold text-[#A43E5F] hover:underline" onClick={() => { onChange(""); onApplied(null); }}>
+          <button
+            type="button"
+            className="shrink-0 text-xs font-semibold text-[#A43E5F] hover:underline"
+            onClick={() => {
+              onChange("");
+              onApplied(null);
+            }}
+          >
             Xóa
           </button>
         </div>
@@ -982,24 +1035,69 @@ function CouponSection({
 
   return (
     <div className="border-t border-[#EAE1E4] py-3">
-      <label className="mb-1.5 block text-xs font-semibold text-[#65545B]">Mã giảm giá</label>
+      <label className="mb-1.5 block text-xs font-semibold text-[#65545B]">
+        Mã giảm giá
+      </label>
       <div className="flex min-w-0 gap-2">
         <div className="relative min-w-0 flex-1">
           <TicketPercent className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#9B8C91]" />
-          <input value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} onKeyDown={(event) => event.key === "Enter" && !loading && void apply()} placeholder="Nhập mã giảm giá" className="h-10 w-full min-w-0 rounded-lg border border-[#EAE1E4] bg-white pl-9 pr-3 text-sm uppercase outline-none focus:border-[#D96C8A] focus:ring-2 focus:ring-[#D96C8A]/15" />
+          <input
+            value={code}
+            onChange={(event) => setCode(event.target.value.toUpperCase())}
+            onKeyDown={(event) =>
+              event.key === "Enter" && !loading && void apply()
+            }
+            placeholder="Nhập mã giảm giá"
+            className="h-10 w-full min-w-0 rounded-lg border border-[#EAE1E4] bg-white pl-9 pr-3 text-sm uppercase outline-none focus:border-[#D96C8A] focus:ring-2 focus:ring-[#D96C8A]/15"
+          />
         </div>
-        <Button type="button" variant="ghost" className="h-10 shrink-0 border border-[#EAE1E4] px-3 text-[#65545B]" onClick={() => setScannerOpen(true)}>Quét QR</Button>
-        <Button type="button" variant="ghost" className="h-10 min-w-20 shrink-0 border border-[#D96C8A] px-3 text-[#A43E5F]" aria-label={loading ? "Đang áp dụng mã giảm giá" : "Áp dụng mã giảm giá"} disabled={loading || !code.trim()} onClick={() => void apply()}>
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-10 shrink-0 border border-[#EAE1E4] px-3 text-[#65545B]"
+          onClick={() => setScannerOpen(true)}
+        >
+          Quét QR
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-10 min-w-20 shrink-0 border border-[#D96C8A] px-3 text-[#A43E5F]"
+          aria-label={
+            loading ? "Đang áp dụng mã giảm giá" : "Áp dụng mã giảm giá"
+          }
+          disabled={loading || !code.trim()}
+          onClick={() => void apply()}
+        >
           {loading ? <Loader2 className="size-4 animate-spin" /> : "Áp dụng"}
         </Button>
       </div>
-      {message ? <p className="mt-1.5 text-xs font-medium text-[#B3475E]">{message}</p> : null}
+      {message ? (
+        <p className="mt-1.5 text-xs font-medium text-[#B3475E]">{message}</p>
+      ) : null}
       {scannerOpen ? (
         <div className="fixed inset-0 z-(--z-dialog) flex items-center justify-center bg-black/70 p-4">
           <div className="w-full max-w-sm rounded-2xl bg-white p-4">
-            <div className="flex items-center justify-between"><p className="font-bold text-[#2D2226]">Quét mã QR</p><button type="button" className="p-2 text-[#65545B]" onClick={() => setScannerOpen(false)} aria-label="Đóng quét QR">✕</button></div>
-            <video ref={videoRef} className="mt-3 aspect-square w-full rounded-xl bg-black object-cover" muted playsInline />
-            <p className="mt-3 text-center text-xs text-[#8B7A80]">Đưa mã QR vào khung hình</p>
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-[#2D2226]">Quét mã QR</p>
+              <button
+                type="button"
+                className="p-2 text-[#65545B]"
+                onClick={() => setScannerOpen(false)}
+                aria-label="Đóng quét QR"
+              >
+                ✕
+              </button>
+            </div>
+            <video
+              ref={videoRef}
+              className="mt-3 aspect-square w-full rounded-xl bg-black object-cover"
+              muted
+              playsInline
+            />
+            <p className="mt-3 text-center text-xs text-[#8B7A80]">
+              Đưa mã QR vào khung hình
+            </p>
           </div>
         </div>
       ) : null}
@@ -1019,6 +1117,9 @@ function OrderCart({
   discountPreview,
   onCouponChange,
   onDiscountPreviewChange,
+  customer,
+  customerLoading,
+  onLookupCustomer,
 }: {
   mode: OfflineOrderEditorMode;
   form: OrderFormState;
@@ -1034,6 +1135,9 @@ function OrderCart({
   discountPreview: DiscountPreview | null;
   onCouponChange: (code: string) => void;
   onDiscountPreviewChange: (preview: DiscountPreview | null) => void;
+  customer: Customer | null;
+  customerLoading: boolean;
+  onLookupCustomer: () => void;
 }) {
   const totals = form.items.reduce(
     (result, item) => {
@@ -1106,6 +1210,59 @@ function OrderCart({
       </div>
 
       <div className="shrink-0 border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5">
+        <div className="border-b border-[#EAE1E4] py-3">
+          <label className="text-xs font-bold text-[#2D2226]">
+            Khách hàng / số điện thoại
+            <div className="mt-1.5 flex gap-2">
+              <Input
+                standalone
+                value={form.customerPhone}
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                onManualChange={(value) =>
+                  onChange({ customerPhone: value, userId: null })
+                }
+                placeholder="Nhập số điện thoại khách hàng"
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    onLookupCustomer();
+                  }
+                }}
+                icon={<Phone className="ml-3 size-4 shrink-0 text-[#9B8C91]" />}
+                classNameContainer="h-10 min-w-0 flex-1 rounded-lg border border-[#EAE1E4] bg-white focus-within:border-[#D96C8A] focus-within:ring-2 focus-within:ring-[#D96C8A]/15"
+                className="h-9! rounded-lg! border-0! bg-transparent! px-2! text-sm! text-[#2D2226] placeholder:text-[#9B8C91]"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                className="h-10 shrink-0 rounded-lg border border-[#EAE1E4] px-3 text-[#A43E5F] hover:bg-[#FCEEF3] focus-visible:ring-[#D96C8A]/30"
+                disabled={customerLoading}
+                onClick={onLookupCustomer}
+              >
+                {customerLoading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Search className="size-4" />
+                )}
+                <span className="sr-only">Tìm khách hàng</span>
+              </Button>
+            </div>
+          </label>
+          {customer ? (
+            <div className="mt-2 rounded-lg bg-[#FCEEF3] px-3 py-2 text-xs text-[#65545B]">
+              <p className="font-bold text-[#2D2226]">
+                {customer.displayName || customer.phone}
+              </p>
+              <p className="mt-0.5">
+                {customer.membership
+                  ? `${customer.membership.name} · Giảm mặc định ${customer.membership.discountRate}%`
+                  : "Chưa có hạng membership"}
+              </p>
+            </div>
+          ) : null}
+        </div>
         <CouponSection
           items={form.items}
           value={discountPreview}
@@ -1116,8 +1273,14 @@ function OrderCart({
         <div className="space-y-2 pb-4 text-sm">
           {discountPreview ? (
             <>
-              <div className="flex items-center justify-between text-[#65545B]"><span>Tạm tính</span><span>{formatMoney(totals.amount)}</span></div>
-              <div className="flex items-center justify-between text-[#397354]"><span>Mã {discountPreview.code}</span><span>-{formatMoney(discountPreview.discountAmount)}</span></div>
+              <div className="flex items-center justify-between text-[#65545B]">
+                <span>Tạm tính</span>
+                <span>{formatMoney(totals.amount)}</span>
+              </div>
+              <div className="flex items-center justify-between text-[#397354]">
+                <span>Mã {discountPreview.code}</span>
+                <span>-{formatMoney(discountPreview.discountAmount)}</span>
+              </div>
             </>
           ) : null}
           <div className="flex items-center justify-between text-[#65545B]">
@@ -1181,7 +1344,10 @@ export function OfflineOrderEditor({
   const [cartOpen, setCartOpen] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [discountPreview, setDiscountPreview] = useState<DiscountPreview | null>(null);
+  const [discountPreview, setDiscountPreview] =
+    useState<DiscountPreview | null>(null);
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [customerLoading, setCustomerLoading] = useState(false);
   const [idempotencyKey, setIdempotencyKey] = useState(createIdempotencyKey);
   const initializedRef = useRef(false);
 
@@ -1191,6 +1357,7 @@ export function OfflineOrderEditor({
       setCartOpen(false);
       setForm(emptyForm());
       setDiscountPreview(null);
+      setCustomer(null);
       setError("");
       return;
     }
@@ -1205,6 +1372,8 @@ export function OfflineOrderEditor({
             : "CASH",
         paymentStatus: order.paymentStatus === "UNPAID" ? "UNPAID" : "PAID",
         couponCode: "",
+        customerPhone: order.customer?.phone || "",
+        userId: order.customer?.id || null,
         items: order.items
           .filter((item) => item.productId)
           .map((item) => {
@@ -1241,11 +1410,44 @@ export function OfflineOrderEditor({
       });
     } else {
       setForm(emptyForm());
+      setCustomer(null);
       setIdempotencyKey(createIdempotencyKey());
     }
     setError("");
     initializedRef.current = true;
   }, [mode, open, order, products, productsLoading]);
+
+  const lookupCustomer = async () => {
+    const phone = form.customerPhone.trim();
+    if (!phone) {
+      setCustomer(null);
+      setForm((current) => ({ ...current, userId: null }));
+      setError("Vui lòng nhập số điện thoại khách hàng.");
+      return;
+    }
+    setCustomerLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        `/api/customers/lookup?phone=${encodeURIComponent(phone)}`,
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        setCustomer(null);
+        setForm((current) => ({ ...current, userId: null }));
+        setError(data.message || "Không tìm thấy khách hàng.");
+        return;
+      }
+      setCustomer(data);
+      setForm((current) => ({ ...current, userId: data.id }));
+    } catch {
+      setCustomer(null);
+      setForm((current) => ({ ...current, userId: null }));
+      setError("Không thể tìm khách hàng. Vui lòng thử lại.");
+    } finally {
+      setCustomerLoading(false);
+    }
+  };
 
   const totals = form.items.reduce(
     (result, item) => {
@@ -1275,7 +1477,9 @@ export function OfflineOrderEditor({
         const items = [...current.items];
         items[index] = {
           ...items[index],
-          quantity: String(Math.min(requestedQuantity, items[index].availableStock)),
+          quantity: String(
+            Math.min(requestedQuantity, items[index].availableStock),
+          ),
         };
         return { ...current, items };
       }
@@ -1286,7 +1490,9 @@ export function OfflineOrderEditor({
           ...current.items,
           {
             ...option,
-            quantity: String(Math.min(requestedQuantity, option.availableStock)),
+            quantity: String(
+              Math.min(requestedQuantity, option.availableStock),
+            ),
             unitPrice: String(option.originalUnitPrice),
           },
         ],
@@ -1338,6 +1544,7 @@ export function OfflineOrderEditor({
         {
           paymentMethod: form.paymentMethod,
           paymentStatus: form.paymentStatus,
+          userId: form.userId,
           idempotencyKey: mode === "create" ? idempotencyKey : undefined,
           couponCode: form.couponCode || undefined,
           items,
@@ -1377,6 +1584,9 @@ export function OfflineOrderEditor({
         setForm((current) => ({ ...current, couponCode }))
       }
       onDiscountPreviewChange={setDiscountPreview}
+      customer={customer}
+      customerLoading={customerLoading}
+      onLookupCustomer={() => void lookupCustomer()}
     />
   );
 
@@ -1425,15 +1635,16 @@ export function OfflineOrderEditor({
               selectedItems={form.items}
               loading={productsLoading}
               onAdd={addItem}
-              onRemoveProduct={(productId) =>
-                (setDiscountPreview(null), setForm((current) => ({
+              onRemoveProduct={(productId) => (
+                setDiscountPreview(null),
+                setForm((current) => ({
                   ...current,
                   items: current.items.filter(
                     (item) => item.productId !== productId,
                   ),
                   couponCode: "",
-                })))
-              }
+                }))
+              )}
             />
           </div>
           <div className="hidden min-h-0 xl:block">{cart}</div>

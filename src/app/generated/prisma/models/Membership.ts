@@ -47,7 +47,9 @@ export type MembershipSumAggregateOutputType = {
 export type MembershipMinAggregateOutputType = {
   id: number | null
   name: string | null
+  code: string | null
   description: string | null
+  terms: string | null
   level: number | null
   color: string | null
   icon: string | null
@@ -63,7 +65,9 @@ export type MembershipMinAggregateOutputType = {
 export type MembershipMaxAggregateOutputType = {
   id: number | null
   name: string | null
+  code: string | null
   description: string | null
+  terms: string | null
   level: number | null
   color: string | null
   icon: string | null
@@ -79,7 +83,9 @@ export type MembershipMaxAggregateOutputType = {
 export type MembershipCountAggregateOutputType = {
   id: number
   name: number
+  code: number
   description: number
+  terms: number
   level: number
   color: number
   icon: number
@@ -116,7 +122,9 @@ export type MembershipSumAggregateInputType = {
 export type MembershipMinAggregateInputType = {
   id?: true
   name?: true
+  code?: true
   description?: true
+  terms?: true
   level?: true
   color?: true
   icon?: true
@@ -132,7 +140,9 @@ export type MembershipMinAggregateInputType = {
 export type MembershipMaxAggregateInputType = {
   id?: true
   name?: true
+  code?: true
   description?: true
+  terms?: true
   level?: true
   color?: true
   icon?: true
@@ -148,7 +158,9 @@ export type MembershipMaxAggregateInputType = {
 export type MembershipCountAggregateInputType = {
   id?: true
   name?: true
+  code?: true
   description?: true
+  terms?: true
   level?: true
   color?: true
   icon?: true
@@ -252,7 +264,9 @@ export type MembershipGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type MembershipGroupByOutputType = {
   id: number
   name: string
+  code: string
   description: string | null
+  terms: string | null
   level: number
   color: string | null
   icon: string | null
@@ -292,7 +306,9 @@ export type MembershipWhereInput = {
   NOT?: Prisma.MembershipWhereInput | Prisma.MembershipWhereInput[]
   id?: Prisma.IntFilter<"Membership"> | number
   name?: Prisma.StringFilter<"Membership"> | string
+  code?: Prisma.StringFilter<"Membership"> | string
   description?: Prisma.StringNullableFilter<"Membership"> | string | null
+  terms?: Prisma.StringNullableFilter<"Membership"> | string | null
   level?: Prisma.IntFilter<"Membership"> | number
   color?: Prisma.StringNullableFilter<"Membership"> | string | null
   icon?: Prisma.StringNullableFilter<"Membership"> | string | null
@@ -306,12 +322,16 @@ export type MembershipWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   users?: Prisma.UserListRelationFilter
   coupons?: Prisma.CouponMembershipListRelationFilter
+  histories?: Prisma.MembershipHistoryListRelationFilter
+  benefitTiers?: Prisma.MembershipBenefitTierListRelationFilter
 }
 
 export type MembershipOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  terms?: Prisma.SortOrderInput | Prisma.SortOrder
   level?: Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -325,15 +345,19 @@ export type MembershipOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   coupons?: Prisma.CouponMembershipOrderByRelationAggregateInput
+  histories?: Prisma.MembershipHistoryOrderByRelationAggregateInput
+  benefitTiers?: Prisma.MembershipBenefitTierOrderByRelationAggregateInput
 }
 
 export type MembershipWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   name?: string
+  code?: string
   AND?: Prisma.MembershipWhereInput | Prisma.MembershipWhereInput[]
   OR?: Prisma.MembershipWhereInput[]
   NOT?: Prisma.MembershipWhereInput | Prisma.MembershipWhereInput[]
   description?: Prisma.StringNullableFilter<"Membership"> | string | null
+  terms?: Prisma.StringNullableFilter<"Membership"> | string | null
   level?: Prisma.IntFilter<"Membership"> | number
   color?: Prisma.StringNullableFilter<"Membership"> | string | null
   icon?: Prisma.StringNullableFilter<"Membership"> | string | null
@@ -347,12 +371,16 @@ export type MembershipWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   users?: Prisma.UserListRelationFilter
   coupons?: Prisma.CouponMembershipListRelationFilter
-}, "id" | "name">
+  histories?: Prisma.MembershipHistoryListRelationFilter
+  benefitTiers?: Prisma.MembershipBenefitTierListRelationFilter
+}, "id" | "name" | "code">
 
 export type MembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  terms?: Prisma.SortOrderInput | Prisma.SortOrder
   level?: Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -377,7 +405,9 @@ export type MembershipScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MembershipScalarWhereWithAggregatesInput | Prisma.MembershipScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Membership"> | number
   name?: Prisma.StringWithAggregatesFilter<"Membership"> | string
+  code?: Prisma.StringWithAggregatesFilter<"Membership"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Membership"> | string | null
+  terms?: Prisma.StringNullableWithAggregatesFilter<"Membership"> | string | null
   level?: Prisma.IntWithAggregatesFilter<"Membership"> | number
   color?: Prisma.StringNullableWithAggregatesFilter<"Membership"> | string | null
   icon?: Prisma.StringNullableWithAggregatesFilter<"Membership"> | string | null
@@ -393,7 +423,9 @@ export type MembershipScalarWhereWithAggregatesInput = {
 
 export type MembershipCreateInput = {
   name: string
+  code: string
   description?: string | null
+  terms?: string | null
   level?: number
   color?: string | null
   icon?: string | null
@@ -407,12 +439,16 @@ export type MembershipCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutMembershipInput
   coupons?: Prisma.CouponMembershipCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierCreateNestedManyWithoutMembershipInput
 }
 
 export type MembershipUncheckedCreateInput = {
   id?: number
   name: string
+  code: string
   description?: string | null
+  terms?: string | null
   level?: number
   color?: string | null
   icon?: string | null
@@ -426,11 +462,15 @@ export type MembershipUncheckedCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutMembershipInput
   coupons?: Prisma.CouponMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryUncheckedCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type MembershipUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -444,12 +484,16 @@ export type MembershipUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutMembershipNestedInput
   coupons?: Prisma.CouponMembershipUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUpdateManyWithoutMembershipNestedInput
 }
 
 export type MembershipUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -463,12 +507,16 @@ export type MembershipUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutMembershipNestedInput
   coupons?: Prisma.CouponMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUncheckedUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type MembershipCreateManyInput = {
   id?: number
   name: string
+  code: string
   description?: string | null
+  terms?: string | null
   level?: number
   color?: string | null
   icon?: string | null
@@ -484,7 +532,9 @@ export type MembershipCreateManyInput = {
 
 export type MembershipUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -501,7 +551,9 @@ export type MembershipUpdateManyMutationInput = {
 export type MembershipUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -523,7 +575,9 @@ export type MembershipNullableScalarRelationFilter = {
 export type MembershipCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  terms?: Prisma.SortOrder
   level?: Prisma.SortOrder
   color?: Prisma.SortOrder
   icon?: Prisma.SortOrder
@@ -549,7 +603,9 @@ export type MembershipAvgOrderByAggregateInput = {
 export type MembershipMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  terms?: Prisma.SortOrder
   level?: Prisma.SortOrder
   color?: Prisma.SortOrder
   icon?: Prisma.SortOrder
@@ -565,7 +621,9 @@ export type MembershipMaxOrderByAggregateInput = {
 export type MembershipMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  terms?: Prisma.SortOrder
   level?: Prisma.SortOrder
   color?: Prisma.SortOrder
   icon?: Prisma.SortOrder
@@ -608,6 +666,36 @@ export type MembershipUpdateOneWithoutUsersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MembershipUpdateToOneWithWhereWithoutUsersInput, Prisma.MembershipUpdateWithoutUsersInput>, Prisma.MembershipUncheckedUpdateWithoutUsersInput>
 }
 
+export type MembershipCreateNestedOneWithoutHistoriesInput = {
+  create?: Prisma.XOR<Prisma.MembershipCreateWithoutHistoriesInput, Prisma.MembershipUncheckedCreateWithoutHistoriesInput>
+  connectOrCreate?: Prisma.MembershipCreateOrConnectWithoutHistoriesInput
+  connect?: Prisma.MembershipWhereUniqueInput
+}
+
+export type MembershipUpdateOneWithoutHistoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.MembershipCreateWithoutHistoriesInput, Prisma.MembershipUncheckedCreateWithoutHistoriesInput>
+  connectOrCreate?: Prisma.MembershipCreateOrConnectWithoutHistoriesInput
+  upsert?: Prisma.MembershipUpsertWithoutHistoriesInput
+  disconnect?: Prisma.MembershipWhereInput | boolean
+  delete?: Prisma.MembershipWhereInput | boolean
+  connect?: Prisma.MembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MembershipUpdateToOneWithWhereWithoutHistoriesInput, Prisma.MembershipUpdateWithoutHistoriesInput>, Prisma.MembershipUncheckedUpdateWithoutHistoriesInput>
+}
+
+export type MembershipCreateNestedOneWithoutBenefitTiersInput = {
+  create?: Prisma.XOR<Prisma.MembershipCreateWithoutBenefitTiersInput, Prisma.MembershipUncheckedCreateWithoutBenefitTiersInput>
+  connectOrCreate?: Prisma.MembershipCreateOrConnectWithoutBenefitTiersInput
+  connect?: Prisma.MembershipWhereUniqueInput
+}
+
+export type MembershipUpdateOneRequiredWithoutBenefitTiersNestedInput = {
+  create?: Prisma.XOR<Prisma.MembershipCreateWithoutBenefitTiersInput, Prisma.MembershipUncheckedCreateWithoutBenefitTiersInput>
+  connectOrCreate?: Prisma.MembershipCreateOrConnectWithoutBenefitTiersInput
+  upsert?: Prisma.MembershipUpsertWithoutBenefitTiersInput
+  connect?: Prisma.MembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MembershipUpdateToOneWithWhereWithoutBenefitTiersInput, Prisma.MembershipUpdateWithoutBenefitTiersInput>, Prisma.MembershipUncheckedUpdateWithoutBenefitTiersInput>
+}
+
 export type MembershipCreateNestedOneWithoutCouponsInput = {
   create?: Prisma.XOR<Prisma.MembershipCreateWithoutCouponsInput, Prisma.MembershipUncheckedCreateWithoutCouponsInput>
   connectOrCreate?: Prisma.MembershipCreateOrConnectWithoutCouponsInput
@@ -624,7 +712,9 @@ export type MembershipUpdateOneRequiredWithoutCouponsNestedInput = {
 
 export type MembershipCreateWithoutUsersInput = {
   name: string
+  code: string
   description?: string | null
+  terms?: string | null
   level?: number
   color?: string | null
   icon?: string | null
@@ -637,12 +727,16 @@ export type MembershipCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   coupons?: Prisma.CouponMembershipCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierCreateNestedManyWithoutMembershipInput
 }
 
 export type MembershipUncheckedCreateWithoutUsersInput = {
   id?: number
   name: string
+  code: string
   description?: string | null
+  terms?: string | null
   level?: number
   color?: string | null
   icon?: string | null
@@ -655,6 +749,8 @@ export type MembershipUncheckedCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   coupons?: Prisma.CouponMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryUncheckedCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type MembershipCreateOrConnectWithoutUsersInput = {
@@ -675,7 +771,9 @@ export type MembershipUpdateToOneWithWhereWithoutUsersInput = {
 
 export type MembershipUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -688,12 +786,16 @@ export type MembershipUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coupons?: Prisma.CouponMembershipUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUpdateManyWithoutMembershipNestedInput
 }
 
 export type MembershipUncheckedUpdateWithoutUsersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -706,11 +808,15 @@ export type MembershipUncheckedUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coupons?: Prisma.CouponMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUncheckedUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
-export type MembershipCreateWithoutCouponsInput = {
+export type MembershipCreateWithoutHistoriesInput = {
   name: string
+  code: string
   description?: string | null
+  terms?: string | null
   level?: number
   color?: string | null
   icon?: string | null
@@ -723,12 +829,16 @@ export type MembershipCreateWithoutCouponsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutMembershipInput
+  coupons?: Prisma.CouponMembershipCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierCreateNestedManyWithoutMembershipInput
 }
 
-export type MembershipUncheckedCreateWithoutCouponsInput = {
+export type MembershipUncheckedCreateWithoutHistoriesInput = {
   id?: number
   name: string
+  code: string
   description?: string | null
+  terms?: string | null
   level?: number
   color?: string | null
   icon?: string | null
@@ -741,6 +851,212 @@ export type MembershipUncheckedCreateWithoutCouponsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutMembershipInput
+  coupons?: Prisma.CouponMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedCreateNestedManyWithoutMembershipInput
+}
+
+export type MembershipCreateOrConnectWithoutHistoriesInput = {
+  where: Prisma.MembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.MembershipCreateWithoutHistoriesInput, Prisma.MembershipUncheckedCreateWithoutHistoriesInput>
+}
+
+export type MembershipUpsertWithoutHistoriesInput = {
+  update: Prisma.XOR<Prisma.MembershipUpdateWithoutHistoriesInput, Prisma.MembershipUncheckedUpdateWithoutHistoriesInput>
+  create: Prisma.XOR<Prisma.MembershipCreateWithoutHistoriesInput, Prisma.MembershipUncheckedCreateWithoutHistoriesInput>
+  where?: Prisma.MembershipWhereInput
+}
+
+export type MembershipUpdateToOneWithWhereWithoutHistoriesInput = {
+  where?: Prisma.MembershipWhereInput
+  data: Prisma.XOR<Prisma.MembershipUpdateWithoutHistoriesInput, Prisma.MembershipUncheckedUpdateWithoutHistoriesInput>
+}
+
+export type MembershipUpdateWithoutHistoriesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutMembershipNestedInput
+  coupons?: Prisma.CouponMembershipUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUpdateManyWithoutMembershipNestedInput
+}
+
+export type MembershipUncheckedUpdateWithoutHistoriesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutMembershipNestedInput
+  coupons?: Prisma.CouponMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedUpdateManyWithoutMembershipNestedInput
+}
+
+export type MembershipCreateWithoutBenefitTiersInput = {
+  name: string
+  code: string
+  description?: string | null
+  terms?: string | null
+  level?: number
+  color?: string | null
+  icon?: string | null
+  priority?: number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutMembershipInput
+  coupons?: Prisma.CouponMembershipCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryCreateNestedManyWithoutMembershipInput
+}
+
+export type MembershipUncheckedCreateWithoutBenefitTiersInput = {
+  id?: number
+  name: string
+  code: string
+  description?: string | null
+  terms?: string | null
+  level?: number
+  color?: string | null
+  icon?: string | null
+  priority?: number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutMembershipInput
+  coupons?: Prisma.CouponMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryUncheckedCreateNestedManyWithoutMembershipInput
+}
+
+export type MembershipCreateOrConnectWithoutBenefitTiersInput = {
+  where: Prisma.MembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.MembershipCreateWithoutBenefitTiersInput, Prisma.MembershipUncheckedCreateWithoutBenefitTiersInput>
+}
+
+export type MembershipUpsertWithoutBenefitTiersInput = {
+  update: Prisma.XOR<Prisma.MembershipUpdateWithoutBenefitTiersInput, Prisma.MembershipUncheckedUpdateWithoutBenefitTiersInput>
+  create: Prisma.XOR<Prisma.MembershipCreateWithoutBenefitTiersInput, Prisma.MembershipUncheckedCreateWithoutBenefitTiersInput>
+  where?: Prisma.MembershipWhereInput
+}
+
+export type MembershipUpdateToOneWithWhereWithoutBenefitTiersInput = {
+  where?: Prisma.MembershipWhereInput
+  data: Prisma.XOR<Prisma.MembershipUpdateWithoutBenefitTiersInput, Prisma.MembershipUncheckedUpdateWithoutBenefitTiersInput>
+}
+
+export type MembershipUpdateWithoutBenefitTiersInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutMembershipNestedInput
+  coupons?: Prisma.CouponMembershipUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUpdateManyWithoutMembershipNestedInput
+}
+
+export type MembershipUncheckedUpdateWithoutBenefitTiersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minSpendAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutMembershipNestedInput
+  coupons?: Prisma.CouponMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUncheckedUpdateManyWithoutMembershipNestedInput
+}
+
+export type MembershipCreateWithoutCouponsInput = {
+  name: string
+  code: string
+  description?: string | null
+  terms?: string | null
+  level?: number
+  color?: string | null
+  icon?: string | null
+  priority?: number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierCreateNestedManyWithoutMembershipInput
+}
+
+export type MembershipUncheckedCreateWithoutCouponsInput = {
+  id?: number
+  name: string
+  code: string
+  description?: string | null
+  terms?: string | null
+  level?: number
+  color?: string | null
+  icon?: string | null
+  priority?: number
+  benefits?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  minSpendAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  birthdayMaxDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutMembershipInput
+  histories?: Prisma.MembershipHistoryUncheckedCreateNestedManyWithoutMembershipInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type MembershipCreateOrConnectWithoutCouponsInput = {
@@ -761,7 +1077,9 @@ export type MembershipUpdateToOneWithWhereWithoutCouponsInput = {
 
 export type MembershipUpdateWithoutCouponsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -774,12 +1092,16 @@ export type MembershipUpdateWithoutCouponsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUpdateManyWithoutMembershipNestedInput
 }
 
 export type MembershipUncheckedUpdateWithoutCouponsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  terms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   level?: Prisma.IntFieldUpdateOperationsInput | number
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -792,6 +1114,8 @@ export type MembershipUncheckedUpdateWithoutCouponsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutMembershipNestedInput
+  histories?: Prisma.MembershipHistoryUncheckedUpdateManyWithoutMembershipNestedInput
+  benefitTiers?: Prisma.MembershipBenefitTierUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 
@@ -802,11 +1126,15 @@ export type MembershipUncheckedUpdateWithoutCouponsInput = {
 export type MembershipCountOutputType = {
   users: number
   coupons: number
+  histories: number
+  benefitTiers: number
 }
 
 export type MembershipCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | MembershipCountOutputTypeCountUsersArgs
   coupons?: boolean | MembershipCountOutputTypeCountCouponsArgs
+  histories?: boolean | MembershipCountOutputTypeCountHistoriesArgs
+  benefitTiers?: boolean | MembershipCountOutputTypeCountBenefitTiersArgs
 }
 
 /**
@@ -833,11 +1161,27 @@ export type MembershipCountOutputTypeCountCouponsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.CouponMembershipWhereInput
 }
 
+/**
+ * MembershipCountOutputType without action
+ */
+export type MembershipCountOutputTypeCountHistoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MembershipHistoryWhereInput
+}
+
+/**
+ * MembershipCountOutputType without action
+ */
+export type MembershipCountOutputTypeCountBenefitTiersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MembershipBenefitTierWhereInput
+}
+
 
 export type MembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  code?: boolean
   description?: boolean
+  terms?: boolean
   level?: boolean
   color?: boolean
   icon?: boolean
@@ -851,13 +1195,17 @@ export type MembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   updatedAt?: boolean
   users?: boolean | Prisma.Membership$usersArgs<ExtArgs>
   coupons?: boolean | Prisma.Membership$couponsArgs<ExtArgs>
+  histories?: boolean | Prisma.Membership$historiesArgs<ExtArgs>
+  benefitTiers?: boolean | Prisma.Membership$benefitTiersArgs<ExtArgs>
   _count?: boolean | Prisma.MembershipCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["membership"]>
 
 export type MembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  code?: boolean
   description?: boolean
+  terms?: boolean
   level?: boolean
   color?: boolean
   icon?: boolean
@@ -874,7 +1222,9 @@ export type MembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type MembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  code?: boolean
   description?: boolean
+  terms?: boolean
   level?: boolean
   color?: boolean
   icon?: boolean
@@ -891,7 +1241,9 @@ export type MembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type MembershipSelectScalar = {
   id?: boolean
   name?: boolean
+  code?: boolean
   description?: boolean
+  terms?: boolean
   level?: boolean
   color?: boolean
   icon?: boolean
@@ -905,10 +1257,12 @@ export type MembershipSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "level" | "color" | "icon" | "priority" | "benefits" | "isActive" | "minSpendAmount" | "discountRate" | "birthdayMaxDiscountAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["membership"]>
+export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "description" | "terms" | "level" | "color" | "icon" | "priority" | "benefits" | "isActive" | "minSpendAmount" | "discountRate" | "birthdayMaxDiscountAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["membership"]>
 export type MembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Membership$usersArgs<ExtArgs>
   coupons?: boolean | Prisma.Membership$couponsArgs<ExtArgs>
+  histories?: boolean | Prisma.Membership$historiesArgs<ExtArgs>
+  benefitTiers?: boolean | Prisma.Membership$benefitTiersArgs<ExtArgs>
   _count?: boolean | Prisma.MembershipCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MembershipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -919,11 +1273,15 @@ export type $MembershipPayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
     coupons: Prisma.$CouponMembershipPayload<ExtArgs>[]
+    histories: Prisma.$MembershipHistoryPayload<ExtArgs>[]
+    benefitTiers: Prisma.$MembershipBenefitTierPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
+    code: string
     description: string | null
+    terms: string | null
     level: number
     color: string | null
     icon: string | null
@@ -1331,6 +1689,8 @@ export interface Prisma__MembershipClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.Membership$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Membership$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   coupons<T extends Prisma.Membership$couponsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Membership$couponsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CouponMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  histories<T extends Prisma.Membership$historiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Membership$historiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  benefitTiers<T extends Prisma.Membership$benefitTiersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Membership$benefitTiersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipBenefitTierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1362,7 +1722,9 @@ export interface Prisma__MembershipClient<T, Null = never, ExtArgs extends runti
 export interface MembershipFieldRefs {
   readonly id: Prisma.FieldRef<"Membership", 'Int'>
   readonly name: Prisma.FieldRef<"Membership", 'String'>
+  readonly code: Prisma.FieldRef<"Membership", 'String'>
   readonly description: Prisma.FieldRef<"Membership", 'String'>
+  readonly terms: Prisma.FieldRef<"Membership", 'String'>
   readonly level: Prisma.FieldRef<"Membership", 'Int'>
   readonly color: Prisma.FieldRef<"Membership", 'String'>
   readonly icon: Prisma.FieldRef<"Membership", 'String'>
@@ -1807,6 +2169,54 @@ export type Membership$couponsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.CouponMembershipScalarFieldEnum | Prisma.CouponMembershipScalarFieldEnum[]
+}
+
+/**
+ * Membership.histories
+ */
+export type Membership$historiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MembershipHistory
+   */
+  select?: Prisma.MembershipHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MembershipHistory
+   */
+  omit?: Prisma.MembershipHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MembershipHistoryInclude<ExtArgs> | null
+  where?: Prisma.MembershipHistoryWhereInput
+  orderBy?: Prisma.MembershipHistoryOrderByWithRelationInput | Prisma.MembershipHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.MembershipHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MembershipHistoryScalarFieldEnum | Prisma.MembershipHistoryScalarFieldEnum[]
+}
+
+/**
+ * Membership.benefitTiers
+ */
+export type Membership$benefitTiersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MembershipBenefitTier
+   */
+  select?: Prisma.MembershipBenefitTierSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MembershipBenefitTier
+   */
+  omit?: Prisma.MembershipBenefitTierOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MembershipBenefitTierInclude<ExtArgs> | null
+  where?: Prisma.MembershipBenefitTierWhereInput
+  orderBy?: Prisma.MembershipBenefitTierOrderByWithRelationInput | Prisma.MembershipBenefitTierOrderByWithRelationInput[]
+  cursor?: Prisma.MembershipBenefitTierWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MembershipBenefitTierScalarFieldEnum | Prisma.MembershipBenefitTierScalarFieldEnum[]
 }
 
 /**
