@@ -298,3 +298,28 @@ export const PaymentLogType = {
 } as const
 
 export type PaymentLogType = (typeof PaymentLogType)[keyof typeof PaymentLogType]
+
+
+export const MembershipBenefitType = {
+  PERCENTAGE_ORDER_DISCOUNT: 'PERCENTAGE_ORDER_DISCOUNT',
+  FIXED_ORDER_DISCOUNT: 'FIXED_ORDER_DISCOUNT',
+  FREE_SHIPPING: 'FREE_SHIPPING',
+  BIRTHDAY_VOUCHER: 'BIRTHDAY_VOUCHER',
+  EARLY_ACCESS: 'EARLY_ACCESS',
+  EXCLUSIVE_PRODUCTS: 'EXCLUSIVE_PRODUCTS',
+  BONUS_POINTS: 'BONUS_POINTS',
+  CAMPAIGN_ACCESS: 'CAMPAIGN_ACCESS',
+  FREE_GIFT: 'FREE_GIFT',
+  CUSTOM_TEXT: 'CUSTOM_TEXT'
+} as const
+
+export type MembershipBenefitType = (typeof MembershipBenefitType)[keyof typeof MembershipBenefitType]
+
+
+export const MembershipResetStatus = {
+  RUNNING: 'RUNNING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type MembershipResetStatus = (typeof MembershipResetStatus)[keyof typeof MembershipResetStatus]

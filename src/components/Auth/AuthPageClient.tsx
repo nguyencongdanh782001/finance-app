@@ -32,9 +32,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
+  Eye,
+  EyeOff,
   Loader2,
   LockKeyhole,
   Mail,
+  Phone,
   RotateCw,
   ShieldCheck,
   Sparkles,
@@ -59,6 +62,7 @@ type Step = "phone" | "otp";
 type UserGender = "FEMALE" | "MALE" | "OTHER" | "UNSPECIFIED";
 type FieldName =
   | "displayName"
+  | "phone"
   | "email"
   | "password"
   | "confirmPassword"
@@ -356,14 +360,19 @@ export function AuthDatePicker({
     ...Array.from({ length: firstDay }, () => null),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
   ];
-  const yearOptions = Array.from({ length: allowFuture ? 12 : 101 }, (_, index) => {
-    const optionYear = allowFuture ? currentYear - 1 + index : currentYear - index;
+  const yearOptions = Array.from(
+    { length: allowFuture ? 12 : 101 },
+    (_, index) => {
+      const optionYear = allowFuture
+        ? currentYear - 1 + index
+        : currentYear - index;
 
-    return {
-      value: String(optionYear),
-      label: String(optionYear),
-    };
-  });
+      return {
+        value: String(optionYear),
+        label: String(optionYear),
+      };
+    },
+  );
 
   const moveMonth = (offset: number) => {
     setViewDate((current) => {
@@ -421,7 +430,7 @@ export function AuthDatePicker({
               <ChevronLeft className="size-4" />
             </Button>
             <p className="min-w-0 flex-1 text-center text-sm font-extrabold text-[#1C1A1B]">
-            {placeholder}
+              {placeholder}
             </p>
             <Button
               type="button"
@@ -477,7 +486,7 @@ export function AuthDatePicker({
                   setOpen(false);
                 }}
                 className={`mx-auto size-9 text-sm font-bold ${
-                  ((!allowFuture && isFuture) || isBeforeMinDate)
+                  (!allowFuture && isFuture) || isBeforeMinDate
                     ? "cursor-not-allowed text-[#D8C8CE]"
                     : "text-[#1C1A1B] hover:bg-[#FFF3F6]"
                 }`}
@@ -509,11 +518,14 @@ export default function AuthPageClient({
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [step, setStep] = useState<Step>("phone");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [birthday, setBirthday] = useState("");
   const [gender, setGender] = useState<UserGender | "">("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [otpDigits, setOtpDigits] = useState<string[]>(createEmptyOtp);
   const [otpPurpose, setOtpPurpose] = useState<AuthPurpose>("REGISTER");
   const [devOtp, setDevOtp] = useState("");
@@ -766,6 +778,16 @@ export default function AuthPageClient({
       nextErrors.displayName = "Vui lòng nhập tên hiển thị.";
     }
 
+    const normalizedPhone = phone.replace(/\s/g, "");
+    if (mode === "register" && !normalizedPhone) {
+      nextErrors.phone = "Vui lòng nhập số điện thoại.";
+    } else if (
+      mode === "register" &&
+      !/^(0|\+84)(3|5|7|8|9)\d{8}$/.test(normalizedPhone)
+    ) {
+      nextErrors.phone = "Số điện thoại Việt Nam không hợp lệ.";
+    }
+
     if (mode === "register" && !birthday) {
       nextErrors.birthday = "Vui lòng chọn ngày sinh.";
     } else if (mode === "register") {
@@ -966,6 +988,7 @@ export default function AuthPageClient({
 
     const response = await financeAPI.register({
       email: cleanEmail,
+      phone: phone.trim(),
       password,
       displayName: displayName.trim(),
       birthday,
@@ -1203,6 +1226,38 @@ export default function AuthPageClient({
                         ) : null}
                       </label>
 
+                      <label className="block sm:col-span-2">
+                        <span className="mb-2 flex items-center gap-2 text-sm font-bold text-[#1C1A1B]">
+                          <Phone className="size-4 text-[#D96C8A]" />
+                          Số điện thoại
+                        </span>
+                        <input
+                          value={phone}
+                          type="tel"
+                          inputMode="tel"
+                          autoComplete="tel"
+                          onChange={(event) => {
+                            setPhone(event.target.value);
+                            setFieldErrors((prev) => ({
+                              ...prev,
+                              phone: undefined,
+                            }));
+                          }}
+                          placeholder="Ví dụ: 0912345678"
+                          aria-invalid={Boolean(fieldErrors.phone)}
+                          className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
+                            fieldErrors.phone
+                              ? "border-[#C64040]"
+                              : "border-[#E9E2E5]"
+                          }`}
+                        />
+                        {fieldErrors.phone ? (
+                          <p className="mt-2 text-sm font-semibold text-[#C64040]">
+                            {fieldErrors.phone}
+                          </p>
+                        ) : null}
+                      </label>
+
                       <label className="block">
                         <span className="mb-2 flex items-center gap-2 text-sm font-bold text-[#1C1A1B]">
                           <Cake className="size-4 text-[#D96C8A]" />
@@ -1290,27 +1345,43 @@ export default function AuthPageClient({
                       <LockKeyhole className="size-4 text-[#D96C8A]" />
                       Mật khẩu
                     </span>
-                    <input
-                      value={password}
-                      type="password"
-                      autoComplete={
-                        mode === "login" ? "current-password" : "new-password"
-                      }
-                      onChange={(event) => {
-                        setPassword(event.target.value);
-                        setFieldErrors((prev) => ({
-                          ...prev,
-                          password: undefined,
-                        }));
-                      }}
-                      placeholder={`Tối thiểu ${MIN_PASSWORD_LENGTH} ký tự`}
-                      aria-invalid={Boolean(fieldErrors.password)}
-                      className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
-                        fieldErrors.password
-                          ? "border-[#C64040]"
-                          : "border-[#E9E2E5]"
-                      }`}
-                    />
+                    <div className="relative">
+                      <input
+                        value={password}
+                        type={showPassword ? "text" : "password"}
+                        autoComplete={
+                          mode === "login" ? "current-password" : "new-password"
+                        }
+                        onChange={(event) => {
+                          setPassword(event.target.value);
+                          setFieldErrors((prev) => ({
+                            ...prev,
+                            password: undefined,
+                          }));
+                        }}
+                        placeholder={`Tối thiểu ${MIN_PASSWORD_LENGTH} ký tự`}
+                        aria-invalid={Boolean(fieldErrors.password)}
+                        className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 pr-12 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
+                          fieldErrors.password
+                            ? "border-[#C64040]"
+                            : "border-[#E9E2E5]"
+                        }`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((visible) => !visible)}
+                        aria-label={
+                          showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
+                        }
+                        className="absolute inset-y-0 right-3 text-[#9B9296] transition hover:text-[#7A2944]"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="size-5" />
+                        ) : (
+                          <Eye className="size-5" />
+                        )}
+                      </button>
+                    </div>
                     {fieldErrors.password ? (
                       <p className="mt-2 text-sm font-semibold text-[#C64040]">
                         {fieldErrors.password}
@@ -1332,25 +1403,45 @@ export default function AuthPageClient({
                         <ShieldCheck className="size-4 text-[#D96C8A]" />
                         Xác nhận mật khẩu
                       </span>
-                      <input
-                        value={confirmPassword}
-                        type="password"
-                        autoComplete="new-password"
-                        onChange={(event) => {
-                          setConfirmPassword(event.target.value);
-                          setFieldErrors((prev) => ({
-                            ...prev,
-                            confirmPassword: undefined,
-                          }));
-                        }}
-                        placeholder="Nhập lại mật khẩu"
-                        aria-invalid={Boolean(fieldErrors.confirmPassword)}
-                        className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
-                          fieldErrors.confirmPassword
-                            ? "border-[#C64040]"
-                            : "border-[#E9E2E5]"
-                        }`}
-                      />
+                      <div className="relative">
+                        <input
+                          value={confirmPassword}
+                          type={showConfirmPassword ? "text" : "password"}
+                          autoComplete="new-password"
+                          onChange={(event) => {
+                            setConfirmPassword(event.target.value);
+                            setFieldErrors((prev) => ({
+                              ...prev,
+                              confirmPassword: undefined,
+                            }));
+                          }}
+                          placeholder="Nhập lại mật khẩu"
+                          aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                          className={`h-12 w-full rounded-md border bg-[#FFFCFA] px-4 pr-12 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12 ${
+                            fieldErrors.confirmPassword
+                              ? "border-[#C64040]"
+                              : "border-[#E9E2E5]"
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowConfirmPassword((visible) => !visible)
+                          }
+                          aria-label={
+                            showConfirmPassword
+                              ? "Ẩn mật khẩu xác nhận"
+                              : "Hiện mật khẩu xác nhận"
+                          }
+                          className="absolute inset-y-0 right-3 text-[#9B9296] transition hover:text-[#7A2944]"
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="size-5" />
+                          ) : (
+                            <Eye className="size-5" />
+                          )}
+                        </button>
+                      </div>
                       {fieldErrors.confirmPassword ? (
                         <p className="mt-2 text-sm font-semibold text-[#C64040]">
                           {fieldErrors.confirmPassword}

@@ -154,10 +154,7 @@ export interface DailySoldProductItem {
   createdAt: string;
 }
 
-export type SoldProductSourceValue =
-  | "OFFLINE"
-  | "ONLINE"
-  | "LEGACY_MANUAL";
+export type SoldProductSourceValue = "OFFLINE" | "ONLINE" | "LEGACY_MANUAL";
 
 export interface DailySoldProductSale extends DailySoldProductItem {
   source: SoldProductSourceValue;
@@ -329,6 +326,7 @@ export interface OfflineOrderPayload {
   orderedAt?: string;
   idempotencyKey?: string;
   couponCode?: string;
+  userId?: number | null;
   items: {
     productId: number;
     variantId?: number | null;

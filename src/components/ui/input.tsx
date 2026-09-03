@@ -110,9 +110,11 @@ const Input = React.forwardRef<
             </p>
           )}
           {clearable && !!value && (
-            <div className="absolute right-3.75 top-0 bottom-0 flex items-center">
+            <div className="absolute right-2 top-0 bottom-0 z-10 flex items-center">
               <Button
                 variant="ghost"
+                size="icon-xs"
+                className="p-0!"
                 onClick={() => {
                   if (form && field) form.setFieldValue(name, "");
                   else
@@ -122,7 +124,7 @@ const Input = React.forwardRef<
                   onManualClear?.();
                 }}
               >
-                <X className="text-gray-4 size-2.5" />
+                <X className="size-2.5 text-[#D96C8A]" />
               </Button>
             </div>
           )}

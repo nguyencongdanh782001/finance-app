@@ -65,6 +65,12 @@ export const ModelName = {
   PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
+  MembershipHistory: 'MembershipHistory',
+  MembershipBenefit: 'MembershipBenefit',
+  MembershipBenefitTier: 'MembershipBenefitTier',
+  MembershipBenefitRedemption: 'MembershipBenefitRedemption',
+  MembershipResetRun: 'MembershipResetRun',
+  AuditLog: 'AuditLog',
   Otp: 'Otp',
   UserAddress: 'UserAddress',
   ProductImage: 'ProductImage',
@@ -378,7 +384,9 @@ export type UserSessionScalarFieldEnum = (typeof UserSessionScalarFieldEnum)[key
 export const MembershipScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  code: 'code',
   description: 'description',
+  terms: 'terms',
   level: 'level',
   color: 'color',
   icon: 'icon',
@@ -393,6 +401,112 @@ export const MembershipScalarFieldEnum = {
 } as const
 
 export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+
+
+export const MembershipHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  membershipId: 'membershipId',
+  membershipNameSnapshot: 'membershipNameSnapshot',
+  minSpendAmountSnapshot: 'minSpendAmountSnapshot',
+  discountRateSnapshot: 'discountRateSnapshot',
+  cycleYear: 'cycleYear',
+  spending: 'spending',
+  rankStartDate: 'rankStartDate',
+  rankEndDate: 'rankEndDate',
+  reason: 'reason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipHistoryScalarFieldEnum = (typeof MembershipHistoryScalarFieldEnum)[keyof typeof MembershipHistoryScalarFieldEnum]
+
+
+export const MembershipBenefitScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  type: 'type',
+  icon: 'icon',
+  isActive: 'isActive',
+  position: 'position',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  usageLimit: 'usageLimit',
+  usedCount: 'usedCount',
+  usageLimitPerUser: 'usageLimitPerUser',
+  automatic: 'automatic',
+  requiresRedemption: 'requiresRedemption',
+  minOrderValue: 'minOrderValue',
+  maxDiscountAmount: 'maxDiscountAmount',
+  salesChannels: 'salesChannels',
+  canCombineWithCoupons: 'canCombineWithCoupons',
+  canCombineWithBenefits: 'canCombineWithBenefits',
+  priority: 'priority',
+  internalNotes: 'internalNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipBenefitScalarFieldEnum = (typeof MembershipBenefitScalarFieldEnum)[keyof typeof MembershipBenefitScalarFieldEnum]
+
+
+export const MembershipBenefitTierScalarFieldEnum = {
+  id: 'id',
+  benefitId: 'benefitId',
+  membershipId: 'membershipId',
+  value: 'value',
+  config: 'config'
+} as const
+
+export type MembershipBenefitTierScalarFieldEnum = (typeof MembershipBenefitTierScalarFieldEnum)[keyof typeof MembershipBenefitTierScalarFieldEnum]
+
+
+export const MembershipBenefitRedemptionScalarFieldEnum = {
+  id: 'id',
+  benefitId: 'benefitId',
+  userId: 'userId',
+  orderId: 'orderId',
+  cycleYear: 'cycleYear',
+  valueSnapshot: 'valueSnapshot',
+  nameSnapshot: 'nameSnapshot',
+  typeSnapshot: 'typeSnapshot',
+  amount: 'amount',
+  redeemedAt: 'redeemedAt'
+} as const
+
+export type MembershipBenefitRedemptionScalarFieldEnum = (typeof MembershipBenefitRedemptionScalarFieldEnum)[keyof typeof MembershipBenefitRedemptionScalarFieldEnum]
+
+
+export const MembershipResetRunScalarFieldEnum = {
+  id: 'id',
+  cycleYear: 'cycleYear',
+  status: 'status',
+  reason: 'reason',
+  processedCount: 'processedCount',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipResetRunScalarFieldEnum = (typeof MembershipResetRunScalarFieldEnum)[keyof typeof MembershipResetRunScalarFieldEnum]
+
+
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  actorId: 'actorId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  previousValue: 'previousValue',
+  newValue: 'newValue',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
 export const OtpScalarFieldEnum = {

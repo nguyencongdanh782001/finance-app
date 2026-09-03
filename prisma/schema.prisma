@@ -220,6 +220,25 @@ enum PaymentLogType {
   MANUAL_UPDATE
 }
 
+enum MembershipBenefitType {
+  PERCENTAGE_ORDER_DISCOUNT
+  FIXED_ORDER_DISCOUNT
+  FREE_SHIPPING
+  BIRTHDAY_VOUCHER
+  EARLY_ACCESS
+  EXCLUSIVE_PRODUCTS
+  BONUS_POINTS
+  CAMPAIGN_ACCESS
+  FREE_GIFT
+  CUSTOM_TEXT
+}
+
+enum MembershipResetStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
 model DailyFinance {
   id Int @id @default(autoincrement())
 
@@ -521,8 +540,8 @@ model User {
   wishlists              Wishlist[]
   wishlistItems          WishlistItem[]
   orders                 Order[]
-  createdOrders          Order[]                 @relation("OrderCreatedBy")
-  updatedOrders          Order[]                 @relation("OrderUpdatedBy")
+  createdOrders          Order[]                       @relation("OrderCreatedBy")
+  updatedOrders          Order[]                       @relation("OrderUpdatedBy")
   orderStatusChanges     OrderStatusHistory[]
   reviews                Review[]
   notifications          Notification[]
@@ -530,7 +549,9 @@ model User {
   recentlyViewedProducts RecentlyViewedProduct[]
   productDrafts          ProductDraft[]
   productImportJobs      ProductImportJob[]
-  birthdayCoupons        Coupon[] @relation("BirthdayCoupons")
+  birthdayCoupons        Coupon[]                      @relation("BirthdayCoupons")
+  membershipHistories    MembershipHistory[]
+  benefitRedemptions     MembershipBenefitRedemption[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -649,7 +670,9 @@ model Membership {
   id Int @id @default(autoincrement())
 
   name        String  @unique
+  code        String  @unique
   description String?
+  terms       String?
   level       Int     @default(0)
   color       String?
   icon        String?
@@ -657,12 +680,14 @@ model Membership {
   benefits    Json?
   isActive    Boolean @default(true)
 
-  minSpendAmount Decimal @default(0)
-  discountRate   Decimal @default(0)
+  minSpendAmount            Decimal  @default(0)
+  discountRate              Decimal  @default(0)
   birthdayMaxDiscountAmount Decimal?
 
-  users   User[]
-  coupons CouponMembership[]
+  users        User[]
+  coupons      CouponMembership[]
+  histories    MembershipHistory[]
+  benefitTiers MembershipBenefitTier[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -671,6 +696,135 @@ model Membership {
   @@index([priority])
   @@index([isActive])
   @@map("membership")
+}
+
+model MembershipHistory {
+  id Int @id @default(autoincrement())
+
+  userId       Int
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  membershipId Int?
+  membership   Membership? @relation(fields: [membershipId], references: [id], onDelete: SetNull)
+
+  membershipNameSnapshot String
+  minSpendAmountSnapshot Decimal  @default(0)
+  discountRateSnapshot   Decimal  @default(0)
+  cycleYear              Int
+  spending               Decimal  @default(0)
+  rankStartDate          DateTime
+  rankEndDate            DateTime
+  reason                 String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, cycleYear])
+  @@index([cycleYear])
+  @@index([membershipId, cycleYear])
+  @@map("membership_history")
+}
+
+model MembershipBenefit {
+  id Int @id @default(autoincrement())
+
+  name                   String
+  code                   String                @unique
+  description            String?
+  type                   MembershipBenefitType
+  icon                   String?
+  isActive               Boolean               @default(true)
+  position               Int                   @default(0)
+  startsAt               DateTime?
+  endsAt                 DateTime?
+  usageLimit             Int?
+  usedCount              Int                   @default(0)
+  usageLimitPerUser      Int?
+  automatic              Boolean               @default(true)
+  requiresRedemption     Boolean               @default(false)
+  minOrderValue          Decimal?
+  maxDiscountAmount      Decimal?
+  salesChannels          Json?
+  canCombineWithCoupons  Boolean               @default(false)
+  canCombineWithBenefits Boolean               @default(false)
+  priority               Int                   @default(0)
+  internalNotes          String?
+
+  tiers       MembershipBenefitTier[]
+  redemptions MembershipBenefitRedemption[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, startsAt, endsAt])
+  @@index([type])
+  @@index([position])
+  @@map("membership_benefit")
+}
+
+model MembershipBenefitTier {
+  id           Int               @id @default(autoincrement())
+  benefitId    Int
+  benefit      MembershipBenefit @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+  membershipId Int
+  membership   Membership        @relation(fields: [membershipId], references: [id], onDelete: Restrict)
+  value        Decimal?
+  config       Json?
+
+  @@unique([benefitId, membershipId])
+  @@index([membershipId])
+  @@map("membership_benefit_tier")
+}
+
+model MembershipBenefitRedemption {
+  id            Int                   @id @default(autoincrement())
+  benefitId     Int
+  benefit       MembershipBenefit     @relation(fields: [benefitId], references: [id], onDelete: Restrict)
+  userId        Int
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  orderId       Int?
+  order         Order?                @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  cycleYear     Int
+  valueSnapshot Decimal?
+  nameSnapshot  String
+  typeSnapshot  MembershipBenefitType
+  amount        Decimal               @default(0)
+  redeemedAt    DateTime              @default(now())
+
+  @@unique([benefitId, userId, orderId])
+  @@index([userId, cycleYear])
+  @@index([benefitId, redeemedAt])
+  @@map("membership_benefit_redemption")
+}
+
+model MembershipResetRun {
+  id             Int                   @id @default(autoincrement())
+  cycleYear      Int                   @unique
+  status         MembershipResetStatus @default(RUNNING)
+  reason         String?
+  processedCount Int                   @default(0)
+  startedAt      DateTime              @default(now())
+  completedAt    DateTime?
+  errorMessage   String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@index([status])
+  @@map("membership_reset_run")
+}
+
+model AuditLog {
+  id            Int      @id @default(autoincrement())
+  actorId       Int?
+  action        String
+  entityType    String
+  entityId      Int?
+  previousValue Json?
+  newValue      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@map("audit_log")
 }
 
 model Otp {
@@ -1000,9 +1154,9 @@ model Order {
   isPaid          Boolean        @default(false)
   paidAt          DateTime?
 
-  couponId Int?
-  coupon   Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
-  discountRedemption DiscountRedemption?
+  couponId             Int?
+  coupon               Coupon?             @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  discountRedemption   DiscountRedemption?
   discountCodeSnapshot String?
 
   receiverName     String?
@@ -1014,11 +1168,12 @@ model Order {
   latitude         Decimal?
   longitude        Decimal?
 
-  items             OrderItem[]
-  soldContributions DailySoldProductContribution[]
-  payments          Payment[]
-  shipments         Shipping[]
-  statusHistories   OrderStatusHistory[]
+  items                        OrderItem[]
+  soldContributions            DailySoldProductContribution[]
+  payments                     Payment[]
+  membershipBenefitRedemptions MembershipBenefitRedemption[]
+  shipments                    Shipping[]
+  statusHistories              OrderStatusHistory[]
 
   note String?
 
@@ -1280,11 +1435,11 @@ model Shipping {
 model Coupon {
   id Int @id @default(autoincrement())
 
-  code        String  @unique
+  code           String  @unique
   normalizedCode String  @unique
-  publicToken String  @unique
-  name        String
-  description String?
+  publicToken    String  @unique
+  name           String
+  description    String?
 
   type  CouponType
   value Decimal
@@ -1298,13 +1453,13 @@ model Coupon {
   firstOrderOnly     Boolean @default(false)
   maximumUsagePerDay Int?
 
-  startsAt DateTime?
-  endsAt   DateTime?
-  isActive Boolean   @default(true)
-  source CouponSource @default(MANUAL)
+  startsAt        DateTime?
+  endsAt          DateTime?
+  isActive        Boolean      @default(true)
+  source          CouponSource @default(MANUAL)
   recipientUserId Int?
-  recipientUser User? @relation("BirthdayCoupons", fields: [recipientUserId], references: [id], onDelete: SetNull)
-  birthdayYear Int?
+  recipientUser   User?        @relation("BirthdayCoupons", fields: [recipientUserId], references: [id], onDelete: SetNull)
+  birthdayYear    Int?
 
   orders                Order[]
   redemptions           DiscountRedemption[]
@@ -1317,11 +1472,11 @@ model Coupon {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([recipientUserId, birthdayYear])
   @@index([code])
   @@index([isActive])
   @@index([firstOrderOnly])
   @@index([source, birthdayYear])
-  @@unique([recipientUserId, birthdayYear])
   @@map("coupon")
 }
 
@@ -1329,16 +1484,16 @@ model DiscountRedemption {
   id Int @id @default(autoincrement())
 
   couponId Int
-  coupon Coupon @relation(fields: [couponId], references: [id], onDelete: Restrict)
-  orderId Int @unique
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  coupon   Coupon @relation(fields: [couponId], references: [id], onDelete: Restrict)
+  orderId  Int    @unique
+  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  codeSnapshot String
-  discountTypeSnapshot CouponType
+  codeSnapshot          String
+  discountTypeSnapshot  CouponType
   discountValueSnapshot Decimal
-  discountAmount Decimal
-  subtotalSnapshot Decimal
-  redeemedAt DateTime @default(now())
+  discountAmount        Decimal
+  subtotalSnapshot      Decimal
+  redeemedAt            DateTime   @default(now())
 
   @@index([couponId])
   @@map("discount_redemption")

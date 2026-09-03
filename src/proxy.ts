@@ -12,7 +12,11 @@ const allowedOrigins = () => {
     return ["https://quynhnhistore.com"];
   }
 
-  return (process.env.CORS_ALLOWED_ORIGINS || process.env.NEXT_PUBLIC_SITE_URL || "")
+  return (
+    process.env.CORS_ALLOWED_ORIGINS ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    ""
+  )
     .split(",")
     .map((origin) => origin.trim().replace(/\/$/, ""))
     .filter(Boolean);
@@ -24,8 +28,14 @@ const withCors = (response: NextResponse, request: NextRequest) => {
     response.headers.set("Access-Control-Allow-Origin", origin);
     response.headers.set("Vary", "Origin");
     response.headers.set("Access-Control-Allow-Credentials", "true");
-    response.headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    response.headers.set(
+      "Access-Control-Allow-Methods",
+      "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+    );
+    response.headers.set(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Requested-With",
+    );
     response.headers.set("Access-Control-Max-Age", "86400");
   }
   return response;
@@ -53,28 +63,45 @@ export async function proxy(req: NextRequest) {
   const token = bearerToken || cookieToken;
 
   if (!token) {
-    return withCors(NextResponse.json({ message: "Unauthorized" }, { status: 401 }), req);
+    return withCors(
+      NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+      req,
+    );
   }
 
   const payload = await verifyJwt(token).catch(() => null);
 
   if (!payload) {
-    return withCors(NextResponse.json({ message: "Unauthorized" }, { status: 401 }), req);
+    return withCors(
+      NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+      req,
+    );
   }
 
-  if (!ADMIN_ROLES.includes(payload.role as (typeof ADMIN_ROLES)[number])) {
-    return withCors(NextResponse.json({ message: "Forbidden" }, { status: 403 }), req);
+  const isMembershipSelfApi = pathname === "/api/memberships/me";
+
+  if (
+    !isMembershipSelfApi &&
+    !ADMIN_ROLES.includes(payload.role as (typeof ADMIN_ROLES)[number])
+  ) {
+    return withCors(
+      NextResponse.json({ message: "Forbidden" }, { status: 403 }),
+      req,
+    );
   }
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-user-id", payload.sub);
   requestHeaders.set("x-user-role", payload.role);
 
-  return withCors(NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  }), req);
+  return withCors(
+    NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    }),
+    req,
+  );
 }
 
 export const config = {

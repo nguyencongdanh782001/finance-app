@@ -7,6 +7,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Clock3,
+  Eye,
+  EyeOff,
   Loader2,
   LockKeyhole,
   Mail,
@@ -45,6 +47,8 @@ export default function ForgotPasswordClient() {
   const [otpDigits, setOtpDigits] = useState<string[]>(createEmptyOtp);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [devOtp, setDevOtp] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -357,14 +361,28 @@ export default function ForgotPasswordClient() {
                   <LockKeyhole className="size-4 text-[#D96C8A]" />
                   Mật khẩu mới
                 </span>
-                <input
-                  value={password}
-                  type="password"
-                  autoComplete="new-password"
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Tối thiểu 8 ký tự"
-                  className="h-12 w-full rounded-md border border-[#E9E2E5] bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12"
-                />
+                <div className="relative">
+                  <input
+                    value={password}
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder="Tối thiểu 8 ký tự"
+                    className="h-12 w-full rounded-md border border-[#E9E2E5] bg-[#FFFCFA] px-4 pr-12 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                    className="absolute inset-y-0 right-3 text-[#9B9296] transition hover:text-[#7A2944]"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="size-5" />
+                    ) : (
+                      <Eye className="size-5" />
+                    )}
+                  </button>
+                </div>
               </label>
 
               <label className="block">
@@ -372,14 +390,34 @@ export default function ForgotPasswordClient() {
                   <LockKeyhole className="size-4 text-[#D96C8A]" />
                   Xác nhận mật khẩu
                 </span>
-                <input
-                  value={confirmPassword}
-                  type="password"
-                  autoComplete="new-password"
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  placeholder="Nhập lại mật khẩu mới"
-                  className="h-12 w-full rounded-md border border-[#E9E2E5] bg-[#FFFCFA] px-4 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12"
-                />
+                <div className="relative">
+                  <input
+                    value={confirmPassword}
+                    type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    placeholder="Nhập lại mật khẩu mới"
+                    className="h-12 w-full rounded-md border border-[#E9E2E5] bg-[#FFFCFA] px-4 pr-12 text-base font-semibold outline-none transition placeholder:text-[#9B9296] focus:border-[#D96C8A] focus:ring-4 focus:ring-[#D96C8A]/12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowConfirmPassword((visible) => !visible)
+                    }
+                    aria-label={
+                      showConfirmPassword
+                        ? "Ẩn mật khẩu xác nhận"
+                        : "Hiện mật khẩu xác nhận"
+                    }
+                    className="absolute inset-y-0 right-3 text-[#9B9296] transition hover:text-[#7A2944]"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="size-5" />
+                    ) : (
+                      <Eye className="size-5" />
+                    )}
+                  </button>
+                </div>
               </label>
 
               <Button

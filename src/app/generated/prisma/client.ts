@@ -112,6 +112,36 @@ export type UserSession = Prisma.UserSessionModel
  */
 export type Membership = Prisma.MembershipModel
 /**
+ * Model MembershipHistory
+ * 
+ */
+export type MembershipHistory = Prisma.MembershipHistoryModel
+/**
+ * Model MembershipBenefit
+ * 
+ */
+export type MembershipBenefit = Prisma.MembershipBenefitModel
+/**
+ * Model MembershipBenefitTier
+ * 
+ */
+export type MembershipBenefitTier = Prisma.MembershipBenefitTierModel
+/**
+ * Model MembershipBenefitRedemption
+ * 
+ */
+export type MembershipBenefitRedemption = Prisma.MembershipBenefitRedemptionModel
+/**
+ * Model MembershipResetRun
+ * 
+ */
+export type MembershipResetRun = Prisma.MembershipResetRunModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel
+/**
  * Model Otp
  * 
  */

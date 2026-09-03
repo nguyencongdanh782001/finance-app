@@ -398,6 +398,12 @@ export const ModelName = {
   PasswordResetToken: 'PasswordResetToken',
   UserSession: 'UserSession',
   Membership: 'Membership',
+  MembershipHistory: 'MembershipHistory',
+  MembershipBenefit: 'MembershipBenefit',
+  MembershipBenefitTier: 'MembershipBenefitTier',
+  MembershipBenefitRedemption: 'MembershipBenefitRedemption',
+  MembershipResetRun: 'MembershipResetRun',
+  AuditLog: 'AuditLog',
   Otp: 'Otp',
   UserAddress: 'UserAddress',
   ProductImage: 'ProductImage',
@@ -450,7 +456,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "discountRedemption" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "membershipHistory" | "membershipBenefit" | "membershipBenefitTier" | "membershipBenefitRedemption" | "membershipResetRun" | "auditLog" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "discountRedemption" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1487,6 +1493,450 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.MembershipCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.MembershipCountAggregateOutputType> | number
+        }
+      }
+    }
+    MembershipHistory: {
+      payload: Prisma.$MembershipHistoryPayload<ExtArgs>
+      fields: Prisma.MembershipHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MembershipHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MembershipHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.MembershipHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MembershipHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.MembershipHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.MembershipHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.MembershipHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MembershipHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.MembershipHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>
+        }
+        update: {
+          args: Prisma.MembershipHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.MembershipHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MembershipHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MembershipHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.MembershipHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.MembershipHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMembershipHistory>
+        }
+        groupBy: {
+          args: Prisma.MembershipHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MembershipHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipHistoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    MembershipBenefit: {
+      payload: Prisma.$MembershipBenefitPayload<ExtArgs>
+      fields: Prisma.MembershipBenefitFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MembershipBenefitFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MembershipBenefitFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>
+        }
+        findFirst: {
+          args: Prisma.MembershipBenefitFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MembershipBenefitFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>
+        }
+        findMany: {
+          args: Prisma.MembershipBenefitFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>[]
+        }
+        create: {
+          args: Prisma.MembershipBenefitCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>
+        }
+        createMany: {
+          args: Prisma.MembershipBenefitCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MembershipBenefitCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>[]
+        }
+        delete: {
+          args: Prisma.MembershipBenefitDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>
+        }
+        update: {
+          args: Prisma.MembershipBenefitUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>
+        }
+        deleteMany: {
+          args: Prisma.MembershipBenefitDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MembershipBenefitUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MembershipBenefitUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>[]
+        }
+        upsert: {
+          args: Prisma.MembershipBenefitUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitPayload>
+        }
+        aggregate: {
+          args: Prisma.MembershipBenefitAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMembershipBenefit>
+        }
+        groupBy: {
+          args: Prisma.MembershipBenefitGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipBenefitGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MembershipBenefitCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipBenefitCountAggregateOutputType> | number
+        }
+      }
+    }
+    MembershipBenefitTier: {
+      payload: Prisma.$MembershipBenefitTierPayload<ExtArgs>
+      fields: Prisma.MembershipBenefitTierFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MembershipBenefitTierFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MembershipBenefitTierFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>
+        }
+        findFirst: {
+          args: Prisma.MembershipBenefitTierFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MembershipBenefitTierFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>
+        }
+        findMany: {
+          args: Prisma.MembershipBenefitTierFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>[]
+        }
+        create: {
+          args: Prisma.MembershipBenefitTierCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>
+        }
+        createMany: {
+          args: Prisma.MembershipBenefitTierCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MembershipBenefitTierCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>[]
+        }
+        delete: {
+          args: Prisma.MembershipBenefitTierDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>
+        }
+        update: {
+          args: Prisma.MembershipBenefitTierUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>
+        }
+        deleteMany: {
+          args: Prisma.MembershipBenefitTierDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MembershipBenefitTierUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MembershipBenefitTierUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>[]
+        }
+        upsert: {
+          args: Prisma.MembershipBenefitTierUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitTierPayload>
+        }
+        aggregate: {
+          args: Prisma.MembershipBenefitTierAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMembershipBenefitTier>
+        }
+        groupBy: {
+          args: Prisma.MembershipBenefitTierGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipBenefitTierGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MembershipBenefitTierCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipBenefitTierCountAggregateOutputType> | number
+        }
+      }
+    }
+    MembershipBenefitRedemption: {
+      payload: Prisma.$MembershipBenefitRedemptionPayload<ExtArgs>
+      fields: Prisma.MembershipBenefitRedemptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MembershipBenefitRedemptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MembershipBenefitRedemptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>
+        }
+        findFirst: {
+          args: Prisma.MembershipBenefitRedemptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MembershipBenefitRedemptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>
+        }
+        findMany: {
+          args: Prisma.MembershipBenefitRedemptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>[]
+        }
+        create: {
+          args: Prisma.MembershipBenefitRedemptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>
+        }
+        createMany: {
+          args: Prisma.MembershipBenefitRedemptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MembershipBenefitRedemptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>[]
+        }
+        delete: {
+          args: Prisma.MembershipBenefitRedemptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>
+        }
+        update: {
+          args: Prisma.MembershipBenefitRedemptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.MembershipBenefitRedemptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MembershipBenefitRedemptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MembershipBenefitRedemptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.MembershipBenefitRedemptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipBenefitRedemptionPayload>
+        }
+        aggregate: {
+          args: Prisma.MembershipBenefitRedemptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMembershipBenefitRedemption>
+        }
+        groupBy: {
+          args: Prisma.MembershipBenefitRedemptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipBenefitRedemptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MembershipBenefitRedemptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipBenefitRedemptionCountAggregateOutputType> | number
+        }
+      }
+    }
+    MembershipResetRun: {
+      payload: Prisma.$MembershipResetRunPayload<ExtArgs>
+      fields: Prisma.MembershipResetRunFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MembershipResetRunFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MembershipResetRunFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>
+        }
+        findFirst: {
+          args: Prisma.MembershipResetRunFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MembershipResetRunFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>
+        }
+        findMany: {
+          args: Prisma.MembershipResetRunFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>[]
+        }
+        create: {
+          args: Prisma.MembershipResetRunCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>
+        }
+        createMany: {
+          args: Prisma.MembershipResetRunCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MembershipResetRunCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>[]
+        }
+        delete: {
+          args: Prisma.MembershipResetRunDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>
+        }
+        update: {
+          args: Prisma.MembershipResetRunUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>
+        }
+        deleteMany: {
+          args: Prisma.MembershipResetRunDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MembershipResetRunUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MembershipResetRunUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>[]
+        }
+        upsert: {
+          args: Prisma.MembershipResetRunUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MembershipResetRunPayload>
+        }
+        aggregate: {
+          args: Prisma.MembershipResetRunAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMembershipResetRun>
+        }
+        groupBy: {
+          args: Prisma.MembershipResetRunGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipResetRunGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MembershipResetRunCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MembershipResetRunCountAggregateOutputType> | number
+        }
+      }
+    }
+    AuditLog: {
+      payload: Prisma.$AuditLogPayload<ExtArgs>
+      fields: Prisma.AuditLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AuditLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AuditLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        findFirst: {
+          args: Prisma.AuditLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AuditLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        findMany: {
+          args: Prisma.AuditLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+        }
+        create: {
+          args: Prisma.AuditLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        createMany: {
+          args: Prisma.AuditLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AuditLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+        }
+        delete: {
+          args: Prisma.AuditLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        update: {
+          args: Prisma.AuditLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.AuditLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AuditLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AuditLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.AuditLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        aggregate: {
+          args: Prisma.AuditLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditLog>
+        }
+        groupBy: {
+          args: Prisma.AuditLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AuditLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditLogCountAggregateOutputType> | number
         }
       }
     }
@@ -4525,7 +4975,9 @@ export type UserSessionScalarFieldEnum = (typeof UserSessionScalarFieldEnum)[key
 export const MembershipScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  code: 'code',
   description: 'description',
+  terms: 'terms',
   level: 'level',
   color: 'color',
   icon: 'icon',
@@ -4540,6 +4992,112 @@ export const MembershipScalarFieldEnum = {
 } as const
 
 export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+
+
+export const MembershipHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  membershipId: 'membershipId',
+  membershipNameSnapshot: 'membershipNameSnapshot',
+  minSpendAmountSnapshot: 'minSpendAmountSnapshot',
+  discountRateSnapshot: 'discountRateSnapshot',
+  cycleYear: 'cycleYear',
+  spending: 'spending',
+  rankStartDate: 'rankStartDate',
+  rankEndDate: 'rankEndDate',
+  reason: 'reason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipHistoryScalarFieldEnum = (typeof MembershipHistoryScalarFieldEnum)[keyof typeof MembershipHistoryScalarFieldEnum]
+
+
+export const MembershipBenefitScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  type: 'type',
+  icon: 'icon',
+  isActive: 'isActive',
+  position: 'position',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  usageLimit: 'usageLimit',
+  usedCount: 'usedCount',
+  usageLimitPerUser: 'usageLimitPerUser',
+  automatic: 'automatic',
+  requiresRedemption: 'requiresRedemption',
+  minOrderValue: 'minOrderValue',
+  maxDiscountAmount: 'maxDiscountAmount',
+  salesChannels: 'salesChannels',
+  canCombineWithCoupons: 'canCombineWithCoupons',
+  canCombineWithBenefits: 'canCombineWithBenefits',
+  priority: 'priority',
+  internalNotes: 'internalNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipBenefitScalarFieldEnum = (typeof MembershipBenefitScalarFieldEnum)[keyof typeof MembershipBenefitScalarFieldEnum]
+
+
+export const MembershipBenefitTierScalarFieldEnum = {
+  id: 'id',
+  benefitId: 'benefitId',
+  membershipId: 'membershipId',
+  value: 'value',
+  config: 'config'
+} as const
+
+export type MembershipBenefitTierScalarFieldEnum = (typeof MembershipBenefitTierScalarFieldEnum)[keyof typeof MembershipBenefitTierScalarFieldEnum]
+
+
+export const MembershipBenefitRedemptionScalarFieldEnum = {
+  id: 'id',
+  benefitId: 'benefitId',
+  userId: 'userId',
+  orderId: 'orderId',
+  cycleYear: 'cycleYear',
+  valueSnapshot: 'valueSnapshot',
+  nameSnapshot: 'nameSnapshot',
+  typeSnapshot: 'typeSnapshot',
+  amount: 'amount',
+  redeemedAt: 'redeemedAt'
+} as const
+
+export type MembershipBenefitRedemptionScalarFieldEnum = (typeof MembershipBenefitRedemptionScalarFieldEnum)[keyof typeof MembershipBenefitRedemptionScalarFieldEnum]
+
+
+export const MembershipResetRunScalarFieldEnum = {
+  id: 'id',
+  cycleYear: 'cycleYear',
+  status: 'status',
+  reason: 'reason',
+  processedCount: 'processedCount',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipResetRunScalarFieldEnum = (typeof MembershipResetRunScalarFieldEnum)[keyof typeof MembershipResetRunScalarFieldEnum]
+
+
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  actorId: 'actorId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  previousValue: 'previousValue',
+  newValue: 'newValue',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
 export const OtpScalarFieldEnum = {
@@ -5441,6 +5999,34 @@ export type ListEnumProductImportModeFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
+ * Reference to a field of type 'MembershipBenefitType'
+ */
+export type EnumMembershipBenefitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipBenefitType'>
+    
+
+
+/**
+ * Reference to a field of type 'MembershipBenefitType[]'
+ */
+export type ListEnumMembershipBenefitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipBenefitType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MembershipResetStatus'
+ */
+export type EnumMembershipResetStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipResetStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'MembershipResetStatus[]'
+ */
+export type ListEnumMembershipResetStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MembershipResetStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'OtpPurpose'
  */
 export type EnumOtpPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OtpPurpose'>
@@ -5786,6 +6372,12 @@ export type GlobalOmitConfig = {
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   userSession?: Prisma.UserSessionOmit
   membership?: Prisma.MembershipOmit
+  membershipHistory?: Prisma.MembershipHistoryOmit
+  membershipBenefit?: Prisma.MembershipBenefitOmit
+  membershipBenefitTier?: Prisma.MembershipBenefitTierOmit
+  membershipBenefitRedemption?: Prisma.MembershipBenefitRedemptionOmit
+  membershipResetRun?: Prisma.MembershipResetRunOmit
+  auditLog?: Prisma.AuditLogOmit
   otp?: Prisma.OtpOmit
   userAddress?: Prisma.UserAddressOmit
   productImage?: Prisma.ProductImageOmit
