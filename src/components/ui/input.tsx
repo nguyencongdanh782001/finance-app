@@ -114,7 +114,7 @@ const Input = React.forwardRef<
               <Button
                 variant="ghost"
                 size="icon-xs"
-                className="p-0! text-[#D96C8A] hover:bg-[#FCEEF3] hover:text-[#A43E5F]"
+                className="p-0!"
                 onClick={() => {
                   if (form && field) form.setFieldValue(name, "");
                   else
@@ -124,7 +124,7 @@ const Input = React.forwardRef<
                   onManualClear?.();
                 }}
               >
-                <X className="text-gray-4 size-2.5" />
+                <X className="size-2.5 text-[#D96C8A]" />
               </Button>
             </div>
           )}
