@@ -11,7 +11,7 @@ type MembershipData = {
       color?: string | null;
       minSpendAmount: number;
       discountRate: number;
-    };
+    } | null;
   };
   benefits: Array<{
     id: number;
@@ -62,13 +62,11 @@ export default function MembershipPage() {
         Đang tải membership...
       </main>
     );
-  const nextThreshold = Math.max(
-    data.current.membership.minSpendAmount,
-    data.current.spending,
-  );
-  const progress = nextThreshold
-    ? Math.min(100, Math.round((data.current.spending / nextThreshold) * 100))
-    : 100;
+  const nextThreshold = data.current.membership?.minSpendAmount || 0;
+  const progress =
+    data.current.membership && nextThreshold
+      ? Math.min(100, Math.round((data.current.spending / nextThreshold) * 100))
+      : 0;
   return (
     <main className="min-h-svh bg-[#FFF9FA] px-4 py-8 text-[#2D2226] sm:px-6">
       <div className="mx-auto max-w-3xl">
@@ -83,7 +81,7 @@ export default function MembershipPage() {
             <div>
               <p className="text-sm text-[#8B7A80]">Hạng hiện tại</p>
               <h2 className="mt-1 text-2xl font-extrabold text-[#A43E5F]">
-                {data.current.membership.name}
+                {data.current.membership?.name || "Chưa đạt hạng"}
               </h2>
             </div>
             <span className="rounded-full bg-[#FCEEF3] px-3 py-1 text-xs font-bold text-[#A43E5F]">
@@ -106,7 +104,7 @@ export default function MembershipPage() {
           </div>
           <p className="mt-4 text-sm text-[#65545B]">
             Ưu đãi mặc định:{" "}
-            <strong>{data.current.membership.discountRate}%</strong>
+            <strong>{data.current.membership?.discountRate || 0}%</strong>
           </p>
           <p className="mt-2 text-xs leading-5 text-[#8B7A80]">
             Chu kỳ được tính từ {date(data.cycle.start)} đến{" "}

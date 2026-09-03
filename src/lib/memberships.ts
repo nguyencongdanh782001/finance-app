@@ -58,17 +58,27 @@ const getEligibleSpending = async (
   return result._sum.paidAmount ?? new Prisma.Decimal(0);
 };
 
-const tierSnapshot = (tier: {
-  id: number;
-  name: string;
-  minSpendAmount: Prisma.Decimal;
-  discountRate: Prisma.Decimal;
-}) => ({
-  membershipId: tier.id,
-  membershipNameSnapshot: tier.name,
-  minSpendAmountSnapshot: tier.minSpendAmount,
-  discountRateSnapshot: tier.discountRate,
-});
+const tierSnapshot = (
+  tier: {
+    id: number;
+    name: string;
+    minSpendAmount: Prisma.Decimal;
+    discountRate: Prisma.Decimal;
+  } | null,
+) =>
+  tier
+    ? {
+        membershipId: tier.id,
+        membershipNameSnapshot: tier.name,
+        minSpendAmountSnapshot: tier.minSpendAmount,
+        discountRateSnapshot: tier.discountRate,
+      }
+    : {
+        membershipId: null,
+        membershipNameSnapshot: "Chưa đạt hạng",
+        minSpendAmountSnapshot: new Prisma.Decimal(0),
+        discountRateSnapshot: new Prisma.Decimal(0),
+      };
 
 export const ensureCurrentMembership = async (
   userId: number,
@@ -84,6 +94,7 @@ export const ensureCurrentMembership = async (
       name: true,
       level: true,
       priority: true,
+      color: true,
       minSpendAmount: true,
       discountRate: true,
       birthdayMaxDiscountAmount: true,
@@ -94,7 +105,6 @@ export const ensureCurrentMembership = async (
     throw new Error("Chưa có hạng membership đang hoạt động.");
   }
 
-  const lowestTier = tiers[0];
   const history = await client.membershipHistory.findUnique({
     where: { userId_cycleYear: { userId, cycleYear: cycle.year } },
   });
@@ -106,14 +116,14 @@ export const ensureCurrentMembership = async (
   );
   const calculatedTier =
     [...tiers].reverse().find((tier) => spending.gte(tier.minSpendAmount)) ??
-    lowestTier;
+    null;
 
   if (!history) {
     const created = await client.membershipHistory.create({
       data: {
         userId,
         cycleYear: cycle.year,
-        ...tierSnapshot(lowestTier),
+        ...tierSnapshot(calculatedTier),
         spending,
         rankStartDate: cycle.start,
         rankEndDate: cycle.end,
@@ -122,30 +132,30 @@ export const ensureCurrentMembership = async (
     });
     await client.user.update({
       where: { id: userId },
-      data: { membershipId: lowestTier.id },
+      data: { membershipId: calculatedTier?.id ?? null },
     });
-    return { ...created, membership: lowestTier, spending };
+    return { ...created, membership: calculatedTier, spending };
   }
 
-  const currentTier = tiers.find((tier) => tier.id === history.membershipId);
-  const tier =
-    currentTier && calculatedTier.level < currentTier.level
-      ? currentTier
-      : calculatedTier;
-  const shouldUpgrade = tier.id !== history.membershipId;
+  const tier = calculatedTier;
+  const shouldChange = (tier?.id ?? null) !== history.membershipId;
   const updated = await client.membershipHistory.update({
     where: { id: history.id },
     data: {
       ...tierSnapshot(tier),
       spending,
-      reason: shouldUpgrade ? "SPENDING_UPGRADE" : history.reason,
+      reason: shouldChange
+        ? tier
+          ? "SPENDING_UPGRADE"
+          : "SPENDING_BELOW_THRESHOLD"
+        : history.reason,
     },
   });
 
-  if (shouldUpgrade) {
+  if (shouldChange) {
     await client.user.update({
       where: { id: userId },
-      data: { membershipId: tier.id },
+      data: { membershipId: tier?.id ?? null },
     });
   }
 

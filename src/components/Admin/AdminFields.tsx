@@ -21,6 +21,7 @@ type RuntimeSelectProps = {
   optionValue: SelectOption[];
   placeholder: string;
   searchable?: boolean;
+  disabled?: boolean;
   className?: string;
   inputClassName?: string;
   lblClassName?: string;
@@ -38,6 +39,7 @@ export function AdminSelect({
   onChange,
   searchable = false,
   hasError = false,
+  disabled = false,
 }: {
   name: string;
   value: string;
@@ -46,6 +48,7 @@ export function AdminSelect({
   onChange: (value: string) => void;
   searchable?: boolean;
   hasError?: boolean;
+  disabled?: boolean;
 }) {
   const field = {
     name,
@@ -70,6 +73,7 @@ export function AdminSelect({
       optionValue={options}
       placeholder={placeholder}
       searchable={searchable}
+      disabled={disabled}
       className="w-full! max-w-full! min-w-0! sm:w-full!"
       inputClassName={cn(
         "h-10! w-full! max-w-full! min-w-0! rounded-lg! border-slate-200! bg-white! text-sm! font-medium!",
