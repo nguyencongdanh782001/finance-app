@@ -206,7 +206,7 @@ export const financeAPI = {
   },
   register: (payload: {
     email: string;
-    phone?: string;
+    phone: string;
     password: string;
     displayName: string;
     birthday: string;

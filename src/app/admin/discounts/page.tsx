@@ -8,6 +8,7 @@ import { AdminSelect } from "@/components/Admin/AdminFields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumericInput } from "@/components/ui/numberInput";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hook/use-toast";
@@ -15,6 +16,8 @@ import { AuthDatePicker } from "@/components/Auth/AuthPageClient";
 import Image from "next/image";
 import QRCode from "qrcode";
 import { X } from "lucide-react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 type Coupon = {
@@ -82,6 +85,40 @@ const initialForm: DiscountForm = {
   startsAt: "",
   endsAt: "",
 };
+const discountValidationSchema = Yup.object({
+  name: Yup.string().trim().required("Vui lòng nhập tên chương trình."),
+  code: Yup.string().trim().required("Vui lòng nhập mã giảm giá."),
+  type: Yup.string().required("Vui lòng chọn loại giảm giá."),
+  value: Yup.number()
+    .typeError("Vui lòng nhập mức giảm.")
+    .moreThan(0, "Mức giảm phải lớn hơn 0.")
+    .required("Vui lòng nhập mức giảm."),
+  maxDiscountAmount: Yup.number()
+    .transform((value, original) => (original === "" ? undefined : value))
+    .typeError("Mức giảm tối đa phải là số.")
+    .min(0, "Mức giảm tối đa không được âm."),
+  minOrderAmount: Yup.number()
+    .transform((value, original) => (original === "" ? undefined : value))
+    .typeError("Đơn tối thiểu phải là số.")
+    .min(0, "Đơn tối thiểu không được âm."),
+  usageLimit: Yup.number()
+    .transform((value, original) => (original === "" ? undefined : value))
+    .typeError("Giới hạn lượt dùng phải là số.")
+    .min(1, "Giới hạn lượt dùng phải từ 1."),
+  usageLimitPerUser: Yup.number()
+    .transform((value, original) => (original === "" ? undefined : value))
+    .typeError("Giới hạn mỗi tài khoản phải là số.")
+    .min(1, "Giới hạn mỗi tài khoản phải từ 1."),
+  startsAt: Yup.string(),
+  endsAt: Yup.string().test(
+    "after-start",
+    "Ngày kết thúc phải sau ngày bắt đầu.",
+    function (value) {
+      const start = this.parent.startsAt;
+      return !value || !start || value >= start;
+    },
+  ),
+});
 const randomCode = () => {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   const bytes = crypto.getRandomValues(new Uint8Array(6));
@@ -127,41 +164,54 @@ const inputClassName =
 export default function DiscountsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [memberships, setMemberships] = useState<Membership[]>([]);
-  const [membershipForm, setMembershipForm] = useState({
-    name: "",
-    level: "0",
-    minSpendAmount: "0",
-    discountRate: "0",
-    birthdayMaxDiscountAmount: "",
-  });
-  const [membershipMessage, setMembershipMessage] = useState("");
   const [form, setForm] = useState<DiscountForm>(initialForm);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
   const [qr, setQr] = useState<{
     code: string;
     dataUrl: string;
     link: string;
   } | null>(null);
+  const validation = useFormik({
+    initialValues: initialForm,
+    validationSchema: discountValidationSchema,
+    onSubmit: async () => undefined,
+  });
+  const hasError = (field: keyof DiscountForm) =>
+    Boolean(validation.touched[field] && validation.errors[field]);
+  const fieldClassName = (field: keyof DiscountForm) =>
+    cn(
+      inputClassName,
+      hasError(field) &&
+        "border-[#C64040]! focus:border-[#C64040]! focus:ring-[#C64040]/10!",
+    );
   const load = async () => {
-    const [discountResponse, membershipResponse] = await Promise.all([
-      fetch("/api/discounts"),
-      fetch("/api/memberships"),
-    ]);
-    if (discountResponse.ok) setCoupons(await discountResponse.json());
-    if (membershipResponse.ok) {
-      const availableMemberships = await membershipResponse.json();
-      setMemberships(
-        availableMemberships.filter(
-          (membership: Membership) => membership.isActive !== false,
-        ),
-      );
+    setLoading(true);
+    try {
+      const [discountResponse, membershipResponse] = await Promise.all([
+        fetch("/api/discounts"),
+        fetch("/api/memberships"),
+      ]);
+      if (discountResponse.ok) setCoupons(await discountResponse.json());
+      if (membershipResponse.ok) {
+        const availableMemberships = await membershipResponse.json();
+        setMemberships(
+          availableMemberships.filter(
+            (membership: Membership) => membership.isActive !== false,
+          ),
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
     void load();
   }, []);
-  const updateForm = (key: keyof DiscountForm, value: string) =>
+  const updateForm = (key: keyof DiscountForm, value: string) => {
+    void validation.setFieldValue(key, value);
     setForm((current) => ({ ...current, [key]: value }));
+  };
   const toggleCoupon = async (coupon: Coupon) => {
     await fetch(`/api/discounts/${coupon.id}`, {
       method: "PATCH",
@@ -180,6 +230,14 @@ export default function DiscountsPage() {
   };
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const errors = await validation.validateForm(form);
+    validation.setTouched(
+      Object.keys(errors).reduce(
+        (result, key) => ({ ...result, [key]: true }),
+        {},
+      ),
+    );
+    if (Object.keys(errors).length) return;
     setMessage("");
     const response = await fetch("/api/discounts", {
       method: "POST",
@@ -229,34 +287,6 @@ export default function DiscountsPage() {
   const membershipRate = (membershipId: number) =>
     form.membershipDiscounts.find((item) => item.membershipId === membershipId)
       ?.discountRate || "";
-  const createMembership = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setMembershipMessage("");
-    const response = await fetch("/api/memberships", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(membershipForm),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      setMembershipMessage(data.message || "Không thể tạo hạng membership.");
-      return;
-    }
-    setMembershipForm({
-      name: "",
-      level: "0",
-      minSpendAmount: "0",
-      discountRate: "0",
-      birthdayMaxDiscountAmount: "",
-    });
-    setMembershipMessage("Đã thêm hạng membership.");
-    toast({
-      title: "Đã thêm hạng membership",
-      description: `Hạng ${data.name} đã sẵn sàng để cấu hình discount.`,
-    });
-    await load();
-  };
-
   const renderActions = (coupon: Coupon) => (
     <div className="flex flex-wrap gap-2">
       <Button
@@ -283,141 +313,8 @@ export default function DiscountsPage() {
       <AdminPageContainer>
         <AdminPageHeader
           title="Mã giảm giá"
-          description="Tạo mã giảm giá và thiết lập mức ưu đãi theo từng hạng membership."
+          description="Tạo và quản lý mã giảm giá cho khách hàng."
         />
-        <section className="admin-surface min-w-0 rounded-2xl p-4 sm:p-5">
-          <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <h2 className="text-base font-semibold text-(--admin-text)">
-                Quản lý membership
-              </h2>
-              <p className="mt-1 text-sm text-(--admin-text-secondary)">
-                Tạo các rank khách hàng và mức ưu đãi mặc định trước khi gắn vào
-                mã giảm giá.
-              </p>
-            </div>
-            <span className="rounded-full bg-(--admin-primary-soft) px-2.5 py-1 text-xs font-semibold text-(--admin-primary)">
-              {memberships.length} rank đang bật
-            </span>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {memberships.length ? (
-              memberships.map((membership) => (
-                <div
-                  key={membership.id}
-                  className="rounded-xl border border-(--admin-border) bg-white p-3"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-semibold text-(--admin-text)">
-                      {membership.name}
-                    </p>
-                    <span className="text-xs font-semibold text-(--admin-primary)">
-                      Cấp {membership.level}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-xs text-(--admin-text-muted)">
-                    <span>
-                      Từ {money(Number(membership.minSpendAmount || 0))}
-                    </span>
-                    <span className="font-bold text-(--admin-primary)">
-                      {Number(membership.discountRate || 0)}% mặc định
-                    </span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="rounded-xl border border-dashed border-(--admin-border) px-4 py-5 text-center text-sm text-(--admin-text-muted) sm:col-span-2 lg:col-span-3">
-                Chưa có rank membership. Tạo rank đầu tiên bên dưới.
-              </p>
-            )}
-          </div>
-          <form
-            onSubmit={createMembership}
-            className="mt-4 grid gap-3 rounded-xl border border-(--admin-border) bg-(--admin-background-subtle) p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_110px_minmax(0,1fr)_130px_minmax(0,1fr)_auto] lg:items-end"
-          >
-            <Field label="Tên rank">
-              <Input
-                standalone
-                required
-                value={membershipForm.name}
-                onManualChange={(value) =>
-                  setMembershipForm((current) => ({ ...current, name: value }))
-                }
-                placeholder="Ví dụ: Gold"
-                aria-label="Tên rank membership"
-                className={inputClassName}
-              />
-            </Field>
-            <Field label="Cấp độ">
-              <NumericInput
-                standalone
-                value={membershipForm.level}
-                onManualChange={(value) =>
-                  setMembershipForm((current) => ({ ...current, level: value }))
-                }
-                placeholder="0"
-                inputMode="numeric"
-                className={inputClassName}
-              />
-            </Field>
-            <Field label="Chi tiêu từ (đ)">
-              <NumericInput
-                standalone
-                value={membershipForm.minSpendAmount}
-                onManualChange={(value) =>
-                  setMembershipForm((current) => ({
-                    ...current,
-                    minSpendAmount: value,
-                  }))
-                }
-                placeholder="0"
-                inputMode="numeric"
-                className={inputClassName}
-              />
-            </Field>
-            <Field label="Ưu đãi (%)">
-              <NumericInput
-                standalone
-                value={membershipForm.discountRate}
-                onManualChange={(value) =>
-                  setMembershipForm((current) => ({
-                    ...current,
-                    discountRate: value,
-                  }))
-                }
-                placeholder="0"
-                inputMode="numeric"
-                className={inputClassName}
-              />
-            </Field>
-            <Field label="Sinh nhật tối đa (đ)">
-              <NumericInput
-                standalone
-                value={membershipForm.birthdayMaxDiscountAmount}
-                onManualChange={(value) =>
-                  setMembershipForm((current) => ({
-                    ...current,
-                    birthdayMaxDiscountAmount: value,
-                  }))
-                }
-                placeholder="Không giới hạn"
-                inputMode="numeric"
-                className={inputClassName}
-              />
-            </Field>
-            <Button
-              type="submit"
-              className="h-10 rounded-lg bg-(--admin-primary) px-4 font-semibold text-white hover:bg-(--admin-primary-hover)"
-            >
-              Thêm rank
-            </Button>
-          </form>
-          {membershipMessage ? (
-            <p className="mt-3 text-sm text-(--admin-text-secondary)">
-              {membershipMessage}
-            </p>
-          ) : null}
-        </section>
         <div className="grid min-w-0 gap-5 xl:grid-cols-[380px_minmax(0,1fr)]">
           <form
             onSubmit={submit}
@@ -435,12 +332,12 @@ export default function DiscountsPage() {
               <Field label="Tên chương trình">
                 <Input
                   standalone
-                  required
                   value={form.name}
+                  onBlur={() => validation.setFieldTouched("name", true)}
                   onManualChange={(value) => updateForm("name", value)}
                   placeholder="Ví dụ: Ưu đãi khách mới"
                   aria-label="Tên chương trình"
-                  className={inputClassName}
+                  className={fieldClassName("name")}
                 />
               </Field>
               <Field
@@ -450,14 +347,17 @@ export default function DiscountsPage() {
                 <div className="grid grid-cols-[1fr_auto] w-full min-w-0 gap-2">
                   <Input
                     standalone
-                    required
                     value={form.code}
+                    onBlur={() => validation.setFieldTouched("code", true)}
                     onManualChange={(value) =>
                       updateForm("code", value.toUpperCase())
                     }
                     placeholder="Nhập mã giảm giá"
                     aria-label="Mã giảm giá"
-                    className={cn(inputClassName, "w-full! min-w-0 uppercase")}
+                    className={cn(
+                      fieldClassName("code"),
+                      "w-full! min-w-0 uppercase",
+                    )}
                   />
                   <Button
                     type="button"
@@ -481,6 +381,7 @@ export default function DiscountsPage() {
                     { value: "true", label: "Khách hàng mới (đơn đầu tiên)" },
                   ]}
                   placeholder="Chọn đối tượng áp dụng"
+                  hasError={hasError("firstOrderOnly")}
                   onChange={(value) => updateForm("firstOrderOnly", value)}
                 />
               </Field>
@@ -493,6 +394,7 @@ export default function DiscountsPage() {
                     { value: "FIXED_AMOUNT", label: "Giảm theo số tiền (đ)" },
                   ]}
                   placeholder="Chọn loại giảm giá"
+                  hasError={hasError("type")}
                   onChange={(value) => updateForm("type", value)}
                 />
               </Field>
@@ -503,16 +405,16 @@ export default function DiscountsPage() {
               >
                 <Input
                   standalone
-                  required
                   min="1"
                   type="number"
                   value={form.value}
+                  onBlur={() => validation.setFieldTouched("value", true)}
                   onManualChange={(value) => updateForm("value", value)}
                   placeholder={
                     form.type === "PERCENTAGE" ? "Ví dụ: 10" : "Ví dụ: 50000"
                   }
                   aria-label="Giá trị giảm"
-                  className={inputClassName}
+                  className={fieldClassName("value")}
                 />
               </Field>
               {form.type === "PERCENTAGE" ? (
@@ -523,13 +425,16 @@ export default function DiscountsPage() {
                   <NumericInput
                     standalone
                     value={form.maxDiscountAmount}
+                    onBlur={() =>
+                      validation.setFieldTouched("maxDiscountAmount", true)
+                    }
                     onManualChange={(value) =>
                       updateForm("maxDiscountAmount", value)
                     }
                     placeholder="Không giới hạn"
                     aria-label="Mức giảm tối đa"
                     inputMode="numeric"
-                    className={inputClassName}
+                    className={fieldClassName("maxDiscountAmount")}
                   />
                 </Field>
               ) : null}
@@ -544,7 +449,7 @@ export default function DiscountsPage() {
                         updateForm("endsAt", "");
                     }}
                     placeholder="Chọn ngày bắt đầu"
-                    className={inputClassName}
+                    className={fieldClassName("startsAt")}
                   />
                 </Field>
                 <Field label="Ngày kết thúc" hint="">
@@ -554,7 +459,7 @@ export default function DiscountsPage() {
                     minDate={form.startsAt}
                     onChange={(value) => updateForm("endsAt", value)}
                     placeholder="Chọn ngày kết thúc"
-                    className={inputClassName}
+                    className={fieldClassName("endsAt")}
                   />
                 </Field>
               </div>
@@ -599,34 +504,47 @@ export default function DiscountsPage() {
                   </div>
                 </div>
               ) : null}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Đơn tối thiểu (đ)" hint="Giá trị tối thiểu là 0.">
-                  <NumericInput
-                    standalone
-                    value={form.minOrderAmount}
-                    onManualChange={(value) =>
-                      updateForm("minOrderAmount", value)
-                    }
-                    placeholder="0"
-                    aria-label="Đơn tối thiểu"
-                    inputMode="numeric"
-                    className={inputClassName}
-                  />
-                </Field>
-                <Field
-                  label="Giới hạn lượt dùng"
-                  hint="Tổng số lượt dùng của mã."
-                >
-                  <NumericInput
-                    standalone
-                    value={form.usageLimit}
-                    onManualChange={(value) => updateForm("usageLimit", value)}
-                    placeholder="1"
-                    aria-label="Giới hạn lượt dùng"
-                    inputMode="numeric"
-                    className={inputClassName}
-                  />
-                </Field>
+              <div className="flex flex-col gap-2.5">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field
+                    label="Đơn tối thiểu (đ)"
+                    hint="Giá trị tối thiểu là 0."
+                  >
+                    <NumericInput
+                      standalone
+                      value={form.minOrderAmount}
+                      onBlur={() =>
+                        validation.setFieldTouched("minOrderAmount", true)
+                      }
+                      onManualChange={(value) =>
+                        updateForm("minOrderAmount", value)
+                      }
+                      placeholder="0"
+                      aria-label="Đơn tối thiểu"
+                      inputMode="numeric"
+                      className={fieldClassName("minOrderAmount")}
+                    />
+                  </Field>
+                  <Field
+                    label="Giới hạn lượt dùng"
+                    hint="Tổng số lượt dùng của mã."
+                  >
+                    <NumericInput
+                      standalone
+                      value={form.usageLimit}
+                      onBlur={() =>
+                        validation.setFieldTouched("usageLimit", true)
+                      }
+                      onManualChange={(value) =>
+                        updateForm("usageLimit", value)
+                      }
+                      placeholder="1"
+                      aria-label="Giới hạn lượt dùng"
+                      inputMode="numeric"
+                      className={fieldClassName("usageLimit")}
+                    />
+                  </Field>
+                </div>
                 <Field
                   label="Mỗi tài khoản dùng"
                   hint="Mặc định 1 lần cho mỗi account."
@@ -634,13 +552,16 @@ export default function DiscountsPage() {
                   <NumericInput
                     standalone
                     value={form.usageLimitPerUser}
+                    onBlur={() =>
+                      validation.setFieldTouched("usageLimitPerUser", true)
+                    }
                     onManualChange={(value) =>
                       updateForm("usageLimitPerUser", value)
                     }
                     placeholder="1"
                     aria-label="Giới hạn mỗi tài khoản"
                     inputMode="numeric"
-                    className={inputClassName}
+                    className={fieldClassName("usageLimitPerUser")}
                   />
                 </Field>
               </div>
@@ -663,7 +584,11 @@ export default function DiscountsPage() {
                 Danh sách mã
               </h2>
               <p className="mt-1 text-sm text-(--admin-text-secondary)">
-                {coupons.length} mã giảm giá
+                {loading ? (
+                  <Skeleton className="h-4 w-28 rounded-md" />
+                ) : (
+                  `${coupons.length} mã giảm giá`
+                )}
               </p>
             </div>
             <div className="hidden overflow-x-auto rounded-xl border border-(--admin-border) md:block">
@@ -679,52 +604,95 @@ export default function DiscountsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {coupons.map((coupon) => (
-                    <tr
-                      key={coupon.id}
-                      className="border-t border-(--admin-border) text-(--admin-text-secondary)"
-                    >
-                      <td className="p-3 font-medium text-(--admin-text)">
-                        {coupon.name}
-                        {coupon.source === "BIRTHDAY" ? (
-                          <span className="mt-1 block text-xs font-normal text-(--admin-primary)">
-                            Sinh nhật ·{" "}
-                            {coupon.recipientUser?.email || "khách hàng"}
-                          </span>
-                        ) : null}
-                      </td>
-                      <td className="p-3 font-semibold text-(--admin-primary)">
-                        {coupon.code}
-                      </td>
-                      <td className="p-3">
-                        {discountLabel(coupon)}
-                        {coupon.membershipDiscounts?.length ? (
-                          <span className="mt-1 block text-xs text-(--admin-text-muted)">
-                            Theo {coupon.membershipDiscounts.length} hạng
-                          </span>
-                        ) : null}
-                        <span className="mt-1 block text-xs text-(--admin-text-muted)">
-                          {dateLabel(coupon.startsAt)} –{" "}
-                          {dateLabel(coupon.endsAt)}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        {coupon.usedCount}
-                        {coupon.usageLimit ? ` / ${coupon.usageLimit}` : ""}
-                      </td>
-                      <td className="p-3">
-                        <span className="rounded-full bg-(--admin-primary-soft) px-2 py-1 text-xs font-semibold text-(--admin-primary)">
-                          {coupon.status}
-                        </span>
-                      </td>
-                      <td className="p-3">{renderActions(coupon)}</td>
-                    </tr>
-                  ))}
+                  {loading
+                    ? Array.from({ length: 4 }, (_, index) => (
+                        <tr
+                          key={index}
+                          className="border-t border-(--admin-border)"
+                        >
+                          {Array.from({ length: 6 }, (_, cellIndex) => (
+                            <td key={cellIndex} className="p-3">
+                              <Skeleton
+                                className={cn(
+                                  "h-4 rounded-md",
+                                  cellIndex === 0
+                                    ? "w-40"
+                                    : cellIndex === 5
+                                      ? "w-20"
+                                      : "w-24",
+                                )}
+                              />
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    : coupons.map((coupon) => (
+                        <tr
+                          key={coupon.id}
+                          className="border-t border-(--admin-border) text-(--admin-text-secondary)"
+                        >
+                          <td className="p-3 font-medium text-(--admin-text)">
+                            {coupon.name}
+                            {coupon.source === "BIRTHDAY" ? (
+                              <span className="mt-1 block text-xs font-normal text-(--admin-primary)">
+                                Sinh nhật ·{" "}
+                                {coupon.recipientUser?.email || "khách hàng"}
+                              </span>
+                            ) : null}
+                          </td>
+                          <td className="p-3 font-semibold text-(--admin-primary)">
+                            {coupon.code}
+                          </td>
+                          <td className="p-3">
+                            {discountLabel(coupon)}
+                            {coupon.membershipDiscounts?.length ? (
+                              <span className="mt-1 block text-xs text-(--admin-text-muted)">
+                                Theo {coupon.membershipDiscounts.length} hạng
+                              </span>
+                            ) : null}
+                            <span className="mt-1 block text-xs text-(--admin-text-muted)">
+                              {dateLabel(coupon.startsAt)} –{" "}
+                              {dateLabel(coupon.endsAt)}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            {coupon.usedCount}
+                            {coupon.usageLimit ? ` / ${coupon.usageLimit}` : ""}
+                          </td>
+                          <td className="p-3">
+                            <span className="rounded-full bg-(--admin-primary-soft) px-2 py-1 text-xs font-semibold text-(--admin-primary)">
+                              {coupon.status}
+                            </span>
+                          </td>
+                          <td className="p-3">{renderActions(coupon)}</td>
+                        </tr>
+                      ))}
                 </tbody>
               </table>
             </div>
             <div className="grid gap-3 md:hidden">
-              {coupons.length ? (
+              {loading ? (
+                Array.from({ length: 3 }, (_, index) => (
+                  <div
+                    key={index}
+                    className="rounded-xl border border-(--admin-border) bg-white p-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="grid flex-1 gap-2">
+                        <Skeleton className="h-4 w-40 rounded-md" />
+                        <Skeleton className="h-6 w-24 rounded-md" />
+                      </div>
+                      <Skeleton className="h-6 w-20 rounded-full" />
+                    </div>
+                    <div className="mt-4 grid grid-cols-2 gap-3 border-y border-(--admin-border) py-3">
+                      <Skeleton className="h-8 w-24 rounded-md" />
+                      <Skeleton className="h-8 w-20 rounded-md" />
+                    </div>
+                    <Skeleton className="mt-3 h-3 w-48 rounded-md" />
+                    <Skeleton className="mt-3 ml-auto h-8 w-24 rounded-md" />
+                  </div>
+                ))
+              ) : coupons.length ? (
                 coupons.map((coupon) => (
                   <article
                     key={coupon.id}

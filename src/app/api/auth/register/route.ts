@@ -26,11 +26,18 @@ export async function POST(req: Request) {
   const gender = body.gender;
   const allowedGenders = ["FEMALE", "MALE", "OTHER", "UNSPECIFIED"];
 
-  if (!displayName || !email || !password || !body.birthday || !gender) {
+  if (
+    !phone ||
+    !displayName ||
+    !email ||
+    !password ||
+    !body.birthday ||
+    !gender
+  ) {
     return NextResponse.json(
       {
         message:
-          "Vui lòng nhập đầy đủ tên hiển thị, email, mật khẩu, ngày sinh và giới tính",
+          "Vui lòng nhập đầy đủ số điện thoại, tên hiển thị, email, mật khẩu, ngày sinh và giới tính",
       },
       { status: 400 },
     );
@@ -43,7 +50,7 @@ export async function POST(req: Request) {
     );
   }
 
-  if (phone && !isValidVietnamesePhone(phone)) {
+  if (!isValidVietnamesePhone(phone)) {
     return NextResponse.json(
       { message: "Số điện thoại Việt Nam không hợp lệ" },
       { status: 400 },
@@ -79,6 +86,14 @@ export async function POST(req: Request) {
   }
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
+  const existingPhoneUser = await prisma.user.findUnique({ where: { phone } });
+
+  if (existingPhoneUser && existingPhoneUser.id !== existingUser?.id) {
+    return NextResponse.json(
+      { message: "Số điện thoại này đã được đăng ký" },
+      { status: 409 },
+    );
+  }
 
   if (existingUser?.emailVerifiedAt && existingUser.passwordHash) {
     return NextResponse.json(
@@ -100,7 +115,7 @@ export async function POST(req: Request) {
         where: { id: existingUser.id },
         data: {
           passwordHash,
-          phone: phone || existingUser.phone,
+          phone,
           email,
           authProvider: "WEB",
           displayName,
@@ -113,7 +128,7 @@ export async function POST(req: Request) {
       })
     : await prisma.user.create({
         data: {
-          phone: phone || null,
+          phone,
           email,
           passwordHash,
           authProvider: "WEB",
@@ -128,7 +143,7 @@ export async function POST(req: Request) {
   await prisma.otp.create({
     data: {
       userId: user.id,
-      phone: phone || null,
+      phone,
       email,
       codeHash: await hashValue(code),
       purpose: "REGISTER",
