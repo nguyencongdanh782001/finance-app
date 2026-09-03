@@ -602,7 +602,7 @@ function ProductSearchPanel({
             placeholder="Tìm tên sản phẩm, SKU hoặc mã vạch..."
             aria-label="Tìm sản phẩm"
             classNameContainer="h-10 rounded-lg border border-[#EAE1E4] bg-white focus-within:border-[#D96C8A] focus-within:ring-2 focus-within:ring-[#D96C8A]/15"
-            className="h-9! rounded-lg! border-0! bg-transparent! px-2! text-sm! text-[#2D2226] placeholder:text-[#9B8C91]"
+            className="h-9! rounded-lg! border-0! bg-transparent! px-2! pr-10! text-sm! text-[#2D2226] placeholder:text-[#9B8C91]"
           />
           <AdminSelect
             name="offlineOrderCategory"
