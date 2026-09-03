@@ -54,6 +54,10 @@ export default function AdminAccountMenu() {
             </p>
           </div>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => router.push("/admin/profile")}>
+            <UserRound className="size-4" />
+            Thông tin cá nhân
+          </DropdownMenuItem>
           <DropdownMenuItem
             disabled={isLoggingOut}
             onSelect={(event) => {
