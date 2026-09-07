@@ -1094,7 +1094,27 @@ export default function AuthPageClient({
 
   return (
     <main className="min-h-screen bg-[#FFFCFA] text-[#1C1A1B]">
-      <div className="grid min-h-screen lg:grid-cols-[1.08fr_0.92fr]">
+      <header className="border-b border-[#E9E2E5] bg-[#FFFCFA] px-5 py-4 sm:px-8 lg:px-12">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <span className="flex size-11 items-center justify-center overflow-hidden rounded-lg border border-[#E9E2E5] bg-white shadow-sm">
+              <Image src="/logo-quynh-nhi-store-mark.svg" alt="Quỳnh Nhi Store" width={58} height={58} className="size-[125%] max-w-none object-contain" priority />
+            </span>
+            <span><span className="block text-sm font-extrabold">Quỳnh Nhi Store</span><span className="block text-xs font-semibold text-[#6F686B]">Thời trang mỗi ngày</span></span>
+          </Link>
+          <nav aria-label="Điều hướng cửa hàng" className="order-3 flex w-full items-center justify-center gap-5 text-sm font-bold text-[#6F686B] sm:order-none sm:w-auto">
+            <Link href="/" className="transition-colors hover:text-[#A43E5F]">Trang chủ</Link>
+            <Link href="/products" className="transition-colors hover:text-[#A43E5F]">Sản phẩm</Link>
+            <Link href="/products?gender=MEN" className="transition-colors hover:text-[#A43E5F]">Nam</Link>
+            <Link href="/products?gender=WOMEN" className="transition-colors hover:text-[#A43E5F]">Nữ</Link>
+          </nav>
+          <div className="grid grid-cols-2 rounded-lg border border-[#E9E2E5] bg-white p-1">
+            <Button type="button" variant={mode === "login" ? "authTabActive" : "authTab"} size="authTab" onClick={() => handleModeChange("login")}>Đăng nhập</Button>
+            <Button type="button" variant={mode === "register" ? "authTabActive" : "authTab"} size="authTab" onClick={() => handleModeChange("register")}>Đăng ký</Button>
+          </div>
+        </div>
+      </header>
+      <div className="grid min-h-[calc(100vh-77px)] lg:grid-cols-[1.08fr_0.92fr]">
         <section className="relative hidden overflow-hidden bg-[#FFF3F6] lg:block">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,#FFFFFF_0%,#FFF3F6_48%,#F7DEE6_100%)]" />
           <div className="absolute left-10 top-10 h-40 w-40 rounded-full border border-[#D96C8A]/20" />
@@ -1132,51 +1152,6 @@ export default function AuthPageClient({
 
         <section className="flex items-center justify-center px-5 py-8 sm:px-8">
           <div className="w-full max-w-md">
-            <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-              <Link
-                href="/"
-                className="flex min-w-0 cursor-pointer items-center justify-center gap-3 sm:justify-start"
-              >
-                <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E9E2E5] bg-white p-0 shadow-sm sm:size-12">
-                  <Image
-                    src="/logo-quynh-nhi-store-mark.svg"
-                    alt="Quỳnh Nhi Store"
-                    width={76}
-                    height={76}
-                    priority
-                    sizes="76px"
-                    className="h-[125%] w-[125%] max-w-none object-contain"
-                  />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-base font-extrabold leading-tight text-[#1C1A1B] sm:text-sm">
-                    Quỳnh Nhi Store
-                  </span>
-                  <span className="mt-1 block text-sm font-semibold text-[#6F686B] sm:text-xs">
-                    Tài khoản của bạn
-                  </span>
-                </span>
-              </Link>
-              <div className="grid w-full grid-cols-2 rounded-lg border border-[#E9E2E5] bg-white p-1 sm:w-auto">
-                <Button
-                  type="button"
-                  variant={mode === "login" ? "authTabActive" : "authTab"}
-                  size="authTab"
-                  onClick={() => handleModeChange("login")}
-                >
-                  Đăng nhập
-                </Button>
-                <Button
-                  type="button"
-                  variant={mode === "register" ? "authTabActive" : "authTab"}
-                  size="authTab"
-                  onClick={() => handleModeChange("register")}
-                >
-                  Đăng ký
-                </Button>
-              </div>
-            </div>
-
             <div className="rounded-lg border border-[#E9E2E5] bg-white p-6 shadow-[0_24px_70px_rgba(28,26,27,0.08)] sm:p-8">
               <div className="flex items-center gap-3">
                 <span className="flex size-10 items-center justify-center rounded-full bg-[#FFF3F6]">

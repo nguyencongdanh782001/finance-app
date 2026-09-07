@@ -1,164 +1,74 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import ProductCard from "@/components/Storefront/ProductCard";
+import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import { getDefaultRouteByRole, isAdminRole } from "@/lib/auth/routing";
-import {
-  Loader2,
-  LogOut,
-  ShoppingBag,
-  Sparkles,
-  UserRound,
-} from "lucide-react";
-import Image from "next/image";
+import type { CategoryApiItem } from "@/interface/category";
+import type { ProductApiItem, ProductListResponse } from "@/interface/product";
+import { ArrowRight, Check, Mail, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+type LandingTab = "ALL" | "WOMEN" | "MEN";
+
+const journal = [
+  { title: "3 cách phối đồ thanh lịch cho ngày bận rộn", label: "Phong cách", text: "Những công thức đơn giản để bạn luôn tự tin trong nhịp sống hiện đại." },
+  { title: "Chọn chất liệu để mặc đẹp lâu hơn", label: "Chăm sóc", text: "Một vài lưu ý nhỏ giúp trang phục giữ được phom dáng và cảm giác ban đầu." },
+  { title: "Soft Confidence: câu chuyện bộ sưu tập mới", label: "Bộ sưu tập", text: "Tối giản, mềm mại và đủ khác biệt để trở thành dấu ấn của riêng bạn." },
+];
 
 export default function StorefrontHomeClient() {
+  const { user, isAuthenticated, isInitializing } = useAuth();
   const router = useRouter();
-  const { user, isAuthenticated, isInitializing, logout } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const userRole = user?.role;
+  const [products, setProducts] = useState<ProductApiItem[]>([]);
+  const [categories, setCategories] = useState<CategoryApiItem[]>([]);
+  const [tab, setTab] = useState<LandingTab>("ALL");
 
   useEffect(() => {
-    if (isInitializing || !isAuthenticated || !isAdminRole(userRole)) {
-      return;
-    }
+    if (!isInitializing && isAuthenticated && isAdminRole(user?.role)) router.replace(getDefaultRouteByRole(user?.role));
+  }, [isAuthenticated, isInitializing, router, user?.role]);
 
-    router.replace(getDefaultRouteByRole(userRole));
-  }, [isAuthenticated, isInitializing, router, userRole]);
+  useEffect(() => {
+    void Promise.all([
+      fetch("/api/product?public=true&limit=12&sort=newest").then((response) => response.ok ? response.json() as Promise<ProductListResponse> : Promise.reject()),
+      fetch("/api/category").then((response) => response.json()),
+    ]).then(([productData, categoryData]) => { setProducts(productData.data); setCategories(categoryData.data || categoryData || []); }).catch(() => undefined);
+  }, []);
 
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
+  const filteredProducts = useMemo(() => tab === "ALL" ? products : products.filter((product) => product.gender === tab), [products, tab]);
+  const hero = products[0];
+  const categoryImages = categories.slice(0, 4).map((category, index) => ({ category, image: products[index]?.imageUrl }));
+  const lookProducts = products.slice(0, 3);
 
-    try {
-      await logout();
-      router.refresh();
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
+  if (isInitializing || (isAuthenticated && isAdminRole(user?.role))) return <main className="flex min-h-screen items-center justify-center bg-[#FFFCFA]"><Skeleton className="size-8 rounded-full" /></main>;
 
-  if (isInitializing || (isAuthenticated && isAdminRole(userRole))) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#FFFCFA] px-4">
-        <Loader2 className="size-6 animate-spin text-[#D96C8A]" />
-      </main>
-    );
-  }
+  return <StorefrontShell><main>
+    <section className="relative isolate min-h-[620px] overflow-hidden bg-[#E8D9D5] sm:min-h-[700px]"><img src={hero?.imageUrl || "/logo-quynh-nhi-store.svg"} alt="Bộ sưu tập mới của Quỳnh Nhi Store" className="absolute inset-0 -z-20 size-full object-cover object-center" /><div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#20181a]/75 via-[#20181a]/35 to-transparent" /><div className="mx-auto flex min-h-[620px] max-w-7xl items-end px-5 pb-16 sm:min-h-[700px] sm:px-8 sm:pb-24"><div className="max-w-xl text-white"><p className="mb-5 text-xs font-bold uppercase tracking-[.28em] text-white/80">New collection · 2026</p><h1 className="font-serif text-5xl leading-[.98] sm:text-7xl">Chạm vào phong cách của riêng bạn.</h1><p className="mt-6 max-w-md text-sm leading-6 text-white/85 sm:text-base">Những thiết kế cân bằng giữa nét nữ tính, tinh thần hiện đại và sự thoải mái cho mỗi ngày.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/products" className="inline-flex min-h-11 items-center gap-2 bg-white px-6 py-3 text-sm font-extrabold text-[#2D2226] transition hover:bg-[#FFF3F6]">Khám phá bộ sưu tập <ArrowRight className="size-4" /></Link><Link href="/products" className="inline-flex min-h-11 items-center border border-white/70 px-6 py-3 text-sm font-extrabold text-white transition hover:bg-white/15">Mua ngay</Link></div></div></div></section>
 
-  return (
-    <main className="min-h-screen bg-[#FFFCFA] text-[#1C1A1B]">
-      <section className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 py-6 sm:px-8 lg:px-10">
-        <header className="flex items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="flex min-w-0 cursor-pointer items-center gap-3"
-          >
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-[#E9E2E5] bg-white shadow-[0_8px_24px_rgba(28,26,27,0.08)]">
-              <Image
-                src="/logo-quynh-nhi-store-mark.svg"
-                alt="Quỳnh Nhi Store"
-                width={54}
-                height={54}
-                className="size-12 object-contain"
-                priority
-                sizes="54px"
-              />
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-base font-extrabold sm:text-lg">
-                Quỳnh Nhi Store
-              </span>
-              <span className="block truncate text-sm font-semibold text-[#7A7376]">
-                Thời trang nhẹ nhàng mỗi ngày
-              </span>
-            </span>
-          </Link>
+    <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-24"><div className="mb-8 flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.22em] text-[#D96C8A]">Shop by category</p><h2 className="mt-3 font-serif text-4xl">Khám phá theo phong cách</h2></div><Link href="/products" className="hidden text-sm font-bold text-[#A43E5F] sm:block">Xem tất cả <ArrowRight className="ml-1 inline size-4" /></Link></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{categoryImages.map(({ category, image }, index) => <Link key={category.id} href={`/products?categoryId=${category.id}`} className={`group relative overflow-hidden bg-[#EDE3E1] ${index === 0 ? "sm:col-span-2 sm:row-span-2" : "aspect-[1.15] sm:aspect-auto"}`}><div className="aspect-[.88] sm:aspect-auto sm:h-full"><img src={image || "/logo-quynh-nhi-store.svg"} alt={category.name} loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-105" /></div><div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-4 pb-4 pt-12 text-white"><p className="text-lg font-extrabold">{category.name}</p><p className="mt-1 text-xs font-semibold text-white/80">Khám phá ngay <ArrowRight className="ml-1 inline size-3" /></p></div></Link>)}</div></section>
 
-          {isAuthenticated ? (
-            <Button
-              type="button"
-              variant="dangerSoft"
-              size="lg"
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-            >
-              {isLoggingOut ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <LogOut className="size-4" />
-              )}
-              Đăng xuất
-            </Button>
-          ) : (
-            <div className="flex shrink-0 items-center gap-2">
-              <Button asChild variant="authTab" size="lg">
-                <Link href="/login">Đăng nhập</Link>
-              </Button>
-              <Button asChild variant="brand" size="lg">
-                <Link href="/register">Đăng ký</Link>
-              </Button>
-            </div>
-          )}
-        </header>
+    <section className="bg-[#F5EFEC] px-5 py-16 sm:px-8 lg:py-24"><div className="mx-auto max-w-7xl"><div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[.22em] text-[#D96C8A]">New arrivals</p><h2 className="mt-3 font-serif text-4xl">Vừa cập bến</h2></div><div className="flex gap-1 border-b border-[#D8CCCA]">{([["ALL", "Tất cả"], ["WOMEN", "Nữ"], ["MEN", "Nam"]] as const).map(([value, label]) => <button key={value} type="button" onClick={() => setTab(value)} className={`px-4 py-2 text-sm font-bold ${tab === value ? "border-b-2 border-[#D96C8A] text-[#A43E5F]" : "text-[#8A7D81]"}`}>{label}</button>)}</div></div>{filteredProducts.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 lg:gap-7">{filteredProducts.slice(0, 8).map((product) => <ProductCard key={product.id} product={product} />)}</div> : <p className="py-16 text-center text-sm text-[#8A7D81]">Chưa có sản phẩm trong danh mục này.</p>}</div></section>
 
-        <div className="grid flex-1 items-center gap-8 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
-          <div>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#FFF3F6] px-4 py-2 text-sm font-extrabold uppercase tracking-[0.12em] text-[#7A2944]">
-              <Sparkles className="size-4 text-[#D96C8A]" />
-              Quỳnh Nhi Store
-            </div>
-            <h1 className="max-w-2xl text-4xl font-extrabold leading-tight text-[#1C1A1B] sm:text-5xl">
-              Mua sắm thời trang nhẹ nhàng, tinh tế và dễ dàng hơn mỗi ngày.
-            </h1>
-            <p className="mt-5 max-w-xl text-base font-semibold leading-7 text-[#6F686B] sm:text-lg">
-              {isAuthenticated
-                ? `Chào ${user?.displayName || "bạn"}, tài khoản của bạn đã sẵn sàng để tiếp tục mua sắm.`
-                : "Đăng nhập hoặc tạo tài khoản để lưu thông tin, theo dõi đơn hàng và nhận ưu đãi phù hợp."}
-            </p>
+    <section className="mx-auto grid max-w-[1600px] items-stretch lg:grid-cols-2"><div className="relative min-h-[430px] overflow-hidden bg-[#D8C4BE]"><img src={products[4]?.imageUrl || hero?.imageUrl || "/logo-quynh-nhi-store.svg"} alt="Bộ sưu tập Soft Confidence" loading="lazy" className="size-full object-cover" /><div className="absolute inset-0 bg-black/25" /><div className="absolute inset-x-0 bottom-0 p-8 text-white sm:p-14"><p className="text-xs font-bold uppercase tracking-[.24em]">The edit</p><h2 className="mt-3 font-serif text-4xl">Soft Confidence</h2><p className="mt-3 max-w-sm text-sm leading-6 text-white/85">Những thiết kế nhẹ nhàng dành cho phong cách mỗi ngày.</p><Link href="/products" className="mt-6 inline-flex items-center gap-2 border-b border-white pb-2 text-sm font-bold">Xem bộ sưu tập <ArrowRight className="size-4" /></Link></div></div><div className="flex flex-col justify-center bg-[#2D2226] px-8 py-16 text-white sm:px-16"><p className="text-xs font-bold uppercase tracking-[.24em] text-[#F4B5C5]">A considered wardrobe</p><h2 className="mt-5 max-w-lg font-serif text-4xl leading-tight sm:text-5xl">Mặc ít hơn. Chọn đúng hơn.</h2><p className="mt-5 max-w-md text-sm leading-7 text-white/70">Một tủ đồ đẹp bắt đầu từ những món đồ phù hợp với bạn, được mặc lại theo nhiều cách và đồng hành qua nhiều mùa.</p><Link href="/products" className="mt-8 inline-flex w-fit items-center gap-2 border border-white/50 px-5 py-3 text-sm font-bold transition hover:bg-white hover:text-[#2D2226]">Khám phá câu chuyện <ArrowRight className="size-4" /></Link></div></section>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              {isAuthenticated ? (
-                <Button asChild variant="brand" size="lg">
-                  <Link href="/">
-                    <ShoppingBag className="size-4" />
-                    Tiếp tục mua sắm
-                  </Link>
-                </Button>
-              ) : (
-                <>
-                  <Button asChild variant="brand" size="lg">
-                    <Link href="/login">
-                      <UserRound className="size-4" />
-                      Đăng nhập tài khoản
-                    </Link>
-                  </Button>
-                  <Button asChild variant="authTab" size="lg">
-                    <Link href="/register">Tạo tài khoản mới</Link>
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
+    <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-24"><div className="mb-8 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.22em] text-[#D96C8A]">Shop the look</p><h2 className="mt-3 font-serif text-4xl">Cảm hứng phối đồ</h2></div><Link href="/products" className="text-sm font-bold text-[#A43E5F]">Xem tất cả <ArrowRight className="ml-1 inline size-4" /></Link></div><div className="grid gap-5 md:grid-cols-3">{lookProducts.map((product, index) => <div key={product.id} className="group"><div className="aspect-[.82] overflow-hidden bg-[#EEE5E2]"><img src={product.imageUrl} alt={`Look ${index + 1}: ${product.title}`} loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-105" /></div><div className="flex items-center justify-between py-4"><div><p className="text-xs font-bold uppercase tracking-widest text-[#9C8E93]">Look 0{index + 1}</p><p className="mt-1 text-sm font-extrabold">{product.title}</p></div><Link href={`/products/${product.slug || product.id}`} className="text-xs font-bold text-[#A43E5F]">Xem look <ArrowRight className="ml-1 inline size-3" /></Link></div></div>)}</div></section>
 
-          <div className="flex justify-center lg:justify-end">
-            <div className="relative flex aspect-square w-full max-w-90 items-center justify-center rounded-full bg-[#FFF3F6] shadow-[0_30px_80px_rgba(122,41,68,0.14)]">
-              <div className="flex size-[78%] items-center justify-center rounded-full border border-[#E9C9D3] bg-white">
-                <Image
-                  src="/logo-quynh-nhi-store.svg"
-                  alt="Logo Quỳnh Nhi Store"
-                  width={300}
-                  height={300}
-                  className="size-[82%] object-contain"
-                  sizes="(min-width: 1024px) 295px, 70vw"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
+    <section className="bg-[#F5EFEC] px-5 py-16 sm:px-8 lg:py-24"><div className="mx-auto max-w-7xl"><div className="mb-8 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.22em] text-[#D96C8A]">Most wanted</p><h2 className="mt-3 font-serif text-4xl">Được yêu thích nhất</h2></div><Link href="/products" className="text-sm font-bold text-[#A43E5F]">Xem tất cả <ArrowRight className="ml-1 inline size-4" /></Link></div><div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 lg:gap-7">{products.slice(4, 8).map((product) => <ProductCard key={product.id} product={product} />)}</div></div></section>
+
+    <section className="mx-auto grid max-w-[1600px] gap-1 bg-[#EEE5E2] sm:grid-cols-2"><Link href="/products?gender=WOMEN" className="group relative min-h-[430px] overflow-hidden"><img src={products[1]?.imageUrl || hero?.imageUrl || "/logo-quynh-nhi-store.svg"} alt="Thời trang nữ" loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-105" /><div className="absolute inset-0 bg-black/25" /><div className="absolute inset-x-0 bottom-0 p-8 text-white sm:p-12"><p className="text-xs font-bold uppercase tracking-[.24em]">For her</p><h2 className="mt-2 font-serif text-4xl">Thời trang nữ</h2><span className="mt-4 inline-block border-b border-white pb-2 text-sm font-bold">Khám phá <ArrowRight className="ml-1 inline size-4" /></span></div></Link><Link href="/products?gender=MEN" className="group relative min-h-[430px] overflow-hidden"><img src={products[2]?.imageUrl || hero?.imageUrl || "/logo-quynh-nhi-store.svg"} alt="Thời trang nam" loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-105" /><div className="absolute inset-0 bg-black/25" /><div className="absolute inset-x-0 bottom-0 p-8 text-white sm:p-12"><p className="text-xs font-bold uppercase tracking-[.24em]">For him</p><h2 className="mt-2 font-serif text-4xl">Thời trang nam</h2><span className="mt-4 inline-block border-b border-white pb-2 text-sm font-bold">Khám phá <ArrowRight className="ml-1 inline size-4" /></span></div></Link></section>
+
+    <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-24"><div className="relative overflow-hidden bg-[#2D2226] px-7 py-12 text-white sm:px-14 sm:py-16"><div className="relative max-w-xl"><p className="text-xs font-bold uppercase tracking-[.24em] text-[#F4B5C5]">Quỳnh Nhi membership</p><h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">Đặc quyền dành riêng cho bạn.</h2><p className="mt-5 max-w-md text-sm leading-7 text-white/70">Tích điểm từ mỗi đơn hàng, nhận ưu đãi theo hạng thành viên và những món quà nhỏ vào dịp đặc biệt.</p><Link href="/membership" className="mt-7 inline-flex items-center gap-2 bg-white px-5 py-3 text-sm font-extrabold text-[#2D2226]">Khám phá quyền lợi <ArrowRight className="size-4" /></Link></div><Sparkles className="absolute -bottom-12 -right-8 size-56 text-white/5" /></div></section>
+
+    <section className="border-y border-[#E9E2E5] bg-white"><div className="mx-auto grid max-w-7xl gap-7 px-5 py-10 sm:grid-cols-3 sm:px-8"><div className="flex gap-3"><Truck className="size-5 shrink-0 text-[#D96C8A]" /><div><p className="text-sm font-extrabold">Giao hàng toàn quốc</p><p className="mt-1 text-xs text-[#8A7D81]">Đóng gói cẩn thận, theo dõi dễ dàng.</p></div></div><div className="flex gap-3"><ShieldCheck className="size-5 shrink-0 text-[#D96C8A]" /><div><p className="text-sm font-extrabold">Thanh toán an toàn</p><p className="mt-1 text-xs text-[#8A7D81]">Nhiều phương thức thanh toán tiện lợi.</p></div></div><div className="flex gap-3"><Check className="size-5 shrink-0 text-[#D96C8A]" /><div><p className="text-sm font-extrabold">Tư vấn chọn size</p><p className="mt-1 text-xs text-[#8A7D81]">Luôn sẵn sàng hỗ trợ bạn.</p></div></div></div></section>
+
+    <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-24"><div className="mb-8"><p className="text-xs font-bold uppercase tracking-[.22em] text-[#D96C8A]">Fashion journal</p><h2 className="mt-3 font-serif text-4xl">Câu chuyện phong cách</h2></div><div className="grid gap-5 md:grid-cols-3">{journal.map((article, index) => <article key={article.title}><div className="aspect-[1.3] overflow-hidden bg-[#EEE5E2]"><img src={products[index + 3]?.imageUrl || hero?.imageUrl || "/logo-quynh-nhi-store.svg"} alt={article.title} loading="lazy" className="size-full object-cover transition duration-700 hover:scale-105" /></div><p className="mt-4 text-xs font-bold uppercase tracking-widest text-[#D96C8A]">{article.label}</p><h3 className="mt-2 font-serif text-2xl leading-tight">{article.title}</h3><p className="mt-2 text-sm leading-6 text-[#6F686B]">{article.text}</p><button type="button" className="mt-4 border-b border-[#2D2226] pb-1 text-xs font-bold">Đọc câu chuyện <ArrowRight className="ml-1 inline size-3" /></button></article>)}</div></section>
+
+    <section className="mx-auto max-w-7xl px-5 pb-16 sm:px-8 lg:pb-24"><div className="mb-8 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.22em] text-[#D96C8A]">#QuynhNhiCommunity</p><h2 className="mt-3 font-serif text-4xl">Wear it your way</h2></div><span className="hidden text-sm text-[#8A7D81] sm:block">Theo dõi @quynhnhistore</span></div><div className="grid grid-cols-4 gap-2 sm:grid-cols-5">{products.slice(0, 5).map((product) => <a key={product.id} href="#newsletter" className="aspect-square overflow-hidden bg-[#EEE5E2]"><img src={product.imageUrl} alt="Cộng đồng Quỳnh Nhi Store" loading="lazy" className="size-full object-cover transition duration-500 hover:scale-105" /></a>)}</div></section>
+
+    <section id="newsletter" className="bg-[#F5EFEC] px-5 py-16 text-center sm:px-8 lg:py-20"><Mail className="mx-auto size-6 text-[#D96C8A]" /><h2 className="mt-4 font-serif text-4xl">Ở lại cùng Quỳnh Nhi</h2><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#6F686B]">Nhận thông tin về sản phẩm mới, cảm hứng phối đồ và ưu đãi dành riêng cho bạn.</p><form onSubmit={(event) => event.preventDefault()} className="mx-auto mt-7 flex max-w-md flex-col gap-2 sm:flex-row"><input type="email" placeholder="Email của bạn" aria-label="Email nhận tin" className="min-h-11 flex-1 border border-[#D8CCCA] bg-white px-4 text-sm outline-none focus:border-[#D96C8A]" /><button type="submit" className="min-h-11 bg-[#D96C8A] px-6 text-sm font-extrabold text-white hover:bg-[#C55778]">Đăng ký</button></form><p className="mt-3 text-[11px] text-[#9C8E93]">Bằng việc đăng ký, bạn đồng ý nhận thông tin từ Quỳnh Nhi Store.</p></section>
+  </main></StorefrontShell>;
 }

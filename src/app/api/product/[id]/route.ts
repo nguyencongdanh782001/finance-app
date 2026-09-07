@@ -19,13 +19,15 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)/g, "");
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = Number((await params).id);
-  if (!Number.isInteger(id)) return bad("Invalid product id");
+  const identifier = (await params).id;
+  const id = Number(identifier);
+  const where = Number.isInteger(id) ? { id } : { slug: identifier };
+  const publicOnly = new URL(req.url).searchParams.get("public") === "true";
   const product = await prisma.product.findUnique({
-    where: { id },
+    where,
     include: {
       category: true,
       images: {
@@ -38,6 +40,9 @@ export async function GET(
       },
     },
   });
+  if (publicOnly && product?.status !== "PUBLIC") {
+    return bad("Product not found", 404);
+  }
   return product
     ? NextResponse.json(toProductResponse(product))
     : bad("Product not found", 404);

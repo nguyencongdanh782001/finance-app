@@ -1,0 +1,671 @@
+openapi: 3.0.3
+info:
+  title: Quỳnh Nhi Store - Auth & Client API
+  version: 1.0.0
+  description: |
+    Tài liệu API dành cho xác thực và giao diện khách hàng.
+    Các endpoint quản trị, báo cáo tài chính và cron job không được mô tả trong file này.
+servers:
+  - url: http://localhost:3000
+    description: Local
+  - url: https://quynhnhistore.com
+    description: Production
+tags:
+  - name: Auth
+    description: Đăng ký, đăng nhập và quản lý phiên
+  - name: Products
+    description: Danh sách và chi tiết sản phẩm công khai
+  - name: Categories
+    description: Danh mục sản phẩm
+  - name: Cart
+    description: Giỏ hàng của khách hàng đang đăng nhập
+  - name: Membership
+    description: Membership và quyền lợi của khách hàng hiện tại
+  - name: Vouchers
+    description: Voucher công khai
+paths:
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Đăng ký tài khoản
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: Tạo tài khoản và gửi OTP thành công
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OtpResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { $ref: "#/components/responses/Conflict" }
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập bằng email và mật khẩu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSessionResponse" }
+        "202":
+          description: Tài khoản cần xác thực email bằng OTP
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LoginOtpRequiredResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /api/auth/google:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập hoặc đăng ký bằng Google
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [credential]
+              properties:
+                credential:
+                  {
+                    type: string,
+                    description: Google Identity Services ID token,
+                  }
+      responses:
+        "200":
+          description: Đăng nhập Google thành công
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSessionResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409": { $ref: "#/components/responses/Conflict" }
+
+  /api/auth/verify:
+    post:
+      tags: [Auth]
+      summary: Xác thực OTP đăng ký hoặc đăng nhập
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code]
+              properties:
+                email: { type: string, format: email }
+                code:
+                  {
+                    type: string,
+                    minLength: 6,
+                    maxLength: 6,
+                    example: "123456",
+                  }
+                purpose:
+                  { type: string, enum: [REGISTER, LOGIN], default: REGISTER }
+      responses:
+        "200":
+          description: OTP hợp lệ và tạo phiên đăng nhập
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSessionResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+
+  /api/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Yêu cầu OTP đặt lại mật khẩu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties: { email: { type: string, format: email } }
+      responses:
+        "200":
+          description: Yêu cầu được tiếp nhận
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { $ref: "#/components/responses/Conflict" }
+
+  /api/auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Đặt lại mật khẩu bằng OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code, password]
+              properties:
+                email: { type: string, format: email }
+                code: { type: string, minLength: 6, maxLength: 6 }
+                password: { type: string, minLength: 8, format: password }
+      responses:
+        "200":
+          {
+            description: Đặt lại mật khẩu thành công,
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/SuccessResponse" } },
+              },
+          }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+
+  /api/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Làm mới access token
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { refreshToken: { type: string } }
+      responses:
+        "200":
+          description: Token mới
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSessionResponse" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Đăng xuất và thu hồi refresh token
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          {
+            description: Đăng xuất thành công,
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/SuccessResponse" } },
+              },
+          }
+
+  /api/product:
+    get:
+      tags: [Products]
+      summary: Lấy danh sách sản phẩm công khai
+      parameters:
+        - { $ref: "#/components/parameters/Search" }
+        - { $ref: "#/components/parameters/CategoryId" }
+        - { $ref: "#/components/parameters/Page" }
+        - { $ref: "#/components/parameters/Limit" }
+        - name: gender
+          in: query
+          schema: { type: string, enum: [WOMEN, MEN, UNISEX] }
+        - name: sort
+          in: query
+          schema:
+            {
+              type: string,
+              enum:
+                [
+                  newest,
+                  price-asc,
+                  price-desc,
+                  title-asc,
+                  title-desc,
+                  createdAt-asc,
+                  createdAt-desc,
+                ],
+              default: newest,
+            }
+        - name: public
+          in: query
+          required: true
+          schema: { type: boolean, enum: [true] }
+      responses:
+        "200":
+          description: Danh sách sản phẩm
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, pagination]
+                properties:
+                  data:
+                    {
+                      type: array,
+                      items: { $ref: "#/components/schemas/Product" },
+                    }
+                  pagination: { $ref: "#/components/schemas/Pagination" }
+
+  /api/product/{id}:
+    get:
+      tags: [Products]
+      summary: Lấy chi tiết sản phẩm công khai
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, example: ao-so-mi-nu }
+        - name: public
+          in: query
+          required: true
+          schema: { type: boolean, enum: [true] }
+      responses:
+        "200":
+          {
+            description: Chi tiết sản phẩm,
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/Product" } },
+              },
+          }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/category:
+    get:
+      tags: [Categories]
+      summary: Lấy danh sách danh mục
+      responses:
+        "200":
+          description: Danh sách danh mục
+          content:
+            application/json:
+              schema:
+                {
+                  type: array,
+                  items: { $ref: "#/components/schemas/Category" },
+                }
+
+  /api/vouchers/{token}:
+    get:
+      tags: [Vouchers]
+      summary: Lấy thông tin voucher công khai
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Voucher
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Voucher" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/cart:
+    get:
+      tags: [Cart]
+      summary: Lấy giỏ hàng hiện tại
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          {
+            description: Giỏ hàng,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            items:
+                              {
+                                type: array,
+                                items:
+                                  { $ref: "#/components/schemas/CartItem" },
+                              },
+                          },
+                      },
+                  },
+              },
+          }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      tags: [Cart]
+      summary: Thêm sản phẩm vào giỏ hàng
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId]
+              properties:
+                productId: { type: integer, example: 12 }
+                variantId: { type: integer, nullable: true, example: 30 }
+                quantity: { type: integer, minimum: 1, default: 1 }
+      responses:
+        "201":
+          {
+            description: Item được thêm,
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/CartItem" } },
+              },
+          }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/cart/{itemId}:
+    patch:
+      tags: [Cart]
+      summary: Cập nhật số lượng item trong giỏ
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              {
+                type: object,
+                required: [quantity],
+                properties: { quantity: { type: integer, minimum: 1 } },
+              }
+      responses:
+        "200":
+          {
+            description: Item đã cập nhật,
+            content: { application/json: { schema: { type: object } } },
+          }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [Cart]
+      summary: Xóa item khỏi giỏ hàng
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          {
+            description: Xóa thành công,
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/SuccessResponse" } },
+              },
+          }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/memberships/me:
+    get:
+      tags: [Membership]
+      summary: Lấy membership và quyền lợi của tài khoản hiện tại
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          {
+            description: Thông tin membership,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            cycle: { type: object },
+                            current: { type: object },
+                            benefits: { type: array, items: { type: object } },
+                            history: { type: array, items: { type: object } },
+                          },
+                      },
+                  },
+              },
+          }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token từ login/verify/refresh. Refresh token cũng được gửi bằng HttpOnly cookie.
+  parameters:
+    Search: { name: search, in: query, schema: { type: string } }
+    CategoryId: { name: categoryId, in: query, schema: { type: integer } }
+    Page:
+      {
+        name: page,
+        in: query,
+        schema: { type: integer, minimum: 1, default: 1 },
+      }
+    Limit:
+      {
+        name: limit,
+        in: query,
+        schema: { type: integer, minimum: 1, maximum: 100, default: 10 },
+      }
+  responses:
+    BadRequest:
+      {
+        description: Dữ liệu không hợp lệ,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/MessageResponse" } },
+          },
+      }
+    Unauthorized:
+      {
+        description: Chưa đăng nhập hoặc token không hợp lệ,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/MessageResponse" } },
+          },
+      }
+    Forbidden:
+      {
+        description: Không có quyền thực hiện,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/MessageResponse" } },
+          },
+      }
+    Conflict:
+      {
+        description: Dữ liệu bị trùng hoặc xung đột,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/MessageResponse" } },
+          },
+      }
+    NotFound:
+      {
+        description: Không tìm thấy tài nguyên,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/MessageResponse" } },
+          },
+      }
+    TooManyRequests:
+      {
+        description: Quá số lần thử,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/MessageResponse" } },
+          },
+      }
+  schemas:
+    MessageResponse:
+      type: object
+      properties: { message: { type: string } }
+    SuccessResponse:
+      type: object
+      properties: { success: { type: boolean, example: true } }
+    RegisterRequest:
+      type: object
+      required: [phone, email, password, displayName, birthday, gender]
+      properties:
+        phone: { type: string, example: "0901234567" }
+        email: { type: string, format: email }
+        password: { type: string, format: password, minLength: 8 }
+        displayName: { type: string, example: Nguyễn Văn A }
+        birthday: { type: string, format: date, example: "1998-05-20" }
+        gender: { type: string, enum: [FEMALE, MALE, OTHER, UNSPECIFIED] }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password, minLength: 8 }
+    OtpResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        email:
+          {
+            type: object,
+            properties:
+              {
+                sent: { type: boolean },
+                skipped: { type: boolean },
+                error: { type: string, nullable: true },
+              },
+          }
+        devOtp:
+          {
+            type: string,
+            nullable: true,
+            description: Chỉ có trong môi trường development,
+          }
+    LoginOtpRequiredResponse:
+      allOf:
+        - $ref: "#/components/schemas/OtpResponse"
+        - type: object
+          properties:
+            { requiresEmailVerification: { type: boolean, example: true } }
+    AuthSessionResponse:
+      type: object
+      required: [accessToken, user]
+      properties:
+        accessToken: { type: string }
+        user: { $ref: "#/components/schemas/User" }
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        phone: { type: string, nullable: true }
+        email: { type: string, nullable: true }
+        role: { type: string, enum: [CUSTOMER, ADMIN, SUPER_ADMIN] }
+        displayName: { type: string, nullable: true }
+        authProvider: { type: string, enum: [WEB, GOOGLE] }
+    Product:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        slug: { type: string, nullable: true }
+        imageUrl: { type: string, format: uri }
+        sellPrice: { type: number }
+        quantity: { type: integer }
+        totalAvailableStock: { type: integer }
+        description: { type: string, nullable: true }
+        productStatus: { type: string, enum: [PUBLIC, PRIVATE, DISCONTINUED] }
+        category: { $ref: "#/components/schemas/Category" }
+        variants:
+          {
+            type: array,
+            items: { $ref: "#/components/schemas/ProductVariant" },
+          }
+    ProductVariant:
+      type: object
+      properties:
+        id: { type: integer }
+        sku: { type: string }
+        size: { type: string, nullable: true }
+        color: { type: string, nullable: true }
+        colorCode: { type: string, nullable: true }
+        sellPrice: { type: number }
+        quantity: { type: integer }
+        reservedQuantity: { type: integer }
+        isActive: { type: boolean }
+    Category:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string, nullable: true }
+        color: { type: string }
+        icon: { type: string }
+        isActive: { type: boolean }
+        _count: { type: object, properties: { products: { type: integer } } }
+    Pagination:
+      type: object
+      properties:
+        page: { type: integer }
+        limit: { type: integer }
+        total: { type: integer }
+        totalPage: { type: integer }
+    CartItem:
+      type: object
+      properties:
+        id: { type: integer }
+        key: { type: string, example: "12-30" }
+        productId: { type: integer }
+        variantId: { type: integer, nullable: true }
+        title: { type: string }
+        imageUrl: { type: string, format: uri }
+        price: { type: number }
+        variantLabel: { type: string, nullable: true }
+        quantity: { type: integer }
+        stock: { type: integer }
+    Voucher:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string, nullable: true }
+        code: { type: string }
+        type: { type: string }
+        value: { type: number }
+        minOrderAmount: { type: number, nullable: true }
+        endsAt: { type: string, format: date-time, nullable: true }
+        status: { type: string }

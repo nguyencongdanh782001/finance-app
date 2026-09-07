@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/components/Auth/AuthProvider";
+import { CartProvider } from "@/components/Storefront/CartProvider";
 import "./globals.css";
 import type { Viewport } from "next";
 
@@ -43,7 +44,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.gstatic.com" />
       </head>
       <body className={`${manrope.variable} font-manrope antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider><CartProvider>{children}</CartProvider></AuthProvider>
       </body>
     </html>
   );
