@@ -103,8 +103,8 @@ export default function AdminProfilePage() {
   return (
     <AdminPageContainer>
       <AdminPageHeader title="Thông tin cá nhân" description="Cập nhật thông tin tài khoản quản trị của bạn." />
-      <div className="grid w-full max-w-5xl items-start gap-6 lg:grid-cols-[260px_minmax(0,1fr)] xl:gap-8">
-        <section className="admin-surface flex flex-col items-center rounded-2xl p-6 text-center lg:min-h-[260px]">
+      <div className="grid w-full min-w-0 max-w-5xl items-start gap-6 xl:grid-cols-[260px_minmax(0,1fr)] xl:gap-8">
+        <section className="admin-surface flex min-w-0 flex-col items-center rounded-2xl p-6 text-center xl:min-h-[260px]">
           {loading ? <Skeleton className="size-20 rounded-full" /> : <span className="flex size-20 items-center justify-center rounded-full bg-(--admin-primary-soft) text-(--admin-primary)"><UserRound className="size-9" /></span>}
           {loading ? <Skeleton className="mt-4 h-4 w-28 rounded-md" /> : <p className="mt-4 font-semibold text-(--admin-text)">{user?.displayName || formik.values.displayName || "Tài khoản"}</p>}
           <p className="mt-1 text-xs text-(--admin-text-muted)">{user?.role === "SUPER_ADMIN" ? "Quản trị viên cấp cao" : "Quản trị viên"}</p>
@@ -115,10 +115,10 @@ export default function AdminProfilePage() {
               <section className="admin-surface rounded-2xl p-5 sm:p-7">
                 <h2 className="text-base font-semibold text-(--admin-text)">Thông tin tài khoản</h2>
                 <p className="mt-1 text-sm text-(--admin-text-secondary)">Cập nhật thông tin cơ bản của tài khoản quản trị.</p>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <label className="grid gap-1.5 text-sm font-semibold"><span>Tên hiển thị</span><Input required {...formik.getFieldProps("displayName")} className={validationInputClass(Boolean(errorFor("displayName")))} aria-invalid={Boolean(errorFor("displayName"))} />{errorFor("displayName") ? <span className="text-xs font-medium text-[#C64040]">{errorFor("displayName")}</span> : null}</label>
-                  <label className="grid gap-1.5 text-sm font-semibold"><span>Số điện thoại</span><Input required type="tel" inputMode="tel" {...formik.getFieldProps("phone")} className={validationInputClass(Boolean(errorFor("phone")))} aria-invalid={Boolean(errorFor("phone"))} />{errorFor("phone") ? <span className="text-xs font-medium text-[#C64040]">{errorFor("phone")}</span> : null}</label>
-                  <label className="grid gap-1.5 text-sm font-semibold sm:col-span-2"><span>Email</span><Input required type="email" {...formik.getFieldProps("email")} className={validationInputClass(Boolean(errorFor("email")))} aria-invalid={Boolean(errorFor("email"))} />{errorFor("email") ? <span className="text-xs font-medium text-[#C64040]">{errorFor("email")}</span> : null}</label>
+                <div className="mt-5 grid items-start gap-4 sm:grid-cols-2">
+                  <label className="grid min-w-0 self-start gap-1.5 text-sm font-semibold"><span>Tên hiển thị</span><Input required {...formik.getFieldProps("displayName")} className={validationInputClass(Boolean(errorFor("displayName")))} aria-invalid={Boolean(errorFor("displayName"))} /><span className="min-h-4 text-xs font-medium text-[#C64040]">{errorFor("displayName") || "\u00a0"}</span></label>
+                  <label className="grid min-w-0 self-start gap-1.5 text-sm font-semibold"><span>Số điện thoại</span><Input required type="tel" inputMode="tel" {...formik.getFieldProps("phone")} className={validationInputClass(Boolean(errorFor("phone")))} aria-invalid={Boolean(errorFor("phone"))} /><span className="min-h-4 text-xs font-medium text-[#C64040]">{errorFor("phone") || "\u00a0"}</span></label>
+                  <label className="grid min-w-0 self-start gap-1.5 text-sm font-semibold sm:col-span-2"><span>Email</span><Input required type="email" {...formik.getFieldProps("email")} className={validationInputClass(Boolean(errorFor("email")))} aria-invalid={Boolean(errorFor("email"))} /><span className="min-h-4 text-xs font-medium text-[#C64040]">{errorFor("email") || "\u00a0"}</span></label>
                 </div>
                 <Button type="submit" disabled={formik.isSubmitting || !formik.dirty} className="mt-5 h-10 bg-(--admin-primary) text-white hover:bg-(--admin-primary-hover) sm:w-fit sm:px-6">{formik.isSubmitting ? <><Loader2 className="size-4 animate-spin" /> Đang lưu...</> : "Lưu thông tin"}</Button>
               </section>
