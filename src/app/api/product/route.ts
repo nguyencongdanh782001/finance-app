@@ -22,11 +22,15 @@ const errorResponse = (message: string, status = 400) =>
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || "";
+  const publicOnly = searchParams.get("public") === "true";
   const where: Prisma.ProductWhereInput = search
     ? { title: { contains: search, mode: "insensitive" } }
     : {};
+  if (publicOnly) where.status = "PUBLIC";
   const categoryId = searchParams.get("categoryId");
   if (categoryId) where.categoryId = Number(categoryId);
+  const gender = searchParams.get("gender");
+  if (gender) where.gender = gender as Prisma.ProductWhereInput["gender"];
   const page = Math.max(1, Number(searchParams.get("page") || 1));
   const limit = Math.min(
     100,
@@ -34,7 +38,13 @@ export async function GET(req: Request) {
   );
   const sort = searchParams.get("sort") || "createdAt-desc";
   const orderBy =
-    sort === "title-asc"
+    sort === "price-asc"
+      ? { sellPrice: "asc" as const }
+      : sort === "price-desc"
+        ? { sellPrice: "desc" as const }
+        : sort === "newest"
+          ? { createdAt: "desc" as const }
+          : sort === "title-asc"
       ? { title: "asc" as const }
       : sort === "title-desc"
         ? { title: "desc" as const }

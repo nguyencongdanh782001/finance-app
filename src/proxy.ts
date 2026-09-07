@@ -3,6 +3,8 @@ import { ACCESS_TOKEN_COOKIE, ADMIN_ROLES } from "@/lib/auth/constants";
 import { verifyJwt } from "@/lib/auth/crypto";
 
 const AUTH_PATH_PREFIX = "/api/auth";
+const PUBLIC_GET_PATHS = ["/api/product", "/api/category"];
+const CUSTOMER_API_PATHS = ["/api/cart"];
 
 const allowedOrigins = () => {
   if (
@@ -56,6 +58,16 @@ export async function proxy(req: NextRequest) {
     return withCors(NextResponse.next(), req);
   }
 
+  const isPublicGet =
+    req.method === "GET" &&
+    PUBLIC_GET_PATHS.some(
+      (path) => pathname === path || pathname.startsWith(`${path}/`),
+    );
+
+  if (isPublicGet) {
+    return withCors(NextResponse.next(), req);
+  }
+
   const bearerToken = req.headers
     .get("authorization")
     ?.replace(/^Bearer\s+/i, "");
@@ -79,9 +91,13 @@ export async function proxy(req: NextRequest) {
   }
 
   const isMembershipSelfApi = pathname === "/api/memberships/me";
+  const isCustomerCartApi = CUSTOMER_API_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
 
   if (
     !isMembershipSelfApi &&
+    !isCustomerCartApi &&
     !ADMIN_ROLES.includes(payload.role as (typeof ADMIN_ROLES)[number])
   ) {
     return withCors(
