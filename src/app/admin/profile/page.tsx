@@ -103,7 +103,7 @@ export default function AdminProfilePage() {
   return (
     <AdminPageContainer>
       <AdminPageHeader title="Thông tin cá nhân" description="Cập nhật thông tin tài khoản quản trị của bạn." />
-      <div className="grid w-full max-w-5xl gap-6 lg:grid-cols-[260px_minmax(0,1fr)] xl:gap-8">
+      <div className="grid w-full max-w-5xl items-start gap-6 lg:grid-cols-[260px_minmax(0,1fr)] xl:gap-8">
         <section className="admin-surface flex flex-col items-center rounded-2xl p-6 text-center lg:min-h-[260px]">
           {loading ? <Skeleton className="size-20 rounded-full" /> : <span className="flex size-20 items-center justify-center rounded-full bg-(--admin-primary-soft) text-(--admin-primary)"><UserRound className="size-9" /></span>}
           {loading ? <Skeleton className="mt-4 h-4 w-28 rounded-md" /> : <p className="mt-4 font-semibold text-(--admin-text)">{user?.displayName || formik.values.displayName || "Tài khoản"}</p>}
