@@ -42,16 +42,23 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const admin = getAdminFromRequest(request);
+    const existingUser = await prisma.user.findUniqueOrThrow({
+      where: { id: admin.userId },
+      select: { email: true, passwordHash: true },
+    });
     const body = (await request.json()) as {
       displayName?: string;
       phone?: string;
       email?: string;
       password?: string;
+      currentPassword?: string;
     };
     const displayName = body.displayName?.trim() || "";
     const phone = normalizeVietnamesePhone(body.phone?.trim() || "");
     const email = normalizeEmail(body.email || "");
     const password = body.password || "";
+    const currentPassword = body.currentPassword || "";
+    const sensitiveChange = email !== (existingUser.email || "") || Boolean(password);
 
     if (!displayName || !phone || !email) {
       return NextResponse.json(
@@ -77,6 +84,20 @@ export async function PATCH(request: Request) {
         { status: 400 },
       );
     }
+    if (sensitiveChange) {
+      if (!currentPassword) {
+        return NextResponse.json(
+          { message: "Vui lòng xác thực bằng mật khẩu hiện tại.", field: "currentPassword" },
+          { status: 400 },
+        );
+      }
+      if (!existingUser.passwordHash || existingUser.passwordHash !== (await hashValue(currentPassword))) {
+        return NextResponse.json(
+          { message: "Mật khẩu hiện tại không đúng.", field: "currentPassword" },
+          { status: 400 },
+        );
+      }
+    }
 
     const duplicate = await prisma.user.findFirst({
       where: {
@@ -98,15 +119,24 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const user = await prisma.user.update({
-      where: { id: admin.userId },
-      data: {
-        displayName,
-        phone,
-        email,
-        ...(password ? { passwordHash: await hashValue(password) } : {}),
-      },
-      select: selectProfile,
+    const user = await prisma.$transaction(async (transaction) => {
+      const updatedUser = await transaction.user.update({
+        where: { id: admin.userId },
+        data: {
+          displayName,
+          phone,
+          email,
+          ...(password ? { passwordHash: await hashValue(password) } : {}),
+        },
+        select: selectProfile,
+      });
+      if (password) {
+        await transaction.userSession.updateMany({
+          where: { userId: admin.userId, revokedAt: null },
+          data: { revokedAt: new Date() },
+        });
+      }
+      return updatedUser;
     });
     return NextResponse.json(user);
   } catch (error) {

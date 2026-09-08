@@ -20,6 +20,8 @@ import {
   Percent,
   Star,
   Users,
+  Megaphone,
+  ScrollText,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -89,6 +91,20 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     icon: FolderTree,
     matches: (pathname) => pathname.startsWith("/admin/categories"),
   },
+  {
+    href: "/admin/content/banners",
+    label: "Banner",
+    group: "Nội dung website",
+    icon: Megaphone,
+    matches: (pathname) => pathname.startsWith("/admin/content/banners"),
+  },
+  {
+    href: "/admin/content/policies",
+    label: "Chính sách",
+    group: "Nội dung website",
+    icon: ScrollText,
+    matches: (pathname) => pathname.startsWith("/admin/content/policies"),
+  },
 ];
 
 const getPageTitle = (pathname: string) => {
@@ -99,6 +115,8 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/profile")) return "Thông tin cá nhân";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";
   if (pathname.startsWith("/admin/categories")) return "Danh mục";
+  if (pathname.startsWith("/admin/content/banners")) return "Banner";
+  if (pathname.startsWith("/admin/content/policies")) return "Chính sách";
   if (pathname.startsWith("/admin/daily-detail/")) return "Chi tiết ngày";
   if (pathname.startsWith("/admin/monthly-detail/")) return "Chi tiết tháng";
   return "Tổng quan";

@@ -5,6 +5,7 @@ import {
   normalizeProductStatus,
   toProductResponse,
 } from "@/lib/products/product-status";
+import { withFavoriteMeta } from "@/lib/products/favorites";
 import { NextResponse } from "next/server";
 const bad = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -19,13 +20,15 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)/g, "");
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = Number((await params).id);
-  if (!Number.isInteger(id)) return bad("Invalid product id");
+  const identifier = (await params).id;
+  const id = Number(identifier);
+  const where = Number.isInteger(id) ? { id } : { slug: identifier };
+  const publicOnly = new URL(req.url).searchParams.get("public") === "true";
   const product = await prisma.product.findUnique({
-    where: { id },
+    where,
     include: {
       category: true,
       images: {
@@ -38,9 +41,27 @@ export async function GET(
       },
     },
   });
-  return product
-    ? NextResponse.json(toProductResponse(product))
-    : bad("Product not found", 404);
+  if (publicOnly && product?.status !== "PUBLIC") {
+    return bad("Product not found", 404);
+  }
+  if (!product) return bad("Product not found", 404);
+  const requesterRole = req.headers.get("x-user-role");
+  const requesterId =
+    requesterRole === "CUSTOMER" ? Number(req.headers.get("x-user-id")) : 0;
+  const isFavorited = requesterId
+    ? Boolean(
+        await prisma.wishlistItem.findFirst({
+          where: { userId: requesterId, productId: product.id },
+          select: { id: true },
+        }),
+      )
+    : false;
+  return NextResponse.json(
+    withFavoriteMeta(product, {
+      isAdmin: requesterRole === "ADMIN" || requesterRole === "SUPER_ADMIN",
+      isFavorited,
+    }),
+  );
 }
 
 export async function PATCH(
@@ -111,6 +132,10 @@ export async function PATCH(
           title,
           slug,
           description: body.description ?? current.description,
+          descriptionContent:
+            body.descriptionContent ?? current.descriptionContent,
+          descriptionHtml:
+            body.descriptionHtml ?? body.description ?? current.descriptionHtml,
           imageUrl: body.imageUrl ?? current.imageUrl,
           imagePublicId: body.imagePublicId ?? current.imagePublicId,
           categoryId: Number(body.categoryId ?? current.categoryId),
@@ -157,9 +182,9 @@ export async function PATCH(
         };
         const savedVariant = v.id
           ? await tx.productVariant.update({
-            where: { id: Number(v.id), productId: id },
-            data,
-          })
+              where: { id: Number(v.id), productId: id },
+              data,
+            })
           : await tx.productVariant.create({
               data: { ...data, productId: id },
             });
@@ -217,10 +242,12 @@ export async function PATCH(
             await tx.productImage.create({
               data: {
                 productId: id,
+                variantId: null,
                 url: image.url,
                 publicId: image.publicId || null,
-                position: image.position,
-                isPrimary: image.isPrimary,
+                altText: image.altText || null,
+                position: image.position || 0,
+                isPrimary: Boolean(image.isPrimary),
               },
             });
       }

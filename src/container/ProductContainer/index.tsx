@@ -54,6 +54,7 @@ const PRODUCT_SORT_OPTIONS = [
 type ProductSortValue = (typeof PRODUCT_SORT_OPTIONS)[number]["value"];
 
 const DEFAULT_SORT: ProductSortValue = "createdAt-desc";
+const PRODUCT_LIST_RETURN_STATE = "admin-products-return-state";
 
 const DEFAULT_FORM_VALUES: ProductFormValues = {
   title: "",
@@ -91,6 +92,9 @@ const mapProductFromApi = (product: ProductApiItem): ProductItemData => ({
   quantity: product.quantity,
   totalAvailableStock: product.totalAvailableStock ?? product.quantity,
   productStatus: product.productStatus || "PRIVATE",
+  organicFavoriteCount: product.organicFavoriteCount ?? 0,
+  favoriteCountAdjustment: product.favoriteCountAdjustment ?? 0,
+  displayFavoriteCount: product.displayFavoriteCount ?? ((product.organicFavoriteCount ?? 0) + (product.favoriteCountAdjustment ?? 0)),
 });
 
 export default function ProductContainer() {
@@ -212,6 +216,30 @@ export default function ProductContainer() {
   }, [search, categoryFilter, sortBy]);
 
   useEffect(() => {
+    if (isInitialLoading) return;
+
+    try {
+      const stored = sessionStorage.getItem(PRODUCT_LIST_RETURN_STATE);
+      if (!stored) return;
+      const state = JSON.parse(stored) as { scrollY?: number };
+      const scrollY = Number(state.scrollY);
+      if (!Number.isFinite(scrollY)) {
+        sessionStorage.removeItem(PRODUCT_LIST_RETURN_STATE);
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: scrollY, behavior: "instant" });
+          sessionStorage.removeItem(PRODUCT_LIST_RETURN_STATE);
+        });
+      });
+    } catch {
+      sessionStorage.removeItem(PRODUCT_LIST_RETURN_STATE);
+    }
+  }, [isInitialLoading]);
+
+  useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (search) {
@@ -276,7 +304,18 @@ export default function ProductContainer() {
   };
 
   const handleOpenEdit = (product: ProductItemData) => {
-    router.push(`/admin/products/${product.id}/edit`);
+    const returnQuery = searchParams.toString();
+    try {
+      sessionStorage.setItem(
+        PRODUCT_LIST_RETURN_STATE,
+        JSON.stringify({ scrollY: window.scrollY }),
+      );
+    } catch {
+      // Navigation still works when sessionStorage is unavailable.
+    }
+    router.push(
+      `/admin/products/${product.id}/edit${returnQuery ? `?returnQuery=${encodeURIComponent(returnQuery)}` : ""}`,
+    );
   };
 
   const handleDeleteClick = (product: ProductItemData) => {
@@ -356,6 +395,25 @@ export default function ProductContainer() {
         return next;
       });
     }
+  };
+
+  const handleAdjustFavorites = async (product: ProductItemData) => {
+    const current = product.displayFavoriteCount ?? 0;
+    const value = window.prompt(`Lượt yêu thích hiển thị cho “${product.title}”:`, String(current));
+    if (value === null) return;
+    const desiredDisplayCount = Number(value);
+    if (!Number.isInteger(desiredDisplayCount) || desiredDisplayCount < 0) {
+      toast({ title: "Giá trị không hợp lệ", description: "Vui lòng nhập một số nguyên không âm.", className: "bg-red-1 text-white text-sm font-medium w-fit", duration: 3000 });
+      return;
+    }
+    const response = await fetch(`/api/admin/products/${product.id}/favorites`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ desiredDisplayCount }) });
+    if (!response.ok) {
+      toast({ title: "Không thể điều chỉnh lượt yêu thích", className: "bg-red-1 text-white text-sm font-medium w-fit", duration: 3000 });
+      return;
+    }
+    const updated = await response.json() as ProductItemData;
+    setProducts((currentProducts) => currentProducts.map((item) => item.id === product.id ? { ...item, organicFavoriteCount: updated.organicFavoriteCount, favoriteCountAdjustment: updated.favoriteCountAdjustment, displayFavoriteCount: updated.displayFavoriteCount } : item));
+    toast({ title: "Đã cập nhật lượt yêu thích", className: "bg-green-16 text-white text-sm font-medium w-fit", duration: 2500 });
   };
 
   const handleDeleteFromForm = () => {
@@ -700,11 +758,12 @@ export default function ProductContainer() {
             />
           ) : (
             <>
-              <ProductList
+            <ProductList
                 products={products}
                 onEdit={handleOpenEdit}
                 onDelete={handleDeleteClick}
-                onStatusChange={handleStatusChange}
+              onStatusChange={handleStatusChange}
+              onAdjustFavorites={handleAdjustFavorites}
                 updatingStatusIds={updatingStatusIds}
               />
               <div ref={loadMoreRef} className="h-0 w-full" />

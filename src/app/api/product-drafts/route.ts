@@ -38,7 +38,44 @@ export async function POST(request: Request) {
     where: { createdById: userId, status: "ACTIVE", mode, originalProductId },
     orderBy: { updatedAt: "desc" },
   });
-  if (existing) return NextResponse.json(existing);
+  if (existing) {
+    // Older edit drafts may not have an `images` key because they were created
+    // before ProductImage became the gallery source of truth. Preserve an
+    // explicitly empty gallery, but hydrate missing data from the legacy field.
+    const existingData =
+      existing.data &&
+      typeof existing.data === "object" &&
+      !Array.isArray(existing.data)
+        ? (existing.data as Record<string, unknown>)
+        : {};
+    if (originalProductId && !("images" in existingData)) {
+      const legacyProduct = await prisma.product.findUnique({
+        where: { id: originalProductId },
+        select: { imageUrl: true, imagePublicId: true },
+      });
+      if (legacyProduct?.imageUrl) {
+        const updated = await prisma.productDraft.update({
+          where: { id: existing.id },
+          data: {
+            data: {
+              ...existingData,
+              images: [
+                {
+                  clientId: `legacy-image-${originalProductId}`,
+                  url: legacyProduct.imageUrl,
+                  publicId: legacyProduct.imagePublicId || undefined,
+                  position: 0,
+                  isPrimary: true,
+                },
+              ],
+            },
+          },
+        });
+        return NextResponse.json(updated);
+      }
+    }
+    return NextResponse.json(existing);
+  }
   let data = body.data || {};
   if (originalProductId) {
     const product = await prisma.product.findUnique({
@@ -82,10 +119,31 @@ export async function POST(request: Request) {
         isPrimary: image.isPrimary,
       })),
     }));
+    const generalImages = product.images.length
+      ? product.images.map((image) => ({
+          id: image.id,
+          clientId: `image-${image.id}`,
+          url: image.url,
+          publicId: image.publicId || undefined,
+          position: image.position,
+          isPrimary: image.isPrimary,
+        }))
+      : product.imageUrl
+        ? [
+            {
+              clientId: `legacy-image-${product.id}`,
+              url: product.imageUrl,
+              publicId: product.imagePublicId || undefined,
+              position: 0,
+              isPrimary: true,
+            },
+          ]
+        : [];
     data = {
       title: product.title,
       slug: product.slug || "",
-      description: product.description || "",
+      description: product.descriptionHtml || product.description || "",
+      descriptionContent: product.descriptionContent || null,
       categoryId: String(product.categoryId),
       importPrice: String(product.importPrice),
       sellPrice: String(product.sellPrice),
@@ -94,14 +152,7 @@ export async function POST(request: Request) {
       productStatus: product.status,
       seoTitle: product.seoTitle || "",
       seoDescription: product.seoDescription || "",
-      images: product.images.map((image) => ({
-        id: image.id,
-        clientId: `image-${image.id}`,
-        url: image.url,
-        publicId: image.publicId || undefined,
-        position: image.position,
-        isPrimary: image.isPrimary,
-      })),
+      images: generalImages,
       variants,
       colorGroups: groupVariantsByColor(variants),
     };

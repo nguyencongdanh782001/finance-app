@@ -15,7 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Loader2, Search, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowUpRight, Loader2, Search, ShieldCheck, UserRound } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type User = {
@@ -431,14 +432,22 @@ export default function UsersPage() {
                     {user.email || "Không có email"} ·{" "}
                     {user.authProvider === "GOOGLE" ? "Google" : "Website"}
                   </p>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className="h-8 border border-(--admin-border) px-3 text-xs"
-                    onClick={() => void toggleStatus(user)}
-                  >
-                    {user.status === "ACTIVE" ? "Khóa tài khoản" : "Mở khóa"}
-                  </Button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link
+                      href={`/admin/users/${user.id}`}
+                      className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-(--admin-border) px-3 text-xs font-semibold text-(--admin-text-secondary) hover:border-(--admin-primary) hover:text-(--admin-primary)"
+                    >
+                      Xem chi tiết <ArrowUpRight className="size-3.5" />
+                    </Link>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="h-9 border border-(--admin-border) px-3 text-xs"
+                      onClick={() => void toggleStatus(user)}
+                    >
+                      {user.status === "ACTIVE" ? "Khóa tài khoản" : "Mở khóa"}
+                    </Button>
+                  </div>
                 </div>
               </article>
             ))

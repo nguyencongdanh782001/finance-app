@@ -31,6 +31,7 @@ import VariantGroupsEditor, {
   type VariantImageTarget,
 } from "@/components/Product/ProductWizard/VariantGroupsEditor";
 import ProductReviewStep from "@/components/Product/ProductWizard/ProductReviewStep";
+import RichTextEditor from "@/components/RichText/RichTextEditor";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { RESPONSE_CODES } from "@/constant/codes";
@@ -49,9 +50,7 @@ import {
   validateProductStep,
   type ProductValidationError,
 } from "@/lib/products/product-draft-validation";
-import {
-  groupVariantsByColor,
-} from "@/lib/products/variant-groups";
+import { groupVariantsByColor } from "@/lib/products/variant-groups";
 import { draftProductToPreviewViewModel } from "@/lib/products/product-preview";
 
 const STEPS: Array<{ id: ProductFormStep; label: string }> = [
@@ -92,6 +91,7 @@ export default function ProductWizard({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const returnQuery = searchParams.get("returnQuery");
   const [draft, setDraft] = useState<ProductDraftApiItem | null>(null);
   const [images, setImages] = useState<ProductImageDraftValue[]>([]);
   const [categories, setCategories] = useState<CategoryApiItem[]>([]);
@@ -435,7 +435,9 @@ export default function ProductWizard({
       title: mode === "CREATE" ? "Đã tạo sản phẩm" : "Đã áp dụng thay đổi",
       className: "bg-green-16 text-white",
     });
-    router.push("/admin/products");
+    router.push(
+      returnQuery ? `/admin/products?${returnQuery}` : "/admin/products",
+    );
   };
   const discard = async () => {
     if (!draft) return;
@@ -448,7 +450,9 @@ export default function ProductWizard({
         className: "bg-red-1 text-white",
       });
     localStorage.removeItem(recoveryKey);
-    router.push("/admin/products");
+    router.push(
+      returnQuery ? `/admin/products?${returnQuery}` : "/admin/products",
+    );
   };
   if (!draft)
     return (
@@ -474,7 +478,13 @@ export default function ProductWizard({
         }
         breadcrumb={
           <button
-            onClick={() => router.push("/admin/products")}
+            onClick={() =>
+              router.push(
+                returnQuery
+                  ? `/admin/products?${returnQuery}`
+                  : "/admin/products",
+              )
+            }
             className="inline-flex items-center gap-1 hover:text-(--admin-primary)"
           >
             <ArrowLeft className="size-3.5" /> Sản phẩm
@@ -706,13 +716,21 @@ function StepContent({
           error={errorFor("description")}
           optional
         >
-          <Textarea
-            name="description"
-            value={formik.values.description}
-            onChange={(event) =>
-              formik.setFieldValue("description", event.target.value)
+          <RichTextEditor
+            preset="full"
+            value={formik.values.descriptionContent || null}
+            legacyHtml={formik.values.description}
+            onChange={(json) =>
+              void formik.setFieldValue("descriptionContent", json, false)
             }
-            className="min-h-28 rounded-xl"
+            onHtmlChange={(html) =>
+              void formik.setFieldValue("description", html, false)
+            }
+            uploadContext="PRODUCT_DESCRIPTION"
+            label="Mô tả"
+            placeholder="Nhập mô tả chi tiết về sản phẩm, chất liệu, kiểu dáng và hướng dẫn bảo quản..."
+            maxCharacters={20_000}
+            error={errorFor("description")}
           />
         </FieldBox>
         <div className="grid gap-4 sm:grid-cols-2">

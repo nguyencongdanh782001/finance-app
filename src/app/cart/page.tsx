@@ -1,0 +1,13 @@
+"use client";
+/* eslint-disable @next/next/no-img-element */
+import StorefrontShell from "@/components/Storefront/StorefrontShell";
+import { useCart } from "@/components/Storefront/CartProvider";
+import Link from "next/link";
+import { Minus, Plus, Trash2 } from "lucide-react";
+
+const money = (value: number) => `${value.toLocaleString("vi-VN")}đ`;
+export default function CartPage() {
+  const { items, update, remove } = useCart();
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  return <StorefrontShell><main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8"><h1 className="text-3xl font-extrabold">Giỏ hàng</h1>{items.length ? <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_300px]"><div className="grid gap-3">{items.map((item) => <div key={item.key} className="flex gap-4 rounded-2xl border border-[#E9E2E5] bg-white p-3"><img src={item.imageUrl} alt={item.title} className="size-24 rounded-xl object-cover" /><div className="min-w-0 flex-1"><Link href={`/products/${item.productId}`} className="line-clamp-2 text-sm font-bold hover:text-[#A43E5F]">{item.title}</Link><p className="mt-1 text-xs text-[#8A7D81]">{item.variantLabel || "Sản phẩm"}</p><p className="mt-2 text-sm font-extrabold text-[#A43E5F]">{money(item.price)}</p><div className="mt-2 flex items-center justify-between"><div className="flex items-center rounded-full border border-[#E9E2E5]"><button type="button" aria-label="Giảm" onClick={() => update(item.key, item.quantity - 1)} className="p-1.5"><Minus className="size-3.5" /></button><span className="w-7 text-center text-xs font-bold">{item.quantity}</span><button type="button" aria-label="Tăng" onClick={() => update(item.key, item.quantity + 1)} className="p-1.5"><Plus className="size-3.5" /></button></div><button type="button" onClick={() => remove(item.key)} className="p-2 text-[#9C8E93] hover:text-red-600" aria-label="Xóa sản phẩm"><Trash2 className="size-4" /></button></div></div></div>)}</div><aside className="h-fit rounded-2xl border border-[#E9E2E5] bg-white p-5"><h2 className="font-extrabold">Tạm tính</h2><div className="mt-5 flex justify-between border-t border-[#E9E2E5] pt-4 text-lg font-extrabold"><span>Tổng cộng</span><span className="text-[#A43E5F]">{money(total)}</span></div><p className="mt-3 text-xs leading-5 text-[#8A7D81]">Thanh toán và tạo đơn hàng sẽ được kết nối khi backend checkout sẵn sàng.</p></aside></div> : <div className="mt-10 rounded-2xl border border-dashed border-[#E9E2E5] py-20 text-center"><p className="font-bold">Giỏ hàng đang trống</p><Link href="/products" className="mt-4 inline-flex rounded-full bg-[#D96C8A] px-5 py-2.5 text-sm font-bold text-white">Tiếp tục mua sắm</Link></div>}</main></StorefrontShell>;
+}

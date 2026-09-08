@@ -3,6 +3,10 @@ import { ACCESS_TOKEN_COOKIE, ADMIN_ROLES } from "@/lib/auth/constants";
 import { verifyJwt } from "@/lib/auth/crypto";
 
 const AUTH_PATH_PREFIX = "/api/auth";
+const PUBLIC_GET_PATHS = ["/api/product", "/api/category", "/api/homepage", "/api/policies", "/api/banners", "/api/products/search-suggestions"];
+const CUSTOMER_API_PATHS = ["/api/cart"];
+const isCustomerFavoriteApi = (pathname: string) =>
+  pathname === "/api/me/favorites" || /^\/api\/product\/\d+\/favorite$/.test(pathname);
 
 const allowedOrigins = () => {
   if (
@@ -62,6 +66,28 @@ export async function proxy(req: NextRequest) {
   const cookieToken = req.cookies.get(ACCESS_TOKEN_COOKIE)?.value;
   const token = bearerToken || cookieToken;
 
+  const isPublicGet =
+    req.method === "GET" &&
+    PUBLIC_GET_PATHS.some(
+      (path) => pathname === path || pathname.startsWith(`${path}/`),
+    );
+
+  if (isPublicGet) {
+    if (token) {
+      const payload = await verifyJwt(token).catch(() => null);
+      if (payload) {
+        const requestHeaders = new Headers(req.headers);
+        requestHeaders.set("x-user-id", payload.sub);
+        requestHeaders.set("x-user-role", payload.role);
+        return withCors(
+          NextResponse.next({ request: { headers: requestHeaders } }),
+          req,
+        );
+      }
+    }
+    return withCors(NextResponse.next(), req);
+  }
+
   if (!token) {
     return withCors(
       NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
@@ -79,9 +105,15 @@ export async function proxy(req: NextRequest) {
   }
 
   const isMembershipSelfApi = pathname === "/api/memberships/me";
+  const isCustomerCartApi = CUSTOMER_API_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+  const isCustomerFavoriteRequest = isCustomerFavoriteApi(pathname);
 
   if (
     !isMembershipSelfApi &&
+    !isCustomerCartApi &&
+    !isCustomerFavoriteRequest &&
     !ADMIN_ROLES.includes(payload.role as (typeof ADMIN_ROLES)[number])
   ) {
     return withCors(

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import AuthHeader from "@/components/Auth/AuthHeader";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1094,7 +1095,8 @@ export default function AuthPageClient({
 
   return (
     <main className="min-h-screen bg-[#FFFCFA] text-[#1C1A1B]">
-      <div className="grid min-h-screen lg:grid-cols-[1.08fr_0.92fr]">
+      <AuthHeader mode={mode} onModeChange={handleModeChange} />
+      <div className="grid min-h-[calc(100vh-110px)] lg:grid-cols-[1.08fr_0.92fr]">
         <section className="relative hidden overflow-hidden bg-[#FFF3F6] lg:block">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,#FFFFFF_0%,#FFF3F6_48%,#F7DEE6_100%)]" />
           <div className="absolute left-10 top-10 h-40 w-40 rounded-full border border-[#D96C8A]/20" />
@@ -1132,51 +1134,6 @@ export default function AuthPageClient({
 
         <section className="flex items-center justify-center px-5 py-8 sm:px-8">
           <div className="w-full max-w-md">
-            <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-              <Link
-                href="/"
-                className="flex min-w-0 cursor-pointer items-center justify-center gap-3 sm:justify-start"
-              >
-                <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E9E2E5] bg-white p-0 shadow-sm sm:size-12">
-                  <Image
-                    src="/logo-quynh-nhi-store-mark.svg"
-                    alt="Quỳnh Nhi Store"
-                    width={76}
-                    height={76}
-                    priority
-                    sizes="76px"
-                    className="h-[125%] w-[125%] max-w-none object-contain"
-                  />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-base font-extrabold leading-tight text-[#1C1A1B] sm:text-sm">
-                    Quỳnh Nhi Store
-                  </span>
-                  <span className="mt-1 block text-sm font-semibold text-[#6F686B] sm:text-xs">
-                    Tài khoản của bạn
-                  </span>
-                </span>
-              </Link>
-              <div className="grid w-full grid-cols-2 rounded-lg border border-[#E9E2E5] bg-white p-1 sm:w-auto">
-                <Button
-                  type="button"
-                  variant={mode === "login" ? "authTabActive" : "authTab"}
-                  size="authTab"
-                  onClick={() => handleModeChange("login")}
-                >
-                  Đăng nhập
-                </Button>
-                <Button
-                  type="button"
-                  variant={mode === "register" ? "authTabActive" : "authTab"}
-                  size="authTab"
-                  onClick={() => handleModeChange("register")}
-                >
-                  Đăng ký
-                </Button>
-              </div>
-            </div>
-
             <div className="rounded-lg border border-[#E9E2E5] bg-white p-6 shadow-[0_24px_70px_rgba(28,26,27,0.08)] sm:p-8">
               <div className="flex items-center gap-3">
                 <span className="flex size-10 items-center justify-center rounded-full bg-[#FFF3F6]">

@@ -83,6 +83,7 @@ export const ModelName = {
   CartItem: 'CartItem',
   Wishlist: 'Wishlist',
   WishlistItem: 'WishlistItem',
+  ProductFavoriteAdjustmentLog: 'ProductFavoriteAdjustmentLog',
   Order: 'Order',
   OrderItem: 'OrderItem',
   InventoryTransaction: 'InventoryTransaction',
@@ -105,6 +106,7 @@ export const ModelName = {
   SearchHistory: 'SearchHistory',
   RecentlyViewedProduct: 'RecentlyViewedProduct',
   HomepageBanner: 'HomepageBanner',
+  StorePolicy: 'StorePolicy',
   HomepageFeaturedProduct: 'HomepageFeaturedProduct',
   HomepageSection: 'HomepageSection',
   HomepageSectionProduct: 'HomepageSectionProduct'
@@ -215,8 +217,12 @@ export const ProductScalarFieldEnum = {
   importPrice: 'importPrice',
   sellPrice: 'sellPrice',
   quantity: 'quantity',
+  organicFavoriteCount: 'organicFavoriteCount',
+  favoriteCountAdjustment: 'favoriteCountAdjustment',
   slug: 'slug',
   description: 'description',
+  descriptionContent: 'descriptionContent',
+  descriptionHtml: 'descriptionHtml',
   productStatus: 'productStatus',
   visibility: 'visibility',
   status: 'status',
@@ -691,6 +697,22 @@ export const WishlistItemScalarFieldEnum = {
 export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[keyof typeof WishlistItemScalarFieldEnum]
 
 
+export const ProductFavoriteAdjustmentLogScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  adminId: 'adminId',
+  previousAdjustment: 'previousAdjustment',
+  newAdjustment: 'newAdjustment',
+  organicCount: 'organicCount',
+  previousDisplayCount: 'previousDisplayCount',
+  newDisplayCount: 'newDisplayCount',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductFavoriteAdjustmentLogScalarFieldEnum = (typeof ProductFavoriteAdjustmentLogScalarFieldEnum)[keyof typeof ProductFavoriteAdjustmentLogScalarFieldEnum]
+
+
 export const OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
@@ -1049,23 +1071,64 @@ export type RecentlyViewedProductScalarFieldEnum = (typeof RecentlyViewedProduct
 
 export const HomepageBannerScalarFieldEnum = {
   id: 'id',
+  internalName: 'internalName',
   title: 'title',
   subtitle: 'subtitle',
+  eyebrow: 'eyebrow',
+  description: 'description',
   imageUrl: 'imageUrl',
   desktopImage: 'desktopImage',
   mobileImage: 'mobileImage',
   imagePublicId: 'imagePublicId',
+  mobileImagePublicId: 'mobileImagePublicId',
+  imageAlt: 'imageAlt',
   linkUrl: 'linkUrl',
+  primaryCtaLabel: 'primaryCtaLabel',
+  primaryCtaUrl: 'primaryCtaUrl',
+  secondaryCtaLabel: 'secondaryCtaLabel',
+  secondaryCtaUrl: 'secondaryCtaUrl',
+  textAlignment: 'textAlignment',
+  textTheme: 'textTheme',
+  overlayOpacity: 'overlayOpacity',
   placement: 'placement',
   position: 'position',
   isActive: 'isActive',
   startsAt: 'startsAt',
   endsAt: 'endsAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type HomepageBannerScalarFieldEnum = (typeof HomepageBannerScalarFieldEnum)[keyof typeof HomepageBannerScalarFieldEnum]
+
+
+export const StorePolicyScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  slug: 'slug',
+  summary: 'summary',
+  summaryJson: 'summaryJson',
+  summaryHtml: 'summaryHtml',
+  summaryText: 'summaryText',
+  content: 'content',
+  contentJson: 'contentJson',
+  contentHtml: 'contentHtml',
+  status: 'status',
+  showInFooter: 'showInFooter',
+  footerOrder: 'footerOrder',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  publishedAt: 'publishedAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StorePolicyScalarFieldEnum = (typeof StorePolicyScalarFieldEnum)[keyof typeof StorePolicyScalarFieldEnum]
 
 
 export const HomepageFeaturedProductScalarFieldEnum = {

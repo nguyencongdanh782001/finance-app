@@ -8,6 +8,7 @@ interface ProductListProps {
   onEdit: (product: ProductItemData) => void;
   onDelete: (product: ProductItemData) => void;
   onStatusChange: (product: ProductItemData, status: ProductStatus) => void;
+  onAdjustFavorites: (product: ProductItemData) => void;
   updatingStatusIds: Set<number>;
 }
 
@@ -16,6 +17,7 @@ export default function ProductList({
   onEdit,
   onDelete,
   onStatusChange,
+  onAdjustFavorites,
   updatingStatusIds,
 }: ProductListProps) {
   return (
@@ -27,6 +29,7 @@ export default function ProductList({
           onEdit={onEdit}
           onDelete={onDelete}
           onStatusChange={onStatusChange}
+          onAdjustFavorites={onAdjustFavorites}
           isStatusUpdating={updatingStatusIds.has(product.id)}
         />
       ))}

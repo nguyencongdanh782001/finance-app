@@ -199,6 +199,38 @@ enum HomepageBannerPlacement {
   TOP
   MIDDLE
   BOTTOM
+  ANNOUNCEMENT_BAR
+  HOME_HERO
+  HOME_CAMPAIGN
+  HOME_CATEGORY
+  PRODUCT_LISTING
+}
+
+enum BannerTextAlignment {
+  LEFT
+  CENTER
+  RIGHT
+}
+
+enum BannerTextTheme {
+  LIGHT
+  DARK
+}
+
+enum PolicyStatus {
+  DRAFT
+  PUBLISHED
+  HIDDEN
+}
+
+enum PolicyType {
+  PURCHASE_GUIDE
+  SHIPPING
+  RETURN_REFUND
+  PRIVACY
+  TERMS
+  PAYMENT
+  OTHER
 }
 
 enum HomepageSectionType {
@@ -391,9 +423,14 @@ model Product {
   /// Stock
   quantity Int @default(0)
 
+  organicFavoriteCount    Int @default(0)
+  favoriteCountAdjustment Int @default(0)
+
   /// E-commerce fields
   slug             String?                 @unique
   description      String?
+  descriptionContent Json?
+  descriptionHtml String?
   productStatus    LegacyProductStatus?    @default(DRAFT)
   visibility       LegacyProductVisibility @default(PUBLIC)
   status           ProductStatus           @default(PRIVATE)
@@ -433,6 +470,7 @@ model Product {
   homepageSectionProducts  HomepageSectionProduct[]
   recentlyViewedBy         RecentlyViewedProduct[]
   drafts                   ProductDraft[]
+  favoriteAdjustmentLogs   ProductFavoriteAdjustmentLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -552,6 +590,7 @@ model User {
   birthdayCoupons        Coupon[]                      @relation("BirthdayCoupons")
   membershipHistories    MembershipHistory[]
   benefitRedemptions     MembershipBenefitRedemption[]
+  favoriteAdjustmentLogs ProductFavoriteAdjustmentLog[] @relation("ProductFavoriteAdjustmentAdmin")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1114,6 +1153,26 @@ model WishlistItem {
   @@index([userId])
   @@index([productId])
   @@map("wishlist_item")
+}
+
+model ProductFavoriteAdjustmentLog {
+  id                    Int      @id @default(autoincrement())
+  productId             Int
+  adminId               Int
+  previousAdjustment    Int
+  newAdjustment         Int
+  organicCount          Int
+  previousDisplayCount  Int
+  newDisplayCount       Int
+  reason                String?
+  createdAt             DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  admin   User    @relation("ProductFavoriteAdjustmentAdmin", fields: [adminId], references: [id], onDelete: Restrict)
+
+  @@index([productId, createdAt])
+  @@index([adminId, createdAt])
+  @@map("product_favorite_adjustment_log")
 }
 
 model Order {
@@ -1690,18 +1749,32 @@ model RecentlyViewedProduct {
 model HomepageBanner {
   id Int @id @default(autoincrement())
 
+  internalName  String                @default("Banner trang chủ")
   title         String
   subtitle      String?
+  eyebrow       String?
+  description   String?
   imageUrl      String
   desktopImage  String?
   mobileImage   String?
   imagePublicId String?
+  mobileImagePublicId String?
+  imageAlt      String                @default("")
   linkUrl       String?
+  primaryCtaLabel String?
+  primaryCtaUrl   String?
+  secondaryCtaLabel String?
+  secondaryCtaUrl   String?
+  textAlignment BannerTextAlignment   @default(LEFT)
+  textTheme     BannerTextTheme       @default(LIGHT)
+  overlayOpacity Int                  @default(20)
   placement     HomepageBannerPlacement @default(HERO)
   position      Int                     @default(0)
   isActive      Boolean                 @default(true)
   startsAt      DateTime?
   endsAt        DateTime?
+  createdById   Int?
+  updatedById   Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1709,7 +1782,37 @@ model HomepageBanner {
   @@index([placement])
   @@index([isActive])
   @@index([position])
+  @@index([placement, isActive, position])
+  @@index([startsAt, endsAt])
   @@map("homepage_banner")
+}
+
+model StorePolicy {
+  id              Int          @id @default(autoincrement())
+  type            PolicyType
+  title           String
+  slug            String       @unique
+  summary         String?
+  summaryJson     Json?
+  summaryHtml     String?
+  summaryText     String?
+  content         Json
+  contentJson     Json?
+  contentHtml     String?
+  status          PolicyStatus @default(DRAFT)
+  showInFooter    Boolean      @default(true)
+  footerOrder     Int          @default(0)
+  seoTitle        String?
+  seoDescription  String?
+  publishedAt     DateTime?
+  createdById     Int?
+  updatedById     Int?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([status, showInFooter, footerOrder])
+  @@index([type])
+  @@map("store_policy")
 }
 
 model HomepageFeaturedProduct {
