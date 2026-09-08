@@ -222,10 +222,12 @@ export async function PATCH(
             await tx.productImage.create({
               data: {
                 productId: id,
+                variantId: null,
                 url: image.url,
                 publicId: image.publicId || null,
-                position: image.position,
-                isPrimary: image.isPrimary,
+                altText: image.altText || null,
+                position: image.position || 0,
+                isPrimary: Boolean(image.isPrimary),
               },
             });
       }
