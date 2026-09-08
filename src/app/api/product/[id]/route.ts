@@ -5,6 +5,7 @@ import {
   normalizeProductStatus,
   toProductResponse,
 } from "@/lib/products/product-status";
+import { withFavoriteMeta } from "@/lib/products/favorites";
 import { NextResponse } from "next/server";
 const bad = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -43,9 +44,24 @@ export async function GET(
   if (publicOnly && product?.status !== "PUBLIC") {
     return bad("Product not found", 404);
   }
-  return product
-    ? NextResponse.json(toProductResponse(product))
-    : bad("Product not found", 404);
+  if (!product) return bad("Product not found", 404);
+  const requesterRole = req.headers.get("x-user-role");
+  const requesterId =
+    requesterRole === "CUSTOMER" ? Number(req.headers.get("x-user-id")) : 0;
+  const isFavorited = requesterId
+    ? Boolean(
+        await prisma.wishlistItem.findFirst({
+          where: { userId: requesterId, productId: product.id },
+          select: { id: true },
+        }),
+      )
+    : false;
+  return NextResponse.json(
+    withFavoriteMeta(product, {
+      isAdmin: requesterRole === "ADMIN" || requesterRole === "SUPER_ADMIN",
+      isFavorited,
+    }),
+  );
 }
 
 export async function PATCH(
@@ -116,6 +132,10 @@ export async function PATCH(
           title,
           slug,
           description: body.description ?? current.description,
+          descriptionContent:
+            body.descriptionContent ?? current.descriptionContent,
+          descriptionHtml:
+            body.descriptionHtml ?? body.description ?? current.descriptionHtml,
           imageUrl: body.imageUrl ?? current.imageUrl,
           imagePublicId: body.imagePublicId ?? current.imagePublicId,
           categoryId: Number(body.categoryId ?? current.categoryId),
@@ -162,9 +182,9 @@ export async function PATCH(
         };
         const savedVariant = v.id
           ? await tx.productVariant.update({
-            where: { id: Number(v.id), productId: id },
-            data,
-          })
+              where: { id: Number(v.id), productId: id },
+              data,
+            })
           : await tx.productVariant.create({
               data: { ...data, productId: id },
             });

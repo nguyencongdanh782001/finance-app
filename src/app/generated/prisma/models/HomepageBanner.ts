@@ -28,64 +28,112 @@ export type AggregateHomepageBanner = {
 
 export type HomepageBannerAvgAggregateOutputType = {
   id: number | null
+  overlayOpacity: number | null
   position: number | null
+  createdById: number | null
+  updatedById: number | null
 }
 
 export type HomepageBannerSumAggregateOutputType = {
   id: number | null
+  overlayOpacity: number | null
   position: number | null
+  createdById: number | null
+  updatedById: number | null
 }
 
 export type HomepageBannerMinAggregateOutputType = {
   id: number | null
+  internalName: string | null
   title: string | null
   subtitle: string | null
+  eyebrow: string | null
+  description: string | null
   imageUrl: string | null
   desktopImage: string | null
   mobileImage: string | null
   imagePublicId: string | null
+  mobileImagePublicId: string | null
+  imageAlt: string | null
   linkUrl: string | null
+  primaryCtaLabel: string | null
+  primaryCtaUrl: string | null
+  secondaryCtaLabel: string | null
+  secondaryCtaUrl: string | null
+  textAlignment: $Enums.BannerTextAlignment | null
+  textTheme: $Enums.BannerTextTheme | null
+  overlayOpacity: number | null
   placement: $Enums.HomepageBannerPlacement | null
   position: number | null
   isActive: boolean | null
   startsAt: Date | null
   endsAt: Date | null
+  createdById: number | null
+  updatedById: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type HomepageBannerMaxAggregateOutputType = {
   id: number | null
+  internalName: string | null
   title: string | null
   subtitle: string | null
+  eyebrow: string | null
+  description: string | null
   imageUrl: string | null
   desktopImage: string | null
   mobileImage: string | null
   imagePublicId: string | null
+  mobileImagePublicId: string | null
+  imageAlt: string | null
   linkUrl: string | null
+  primaryCtaLabel: string | null
+  primaryCtaUrl: string | null
+  secondaryCtaLabel: string | null
+  secondaryCtaUrl: string | null
+  textAlignment: $Enums.BannerTextAlignment | null
+  textTheme: $Enums.BannerTextTheme | null
+  overlayOpacity: number | null
   placement: $Enums.HomepageBannerPlacement | null
   position: number | null
   isActive: boolean | null
   startsAt: Date | null
   endsAt: Date | null
+  createdById: number | null
+  updatedById: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type HomepageBannerCountAggregateOutputType = {
   id: number
+  internalName: number
   title: number
   subtitle: number
+  eyebrow: number
+  description: number
   imageUrl: number
   desktopImage: number
   mobileImage: number
   imagePublicId: number
+  mobileImagePublicId: number
+  imageAlt: number
   linkUrl: number
+  primaryCtaLabel: number
+  primaryCtaUrl: number
+  secondaryCtaLabel: number
+  secondaryCtaUrl: number
+  textAlignment: number
+  textTheme: number
+  overlayOpacity: number
   placement: number
   position: number
   isActive: number
   startsAt: number
   endsAt: number
+  createdById: number
+  updatedById: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -94,64 +142,112 @@ export type HomepageBannerCountAggregateOutputType = {
 
 export type HomepageBannerAvgAggregateInputType = {
   id?: true
+  overlayOpacity?: true
   position?: true
+  createdById?: true
+  updatedById?: true
 }
 
 export type HomepageBannerSumAggregateInputType = {
   id?: true
+  overlayOpacity?: true
   position?: true
+  createdById?: true
+  updatedById?: true
 }
 
 export type HomepageBannerMinAggregateInputType = {
   id?: true
+  internalName?: true
   title?: true
   subtitle?: true
+  eyebrow?: true
+  description?: true
   imageUrl?: true
   desktopImage?: true
   mobileImage?: true
   imagePublicId?: true
+  mobileImagePublicId?: true
+  imageAlt?: true
   linkUrl?: true
+  primaryCtaLabel?: true
+  primaryCtaUrl?: true
+  secondaryCtaLabel?: true
+  secondaryCtaUrl?: true
+  textAlignment?: true
+  textTheme?: true
+  overlayOpacity?: true
   placement?: true
   position?: true
   isActive?: true
   startsAt?: true
   endsAt?: true
+  createdById?: true
+  updatedById?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type HomepageBannerMaxAggregateInputType = {
   id?: true
+  internalName?: true
   title?: true
   subtitle?: true
+  eyebrow?: true
+  description?: true
   imageUrl?: true
   desktopImage?: true
   mobileImage?: true
   imagePublicId?: true
+  mobileImagePublicId?: true
+  imageAlt?: true
   linkUrl?: true
+  primaryCtaLabel?: true
+  primaryCtaUrl?: true
+  secondaryCtaLabel?: true
+  secondaryCtaUrl?: true
+  textAlignment?: true
+  textTheme?: true
+  overlayOpacity?: true
   placement?: true
   position?: true
   isActive?: true
   startsAt?: true
   endsAt?: true
+  createdById?: true
+  updatedById?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type HomepageBannerCountAggregateInputType = {
   id?: true
+  internalName?: true
   title?: true
   subtitle?: true
+  eyebrow?: true
+  description?: true
   imageUrl?: true
   desktopImage?: true
   mobileImage?: true
   imagePublicId?: true
+  mobileImagePublicId?: true
+  imageAlt?: true
   linkUrl?: true
+  primaryCtaLabel?: true
+  primaryCtaUrl?: true
+  secondaryCtaLabel?: true
+  secondaryCtaUrl?: true
+  textAlignment?: true
+  textTheme?: true
+  overlayOpacity?: true
   placement?: true
   position?: true
   isActive?: true
   startsAt?: true
   endsAt?: true
+  createdById?: true
+  updatedById?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -245,18 +341,32 @@ export type HomepageBannerGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type HomepageBannerGroupByOutputType = {
   id: number
+  internalName: string
   title: string
   subtitle: string | null
+  eyebrow: string | null
+  description: string | null
   imageUrl: string
   desktopImage: string | null
   mobileImage: string | null
   imagePublicId: string | null
+  mobileImagePublicId: string | null
+  imageAlt: string
   linkUrl: string | null
+  primaryCtaLabel: string | null
+  primaryCtaUrl: string | null
+  secondaryCtaLabel: string | null
+  secondaryCtaUrl: string | null
+  textAlignment: $Enums.BannerTextAlignment
+  textTheme: $Enums.BannerTextTheme
+  overlayOpacity: number
   placement: $Enums.HomepageBannerPlacement
   position: number
   isActive: boolean
   startsAt: Date | null
   endsAt: Date | null
+  createdById: number | null
+  updatedById: number | null
   createdAt: Date
   updatedAt: Date
   _count: HomepageBannerCountAggregateOutputType | null
@@ -286,36 +396,64 @@ export type HomepageBannerWhereInput = {
   OR?: Prisma.HomepageBannerWhereInput[]
   NOT?: Prisma.HomepageBannerWhereInput | Prisma.HomepageBannerWhereInput[]
   id?: Prisma.IntFilter<"HomepageBanner"> | number
+  internalName?: Prisma.StringFilter<"HomepageBanner"> | string
   title?: Prisma.StringFilter<"HomepageBanner"> | string
   subtitle?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  eyebrow?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  description?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
   imageUrl?: Prisma.StringFilter<"HomepageBanner"> | string
   desktopImage?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
   mobileImage?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
   imagePublicId?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  mobileImagePublicId?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  imageAlt?: Prisma.StringFilter<"HomepageBanner"> | string
   linkUrl?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  primaryCtaLabel?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  primaryCtaUrl?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  secondaryCtaLabel?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  secondaryCtaUrl?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  textAlignment?: Prisma.EnumBannerTextAlignmentFilter<"HomepageBanner"> | $Enums.BannerTextAlignment
+  textTheme?: Prisma.EnumBannerTextThemeFilter<"HomepageBanner"> | $Enums.BannerTextTheme
+  overlayOpacity?: Prisma.IntFilter<"HomepageBanner"> | number
   placement?: Prisma.EnumHomepageBannerPlacementFilter<"HomepageBanner"> | $Enums.HomepageBannerPlacement
   position?: Prisma.IntFilter<"HomepageBanner"> | number
   isActive?: Prisma.BoolFilter<"HomepageBanner"> | boolean
   startsAt?: Prisma.DateTimeNullableFilter<"HomepageBanner"> | Date | string | null
   endsAt?: Prisma.DateTimeNullableFilter<"HomepageBanner"> | Date | string | null
+  createdById?: Prisma.IntNullableFilter<"HomepageBanner"> | number | null
+  updatedById?: Prisma.IntNullableFilter<"HomepageBanner"> | number | null
   createdAt?: Prisma.DateTimeFilter<"HomepageBanner"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"HomepageBanner"> | Date | string
 }
 
 export type HomepageBannerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  internalName?: Prisma.SortOrder
   title?: Prisma.SortOrder
   subtitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  eyebrow?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   desktopImage?: Prisma.SortOrderInput | Prisma.SortOrder
   mobileImage?: Prisma.SortOrderInput | Prisma.SortOrder
   imagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  mobileImagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageAlt?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  primaryCtaLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  primaryCtaUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  secondaryCtaLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  secondaryCtaUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  textAlignment?: Prisma.SortOrder
+  textTheme?: Prisma.SortOrder
+  overlayOpacity?: Prisma.SortOrder
   placement?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   endsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -325,36 +463,64 @@ export type HomepageBannerWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.HomepageBannerWhereInput | Prisma.HomepageBannerWhereInput[]
   OR?: Prisma.HomepageBannerWhereInput[]
   NOT?: Prisma.HomepageBannerWhereInput | Prisma.HomepageBannerWhereInput[]
+  internalName?: Prisma.StringFilter<"HomepageBanner"> | string
   title?: Prisma.StringFilter<"HomepageBanner"> | string
   subtitle?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  eyebrow?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  description?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
   imageUrl?: Prisma.StringFilter<"HomepageBanner"> | string
   desktopImage?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
   mobileImage?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
   imagePublicId?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  mobileImagePublicId?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  imageAlt?: Prisma.StringFilter<"HomepageBanner"> | string
   linkUrl?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  primaryCtaLabel?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  primaryCtaUrl?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  secondaryCtaLabel?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  secondaryCtaUrl?: Prisma.StringNullableFilter<"HomepageBanner"> | string | null
+  textAlignment?: Prisma.EnumBannerTextAlignmentFilter<"HomepageBanner"> | $Enums.BannerTextAlignment
+  textTheme?: Prisma.EnumBannerTextThemeFilter<"HomepageBanner"> | $Enums.BannerTextTheme
+  overlayOpacity?: Prisma.IntFilter<"HomepageBanner"> | number
   placement?: Prisma.EnumHomepageBannerPlacementFilter<"HomepageBanner"> | $Enums.HomepageBannerPlacement
   position?: Prisma.IntFilter<"HomepageBanner"> | number
   isActive?: Prisma.BoolFilter<"HomepageBanner"> | boolean
   startsAt?: Prisma.DateTimeNullableFilter<"HomepageBanner"> | Date | string | null
   endsAt?: Prisma.DateTimeNullableFilter<"HomepageBanner"> | Date | string | null
+  createdById?: Prisma.IntNullableFilter<"HomepageBanner"> | number | null
+  updatedById?: Prisma.IntNullableFilter<"HomepageBanner"> | number | null
   createdAt?: Prisma.DateTimeFilter<"HomepageBanner"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"HomepageBanner"> | Date | string
 }, "id">
 
 export type HomepageBannerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  internalName?: Prisma.SortOrder
   title?: Prisma.SortOrder
   subtitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  eyebrow?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   desktopImage?: Prisma.SortOrderInput | Prisma.SortOrder
   mobileImage?: Prisma.SortOrderInput | Prisma.SortOrder
   imagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  mobileImagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageAlt?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  primaryCtaLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  primaryCtaUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  secondaryCtaLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  secondaryCtaUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  textAlignment?: Prisma.SortOrder
+  textTheme?: Prisma.SortOrder
+  overlayOpacity?: Prisma.SortOrder
   placement?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   endsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.HomepageBannerCountOrderByAggregateInput
@@ -369,207 +535,375 @@ export type HomepageBannerScalarWhereWithAggregatesInput = {
   OR?: Prisma.HomepageBannerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.HomepageBannerScalarWhereWithAggregatesInput | Prisma.HomepageBannerScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"HomepageBanner"> | number
+  internalName?: Prisma.StringWithAggregatesFilter<"HomepageBanner"> | string
   title?: Prisma.StringWithAggregatesFilter<"HomepageBanner"> | string
   subtitle?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  eyebrow?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  description?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
   imageUrl?: Prisma.StringWithAggregatesFilter<"HomepageBanner"> | string
   desktopImage?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
   mobileImage?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
   imagePublicId?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  mobileImagePublicId?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  imageAlt?: Prisma.StringWithAggregatesFilter<"HomepageBanner"> | string
   linkUrl?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  primaryCtaLabel?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  primaryCtaUrl?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  secondaryCtaLabel?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  secondaryCtaUrl?: Prisma.StringNullableWithAggregatesFilter<"HomepageBanner"> | string | null
+  textAlignment?: Prisma.EnumBannerTextAlignmentWithAggregatesFilter<"HomepageBanner"> | $Enums.BannerTextAlignment
+  textTheme?: Prisma.EnumBannerTextThemeWithAggregatesFilter<"HomepageBanner"> | $Enums.BannerTextTheme
+  overlayOpacity?: Prisma.IntWithAggregatesFilter<"HomepageBanner"> | number
   placement?: Prisma.EnumHomepageBannerPlacementWithAggregatesFilter<"HomepageBanner"> | $Enums.HomepageBannerPlacement
   position?: Prisma.IntWithAggregatesFilter<"HomepageBanner"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"HomepageBanner"> | boolean
   startsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"HomepageBanner"> | Date | string | null
   endsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"HomepageBanner"> | Date | string | null
+  createdById?: Prisma.IntNullableWithAggregatesFilter<"HomepageBanner"> | number | null
+  updatedById?: Prisma.IntNullableWithAggregatesFilter<"HomepageBanner"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"HomepageBanner"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"HomepageBanner"> | Date | string
 }
 
 export type HomepageBannerCreateInput = {
+  internalName?: string
   title: string
   subtitle?: string | null
+  eyebrow?: string | null
+  description?: string | null
   imageUrl: string
   desktopImage?: string | null
   mobileImage?: string | null
   imagePublicId?: string | null
+  mobileImagePublicId?: string | null
+  imageAlt?: string
   linkUrl?: string | null
+  primaryCtaLabel?: string | null
+  primaryCtaUrl?: string | null
+  secondaryCtaLabel?: string | null
+  secondaryCtaUrl?: string | null
+  textAlignment?: $Enums.BannerTextAlignment
+  textTheme?: $Enums.BannerTextTheme
+  overlayOpacity?: number
   placement?: $Enums.HomepageBannerPlacement
   position?: number
   isActive?: boolean
   startsAt?: Date | string | null
   endsAt?: Date | string | null
+  createdById?: number | null
+  updatedById?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type HomepageBannerUncheckedCreateInput = {
   id?: number
+  internalName?: string
   title: string
   subtitle?: string | null
+  eyebrow?: string | null
+  description?: string | null
   imageUrl: string
   desktopImage?: string | null
   mobileImage?: string | null
   imagePublicId?: string | null
+  mobileImagePublicId?: string | null
+  imageAlt?: string
   linkUrl?: string | null
+  primaryCtaLabel?: string | null
+  primaryCtaUrl?: string | null
+  secondaryCtaLabel?: string | null
+  secondaryCtaUrl?: string | null
+  textAlignment?: $Enums.BannerTextAlignment
+  textTheme?: $Enums.BannerTextTheme
+  overlayOpacity?: number
   placement?: $Enums.HomepageBannerPlacement
   position?: number
   isActive?: boolean
   startsAt?: Date | string | null
   endsAt?: Date | string | null
+  createdById?: number | null
+  updatedById?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type HomepageBannerUpdateInput = {
+  internalName?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   subtitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eyebrow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   desktopImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobileImagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  textAlignment?: Prisma.EnumBannerTextAlignmentFieldUpdateOperationsInput | $Enums.BannerTextAlignment
+  textTheme?: Prisma.EnumBannerTextThemeFieldUpdateOperationsInput | $Enums.BannerTextTheme
+  overlayOpacity?: Prisma.IntFieldUpdateOperationsInput | number
   placement?: Prisma.EnumHomepageBannerPlacementFieldUpdateOperationsInput | $Enums.HomepageBannerPlacement
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type HomepageBannerUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  internalName?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   subtitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eyebrow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   desktopImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobileImagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  textAlignment?: Prisma.EnumBannerTextAlignmentFieldUpdateOperationsInput | $Enums.BannerTextAlignment
+  textTheme?: Prisma.EnumBannerTextThemeFieldUpdateOperationsInput | $Enums.BannerTextTheme
+  overlayOpacity?: Prisma.IntFieldUpdateOperationsInput | number
   placement?: Prisma.EnumHomepageBannerPlacementFieldUpdateOperationsInput | $Enums.HomepageBannerPlacement
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type HomepageBannerCreateManyInput = {
   id?: number
+  internalName?: string
   title: string
   subtitle?: string | null
+  eyebrow?: string | null
+  description?: string | null
   imageUrl: string
   desktopImage?: string | null
   mobileImage?: string | null
   imagePublicId?: string | null
+  mobileImagePublicId?: string | null
+  imageAlt?: string
   linkUrl?: string | null
+  primaryCtaLabel?: string | null
+  primaryCtaUrl?: string | null
+  secondaryCtaLabel?: string | null
+  secondaryCtaUrl?: string | null
+  textAlignment?: $Enums.BannerTextAlignment
+  textTheme?: $Enums.BannerTextTheme
+  overlayOpacity?: number
   placement?: $Enums.HomepageBannerPlacement
   position?: number
   isActive?: boolean
   startsAt?: Date | string | null
   endsAt?: Date | string | null
+  createdById?: number | null
+  updatedById?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type HomepageBannerUpdateManyMutationInput = {
+  internalName?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   subtitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eyebrow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   desktopImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobileImagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  textAlignment?: Prisma.EnumBannerTextAlignmentFieldUpdateOperationsInput | $Enums.BannerTextAlignment
+  textTheme?: Prisma.EnumBannerTextThemeFieldUpdateOperationsInput | $Enums.BannerTextTheme
+  overlayOpacity?: Prisma.IntFieldUpdateOperationsInput | number
   placement?: Prisma.EnumHomepageBannerPlacementFieldUpdateOperationsInput | $Enums.HomepageBannerPlacement
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type HomepageBannerUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  internalName?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   subtitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eyebrow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   desktopImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobileImagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageAlt?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryCtaUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  textAlignment?: Prisma.EnumBannerTextAlignmentFieldUpdateOperationsInput | $Enums.BannerTextAlignment
+  textTheme?: Prisma.EnumBannerTextThemeFieldUpdateOperationsInput | $Enums.BannerTextTheme
+  overlayOpacity?: Prisma.IntFieldUpdateOperationsInput | number
   placement?: Prisma.EnumHomepageBannerPlacementFieldUpdateOperationsInput | $Enums.HomepageBannerPlacement
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type HomepageBannerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  internalName?: Prisma.SortOrder
   title?: Prisma.SortOrder
   subtitle?: Prisma.SortOrder
+  eyebrow?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   desktopImage?: Prisma.SortOrder
   mobileImage?: Prisma.SortOrder
   imagePublicId?: Prisma.SortOrder
+  mobileImagePublicId?: Prisma.SortOrder
+  imageAlt?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
+  primaryCtaLabel?: Prisma.SortOrder
+  primaryCtaUrl?: Prisma.SortOrder
+  secondaryCtaLabel?: Prisma.SortOrder
+  secondaryCtaUrl?: Prisma.SortOrder
+  textAlignment?: Prisma.SortOrder
+  textTheme?: Prisma.SortOrder
+  overlayOpacity?: Prisma.SortOrder
   placement?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type HomepageBannerAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  overlayOpacity?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
 }
 
 export type HomepageBannerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  internalName?: Prisma.SortOrder
   title?: Prisma.SortOrder
   subtitle?: Prisma.SortOrder
+  eyebrow?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   desktopImage?: Prisma.SortOrder
   mobileImage?: Prisma.SortOrder
   imagePublicId?: Prisma.SortOrder
+  mobileImagePublicId?: Prisma.SortOrder
+  imageAlt?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
+  primaryCtaLabel?: Prisma.SortOrder
+  primaryCtaUrl?: Prisma.SortOrder
+  secondaryCtaLabel?: Prisma.SortOrder
+  secondaryCtaUrl?: Prisma.SortOrder
+  textAlignment?: Prisma.SortOrder
+  textTheme?: Prisma.SortOrder
+  overlayOpacity?: Prisma.SortOrder
   placement?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type HomepageBannerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  internalName?: Prisma.SortOrder
   title?: Prisma.SortOrder
   subtitle?: Prisma.SortOrder
+  eyebrow?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   desktopImage?: Prisma.SortOrder
   mobileImage?: Prisma.SortOrder
   imagePublicId?: Prisma.SortOrder
+  mobileImagePublicId?: Prisma.SortOrder
+  imageAlt?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
+  primaryCtaLabel?: Prisma.SortOrder
+  primaryCtaUrl?: Prisma.SortOrder
+  secondaryCtaLabel?: Prisma.SortOrder
+  secondaryCtaUrl?: Prisma.SortOrder
+  textAlignment?: Prisma.SortOrder
+  textTheme?: Prisma.SortOrder
+  overlayOpacity?: Prisma.SortOrder
   placement?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type HomepageBannerSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  overlayOpacity?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
+}
+
+export type EnumBannerTextAlignmentFieldUpdateOperationsInput = {
+  set?: $Enums.BannerTextAlignment
+}
+
+export type EnumBannerTextThemeFieldUpdateOperationsInput = {
+  set?: $Enums.BannerTextTheme
 }
 
 export type EnumHomepageBannerPlacementFieldUpdateOperationsInput = {
@@ -580,95 +914,165 @@ export type EnumHomepageBannerPlacementFieldUpdateOperationsInput = {
 
 export type HomepageBannerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  internalName?: boolean
   title?: boolean
   subtitle?: boolean
+  eyebrow?: boolean
+  description?: boolean
   imageUrl?: boolean
   desktopImage?: boolean
   mobileImage?: boolean
   imagePublicId?: boolean
+  mobileImagePublicId?: boolean
+  imageAlt?: boolean
   linkUrl?: boolean
+  primaryCtaLabel?: boolean
+  primaryCtaUrl?: boolean
+  secondaryCtaLabel?: boolean
+  secondaryCtaUrl?: boolean
+  textAlignment?: boolean
+  textTheme?: boolean
+  overlayOpacity?: boolean
   placement?: boolean
   position?: boolean
   isActive?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["homepageBanner"]>
 
 export type HomepageBannerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  internalName?: boolean
   title?: boolean
   subtitle?: boolean
+  eyebrow?: boolean
+  description?: boolean
   imageUrl?: boolean
   desktopImage?: boolean
   mobileImage?: boolean
   imagePublicId?: boolean
+  mobileImagePublicId?: boolean
+  imageAlt?: boolean
   linkUrl?: boolean
+  primaryCtaLabel?: boolean
+  primaryCtaUrl?: boolean
+  secondaryCtaLabel?: boolean
+  secondaryCtaUrl?: boolean
+  textAlignment?: boolean
+  textTheme?: boolean
+  overlayOpacity?: boolean
   placement?: boolean
   position?: boolean
   isActive?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["homepageBanner"]>
 
 export type HomepageBannerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  internalName?: boolean
   title?: boolean
   subtitle?: boolean
+  eyebrow?: boolean
+  description?: boolean
   imageUrl?: boolean
   desktopImage?: boolean
   mobileImage?: boolean
   imagePublicId?: boolean
+  mobileImagePublicId?: boolean
+  imageAlt?: boolean
   linkUrl?: boolean
+  primaryCtaLabel?: boolean
+  primaryCtaUrl?: boolean
+  secondaryCtaLabel?: boolean
+  secondaryCtaUrl?: boolean
+  textAlignment?: boolean
+  textTheme?: boolean
+  overlayOpacity?: boolean
   placement?: boolean
   position?: boolean
   isActive?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["homepageBanner"]>
 
 export type HomepageBannerSelectScalar = {
   id?: boolean
+  internalName?: boolean
   title?: boolean
   subtitle?: boolean
+  eyebrow?: boolean
+  description?: boolean
   imageUrl?: boolean
   desktopImage?: boolean
   mobileImage?: boolean
   imagePublicId?: boolean
+  mobileImagePublicId?: boolean
+  imageAlt?: boolean
   linkUrl?: boolean
+  primaryCtaLabel?: boolean
+  primaryCtaUrl?: boolean
+  secondaryCtaLabel?: boolean
+  secondaryCtaUrl?: boolean
+  textAlignment?: boolean
+  textTheme?: boolean
+  overlayOpacity?: boolean
   placement?: boolean
   position?: boolean
   isActive?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type HomepageBannerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subtitle" | "imageUrl" | "desktopImage" | "mobileImage" | "imagePublicId" | "linkUrl" | "placement" | "position" | "isActive" | "startsAt" | "endsAt" | "createdAt" | "updatedAt", ExtArgs["result"]["homepageBanner"]>
+export type HomepageBannerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "internalName" | "title" | "subtitle" | "eyebrow" | "description" | "imageUrl" | "desktopImage" | "mobileImage" | "imagePublicId" | "mobileImagePublicId" | "imageAlt" | "linkUrl" | "primaryCtaLabel" | "primaryCtaUrl" | "secondaryCtaLabel" | "secondaryCtaUrl" | "textAlignment" | "textTheme" | "overlayOpacity" | "placement" | "position" | "isActive" | "startsAt" | "endsAt" | "createdById" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["homepageBanner"]>
 
 export type $HomepageBannerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "HomepageBanner"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    internalName: string
     title: string
     subtitle: string | null
+    eyebrow: string | null
+    description: string | null
     imageUrl: string
     desktopImage: string | null
     mobileImage: string | null
     imagePublicId: string | null
+    mobileImagePublicId: string | null
+    imageAlt: string
     linkUrl: string | null
+    primaryCtaLabel: string | null
+    primaryCtaUrl: string | null
+    secondaryCtaLabel: string | null
+    secondaryCtaUrl: string | null
+    textAlignment: $Enums.BannerTextAlignment
+    textTheme: $Enums.BannerTextTheme
+    overlayOpacity: number
     placement: $Enums.HomepageBannerPlacement
     position: number
     isActive: boolean
     startsAt: Date | null
     endsAt: Date | null
+    createdById: number | null
+    updatedById: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["homepageBanner"]>
@@ -1095,18 +1499,32 @@ export interface Prisma__HomepageBannerClient<T, Null = never, ExtArgs extends r
  */
 export interface HomepageBannerFieldRefs {
   readonly id: Prisma.FieldRef<"HomepageBanner", 'Int'>
+  readonly internalName: Prisma.FieldRef<"HomepageBanner", 'String'>
   readonly title: Prisma.FieldRef<"HomepageBanner", 'String'>
   readonly subtitle: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly eyebrow: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly description: Prisma.FieldRef<"HomepageBanner", 'String'>
   readonly imageUrl: Prisma.FieldRef<"HomepageBanner", 'String'>
   readonly desktopImage: Prisma.FieldRef<"HomepageBanner", 'String'>
   readonly mobileImage: Prisma.FieldRef<"HomepageBanner", 'String'>
   readonly imagePublicId: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly mobileImagePublicId: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly imageAlt: Prisma.FieldRef<"HomepageBanner", 'String'>
   readonly linkUrl: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly primaryCtaLabel: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly primaryCtaUrl: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly secondaryCtaLabel: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly secondaryCtaUrl: Prisma.FieldRef<"HomepageBanner", 'String'>
+  readonly textAlignment: Prisma.FieldRef<"HomepageBanner", 'BannerTextAlignment'>
+  readonly textTheme: Prisma.FieldRef<"HomepageBanner", 'BannerTextTheme'>
+  readonly overlayOpacity: Prisma.FieldRef<"HomepageBanner", 'Int'>
   readonly placement: Prisma.FieldRef<"HomepageBanner", 'HomepageBannerPlacement'>
   readonly position: Prisma.FieldRef<"HomepageBanner", 'Int'>
   readonly isActive: Prisma.FieldRef<"HomepageBanner", 'Boolean'>
   readonly startsAt: Prisma.FieldRef<"HomepageBanner", 'DateTime'>
   readonly endsAt: Prisma.FieldRef<"HomepageBanner", 'DateTime'>
+  readonly createdById: Prisma.FieldRef<"HomepageBanner", 'Int'>
+  readonly updatedById: Prisma.FieldRef<"HomepageBanner", 'Int'>
   readonly createdAt: Prisma.FieldRef<"HomepageBanner", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"HomepageBanner", 'DateTime'>
 }

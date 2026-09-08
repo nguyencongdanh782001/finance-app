@@ -269,10 +269,54 @@ export const HomepageBannerPlacement = {
   HERO: 'HERO',
   TOP: 'TOP',
   MIDDLE: 'MIDDLE',
-  BOTTOM: 'BOTTOM'
+  BOTTOM: 'BOTTOM',
+  ANNOUNCEMENT_BAR: 'ANNOUNCEMENT_BAR',
+  HOME_HERO: 'HOME_HERO',
+  HOME_CAMPAIGN: 'HOME_CAMPAIGN',
+  HOME_CATEGORY: 'HOME_CATEGORY',
+  PRODUCT_LISTING: 'PRODUCT_LISTING'
 } as const
 
 export type HomepageBannerPlacement = (typeof HomepageBannerPlacement)[keyof typeof HomepageBannerPlacement]
+
+
+export const BannerTextAlignment = {
+  LEFT: 'LEFT',
+  CENTER: 'CENTER',
+  RIGHT: 'RIGHT'
+} as const
+
+export type BannerTextAlignment = (typeof BannerTextAlignment)[keyof typeof BannerTextAlignment]
+
+
+export const BannerTextTheme = {
+  LIGHT: 'LIGHT',
+  DARK: 'DARK'
+} as const
+
+export type BannerTextTheme = (typeof BannerTextTheme)[keyof typeof BannerTextTheme]
+
+
+export const PolicyStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  HIDDEN: 'HIDDEN'
+} as const
+
+export type PolicyStatus = (typeof PolicyStatus)[keyof typeof PolicyStatus]
+
+
+export const PolicyType = {
+  PURCHASE_GUIDE: 'PURCHASE_GUIDE',
+  SHIPPING: 'SHIPPING',
+  RETURN_REFUND: 'RETURN_REFUND',
+  PRIVACY: 'PRIVACY',
+  TERMS: 'TERMS',
+  PAYMENT: 'PAYMENT',
+  OTHER: 'OTHER'
+} as const
+
+export type PolicyType = (typeof PolicyType)[keyof typeof PolicyType]
 
 
 export const HomepageSectionType = {

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import AuthHeader from "@/components/Auth/AuthHeader";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1094,27 +1095,8 @@ export default function AuthPageClient({
 
   return (
     <main className="min-h-screen bg-[#FFFCFA] text-[#1C1A1B]">
-      <header className="border-b border-[#E9E2E5] bg-[#FFFCFA] px-5 py-4 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-3">
-            <span className="flex size-11 items-center justify-center overflow-hidden rounded-lg border border-[#E9E2E5] bg-white shadow-sm">
-              <Image src="/logo-quynh-nhi-store-mark.svg" alt="Quỳnh Nhi Store" width={58} height={58} className="size-[125%] max-w-none object-contain" priority />
-            </span>
-            <span><span className="block text-sm font-extrabold">Quỳnh Nhi Store</span><span className="block text-xs font-semibold text-[#6F686B]">Thời trang mỗi ngày</span></span>
-          </Link>
-          <nav aria-label="Điều hướng cửa hàng" className="order-3 flex w-full items-center justify-center gap-5 text-sm font-bold text-[#6F686B] sm:order-none sm:w-auto">
-            <Link href="/" className="transition-colors hover:text-[#A43E5F]">Trang chủ</Link>
-            <Link href="/products" className="transition-colors hover:text-[#A43E5F]">Sản phẩm</Link>
-            <Link href="/products?gender=MEN" className="transition-colors hover:text-[#A43E5F]">Nam</Link>
-            <Link href="/products?gender=WOMEN" className="transition-colors hover:text-[#A43E5F]">Nữ</Link>
-          </nav>
-          <div className="grid grid-cols-2 rounded-lg border border-[#E9E2E5] bg-white p-1">
-            <Button type="button" variant={mode === "login" ? "authTabActive" : "authTab"} size="authTab" onClick={() => handleModeChange("login")}>Đăng nhập</Button>
-            <Button type="button" variant={mode === "register" ? "authTabActive" : "authTab"} size="authTab" onClick={() => handleModeChange("register")}>Đăng ký</Button>
-          </div>
-        </div>
-      </header>
-      <div className="grid min-h-[calc(100vh-77px)] lg:grid-cols-[1.08fr_0.92fr]">
+      <AuthHeader mode={mode} onModeChange={handleModeChange} />
+      <div className="grid min-h-[calc(100vh-110px)] lg:grid-cols-[1.08fr_0.92fr]">
         <section className="relative hidden overflow-hidden bg-[#FFF3F6] lg:block">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,#FFFFFF_0%,#FFF3F6_48%,#F7DEE6_100%)]" />
           <div className="absolute left-10 top-10 h-40 w-40 rounded-full border border-[#D96C8A]/20" />

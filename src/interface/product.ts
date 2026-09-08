@@ -1,4 +1,5 @@
 import { CategoryApiItem } from "@/interface/category";
+import type { RichTextDocument } from "@/lib/rich-text";
 
 export type ProductStatus = "PUBLIC" | "PRIVATE" | "DISCONTINUED";
 
@@ -11,10 +12,16 @@ export interface ProductApiItem {
   importPrice: number | string;
   sellPrice: number | string;
   quantity: number;
+  organicFavoriteCount?: number;
+  favoriteCountAdjustment?: number;
+  displayFavoriteCount?: number;
+  isFavorited?: boolean;
   totalAvailableStock?: number;
   category: CategoryApiItem;
   variants?: ProductVariantApiItem[];
   description?: string | null;
+  descriptionContent?: RichTextDocument | null;
+  descriptionHtml?: string | null;
   slug?: string | null;
   productStatus?: ProductStatus | null;
   gender?: "WOMEN" | "MEN" | "UNISEX" | "KIDS" | null;
@@ -69,6 +76,7 @@ export interface ProductPayload {
   quantity: number;
   slug?: string;
   description?: string;
+  descriptionContent?: RichTextDocument | null;
   productStatus?: ProductStatus;
   gender?: "WOMEN" | "MEN" | "UNISEX" | "KIDS";
   seoTitle?: string;
@@ -113,6 +121,9 @@ export interface ProductItemData {
   quantity: number;
   totalAvailableStock: number;
   productStatus: ProductStatus;
+  organicFavoriteCount?: number;
+  favoriteCountAdjustment?: number;
+  displayFavoriteCount?: number;
 }
 
 export interface ProductFormValues {
@@ -123,6 +134,7 @@ export interface ProductFormValues {
   quantity: string;
   slug: string;
   description: string;
+  descriptionContent?: RichTextDocument | null;
   gender: "" | "WOMEN" | "MEN" | "UNISEX" | "KIDS";
   productStatus: ProductStatus;
   seoTitle: string;

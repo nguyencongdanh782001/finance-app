@@ -1,7 +1,8 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const publicOnly = new URL(request.url).searchParams.get("public") === "true";
   const categories = await prisma.category.findMany({
     orderBy: {
       name: "asc",
@@ -10,7 +11,7 @@ export async function GET() {
       parent: { select: { id: true, name: true } },
       _count: {
         select: {
-          products: true,
+          products: publicOnly ? { where: { status: "PUBLIC" } } : true,
         },
       },
     },

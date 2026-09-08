@@ -158,6 +158,10 @@ export async function POST(
         title,
         slug,
         description: data.description || null,
+        descriptionContent: data.descriptionContent
+          ? JSON.parse(JSON.stringify(data.descriptionContent))
+          : undefined,
+        descriptionHtml: data.description || null,
         categoryId,
         importPrice,
         sellPrice,

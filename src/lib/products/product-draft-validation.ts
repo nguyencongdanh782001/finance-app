@@ -10,6 +10,7 @@ import {
   resolveSizeCost,
   resolveSizePrice,
 } from "./variant-groups.ts";
+import { hasMissingImageAlt, meaningfulText } from "../rich-text.ts";
 
 export type ProductValidationError = {
   path: string;
@@ -53,10 +54,7 @@ function validateColorGroups(
       add(`${groupBase}.colorName`, `Màu “${colorName}” đang bị trùng.`);
     else colorSeen.add(colorKey);
     if (group.colorCode.trim() && !colorPattern.test(group.colorCode.trim()))
-      add(
-        `${groupBase}.colorCode`,
-        "Mã màu phải có dạng #RGB hoặc #RRGGBB.",
-      );
+      add(`${groupBase}.colorCode`, "Mã màu phải có dạng #RGB hoặc #RRGGBB.");
     if (!group.sizes.some((size) => size.isActive))
       add(
         `${groupBase}.sizes`,
@@ -70,7 +68,10 @@ function validateColorGroups(
       const name = variantName(colorName, sizeName);
       const sizeKey = normalizedVariantKey(sizeName);
       if (sizeName && sizeSeen.has(sizeKey))
-        add(`${sizeBase}.sizeName`, `Size “${sizeName}” đang bị trùng trong màu này.`);
+        add(
+          `${sizeBase}.sizeName`,
+          `Size “${sizeName}” đang bị trùng trong màu này.`,
+        );
       else if (sizeName) sizeSeen.add(sizeKey);
       if (!size.isActive) return;
       if (!sizeName)
@@ -116,8 +117,13 @@ export function validateProductStep(
       add("title", "Tên sản phẩm không được vượt quá 150 ký tự.");
     if (data.slug.trim() && !slugPattern.test(data.slug.trim()))
       add("slug", "Đường dẫn sản phẩm không hợp lệ.");
-    if (data.description && data.description.length > 20_000)
+    if (meaningfulText(data.description).length > 20_000)
       add("description", "Mô tả sản phẩm quá dài.");
+    if (hasMissingImageAlt(data.description))
+      add(
+        "description",
+        "Vui lòng thêm văn bản thay thế cho tất cả hình ảnh trong mô tả.",
+      );
     if (data.variants.length === 0) {
       if (!data.sellPrice.trim()) add("sellPrice", "Vui lòng nhập giá bán.");
       else if (!integer(data.sellPrice) || Number(data.sellPrice) <= 0)

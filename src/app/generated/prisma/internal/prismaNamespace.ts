@@ -416,6 +416,7 @@ export const ModelName = {
   CartItem: 'CartItem',
   Wishlist: 'Wishlist',
   WishlistItem: 'WishlistItem',
+  ProductFavoriteAdjustmentLog: 'ProductFavoriteAdjustmentLog',
   Order: 'Order',
   OrderItem: 'OrderItem',
   InventoryTransaction: 'InventoryTransaction',
@@ -438,6 +439,7 @@ export const ModelName = {
   SearchHistory: 'SearchHistory',
   RecentlyViewedProduct: 'RecentlyViewedProduct',
   HomepageBanner: 'HomepageBanner',
+  StorePolicy: 'StorePolicy',
   HomepageFeaturedProduct: 'HomepageFeaturedProduct',
   HomepageSection: 'HomepageSection',
   HomepageSectionProduct: 'HomepageSectionProduct'
@@ -456,7 +458,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "membershipHistory" | "membershipBenefit" | "membershipBenefitTier" | "membershipBenefitRedemption" | "membershipResetRun" | "auditLog" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "discountRedemption" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "membershipHistory" | "membershipBenefit" | "membershipBenefitTier" | "membershipBenefitRedemption" | "membershipResetRun" | "auditLog" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "productFavoriteAdjustmentLog" | "order" | "orderItem" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "discountRedemption" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "storePolicy" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2828,6 +2830,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProductFavoriteAdjustmentLog: {
+      payload: Prisma.$ProductFavoriteAdjustmentLogPayload<ExtArgs>
+      fields: Prisma.ProductFavoriteAdjustmentLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductFavoriteAdjustmentLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductFavoriteAdjustmentLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductFavoriteAdjustmentLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductFavoriteAdjustmentLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>
+        }
+        findMany: {
+          args: Prisma.ProductFavoriteAdjustmentLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>[]
+        }
+        create: {
+          args: Prisma.ProductFavoriteAdjustmentLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>
+        }
+        createMany: {
+          args: Prisma.ProductFavoriteAdjustmentLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductFavoriteAdjustmentLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductFavoriteAdjustmentLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>
+        }
+        update: {
+          args: Prisma.ProductFavoriteAdjustmentLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductFavoriteAdjustmentLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductFavoriteAdjustmentLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductFavoriteAdjustmentLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductFavoriteAdjustmentLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductFavoriteAdjustmentLogPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductFavoriteAdjustmentLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductFavoriteAdjustmentLog>
+        }
+        groupBy: {
+          args: Prisma.ProductFavoriteAdjustmentLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductFavoriteAdjustmentLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductFavoriteAdjustmentLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductFavoriteAdjustmentLogCountAggregateOutputType> | number
+        }
+      }
+    }
     Order: {
       payload: Prisma.$OrderPayload<ExtArgs>
       fields: Prisma.OrderFieldRefs
@@ -4456,6 +4532,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    StorePolicy: {
+      payload: Prisma.$StorePolicyPayload<ExtArgs>
+      fields: Prisma.StorePolicyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StorePolicyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StorePolicyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>
+        }
+        findFirst: {
+          args: Prisma.StorePolicyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StorePolicyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>
+        }
+        findMany: {
+          args: Prisma.StorePolicyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>[]
+        }
+        create: {
+          args: Prisma.StorePolicyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>
+        }
+        createMany: {
+          args: Prisma.StorePolicyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StorePolicyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>[]
+        }
+        delete: {
+          args: Prisma.StorePolicyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>
+        }
+        update: {
+          args: Prisma.StorePolicyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>
+        }
+        deleteMany: {
+          args: Prisma.StorePolicyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StorePolicyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StorePolicyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>[]
+        }
+        upsert: {
+          args: Prisma.StorePolicyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StorePolicyPayload>
+        }
+        aggregate: {
+          args: Prisma.StorePolicyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStorePolicy>
+        }
+        groupBy: {
+          args: Prisma.StorePolicyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StorePolicyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StorePolicyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StorePolicyCountAggregateOutputType> | number
+        }
+      }
+    }
     HomepageFeaturedProduct: {
       payload: Prisma.$HomepageFeaturedProductPayload<ExtArgs>
       fields: Prisma.HomepageFeaturedProductFieldRefs
@@ -4806,8 +4956,12 @@ export const ProductScalarFieldEnum = {
   importPrice: 'importPrice',
   sellPrice: 'sellPrice',
   quantity: 'quantity',
+  organicFavoriteCount: 'organicFavoriteCount',
+  favoriteCountAdjustment: 'favoriteCountAdjustment',
   slug: 'slug',
   description: 'description',
+  descriptionContent: 'descriptionContent',
+  descriptionHtml: 'descriptionHtml',
   productStatus: 'productStatus',
   visibility: 'visibility',
   status: 'status',
@@ -5282,6 +5436,22 @@ export const WishlistItemScalarFieldEnum = {
 export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[keyof typeof WishlistItemScalarFieldEnum]
 
 
+export const ProductFavoriteAdjustmentLogScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  adminId: 'adminId',
+  previousAdjustment: 'previousAdjustment',
+  newAdjustment: 'newAdjustment',
+  organicCount: 'organicCount',
+  previousDisplayCount: 'previousDisplayCount',
+  newDisplayCount: 'newDisplayCount',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductFavoriteAdjustmentLogScalarFieldEnum = (typeof ProductFavoriteAdjustmentLogScalarFieldEnum)[keyof typeof ProductFavoriteAdjustmentLogScalarFieldEnum]
+
+
 export const OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
@@ -5640,23 +5810,64 @@ export type RecentlyViewedProductScalarFieldEnum = (typeof RecentlyViewedProduct
 
 export const HomepageBannerScalarFieldEnum = {
   id: 'id',
+  internalName: 'internalName',
   title: 'title',
   subtitle: 'subtitle',
+  eyebrow: 'eyebrow',
+  description: 'description',
   imageUrl: 'imageUrl',
   desktopImage: 'desktopImage',
   mobileImage: 'mobileImage',
   imagePublicId: 'imagePublicId',
+  mobileImagePublicId: 'mobileImagePublicId',
+  imageAlt: 'imageAlt',
   linkUrl: 'linkUrl',
+  primaryCtaLabel: 'primaryCtaLabel',
+  primaryCtaUrl: 'primaryCtaUrl',
+  secondaryCtaLabel: 'secondaryCtaLabel',
+  secondaryCtaUrl: 'secondaryCtaUrl',
+  textAlignment: 'textAlignment',
+  textTheme: 'textTheme',
+  overlayOpacity: 'overlayOpacity',
   placement: 'placement',
   position: 'position',
   isActive: 'isActive',
   startsAt: 'startsAt',
   endsAt: 'endsAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type HomepageBannerScalarFieldEnum = (typeof HomepageBannerScalarFieldEnum)[keyof typeof HomepageBannerScalarFieldEnum]
+
+
+export const StorePolicyScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  slug: 'slug',
+  summary: 'summary',
+  summaryJson: 'summaryJson',
+  summaryHtml: 'summaryHtml',
+  summaryText: 'summaryText',
+  content: 'content',
+  contentJson: 'contentJson',
+  contentHtml: 'contentHtml',
+  status: 'status',
+  showInFooter: 'showInFooter',
+  footerOrder: 'footerOrder',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  publishedAt: 'publishedAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StorePolicyScalarFieldEnum = (typeof StorePolicyScalarFieldEnum)[keyof typeof StorePolicyScalarFieldEnum]
 
 
 export const HomepageFeaturedProductScalarFieldEnum = {
@@ -5817,6 +6028,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'LegacyProductStatus'
  */
 export type EnumLegacyProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LegacyProductStatus'>
@@ -5869,20 +6094,6 @@ export type EnumProductGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'ProductGender[]'
  */
 export type ListEnumProductGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductGender[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -6223,6 +6434,34 @@ export type ListEnumNotificationPriorityFieldRefInput<$PrismaModel> = FieldRefIn
 
 
 /**
+ * Reference to a field of type 'BannerTextAlignment'
+ */
+export type EnumBannerTextAlignmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BannerTextAlignment'>
+    
+
+
+/**
+ * Reference to a field of type 'BannerTextAlignment[]'
+ */
+export type ListEnumBannerTextAlignmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BannerTextAlignment[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BannerTextTheme'
+ */
+export type EnumBannerTextThemeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BannerTextTheme'>
+    
+
+
+/**
+ * Reference to a field of type 'BannerTextTheme[]'
+ */
+export type ListEnumBannerTextThemeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BannerTextTheme[]'>
+    
+
+
+/**
  * Reference to a field of type 'HomepageBannerPlacement'
  */
 export type EnumHomepageBannerPlacementFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HomepageBannerPlacement'>
@@ -6233,6 +6472,34 @@ export type EnumHomepageBannerPlacementFieldRefInput<$PrismaModel> = FieldRefInp
  * Reference to a field of type 'HomepageBannerPlacement[]'
  */
 export type ListEnumHomepageBannerPlacementFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HomepageBannerPlacement[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PolicyType'
+ */
+export type EnumPolicyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PolicyType'>
+    
+
+
+/**
+ * Reference to a field of type 'PolicyType[]'
+ */
+export type ListEnumPolicyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PolicyType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PolicyStatus'
+ */
+export type EnumPolicyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PolicyStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PolicyStatus[]'
+ */
+export type ListEnumPolicyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PolicyStatus[]'>
     
 
 
@@ -6390,6 +6657,7 @@ export type GlobalOmitConfig = {
   cartItem?: Prisma.CartItemOmit
   wishlist?: Prisma.WishlistOmit
   wishlistItem?: Prisma.WishlistItemOmit
+  productFavoriteAdjustmentLog?: Prisma.ProductFavoriteAdjustmentLogOmit
   order?: Prisma.OrderOmit
   orderItem?: Prisma.OrderItemOmit
   inventoryTransaction?: Prisma.InventoryTransactionOmit
@@ -6412,6 +6680,7 @@ export type GlobalOmitConfig = {
   searchHistory?: Prisma.SearchHistoryOmit
   recentlyViewedProduct?: Prisma.RecentlyViewedProductOmit
   homepageBanner?: Prisma.HomepageBannerOmit
+  storePolicy?: Prisma.StorePolicyOmit
   homepageFeaturedProduct?: Prisma.HomepageFeaturedProductOmit
   homepageSection?: Prisma.HomepageSectionOmit
   homepageSectionProduct?: Prisma.HomepageSectionProductOmit

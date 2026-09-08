@@ -57,6 +57,7 @@ interface ProductItemProps {
   onEdit: (product: ProductItemData) => void;
   onDelete: (product: ProductItemData) => void;
   onStatusChange: (product: ProductItemData, status: ProductStatus) => void;
+  onAdjustFavorites: (product: ProductItemData) => void;
   isStatusUpdating: boolean;
 }
 
@@ -65,6 +66,7 @@ export default function ProductItem({
   onEdit,
   onDelete,
   onStatusChange,
+  onAdjustFavorites,
   isStatusUpdating,
 }: ProductItemProps) {
   const [showImage, setShowImage] = useState(Boolean(product.imageUrl));
@@ -217,6 +219,9 @@ export default function ProductItem({
               </p>
             </div>
           </div>
+          <button type="button" onClick={() => onAdjustFavorites(product)} className="mt-3 rounded-full border border-pink-200 bg-pink-50 px-3 py-1.5 text-11px font-bold text-pink-700 hover:bg-pink-100">
+            ♥ Yêu thích: {(product.displayFavoriteCount ?? 0).toLocaleString("vi-VN")}
+          </button>
         </div>
       </div>
 

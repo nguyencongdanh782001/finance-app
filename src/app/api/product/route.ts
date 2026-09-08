@@ -6,6 +6,7 @@ import {
   normalizeProductStatus,
   toProductResponse,
 } from "@/lib/products/product-status";
+import { withFavoriteMeta } from "@/lib/products/favorites";
 
 const slugify = (value: string) =>
   value
@@ -37,6 +38,10 @@ export async function GET(req: Request) {
     Math.max(1, Number(searchParams.get("limit") || 10)),
   );
   const sort = searchParams.get("sort") || "createdAt-desc";
+  const requesterRole = req.headers.get("x-user-role");
+  const requesterId =
+    requesterRole === "CUSTOMER" ? Number(req.headers.get("x-user-id")) : 0;
+  const isAdmin = requesterRole === "ADMIN" || requesterRole === "SUPER_ADMIN";
   const orderBy =
     sort === "price-asc"
       ? { sellPrice: "asc" as const }
@@ -45,12 +50,12 @@ export async function GET(req: Request) {
         : sort === "newest"
           ? { createdAt: "desc" as const }
           : sort === "title-asc"
-      ? { title: "asc" as const }
-      : sort === "title-desc"
-        ? { title: "desc" as const }
-        : sort === "createdAt-asc"
-          ? { createdAt: "asc" as const }
-          : { createdAt: "desc" as const };
+            ? { title: "asc" as const }
+            : sort === "title-desc"
+              ? { title: "desc" as const }
+              : sort === "createdAt-asc"
+                ? { createdAt: "asc" as const }
+                : { createdAt: "desc" as const };
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
@@ -71,8 +76,27 @@ export async function GET(req: Request) {
     }),
     prisma.product.count({ where }),
   ]);
+  const favoriteProductIds =
+    requesterId && products.length
+      ? new Set(
+          (
+            await prisma.wishlistItem.findMany({
+              where: {
+                userId: requesterId,
+                productId: { in: products.map((product) => product.id) },
+              },
+              select: { productId: true },
+            })
+          ).map((item) => item.productId),
+        )
+      : new Set<number>();
   return NextResponse.json({
-    data: products.map(toProductResponse),
+    data: products.map((product) =>
+      withFavoriteMeta(product, {
+        isAdmin,
+        isFavorited: favoriteProductIds.has(product.id),
+      }),
+    ),
     pagination: { page, limit, total, totalPage: Math.ceil(total / limit) },
   });
 }
@@ -140,6 +164,8 @@ export async function POST(req: Request) {
           title,
           slug,
           description: body.description || null,
+          descriptionContent: body.descriptionContent || null,
+          descriptionHtml: body.description || null,
           imageUrl: String(body.imageUrl || ""),
           imagePublicId: body.imagePublicId || "",
           categoryId,

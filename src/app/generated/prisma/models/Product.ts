@@ -33,6 +33,8 @@ export type ProductAvgAggregateOutputType = {
   importPrice: runtime.Decimal | null
   sellPrice: runtime.Decimal | null
   quantity: number | null
+  organicFavoriteCount: number | null
+  favoriteCountAdjustment: number | null
   viewCount: number | null
   soldCount: number | null
   weight: runtime.Decimal | null
@@ -48,6 +50,8 @@ export type ProductSumAggregateOutputType = {
   importPrice: runtime.Decimal | null
   sellPrice: runtime.Decimal | null
   quantity: number | null
+  organicFavoriteCount: number | null
+  favoriteCountAdjustment: number | null
   viewCount: number | null
   soldCount: number | null
   weight: runtime.Decimal | null
@@ -66,8 +70,11 @@ export type ProductMinAggregateOutputType = {
   importPrice: runtime.Decimal | null
   sellPrice: runtime.Decimal | null
   quantity: number | null
+  organicFavoriteCount: number | null
+  favoriteCountAdjustment: number | null
   slug: string | null
   description: string | null
+  descriptionHtml: string | null
   productStatus: $Enums.LegacyProductStatus | null
   visibility: $Enums.LegacyProductVisibility | null
   status: $Enums.ProductStatus | null
@@ -102,8 +109,11 @@ export type ProductMaxAggregateOutputType = {
   importPrice: runtime.Decimal | null
   sellPrice: runtime.Decimal | null
   quantity: number | null
+  organicFavoriteCount: number | null
+  favoriteCountAdjustment: number | null
   slug: string | null
   description: string | null
+  descriptionHtml: string | null
   productStatus: $Enums.LegacyProductStatus | null
   visibility: $Enums.LegacyProductVisibility | null
   status: $Enums.ProductStatus | null
@@ -138,8 +148,12 @@ export type ProductCountAggregateOutputType = {
   importPrice: number
   sellPrice: number
   quantity: number
+  organicFavoriteCount: number
+  favoriteCountAdjustment: number
   slug: number
   description: number
+  descriptionContent: number
+  descriptionHtml: number
   productStatus: number
   visibility: number
   status: number
@@ -174,6 +188,8 @@ export type ProductAvgAggregateInputType = {
   importPrice?: true
   sellPrice?: true
   quantity?: true
+  organicFavoriteCount?: true
+  favoriteCountAdjustment?: true
   viewCount?: true
   soldCount?: true
   weight?: true
@@ -189,6 +205,8 @@ export type ProductSumAggregateInputType = {
   importPrice?: true
   sellPrice?: true
   quantity?: true
+  organicFavoriteCount?: true
+  favoriteCountAdjustment?: true
   viewCount?: true
   soldCount?: true
   weight?: true
@@ -207,8 +225,11 @@ export type ProductMinAggregateInputType = {
   importPrice?: true
   sellPrice?: true
   quantity?: true
+  organicFavoriteCount?: true
+  favoriteCountAdjustment?: true
   slug?: true
   description?: true
+  descriptionHtml?: true
   productStatus?: true
   visibility?: true
   status?: true
@@ -243,8 +264,11 @@ export type ProductMaxAggregateInputType = {
   importPrice?: true
   sellPrice?: true
   quantity?: true
+  organicFavoriteCount?: true
+  favoriteCountAdjustment?: true
   slug?: true
   description?: true
+  descriptionHtml?: true
   productStatus?: true
   visibility?: true
   status?: true
@@ -279,8 +303,12 @@ export type ProductCountAggregateInputType = {
   importPrice?: true
   sellPrice?: true
   quantity?: true
+  organicFavoriteCount?: true
+  favoriteCountAdjustment?: true
   slug?: true
   description?: true
+  descriptionContent?: true
+  descriptionHtml?: true
   productStatus?: true
   visibility?: true
   status?: true
@@ -403,8 +431,12 @@ export type ProductGroupByOutputType = {
   importPrice: runtime.Decimal
   sellPrice: runtime.Decimal
   quantity: number
+  organicFavoriteCount: number
+  favoriteCountAdjustment: number
   slug: string | null
   description: string | null
+  descriptionContent: runtime.JsonValue | null
+  descriptionHtml: string | null
   productStatus: $Enums.LegacyProductStatus | null
   visibility: $Enums.LegacyProductVisibility
   status: $Enums.ProductStatus
@@ -463,8 +495,12 @@ export type ProductWhereInput = {
   importPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFilter<"Product"> | number
+  organicFavoriteCount?: Prisma.IntFilter<"Product"> | number
+  favoriteCountAdjustment?: Prisma.IntFilter<"Product"> | number
   slug?: Prisma.StringNullableFilter<"Product"> | string | null
   description?: Prisma.StringNullableFilter<"Product"> | string | null
+  descriptionContent?: Prisma.JsonNullableFilter<"Product">
+  descriptionHtml?: Prisma.StringNullableFilter<"Product"> | string | null
   productStatus?: Prisma.EnumLegacyProductStatusNullableFilter<"Product"> | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFilter<"Product"> | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
@@ -506,6 +542,7 @@ export type ProductWhereInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductListRelationFilter
   recentlyViewedBy?: Prisma.RecentlyViewedProductListRelationFilter
   drafts?: Prisma.ProductDraftListRelationFilter
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogListRelationFilter
 }
 
 export type ProductOrderByWithRelationInput = {
@@ -518,8 +555,12 @@ export type ProductOrderByWithRelationInput = {
   importPrice?: Prisma.SortOrder
   sellPrice?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  organicFavoriteCount?: Prisma.SortOrder
+  favoriteCountAdjustment?: Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionContent?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionHtml?: Prisma.SortOrderInput | Prisma.SortOrder
   productStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   visibility?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -561,6 +602,7 @@ export type ProductOrderByWithRelationInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductOrderByRelationAggregateInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductOrderByRelationAggregateInput
   drafts?: Prisma.ProductDraftOrderByRelationAggregateInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogOrderByRelationAggregateInput
 }
 
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -577,7 +619,11 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   importPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFilter<"Product"> | number
+  organicFavoriteCount?: Prisma.IntFilter<"Product"> | number
+  favoriteCountAdjustment?: Prisma.IntFilter<"Product"> | number
   description?: Prisma.StringNullableFilter<"Product"> | string | null
+  descriptionContent?: Prisma.JsonNullableFilter<"Product">
+  descriptionHtml?: Prisma.StringNullableFilter<"Product"> | string | null
   productStatus?: Prisma.EnumLegacyProductStatusNullableFilter<"Product"> | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFilter<"Product"> | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
@@ -619,6 +665,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   homepageSectionProducts?: Prisma.HomepageSectionProductListRelationFilter
   recentlyViewedBy?: Prisma.RecentlyViewedProductListRelationFilter
   drafts?: Prisma.ProductDraftListRelationFilter
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogListRelationFilter
 }, "id" | "slug">
 
 export type ProductOrderByWithAggregationInput = {
@@ -631,8 +678,12 @@ export type ProductOrderByWithAggregationInput = {
   importPrice?: Prisma.SortOrder
   sellPrice?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  organicFavoriteCount?: Prisma.SortOrder
+  favoriteCountAdjustment?: Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionContent?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionHtml?: Prisma.SortOrderInput | Prisma.SortOrder
   productStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   visibility?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -676,8 +727,12 @@ export type ProductScalarWhereWithAggregatesInput = {
   importPrice?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntWithAggregatesFilter<"Product"> | number
+  organicFavoriteCount?: Prisma.IntWithAggregatesFilter<"Product"> | number
+  favoriteCountAdjustment?: Prisma.IntWithAggregatesFilter<"Product"> | number
   slug?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  descriptionContent?: Prisma.JsonNullableWithAggregatesFilter<"Product">
+  descriptionHtml?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   productStatus?: Prisma.EnumLegacyProductStatusNullableWithAggregatesFilter<"Product"> | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityWithAggregatesFilter<"Product"> | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusWithAggregatesFilter<"Product"> | $Enums.ProductStatus
@@ -710,8 +765,12 @@ export type ProductCreateInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -753,6 +812,7 @@ export type ProductCreateInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateInput = {
@@ -765,8 +825,12 @@ export type ProductUncheckedCreateInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -806,6 +870,7 @@ export type ProductUncheckedCreateInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductUpdateInput = {
@@ -815,8 +880,12 @@ export type ProductUpdateInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -858,6 +927,7 @@ export type ProductUpdateInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateInput = {
@@ -870,8 +940,12 @@ export type ProductUncheckedUpdateInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -911,6 +985,7 @@ export type ProductUncheckedUpdateInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateManyInput = {
@@ -923,8 +998,12 @@ export type ProductCreateManyInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -957,8 +1036,12 @@ export type ProductUpdateManyMutationInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -994,8 +1077,12 @@ export type ProductUncheckedUpdateManyInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -1041,8 +1128,12 @@ export type ProductCountOrderByAggregateInput = {
   importPrice?: Prisma.SortOrder
   sellPrice?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  organicFavoriteCount?: Prisma.SortOrder
+  favoriteCountAdjustment?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  descriptionContent?: Prisma.SortOrder
+  descriptionHtml?: Prisma.SortOrder
   productStatus?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -1075,6 +1166,8 @@ export type ProductAvgOrderByAggregateInput = {
   importPrice?: Prisma.SortOrder
   sellPrice?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  organicFavoriteCount?: Prisma.SortOrder
+  favoriteCountAdjustment?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   soldCount?: Prisma.SortOrder
   weight?: Prisma.SortOrder
@@ -1093,8 +1186,11 @@ export type ProductMaxOrderByAggregateInput = {
   importPrice?: Prisma.SortOrder
   sellPrice?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  organicFavoriteCount?: Prisma.SortOrder
+  favoriteCountAdjustment?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  descriptionHtml?: Prisma.SortOrder
   productStatus?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -1129,8 +1225,11 @@ export type ProductMinOrderByAggregateInput = {
   importPrice?: Prisma.SortOrder
   sellPrice?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  organicFavoriteCount?: Prisma.SortOrder
+  favoriteCountAdjustment?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  descriptionHtml?: Prisma.SortOrder
   productStatus?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -1162,6 +1261,8 @@ export type ProductSumOrderByAggregateInput = {
   importPrice?: Prisma.SortOrder
   sellPrice?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  organicFavoriteCount?: Prisma.SortOrder
+  favoriteCountAdjustment?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   soldCount?: Prisma.SortOrder
   weight?: Prisma.SortOrder
@@ -1406,6 +1507,20 @@ export type ProductUpdateOneRequiredWithoutWishlistItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutWishlistItemsInput, Prisma.ProductUpdateWithoutWishlistItemsInput>, Prisma.ProductUncheckedUpdateWithoutWishlistItemsInput>
 }
 
+export type ProductCreateNestedOneWithoutFavoriteAdjustmentLogsInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutFavoriteAdjustmentLogsInput, Prisma.ProductUncheckedCreateWithoutFavoriteAdjustmentLogsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutFavoriteAdjustmentLogsInput
+  connect?: Prisma.ProductWhereUniqueInput
+}
+
+export type ProductUpdateOneRequiredWithoutFavoriteAdjustmentLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutFavoriteAdjustmentLogsInput, Prisma.ProductUncheckedCreateWithoutFavoriteAdjustmentLogsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutFavoriteAdjustmentLogsInput
+  upsert?: Prisma.ProductUpsertWithoutFavoriteAdjustmentLogsInput
+  connect?: Prisma.ProductWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutFavoriteAdjustmentLogsInput, Prisma.ProductUpdateWithoutFavoriteAdjustmentLogsInput>, Prisma.ProductUncheckedUpdateWithoutFavoriteAdjustmentLogsInput>
+}
+
 export type ProductCreateNestedOneWithoutOrderItemsInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutOrderItemsInput, Prisma.ProductUncheckedCreateWithoutOrderItemsInput>
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutOrderItemsInput
@@ -1529,8 +1644,12 @@ export type ProductCreateWithoutCategoryInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -1571,6 +1690,7 @@ export type ProductCreateWithoutCategoryInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutCategoryInput = {
@@ -1582,8 +1702,12 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -1623,6 +1747,7 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutCategoryInput = {
@@ -1664,8 +1789,12 @@ export type ProductScalarWhereInput = {
   importPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFilter<"Product"> | number
+  organicFavoriteCount?: Prisma.IntFilter<"Product"> | number
+  favoriteCountAdjustment?: Prisma.IntFilter<"Product"> | number
   slug?: Prisma.StringNullableFilter<"Product"> | string | null
   description?: Prisma.StringNullableFilter<"Product"> | string | null
+  descriptionContent?: Prisma.JsonNullableFilter<"Product">
+  descriptionHtml?: Prisma.StringNullableFilter<"Product"> | string | null
   productStatus?: Prisma.EnumLegacyProductStatusNullableFilter<"Product"> | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFilter<"Product"> | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
@@ -1698,8 +1827,12 @@ export type ProductCreateWithoutBrandRelationInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -1740,6 +1873,7 @@ export type ProductCreateWithoutBrandRelationInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutBrandRelationInput = {
@@ -1751,8 +1885,12 @@ export type ProductUncheckedCreateWithoutBrandRelationInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -1792,6 +1930,7 @@ export type ProductUncheckedCreateWithoutBrandRelationInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutBrandRelationInput = {
@@ -1827,8 +1966,12 @@ export type ProductCreateWithoutDailySalesInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -1869,6 +2012,7 @@ export type ProductCreateWithoutDailySalesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutDailySalesInput = {
@@ -1881,8 +2025,12 @@ export type ProductUncheckedCreateWithoutDailySalesInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -1921,6 +2069,7 @@ export type ProductUncheckedCreateWithoutDailySalesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutDailySalesInput = {
@@ -1946,8 +2095,12 @@ export type ProductUpdateWithoutDailySalesInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -1988,6 +2141,7 @@ export type ProductUpdateWithoutDailySalesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutDailySalesInput = {
@@ -2000,8 +2154,12 @@ export type ProductUncheckedUpdateWithoutDailySalesInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2040,6 +2198,7 @@ export type ProductUncheckedUpdateWithoutDailySalesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutDailySoldContributionsInput = {
@@ -2049,8 +2208,12 @@ export type ProductCreateWithoutDailySoldContributionsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2091,6 +2254,7 @@ export type ProductCreateWithoutDailySoldContributionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutDailySoldContributionsInput = {
@@ -2103,8 +2267,12 @@ export type ProductUncheckedCreateWithoutDailySoldContributionsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2143,6 +2311,7 @@ export type ProductUncheckedCreateWithoutDailySoldContributionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutDailySoldContributionsInput = {
@@ -2168,8 +2337,12 @@ export type ProductUpdateWithoutDailySoldContributionsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2210,6 +2383,7 @@ export type ProductUpdateWithoutDailySoldContributionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutDailySoldContributionsInput = {
@@ -2222,8 +2396,12 @@ export type ProductUncheckedUpdateWithoutDailySoldContributionsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2262,6 +2440,7 @@ export type ProductUncheckedUpdateWithoutDailySoldContributionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutDraftsInput = {
@@ -2271,8 +2450,12 @@ export type ProductCreateWithoutDraftsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2313,6 +2496,7 @@ export type ProductCreateWithoutDraftsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutDraftsInput = {
@@ -2325,8 +2509,12 @@ export type ProductUncheckedCreateWithoutDraftsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2365,6 +2553,7 @@ export type ProductUncheckedCreateWithoutDraftsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutDraftsInput = {
@@ -2390,8 +2579,12 @@ export type ProductUpdateWithoutDraftsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2432,6 +2625,7 @@ export type ProductUpdateWithoutDraftsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutDraftsInput = {
@@ -2444,8 +2638,12 @@ export type ProductUncheckedUpdateWithoutDraftsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2484,6 +2682,7 @@ export type ProductUncheckedUpdateWithoutDraftsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutImagesInput = {
@@ -2493,8 +2692,12 @@ export type ProductCreateWithoutImagesInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2535,6 +2738,7 @@ export type ProductCreateWithoutImagesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutImagesInput = {
@@ -2547,8 +2751,12 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2587,6 +2795,7 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutImagesInput = {
@@ -2612,8 +2821,12 @@ export type ProductUpdateWithoutImagesInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2654,6 +2867,7 @@ export type ProductUpdateWithoutImagesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutImagesInput = {
@@ -2666,8 +2880,12 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2706,6 +2924,7 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutVariantGroupsInput = {
@@ -2715,8 +2934,12 @@ export type ProductCreateWithoutVariantGroupsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2757,6 +2980,7 @@ export type ProductCreateWithoutVariantGroupsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutVariantGroupsInput = {
@@ -2769,8 +2993,12 @@ export type ProductUncheckedCreateWithoutVariantGroupsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2809,6 +3037,7 @@ export type ProductUncheckedCreateWithoutVariantGroupsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutVariantGroupsInput = {
@@ -2834,8 +3063,12 @@ export type ProductUpdateWithoutVariantGroupsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2876,6 +3109,7 @@ export type ProductUpdateWithoutVariantGroupsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutVariantGroupsInput = {
@@ -2888,8 +3122,12 @@ export type ProductUncheckedUpdateWithoutVariantGroupsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -2928,6 +3166,7 @@ export type ProductUncheckedUpdateWithoutVariantGroupsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutVariantsInput = {
@@ -2937,8 +3176,12 @@ export type ProductCreateWithoutVariantsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -2979,6 +3222,7 @@ export type ProductCreateWithoutVariantsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutVariantsInput = {
@@ -2991,8 +3235,12 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3031,6 +3279,7 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutVariantsInput = {
@@ -3056,8 +3305,12 @@ export type ProductUpdateWithoutVariantsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3098,6 +3351,7 @@ export type ProductUpdateWithoutVariantsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutVariantsInput = {
@@ -3110,8 +3364,12 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3150,6 +3408,7 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutCartItemsInput = {
@@ -3159,8 +3418,12 @@ export type ProductCreateWithoutCartItemsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3201,6 +3464,7 @@ export type ProductCreateWithoutCartItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutCartItemsInput = {
@@ -3213,8 +3477,12 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3253,6 +3521,7 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutCartItemsInput = {
@@ -3278,8 +3547,12 @@ export type ProductUpdateWithoutCartItemsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3320,6 +3593,7 @@ export type ProductUpdateWithoutCartItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutCartItemsInput = {
@@ -3332,8 +3606,12 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3372,6 +3650,7 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutWishlistItemsInput = {
@@ -3381,8 +3660,12 @@ export type ProductCreateWithoutWishlistItemsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3423,6 +3706,7 @@ export type ProductCreateWithoutWishlistItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutWishlistItemsInput = {
@@ -3435,8 +3719,12 @@ export type ProductUncheckedCreateWithoutWishlistItemsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3475,6 +3763,7 @@ export type ProductUncheckedCreateWithoutWishlistItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutWishlistItemsInput = {
@@ -3500,8 +3789,12 @@ export type ProductUpdateWithoutWishlistItemsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3542,6 +3835,7 @@ export type ProductUpdateWithoutWishlistItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
@@ -3554,8 +3848,12 @@ export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3594,6 +3892,249 @@ export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
+}
+
+export type ProductCreateWithoutFavoriteAdjustmentLogsInput = {
+  title: string
+  imageUrl: string
+  imagePublicId: string
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
+  slug?: string | null
+  description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
+  brand?: string | null
+  material?: string | null
+  careInstructions?: string | null
+  gender?: $Enums.ProductGender | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  isFeatured?: boolean
+  viewCount?: number
+  soldCount?: number
+  publishedAt?: Date | string | null
+  isPublished?: boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: string | null
+  weight?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category: Prisma.CategoryCreateNestedOneWithoutProductsInput
+  brandRelation?: Prisma.BrandCreateNestedOneWithoutProductsInput
+  dailySales?: Prisma.DailySoldProductCreateNestedManyWithoutProductInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
+  variantGroups?: Prisma.VariantGroupCreateNestedManyWithoutProductInput
+  variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
+  inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductInput
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutProductInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutProductInput
+  couponProducts?: Prisma.CouponProductCreateNestedManyWithoutProductInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductCreateNestedManyWithoutProductInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+}
+
+export type ProductUncheckedCreateWithoutFavoriteAdjustmentLogsInput = {
+  id?: number
+  title: string
+  imageUrl: string
+  imagePublicId: string
+  categoryId: number
+  brandId?: number | null
+  importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
+  slug?: string | null
+  description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
+  productStatus?: $Enums.LegacyProductStatus | null
+  visibility?: $Enums.LegacyProductVisibility
+  status?: $Enums.ProductStatus
+  brand?: string | null
+  material?: string | null
+  careInstructions?: string | null
+  gender?: $Enums.ProductGender | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  isFeatured?: boolean
+  viewCount?: number
+  soldCount?: number
+  publishedAt?: Date | string | null
+  isPublished?: boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: string | null
+  weight?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dailySales?: Prisma.DailySoldProductUncheckedCreateNestedManyWithoutProductInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
+  variantGroups?: Prisma.VariantGroupUncheckedCreateNestedManyWithoutProductInput
+  variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductInput
+  cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutProductInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProductInput
+  couponProducts?: Prisma.CouponProductUncheckedCreateNestedManyWithoutProductInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedCreateNestedManyWithoutProductInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
+  drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+}
+
+export type ProductCreateOrConnectWithoutFavoriteAdjustmentLogsInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutFavoriteAdjustmentLogsInput, Prisma.ProductUncheckedCreateWithoutFavoriteAdjustmentLogsInput>
+}
+
+export type ProductUpsertWithoutFavoriteAdjustmentLogsInput = {
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutFavoriteAdjustmentLogsInput, Prisma.ProductUncheckedUpdateWithoutFavoriteAdjustmentLogsInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutFavoriteAdjustmentLogsInput, Prisma.ProductUncheckedCreateWithoutFavoriteAdjustmentLogsInput>
+  where?: Prisma.ProductWhereInput
+}
+
+export type ProductUpdateToOneWithWhereWithoutFavoriteAdjustmentLogsInput = {
+  where?: Prisma.ProductWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutFavoriteAdjustmentLogsInput, Prisma.ProductUncheckedUpdateWithoutFavoriteAdjustmentLogsInput>
+}
+
+export type ProductUpdateWithoutFavoriteAdjustmentLogsInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imagePublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+  brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableEnumProductGenderFieldUpdateOperationsInput | $Enums.ProductGender | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  soldCount?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  weight?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
+  brandRelation?: Prisma.BrandUpdateOneWithoutProductsNestedInput
+  dailySales?: Prisma.DailySoldProductUpdateManyWithoutProductNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
+  variantGroups?: Prisma.VariantGroupUpdateManyWithoutProductNestedInput
+  variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductNestedInput
+  cartItems?: Prisma.CartItemUpdateManyWithoutProductNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutProductNestedInput
+  couponProducts?: Prisma.CouponProductUpdateManyWithoutProductNestedInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductUpdateManyWithoutProductNestedInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutFavoriteAdjustmentLogsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imagePublicId?: Prisma.StringFieldUpdateOperationsInput | string
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  brandId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
+  visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
+  status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+  brand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableEnumProductGenderFieldUpdateOperationsInput | $Enums.ProductGender | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  soldCount?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  weight?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  length?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  width?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  height?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailySales?: Prisma.DailySoldProductUncheckedUpdateManyWithoutProductNestedInput
+  dailySoldContributions?: Prisma.DailySoldProductContributionUncheckedUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
+  variantGroups?: Prisma.VariantGroupUncheckedUpdateManyWithoutProductNestedInput
+  variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductNestedInput
+  cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutProductNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProductNestedInput
+  couponProducts?: Prisma.CouponProductUncheckedUpdateManyWithoutProductNestedInput
+  excludedCouponProducts?: Prisma.ExcludedCouponProductUncheckedUpdateManyWithoutProductNestedInput
+  homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
+  homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
+  recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
+  drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
 }
 
 export type ProductCreateWithoutOrderItemsInput = {
@@ -3603,8 +4144,12 @@ export type ProductCreateWithoutOrderItemsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3645,6 +4190,7 @@ export type ProductCreateWithoutOrderItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutOrderItemsInput = {
@@ -3657,8 +4203,12 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3697,6 +4247,7 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutOrderItemsInput = {
@@ -3722,8 +4273,12 @@ export type ProductUpdateWithoutOrderItemsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3764,6 +4319,7 @@ export type ProductUpdateWithoutOrderItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutOrderItemsInput = {
@@ -3776,8 +4332,12 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3816,6 +4376,7 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutInventoryTransactionsInput = {
@@ -3825,8 +4386,12 @@ export type ProductCreateWithoutInventoryTransactionsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3867,6 +4432,7 @@ export type ProductCreateWithoutInventoryTransactionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutInventoryTransactionsInput = {
@@ -3879,8 +4445,12 @@ export type ProductUncheckedCreateWithoutInventoryTransactionsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -3919,6 +4489,7 @@ export type ProductUncheckedCreateWithoutInventoryTransactionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutInventoryTransactionsInput = {
@@ -3944,8 +4515,12 @@ export type ProductUpdateWithoutInventoryTransactionsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -3986,6 +4561,7 @@ export type ProductUpdateWithoutInventoryTransactionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutInventoryTransactionsInput = {
@@ -3998,8 +4574,12 @@ export type ProductUncheckedUpdateWithoutInventoryTransactionsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4038,6 +4618,7 @@ export type ProductUncheckedUpdateWithoutInventoryTransactionsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutCouponProductsInput = {
@@ -4047,8 +4628,12 @@ export type ProductCreateWithoutCouponProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4089,6 +4674,7 @@ export type ProductCreateWithoutCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutCouponProductsInput = {
@@ -4101,8 +4687,12 @@ export type ProductUncheckedCreateWithoutCouponProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4141,6 +4731,7 @@ export type ProductUncheckedCreateWithoutCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutCouponProductsInput = {
@@ -4166,8 +4757,12 @@ export type ProductUpdateWithoutCouponProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4208,6 +4803,7 @@ export type ProductUpdateWithoutCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutCouponProductsInput = {
@@ -4220,8 +4816,12 @@ export type ProductUncheckedUpdateWithoutCouponProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4260,6 +4860,7 @@ export type ProductUncheckedUpdateWithoutCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutExcludedCouponProductsInput = {
@@ -4269,8 +4870,12 @@ export type ProductCreateWithoutExcludedCouponProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4311,6 +4916,7 @@ export type ProductCreateWithoutExcludedCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutExcludedCouponProductsInput = {
@@ -4323,8 +4929,12 @@ export type ProductUncheckedCreateWithoutExcludedCouponProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4363,6 +4973,7 @@ export type ProductUncheckedCreateWithoutExcludedCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutExcludedCouponProductsInput = {
@@ -4388,8 +4999,12 @@ export type ProductUpdateWithoutExcludedCouponProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4430,6 +5045,7 @@ export type ProductUpdateWithoutExcludedCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutExcludedCouponProductsInput = {
@@ -4442,8 +5058,12 @@ export type ProductUncheckedUpdateWithoutExcludedCouponProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4482,6 +5102,7 @@ export type ProductUncheckedUpdateWithoutExcludedCouponProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutReviewsInput = {
@@ -4491,8 +5112,12 @@ export type ProductCreateWithoutReviewsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4533,6 +5158,7 @@ export type ProductCreateWithoutReviewsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutReviewsInput = {
@@ -4545,8 +5171,12 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4585,6 +5215,7 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutReviewsInput = {
@@ -4610,8 +5241,12 @@ export type ProductUpdateWithoutReviewsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4652,6 +5287,7 @@ export type ProductUpdateWithoutReviewsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutReviewsInput = {
@@ -4664,8 +5300,12 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4704,6 +5344,7 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutRecentlyViewedByInput = {
@@ -4713,8 +5354,12 @@ export type ProductCreateWithoutRecentlyViewedByInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4755,6 +5400,7 @@ export type ProductCreateWithoutRecentlyViewedByInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutRecentlyViewedByInput = {
@@ -4767,8 +5413,12 @@ export type ProductUncheckedCreateWithoutRecentlyViewedByInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4807,6 +5457,7 @@ export type ProductUncheckedCreateWithoutRecentlyViewedByInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutRecentlyViewedByInput = {
@@ -4832,8 +5483,12 @@ export type ProductUpdateWithoutRecentlyViewedByInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4874,6 +5529,7 @@ export type ProductUpdateWithoutRecentlyViewedByInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutRecentlyViewedByInput = {
@@ -4886,8 +5542,12 @@ export type ProductUncheckedUpdateWithoutRecentlyViewedByInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -4926,6 +5586,7 @@ export type ProductUncheckedUpdateWithoutRecentlyViewedByInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutHomepageFeaturedProductsInput = {
@@ -4935,8 +5596,12 @@ export type ProductCreateWithoutHomepageFeaturedProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -4977,6 +5642,7 @@ export type ProductCreateWithoutHomepageFeaturedProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutHomepageFeaturedProductsInput = {
@@ -4989,8 +5655,12 @@ export type ProductUncheckedCreateWithoutHomepageFeaturedProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -5029,6 +5699,7 @@ export type ProductUncheckedCreateWithoutHomepageFeaturedProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutHomepageFeaturedProductsInput = {
@@ -5054,8 +5725,12 @@ export type ProductUpdateWithoutHomepageFeaturedProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5096,6 +5771,7 @@ export type ProductUpdateWithoutHomepageFeaturedProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutHomepageFeaturedProductsInput = {
@@ -5108,8 +5784,12 @@ export type ProductUncheckedUpdateWithoutHomepageFeaturedProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5148,6 +5828,7 @@ export type ProductUncheckedUpdateWithoutHomepageFeaturedProductsInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutHomepageSectionProductsInput = {
@@ -5157,8 +5838,12 @@ export type ProductCreateWithoutHomepageSectionProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -5199,6 +5884,7 @@ export type ProductCreateWithoutHomepageSectionProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutHomepageSectionProductsInput = {
@@ -5211,8 +5897,12 @@ export type ProductUncheckedCreateWithoutHomepageSectionProductsInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -5251,6 +5941,7 @@ export type ProductUncheckedCreateWithoutHomepageSectionProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedCreateNestedManyWithoutProductInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutProductInput
   drafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutOriginalProductInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutHomepageSectionProductsInput = {
@@ -5276,8 +5967,12 @@ export type ProductUpdateWithoutHomepageSectionProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5318,6 +6013,7 @@ export type ProductUpdateWithoutHomepageSectionProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutHomepageSectionProductsInput = {
@@ -5330,8 +6026,12 @@ export type ProductUncheckedUpdateWithoutHomepageSectionProductsInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5370,6 +6070,7 @@ export type ProductUncheckedUpdateWithoutHomepageSectionProductsInput = {
   homepageFeaturedProducts?: Prisma.HomepageFeaturedProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateManyCategoryInput = {
@@ -5381,8 +6082,12 @@ export type ProductCreateManyCategoryInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -5415,8 +6120,12 @@ export type ProductUpdateWithoutCategoryInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5457,6 +6166,7 @@ export type ProductUpdateWithoutCategoryInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutCategoryInput = {
@@ -5468,8 +6178,12 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5509,6 +6223,7 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateManyWithoutCategoryInput = {
@@ -5520,8 +6235,12 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5556,8 +6275,12 @@ export type ProductCreateManyBrandRelationInput = {
   importPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: number
+  organicFavoriteCount?: number
+  favoriteCountAdjustment?: number
   slug?: string | null
   description?: string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: string | null
   productStatus?: $Enums.LegacyProductStatus | null
   visibility?: $Enums.LegacyProductVisibility
   status?: $Enums.ProductStatus
@@ -5590,8 +6313,12 @@ export type ProductUpdateWithoutBrandRelationInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5632,6 +6359,7 @@ export type ProductUpdateWithoutBrandRelationInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutBrandRelationInput = {
@@ -5643,8 +6371,12 @@ export type ProductUncheckedUpdateWithoutBrandRelationInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5684,6 +6416,7 @@ export type ProductUncheckedUpdateWithoutBrandRelationInput = {
   homepageSectionProducts?: Prisma.HomepageSectionProductUncheckedUpdateManyWithoutProductNestedInput
   recentlyViewedBy?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutProductNestedInput
   drafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutOriginalProductNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateManyWithoutBrandRelationInput = {
@@ -5695,8 +6428,12 @@ export type ProductUncheckedUpdateManyWithoutBrandRelationInput = {
   importPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   sellPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  organicFavoriteCount?: Prisma.IntFieldUpdateOperationsInput | number
+  favoriteCountAdjustment?: Prisma.IntFieldUpdateOperationsInput | number
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  descriptionHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productStatus?: Prisma.NullableEnumLegacyProductStatusFieldUpdateOperationsInput | $Enums.LegacyProductStatus | null
   visibility?: Prisma.EnumLegacyProductVisibilityFieldUpdateOperationsInput | $Enums.LegacyProductVisibility
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -5744,6 +6481,7 @@ export type ProductCountOutputType = {
   homepageSectionProducts: number
   recentlyViewedBy: number
   drafts: number
+  favoriteAdjustmentLogs: number
 }
 
 export type ProductCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5763,6 +6501,7 @@ export type ProductCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   homepageSectionProducts?: boolean | ProductCountOutputTypeCountHomepageSectionProductsArgs
   recentlyViewedBy?: boolean | ProductCountOutputTypeCountRecentlyViewedByArgs
   drafts?: boolean | ProductCountOutputTypeCountDraftsArgs
+  favoriteAdjustmentLogs?: boolean | ProductCountOutputTypeCountFavoriteAdjustmentLogsArgs
 }
 
 /**
@@ -5887,6 +6626,13 @@ export type ProductCountOutputTypeCountDraftsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.ProductDraftWhereInput
 }
 
+/**
+ * ProductCountOutputType without action
+ */
+export type ProductCountOutputTypeCountFavoriteAdjustmentLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductFavoriteAdjustmentLogWhereInput
+}
+
 
 export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5898,8 +6644,12 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   importPrice?: boolean
   sellPrice?: boolean
   quantity?: boolean
+  organicFavoriteCount?: boolean
+  favoriteCountAdjustment?: boolean
   slug?: boolean
   description?: boolean
+  descriptionContent?: boolean
+  descriptionHtml?: boolean
   productStatus?: boolean
   visibility?: boolean
   status?: boolean
@@ -5941,6 +6691,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   homepageSectionProducts?: boolean | Prisma.Product$homepageSectionProductsArgs<ExtArgs>
   recentlyViewedBy?: boolean | Prisma.Product$recentlyViewedByArgs<ExtArgs>
   drafts?: boolean | Prisma.Product$draftsArgs<ExtArgs>
+  favoriteAdjustmentLogs?: boolean | Prisma.Product$favoriteAdjustmentLogsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
@@ -5954,8 +6705,12 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   importPrice?: boolean
   sellPrice?: boolean
   quantity?: boolean
+  organicFavoriteCount?: boolean
+  favoriteCountAdjustment?: boolean
   slug?: boolean
   description?: boolean
+  descriptionContent?: boolean
+  descriptionHtml?: boolean
   productStatus?: boolean
   visibility?: boolean
   status?: boolean
@@ -5993,8 +6748,12 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   importPrice?: boolean
   sellPrice?: boolean
   quantity?: boolean
+  organicFavoriteCount?: boolean
+  favoriteCountAdjustment?: boolean
   slug?: boolean
   description?: boolean
+  descriptionContent?: boolean
+  descriptionHtml?: boolean
   productStatus?: boolean
   visibility?: boolean
   status?: boolean
@@ -6032,8 +6791,12 @@ export type ProductSelectScalar = {
   importPrice?: boolean
   sellPrice?: boolean
   quantity?: boolean
+  organicFavoriteCount?: boolean
+  favoriteCountAdjustment?: boolean
   slug?: boolean
   description?: boolean
+  descriptionContent?: boolean
+  descriptionHtml?: boolean
   productStatus?: boolean
   visibility?: boolean
   status?: boolean
@@ -6059,7 +6822,7 @@ export type ProductSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "imageUrl" | "imagePublicId" | "categoryId" | "brandId" | "importPrice" | "sellPrice" | "quantity" | "slug" | "description" | "productStatus" | "visibility" | "status" | "brand" | "material" | "careInstructions" | "gender" | "seoTitle" | "seoDescription" | "seoKeywords" | "isFeatured" | "viewCount" | "soldCount" | "publishedAt" | "isPublished" | "tags" | "videoUrl" | "weight" | "length" | "width" | "height" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "imageUrl" | "imagePublicId" | "categoryId" | "brandId" | "importPrice" | "sellPrice" | "quantity" | "organicFavoriteCount" | "favoriteCountAdjustment" | "slug" | "description" | "descriptionContent" | "descriptionHtml" | "productStatus" | "visibility" | "status" | "brand" | "material" | "careInstructions" | "gender" | "seoTitle" | "seoDescription" | "seoKeywords" | "isFeatured" | "viewCount" | "soldCount" | "publishedAt" | "isPublished" | "tags" | "videoUrl" | "weight" | "length" | "width" | "height" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   brandRelation?: boolean | Prisma.Product$brandRelationArgs<ExtArgs>
@@ -6079,6 +6842,7 @@ export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   homepageSectionProducts?: boolean | Prisma.Product$homepageSectionProductsArgs<ExtArgs>
   recentlyViewedBy?: boolean | Prisma.Product$recentlyViewedByArgs<ExtArgs>
   drafts?: boolean | Prisma.Product$draftsArgs<ExtArgs>
+  favoriteAdjustmentLogs?: boolean | Prisma.Product$favoriteAdjustmentLogsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6114,6 +6878,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     homepageSectionProducts: Prisma.$HomepageSectionProductPayload<ExtArgs>[]
     recentlyViewedBy: Prisma.$RecentlyViewedProductPayload<ExtArgs>[]
     drafts: Prisma.$ProductDraftPayload<ExtArgs>[]
+    favoriteAdjustmentLogs: Prisma.$ProductFavoriteAdjustmentLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -6137,11 +6902,15 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
      * Stock
      */
     quantity: number
+    organicFavoriteCount: number
+    favoriteCountAdjustment: number
     /**
      * E-commerce fields
      */
     slug: string | null
     description: string | null
+    descriptionContent: runtime.JsonValue | null
+    descriptionHtml: string | null
     productStatus: $Enums.LegacyProductStatus | null
     visibility: $Enums.LegacyProductVisibility
     status: $Enums.ProductStatus
@@ -6577,6 +7346,7 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
   homepageSectionProducts<T extends Prisma.Product$homepageSectionProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$homepageSectionProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HomepageSectionProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recentlyViewedBy<T extends Prisma.Product$recentlyViewedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$recentlyViewedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecentlyViewedProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   drafts<T extends Prisma.Product$draftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$draftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductDraftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  favoriteAdjustmentLogs<T extends Prisma.Product$favoriteAdjustmentLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$favoriteAdjustmentLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductFavoriteAdjustmentLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6615,8 +7385,12 @@ export interface ProductFieldRefs {
   readonly importPrice: Prisma.FieldRef<"Product", 'Decimal'>
   readonly sellPrice: Prisma.FieldRef<"Product", 'Decimal'>
   readonly quantity: Prisma.FieldRef<"Product", 'Int'>
+  readonly organicFavoriteCount: Prisma.FieldRef<"Product", 'Int'>
+  readonly favoriteCountAdjustment: Prisma.FieldRef<"Product", 'Int'>
   readonly slug: Prisma.FieldRef<"Product", 'String'>
   readonly description: Prisma.FieldRef<"Product", 'String'>
+  readonly descriptionContent: Prisma.FieldRef<"Product", 'Json'>
+  readonly descriptionHtml: Prisma.FieldRef<"Product", 'String'>
   readonly productStatus: Prisma.FieldRef<"Product", 'LegacyProductStatus'>
   readonly visibility: Prisma.FieldRef<"Product", 'LegacyProductVisibility'>
   readonly status: Prisma.FieldRef<"Product", 'ProductStatus'>
@@ -7436,6 +8210,30 @@ export type Product$draftsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.ProductDraftScalarFieldEnum | Prisma.ProductDraftScalarFieldEnum[]
+}
+
+/**
+ * Product.favoriteAdjustmentLogs
+ */
+export type Product$favoriteAdjustmentLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductFavoriteAdjustmentLog
+   */
+  select?: Prisma.ProductFavoriteAdjustmentLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductFavoriteAdjustmentLog
+   */
+  omit?: Prisma.ProductFavoriteAdjustmentLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductFavoriteAdjustmentLogInclude<ExtArgs> | null
+  where?: Prisma.ProductFavoriteAdjustmentLogWhereInput
+  orderBy?: Prisma.ProductFavoriteAdjustmentLogOrderByWithRelationInput | Prisma.ProductFavoriteAdjustmentLogOrderByWithRelationInput[]
+  cursor?: Prisma.ProductFavoriteAdjustmentLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductFavoriteAdjustmentLogScalarFieldEnum | Prisma.ProductFavoriteAdjustmentLogScalarFieldEnum[]
 }
 
 /**

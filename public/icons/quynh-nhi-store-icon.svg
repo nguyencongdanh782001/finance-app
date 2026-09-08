@@ -1,24 +1,35 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Quỳnh Nhi Store icon</title>
-  <desc id="desc">Minimal soft boutique icon with a delicate hanger line.</desc>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Quỳnh Nhi Store logo mark</title>
+  <desc id="desc">A refined QN monogram whose flowing Q tail becomes a dress.</desc>
   <defs>
-    <linearGradient id="bg" x1="96" y1="74" x2="416" y2="438" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFF8F9"/>
-      <stop offset="1" stop-color="#F2E1E4"/>
+    <linearGradient id="signature" x1="80" y1="55" x2="390" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B67887" />
+      <stop offset="0.52" stop-color="#7B3F50" />
+      <stop offset="1" stop-color="#4B2430" />
     </linearGradient>
-    <linearGradient id="silk" x1="145" y1="170" x2="358" y2="350" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#DFA9B3"/>
-      <stop offset="1" stop-color="#805862"/>
+    <linearGradient id="roseGold" x1="100" y1="100" x2="360" y2="390" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E8C7C9" />
+      <stop offset="0.5" stop-color="#C9949D" />
+      <stop offset="1" stop-color="#A76C7B" />
     </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#4B2430" flood-opacity="0.13" />
+    </filter>
   </defs>
-
-  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
-  <g stroke-linecap="round" stroke-linejoin="round">
-    <path d="M239 170C239 143 260 124 286 124C312 124 331 142 331 166C331 195 307 210 284 218C268 223.5 258 236 258 252.5V263" stroke="#75545B" stroke-width="18"/>
-    <path d="M135 315C169 268 209 246 258 246C307 246 347 268 381 315" stroke="#75545B" stroke-width="18"/>
-    <path d="M184 322H332" stroke="#75545B" stroke-width="18"/>
-    <path d="M190 321C207 364 240 386 286 386C320 386 349 372 372 343" stroke="url(#silk)" stroke-width="20"/>
-    <path d="M198 322C227 296 286 296 316 322" stroke="#D9A4AE" stroke-width="15"/>
+  <g transform="translate(26 26)" filter="url(#softShadow)">
+    <circle cx="230" cy="230" r="188" fill="none" stroke="#E8D4D6" stroke-width="2" />
+    <circle cx="230" cy="230" r="173" fill="none" stroke="url(#roseGold)" stroke-width="3" />
+    <path d="M229 94 C145 94 98 153 98 225 C98 305 155 352 229 352 C306 352 361 302 361 225 C361 149 307 94 229 94Z" fill="none" stroke="url(#signature)" stroke-width="12" stroke-linecap="round" />
+    <path d="M229 117 C207 94 181 100 181 119 C181 139 207 140 229 124Z M231 117 C253 94 279 100 279 119 C279 139 253 140 231 124Z" fill="#C9949D" />
+    <circle cx="230" cy="120" r="7" fill="#6A3443" />
+    <path d="M186 161 Q230 194 274 161 C267 194 269 221 282 246 C252 263 208 263 178 246 C191 221 193 194 186 161Z" fill="none" stroke="url(#signature)" stroke-width="7" stroke-linejoin="round" />
+    <path d="M203 169 Q230 190 257 169" fill="none" stroke="#C9949D" stroke-width="5" stroke-linecap="round" />
+    <path d="M201 238 L201 189 L257 239 L257 189" fill="none" stroke="#6A3443" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M178 246 C160 278 137 314 114 343 C165 330 195 347 229 377 C264 346 297 329 347 343 C322 312 301 279 282 246 C255 264 206 264 178 246Z" fill="url(#signature)" />
+    <path d="M229 267 C205 303 187 333 177 354 C199 359 216 367 229 380 C243 363 258 350 281 339 C263 316 246 291 229 267Z" fill="#FFF9F8" opacity="0.94" />
+    <path d="M229 267 C236 306 235 343 229 380" fill="none" stroke="#D8AEB4" stroke-width="3" stroke-linecap="round" />
+    <path d="M273 309 C298 348 326 376 379 392" fill="none" stroke="url(#signature)" stroke-width="12" stroke-linecap="round" />
+    <path d="M341 388 C362 394 380 392 394 383" fill="none" stroke="#C9949D" stroke-width="4" stroke-linecap="round" />
   </g>
-  <path d="M369 165C391 188 389 217 366 240C341 224 335 195 350 173C357 173 364 169 369 165Z" fill="#E8BDC5"/>
 </svg>

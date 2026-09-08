@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import AuthHeader from "@/components/Auth/AuthHeader";
 import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
 import {
@@ -15,7 +16,6 @@ import {
   RotateCw,
   ShieldCheck,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   ClipboardEvent,
@@ -214,43 +214,27 @@ export default function ForgotPasswordClient() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#FFFCFA] px-5 py-8 text-[#1C1A1B]">
-      <section className="w-full max-w-md">
-        <Link
-          href="/login"
-          className="mb-8 inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-[#7A2944]"
-        >
-          <ArrowLeft className="size-4" />
-          Quay lại đăng nhập
-        </Link>
+    <main className="min-h-screen bg-[#FFFCFA] text-[#1C1A1B]">
+      <AuthHeader />
+      <section className="mx-auto flex w-full max-w-md justify-center px-5 py-8 sm:px-8">
+        <div className="w-full">
+          <Link
+            href="/login"
+            className="mb-8 inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-[#7A2944]"
+          >
+            <ArrowLeft className="size-4" />
+            Quay lại đăng nhập
+          </Link>
 
-        <div className="rounded-lg border border-[#E9E2E5] bg-white p-6 shadow-[0_24px_70px_rgba(28,26,27,0.08)] sm:p-8">
-          <div className="mb-7 flex items-center gap-3">
-            <span className="flex size-14 items-center justify-center rounded-xl border border-[#E9E2E5] bg-white shadow-sm">
-              <Image
-                src="/logo-quynh-nhi-store-mark.svg"
-                alt="Quỳnh Nhi Store"
-                width={54}
-                height={54}
-                className="size-12 object-contain"
-              />
-            </span>
-            <div>
-              <p className="text-base font-extrabold">Quỳnh Nhi Store</p>
-              <p className="text-sm font-semibold text-[#6F686B]">
-                Khôi phục tài khoản
-              </p>
-            </div>
-          </div>
-
-          <h1 className="text-3xl font-extrabold">
-            {step === "email" ? "Quên mật khẩu" : "Đặt mật khẩu mới"}
-          </h1>
-          <p className="mt-3 text-sm font-medium leading-6 text-[#6F686B]">
-            {step === "email"
-              ? "Nhập email tài khoản để nhận mã OTP."
-              : "Nhập OTP trong email và mật khẩu mới của bạn."}
-          </p>
+          <div className="rounded-lg border border-[#E9E2E5] bg-white p-6 shadow-[0_24px_70px_rgba(28,26,27,0.08)] sm:p-8">
+            <h1 className="text-3xl font-extrabold">
+              {step === "email" ? "Quên mật khẩu" : "Đặt mật khẩu mới"}
+            </h1>
+            <p className="mt-3 text-sm font-medium leading-6 text-[#6F686B]">
+              {step === "email"
+                ? "Nhập email tài khoản để nhận mã OTP."
+                : "Nhập OTP trong email và mật khẩu mới của bạn."}
+            </p>
 
           {step === "email" ? (
             <form className="mt-7 space-y-4" onSubmit={handleRequestReset}>
@@ -447,6 +431,7 @@ export default function ForgotPasswordClient() {
               {message}
             </p>
           ) : null}
+          </div>
         </div>
       </section>
     </main>

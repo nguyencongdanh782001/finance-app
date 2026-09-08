@@ -178,6 +178,11 @@ export type Wishlist = Prisma.WishlistModel
  */
 export type WishlistItem = Prisma.WishlistItemModel
 /**
+ * Model ProductFavoriteAdjustmentLog
+ * 
+ */
+export type ProductFavoriteAdjustmentLog = Prisma.ProductFavoriteAdjustmentLogModel
+/**
  * Model Order
  * 
  */
@@ -287,6 +292,11 @@ export type RecentlyViewedProduct = Prisma.RecentlyViewedProductModel
  * 
  */
 export type HomepageBanner = Prisma.HomepageBannerModel
+/**
+ * Model StorePolicy
+ * 
+ */
+export type StorePolicy = Prisma.StorePolicyModel
 /**
  * Model HomepageFeaturedProduct
  * 

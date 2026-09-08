@@ -43,7 +43,9 @@ export async function POST(request: Request) {
     // before ProductImage became the gallery source of truth. Preserve an
     // explicitly empty gallery, but hydrate missing data from the legacy field.
     const existingData =
-      existing.data && typeof existing.data === "object" && !Array.isArray(existing.data)
+      existing.data &&
+      typeof existing.data === "object" &&
+      !Array.isArray(existing.data)
         ? (existing.data as Record<string, unknown>)
         : {};
     if (originalProductId && !("images" in existingData)) {
@@ -57,13 +59,15 @@ export async function POST(request: Request) {
           data: {
             data: {
               ...existingData,
-              images: [{
-                clientId: `legacy-image-${originalProductId}`,
-                url: legacyProduct.imageUrl,
-                publicId: legacyProduct.imagePublicId || undefined,
-                position: 0,
-                isPrimary: true,
-              }],
+              images: [
+                {
+                  clientId: `legacy-image-${originalProductId}`,
+                  url: legacyProduct.imageUrl,
+                  publicId: legacyProduct.imagePublicId || undefined,
+                  position: 0,
+                  isPrimary: true,
+                },
+              ],
             },
           },
         });
@@ -125,18 +129,21 @@ export async function POST(request: Request) {
           isPrimary: image.isPrimary,
         }))
       : product.imageUrl
-        ? [{
-            clientId: `legacy-image-${product.id}`,
-            url: product.imageUrl,
-            publicId: product.imagePublicId || undefined,
-            position: 0,
-            isPrimary: true,
-          }]
+        ? [
+            {
+              clientId: `legacy-image-${product.id}`,
+              url: product.imageUrl,
+              publicId: product.imagePublicId || undefined,
+              position: 0,
+              isPrimary: true,
+            },
+          ]
         : [];
     data = {
       title: product.title,
       slug: product.slug || "",
-      description: product.description || "",
+      description: product.descriptionHtml || product.description || "",
+      descriptionContent: product.descriptionContent || null,
       categoryId: String(product.categoryId),
       importPrice: String(product.importPrice),
       sellPrice: String(product.sellPrice),

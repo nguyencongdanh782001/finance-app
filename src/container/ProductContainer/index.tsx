@@ -92,6 +92,9 @@ const mapProductFromApi = (product: ProductApiItem): ProductItemData => ({
   quantity: product.quantity,
   totalAvailableStock: product.totalAvailableStock ?? product.quantity,
   productStatus: product.productStatus || "PRIVATE",
+  organicFavoriteCount: product.organicFavoriteCount ?? 0,
+  favoriteCountAdjustment: product.favoriteCountAdjustment ?? 0,
+  displayFavoriteCount: product.displayFavoriteCount ?? ((product.organicFavoriteCount ?? 0) + (product.favoriteCountAdjustment ?? 0)),
 });
 
 export default function ProductContainer() {
@@ -392,6 +395,25 @@ export default function ProductContainer() {
         return next;
       });
     }
+  };
+
+  const handleAdjustFavorites = async (product: ProductItemData) => {
+    const current = product.displayFavoriteCount ?? 0;
+    const value = window.prompt(`Lượt yêu thích hiển thị cho “${product.title}”:`, String(current));
+    if (value === null) return;
+    const desiredDisplayCount = Number(value);
+    if (!Number.isInteger(desiredDisplayCount) || desiredDisplayCount < 0) {
+      toast({ title: "Giá trị không hợp lệ", description: "Vui lòng nhập một số nguyên không âm.", className: "bg-red-1 text-white text-sm font-medium w-fit", duration: 3000 });
+      return;
+    }
+    const response = await fetch(`/api/admin/products/${product.id}/favorites`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ desiredDisplayCount }) });
+    if (!response.ok) {
+      toast({ title: "Không thể điều chỉnh lượt yêu thích", className: "bg-red-1 text-white text-sm font-medium w-fit", duration: 3000 });
+      return;
+    }
+    const updated = await response.json() as ProductItemData;
+    setProducts((currentProducts) => currentProducts.map((item) => item.id === product.id ? { ...item, organicFavoriteCount: updated.organicFavoriteCount, favoriteCountAdjustment: updated.favoriteCountAdjustment, displayFavoriteCount: updated.displayFavoriteCount } : item));
+    toast({ title: "Đã cập nhật lượt yêu thích", className: "bg-green-16 text-white text-sm font-medium w-fit", duration: 2500 });
   };
 
   const handleDeleteFromForm = () => {
@@ -736,11 +758,12 @@ export default function ProductContainer() {
             />
           ) : (
             <>
-              <ProductList
+            <ProductList
                 products={products}
                 onEdit={handleOpenEdit}
                 onDelete={handleDeleteClick}
-                onStatusChange={handleStatusChange}
+              onStatusChange={handleStatusChange}
+              onAdjustFavorites={handleAdjustFavorites}
                 updatingStatusIds={updatingStatusIds}
               />
               <div ref={loadMoreRef} className="h-0 w-full" />

@@ -3,8 +3,10 @@ import { ACCESS_TOKEN_COOKIE, ADMIN_ROLES } from "@/lib/auth/constants";
 import { verifyJwt } from "@/lib/auth/crypto";
 
 const AUTH_PATH_PREFIX = "/api/auth";
-const PUBLIC_GET_PATHS = ["/api/product", "/api/category"];
+const PUBLIC_GET_PATHS = ["/api/product", "/api/category", "/api/homepage", "/api/policies", "/api/banners", "/api/products/search-suggestions"];
 const CUSTOMER_API_PATHS = ["/api/cart"];
+const isCustomerFavoriteApi = (pathname: string) =>
+  pathname === "/api/me/favorites" || /^\/api\/product\/\d+\/favorite$/.test(pathname);
 
 const allowedOrigins = () => {
   if (
@@ -58,6 +60,12 @@ export async function proxy(req: NextRequest) {
     return withCors(NextResponse.next(), req);
   }
 
+  const bearerToken = req.headers
+    .get("authorization")
+    ?.replace(/^Bearer\s+/i, "");
+  const cookieToken = req.cookies.get(ACCESS_TOKEN_COOKIE)?.value;
+  const token = bearerToken || cookieToken;
+
   const isPublicGet =
     req.method === "GET" &&
     PUBLIC_GET_PATHS.some(
@@ -65,14 +73,20 @@ export async function proxy(req: NextRequest) {
     );
 
   if (isPublicGet) {
+    if (token) {
+      const payload = await verifyJwt(token).catch(() => null);
+      if (payload) {
+        const requestHeaders = new Headers(req.headers);
+        requestHeaders.set("x-user-id", payload.sub);
+        requestHeaders.set("x-user-role", payload.role);
+        return withCors(
+          NextResponse.next({ request: { headers: requestHeaders } }),
+          req,
+        );
+      }
+    }
     return withCors(NextResponse.next(), req);
   }
-
-  const bearerToken = req.headers
-    .get("authorization")
-    ?.replace(/^Bearer\s+/i, "");
-  const cookieToken = req.cookies.get(ACCESS_TOKEN_COOKIE)?.value;
-  const token = bearerToken || cookieToken;
 
   if (!token) {
     return withCors(
@@ -94,10 +108,12 @@ export async function proxy(req: NextRequest) {
   const isCustomerCartApi = CUSTOMER_API_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
+  const isCustomerFavoriteRequest = isCustomerFavoriteApi(pathname);
 
   if (
     !isMembershipSelfApi &&
     !isCustomerCartApi &&
+    !isCustomerFavoriteRequest &&
     !ADMIN_ROLES.includes(payload.role as (typeof ADMIN_ROLES)[number])
   ) {
     return withCors(
