@@ -54,6 +54,7 @@ const PRODUCT_SORT_OPTIONS = [
 type ProductSortValue = (typeof PRODUCT_SORT_OPTIONS)[number]["value"];
 
 const DEFAULT_SORT: ProductSortValue = "createdAt-desc";
+const PRODUCT_LIST_RETURN_STATE = "admin-products-return-state";
 
 const DEFAULT_FORM_VALUES: ProductFormValues = {
   title: "",
@@ -212,6 +213,30 @@ export default function ProductContainer() {
   }, [search, categoryFilter, sortBy]);
 
   useEffect(() => {
+    if (isInitialLoading) return;
+
+    try {
+      const stored = sessionStorage.getItem(PRODUCT_LIST_RETURN_STATE);
+      if (!stored) return;
+      const state = JSON.parse(stored) as { scrollY?: number };
+      const scrollY = Number(state.scrollY);
+      if (!Number.isFinite(scrollY)) {
+        sessionStorage.removeItem(PRODUCT_LIST_RETURN_STATE);
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: scrollY, behavior: "instant" });
+          sessionStorage.removeItem(PRODUCT_LIST_RETURN_STATE);
+        });
+      });
+    } catch {
+      sessionStorage.removeItem(PRODUCT_LIST_RETURN_STATE);
+    }
+  }, [isInitialLoading]);
+
+  useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (search) {
@@ -276,7 +301,18 @@ export default function ProductContainer() {
   };
 
   const handleOpenEdit = (product: ProductItemData) => {
-    router.push(`/admin/products/${product.id}/edit`);
+    const returnQuery = searchParams.toString();
+    try {
+      sessionStorage.setItem(
+        PRODUCT_LIST_RETURN_STATE,
+        JSON.stringify({ scrollY: window.scrollY }),
+      );
+    } catch {
+      // Navigation still works when sessionStorage is unavailable.
+    }
+    router.push(
+      `/admin/products/${product.id}/edit${returnQuery ? `?returnQuery=${encodeURIComponent(returnQuery)}` : ""}`,
+    );
   };
 
   const handleDeleteClick = (product: ProductItemData) => {

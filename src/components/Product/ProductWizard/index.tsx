@@ -92,6 +92,7 @@ export default function ProductWizard({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const returnQuery = searchParams.get("returnQuery");
   const [draft, setDraft] = useState<ProductDraftApiItem | null>(null);
   const [images, setImages] = useState<ProductImageDraftValue[]>([]);
   const [categories, setCategories] = useState<CategoryApiItem[]>([]);
@@ -435,7 +436,7 @@ export default function ProductWizard({
       title: mode === "CREATE" ? "Đã tạo sản phẩm" : "Đã áp dụng thay đổi",
       className: "bg-green-16 text-white",
     });
-    router.push("/admin/products");
+    router.push(returnQuery ? `/admin/products?${returnQuery}` : "/admin/products");
   };
   const discard = async () => {
     if (!draft) return;
@@ -448,7 +449,7 @@ export default function ProductWizard({
         className: "bg-red-1 text-white",
       });
     localStorage.removeItem(recoveryKey);
-    router.push("/admin/products");
+    router.push(returnQuery ? `/admin/products?${returnQuery}` : "/admin/products");
   };
   if (!draft)
     return (
@@ -474,7 +475,7 @@ export default function ProductWizard({
         }
         breadcrumb={
           <button
-            onClick={() => router.push("/admin/products")}
+            onClick={() => router.push(returnQuery ? `/admin/products?${returnQuery}` : "/admin/products")}
             className="inline-flex items-center gap-1 hover:text-(--admin-primary)"
           >
             <ArrowLeft className="size-3.5" /> Sản phẩm
