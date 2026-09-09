@@ -13,6 +13,7 @@ export type InvoiceView = {
   publicUrl?: string | null;
   order: {
     id?: number;
+    dailyId?: number | null;
     orderNumber: string;
     source: string;
     status: string;

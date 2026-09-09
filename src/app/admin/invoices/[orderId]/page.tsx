@@ -132,7 +132,11 @@ export default function AdminInvoicePage() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3 print:hidden">
           <Link
-            href="/admin"
+            href={
+              invoice?.order.dailyId
+                ? `/admin/daily-detail/${invoice.order.dailyId}?tab=invoices`
+                : "/admin"
+            }
             className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary"
           >
             <ArrowLeft className="size-4" />

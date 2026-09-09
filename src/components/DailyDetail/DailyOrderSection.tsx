@@ -237,6 +237,18 @@ function PaymentBadge({ status }: { status: PaymentStatusValue }) {
   );
 }
 
+function InvoiceBadge({ invoice }: { invoice: DailyOrder["invoice"] }) {
+  return invoice?.status === "ISSUED" ? (
+    <span className="inline-flex h-6 items-center gap-1 whitespace-nowrap rounded-md bg-emerald-50 px-2 text-xs font-bold text-emerald-700">
+      <ReceiptText className="size-3" /> Đã phát hành
+    </span>
+  ) : (
+    <span className="inline-flex h-6 items-center whitespace-nowrap rounded-md bg-slate-100 px-2 text-xs font-bold text-slate-500">
+      Chưa xuất
+    </span>
+  );
+}
+
 function OrderSelect({
   name,
   value,
@@ -681,8 +693,14 @@ function OrderActions({
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem asChild>
+          <DropdownMenuContent
+            align="end"
+            className="w-56 rounded-xl border-slate-200 p-1.5 shadow-xl"
+          >
+            <DropdownMenuItem
+              asChild
+              className="gap-2 rounded-lg px-3 py-2.5 font-semibold"
+            >
               <Link href={`/admin/invoices/${order.id}`}>
                 <ReceiptText className="size-4 text-primary" />
                 {order.invoice ? "Xem hóa đơn" : "Xuất hóa đơn"}
@@ -691,6 +709,7 @@ function OrderActions({
             <DropdownMenuSeparator />
             {nextOnlineStatus ? (
               <DropdownMenuItem
+                className="gap-2 rounded-lg px-3 py-2.5"
                 onClick={() => void onAdvanceStatus(order)}
                 disabled={updatingOrderId === order.id}
               >
@@ -700,13 +719,16 @@ function OrderActions({
             ) : null}
             {canEdit ? (
               <>
-                <DropdownMenuItem onClick={() => onEdit(order)}>
+                <DropdownMenuItem
+                  className="gap-2 rounded-lg px-3 py-2.5"
+                  onClick={() => onEdit(order)}
+                >
                   <Pencil className="size-4 text-slate-500" />
                   Sửa đơn
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="text-rose-600 focus:text-rose-600"
+                  className="gap-2 rounded-lg px-3 py-2.5 text-rose-600 focus:bg-rose-50 focus:text-rose-600"
                   onClick={() => onCancel(order)}
                 >
                   <Trash2 className="size-4" />
@@ -800,6 +822,7 @@ function OrderRow({
         <div className="flex min-w-0 flex-wrap gap-1.5 sm:justify-end">
           <PaymentBadge status={order.paymentStatus} />
           <StatusBadge status={order.status} />
+          <InvoiceBadge invoice={order.invoice} />
         </div>
       </div>
       <div className="mt-3 flex justify-end">
@@ -821,11 +844,13 @@ export default function DailyOrderSection({
   isLoading: isDailyLoading,
   reload,
   onReload,
+  invoiceOnly = false,
 }: {
   data: DailyDetailResponse | undefined;
   isLoading: boolean;
   reload: boolean;
   onReload: () => void;
+  invoiceOnly?: boolean;
 }) {
   const dailyId = data?.id;
   const [orders, setOrders] = useState<DailyOrderListResponse | null>(null);
@@ -871,8 +896,8 @@ export default function DailyOrderSection({
 
     const res = await financeAPI.getDailyOrders(dailyId, {
       search: debouncedSearch || undefined,
-      source: activeTab,
-      status: activeTab === "ONLINE" ? status : "ALL",
+      source: invoiceOnly ? "ALL" : activeTab,
+      status: invoiceOnly || activeTab === "OFFLINE" ? "ALL" : status,
       paymentStatus,
       paymentMethod,
     });
@@ -904,6 +929,7 @@ export default function DailyOrderSection({
     dailyId,
     debouncedSearch,
     activeTab,
+    invoiceOnly,
     status,
     paymentStatus,
     paymentMethod,
@@ -914,6 +940,11 @@ export default function DailyOrderSection({
       tableScrollerRef.current.scrollLeft = 0;
     }
   }, [activeTab]);
+
+  const displayedOrders = invoiceOnly
+    ? (orders?.items.filter((order) => order.invoice?.status === "ISSUED") ??
+      [])
+    : (orders?.items ?? []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -1124,14 +1155,16 @@ export default function DailyOrderSection({
           </div>
           <div className="min-w-0">
             <p className="text-sm font-extrabold uppercase text-slate-700">
-              Quản lý đơn hàng
+              {invoiceOnly ? "Quản lý hóa đơn" : "Quản lý đơn hàng"}
             </p>
             <p className="mt-0.5 text-xs font-semibold text-slate-400">
-              Đơn tại shop và đơn online trong ngày
+              {invoiceOnly
+                ? "Xem lại các hóa đơn đã phát hành trong ngày"
+                : "Đơn tại shop và đơn online trong ngày"}
             </p>
           </div>
         </div>
-        {activeTab === "OFFLINE" ? (
+        {!invoiceOnly && activeTab === "OFFLINE" ? (
           <Button
             type="button"
             variant="adminPrimary"
@@ -1153,38 +1186,45 @@ export default function DailyOrderSection({
         </div>
       ) : (
         <>
-          <div className="inline-grid w-full max-w-full min-w-0 grid-cols-2 gap-1 rounded-xl border border-slate-100 bg-slate-50 p-1 sm:w-auto">
-            {[
-              {
-                value: "OFFLINE" as const,
-                label: "Tại shop",
-                count: orders.counts.offline,
-              },
-              {
-                value: "ONLINE" as const,
-                label: "Online",
-                count: orders.counts.online,
-              },
-            ].map((tab) => {
-              const isActive = activeTab === tab.value;
+          {!invoiceOnly ? (
+            <div className="inline-grid w-full max-w-full min-w-0 grid-cols-2 gap-1 rounded-xl border border-slate-100 bg-slate-50 p-1 sm:w-auto">
+              {[
+                {
+                  value: "OFFLINE" as const,
+                  label: "Tại shop",
+                  count: orders.counts.offline,
+                },
+                {
+                  value: "ONLINE" as const,
+                  label: "Online",
+                  count: orders.counts.online,
+                },
+              ].map((tab) => {
+                const isActive = activeTab === tab.value;
 
-              return (
-                <Button
-                  key={tab.value}
-                  type="button"
-                  variant={isActive ? "adminPrimary" : "ghost"}
-                  className={`h-9 rounded-lg px-3 text-sm font-bold ${
-                    isActive
-                      ? ""
-                      : "bg-transparent text-slate-500 hover:bg-white"
-                  }`}
-                  onClick={() => setActiveTab(tab.value)}
-                >
-                  {tab.label} {tab.count.toLocaleString("vi-VN")}
-                </Button>
-              );
-            })}
-          </div>
+                return (
+                  <Button
+                    key={tab.value}
+                    type="button"
+                    variant={isActive ? "adminPrimary" : "ghost"}
+                    className={`h-9 rounded-lg px-3 text-sm font-bold ${
+                      isActive
+                        ? ""
+                        : "bg-transparent text-slate-500 hover:bg-white"
+                    }`}
+                    onClick={() => setActiveTab(tab.value)}
+                  >
+                    {tab.label} {tab.count.toLocaleString("vi-VN")}
+                  </Button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">
+              <ReceiptText className="size-4" />
+              Hóa đơn đã phát hành
+            </div>
+          )}
 
           <OrderFilters
             activeTab={activeTab}
@@ -1200,7 +1240,7 @@ export default function DailyOrderSection({
             onReset={resetFilters}
           />
 
-          {orders.items.length === 0 ? (
+          {displayedOrders.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-200 bg-white p-6 text-center">
               {hasActiveFilter ? (
                 <>
@@ -1276,7 +1316,7 @@ export default function DailyOrderSection({
                       Hành động
                     </span>
                   </div>
-                  {orders.items.map((order) => (
+                  {displayedOrders.map((order) => (
                     <div
                       key={order.id}
                       className={`grid items-center gap-3 border-b border-slate-50 px-4 py-3 last:border-b-0 ${
@@ -1302,6 +1342,9 @@ export default function DailyOrderSection({
                             },
                           )}
                         </p>
+                        <div className="mt-1">
+                          <InvoiceBadge invoice={order.invoice} />
+                        </div>
                       </div>
                       {activeTab === "ONLINE" ? (
                         <p
@@ -1358,7 +1401,7 @@ export default function DailyOrderSection({
               </div>
 
               <div className="order-management-cards w-full max-w-full min-w-0 gap-3">
-                {orders.items.map((order) => (
+                {displayedOrders.map((order) => (
                   <OrderRow
                     key={order.id}
                     order={order}

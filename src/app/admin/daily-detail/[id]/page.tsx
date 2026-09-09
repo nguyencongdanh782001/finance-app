@@ -24,18 +24,20 @@ import dayjs from "dayjs";
 import {
   ChevronLeft,
   ChevronRight,
+  FileText,
   PackageCheck,
   ReceiptText,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const DailyDetail = () => {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const id = Number(params.id);
 
@@ -44,9 +46,9 @@ const DailyDetail = () => {
   >(undefined);
   const [reload, setReload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"revenue" | "orders" | "products">(
-    "revenue",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "revenue" | "orders" | "invoices" | "products"
+  >(() => (searchParams.get("tab") === "invoices" ? "invoices" : "revenue"));
 
   const fetchData = async (showLoading = true) => {
     try {
@@ -131,6 +133,19 @@ const DailyDetail = () => {
               }`}
             />
             Doanh thu
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("invoices")}
+            aria-current={activeTab === "invoices" ? "page" : undefined}
+            className={`flex h-9 min-w-0 flex-1 shrink cursor-pointer items-center justify-center gap-1.5 rounded-md px-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--admin-primary)/35 sm:px-3 ${
+              activeTab === "invoices"
+                ? "bg-(--admin-primary) text-white"
+                : "text-(--admin-text-muted) hover:text-(--admin-text-secondary)"
+            }`}
+          >
+            <FileText className="size-3.5" />
+            Hóa đơn
           </button>
           <button
             type="button"
@@ -299,6 +314,14 @@ const DailyDetail = () => {
             isLoading={isLoading}
             reload={reload}
             onReload={() => setReload(true)}
+          />
+        ) : activeTab === "invoices" ? (
+          <DailyOrderSection
+            data={dailyDetailData}
+            isLoading={isLoading}
+            reload={reload}
+            onReload={() => setReload(true)}
+            invoiceOnly
           />
         ) : (
           <FormProducts

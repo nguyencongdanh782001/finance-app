@@ -7,6 +7,7 @@ const invoiceInclude = {
     include: {
       items: { orderBy: { id: "asc" as const } },
       user: { select: { displayName: true, email: true, phone: true } },
+      soldContributions: { select: { dailyFinanceId: true }, take: 1 },
     },
   },
   items: { orderBy: { id: "asc" as const } },
@@ -75,6 +76,7 @@ async function getOrderSnapshot(
     include: {
       items: { orderBy: { id: "asc" } },
       user: { select: { displayName: true, email: true, phone: true } },
+      soldContributions: { select: { dailyFinanceId: true }, take: 1 },
     },
   });
   if (!order) throw new Error("Đơn hàng không còn tồn tại.");
@@ -130,6 +132,7 @@ function mapInvoice(invoice: InvoiceWithRelations) {
     isPrimary: invoice.isPrimary,
     order: {
       id: invoice.orderId,
+      dailyId: invoice.order.soldContributions[0]?.dailyFinanceId || null,
       orderNumber: invoice.orderCodeSnapshot,
       source: invoice.orderSourceSnapshot,
       status: invoice.orderStatusSnapshot,
@@ -184,12 +187,20 @@ function mapInvoice(invoice: InvoiceWithRelations) {
 }
 
 export async function previewInvoice(orderId: number) {
+  const existing = await prisma.orderInvoice.findFirst({
+    where: { orderId, status: "ISSUED", isPrimary: true },
+    orderBy: { version: "desc" },
+    include: invoiceInclude,
+  });
+  if (existing) return mapInvoice(existing);
+
   const snapshot = await getOrderSnapshot(prisma, orderId);
   return {
     status: "DRAFT" as const,
     invoiceNumber: null,
     order: {
       id: snapshot.order.id,
+      dailyId: snapshot.order.soldContributions[0]?.dailyFinanceId || null,
       orderNumber: snapshot.order.orderNumber,
       source: snapshot.order.source,
       status: snapshot.order.status,
