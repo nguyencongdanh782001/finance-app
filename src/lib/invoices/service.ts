@@ -40,8 +40,17 @@ const toNumber = (value: Prisma.Decimal | number | null | undefined) =>
 
 const makePublicToken = () => crypto.randomBytes(32).toString("base64url");
 
-const publicUrl = (token: string) =>
-  `${process.env.NEXT_PUBLIC_SITE_URL || ""}/invoice/${token}`;
+const invoiceSiteUrl = () => {
+  const isProduction =
+    process.env.VERCEL_ENV === "production" ||
+    process.env.NEXT_PUBLIC_NODE_ENV === "production" ||
+    process.env.NODE_ENV === "production";
+  return isProduction
+    ? "https://quynhnhistore.com"
+    : "https://dev.quynhnhistore.com";
+};
+
+const publicUrl = (token: string) => `${invoiceSiteUrl()}/invoice/${token}`;
 
 async function getSellerSnapshot(tx: Prisma.TransactionClient | typeof prisma) {
   const settings = await tx.storeSetting.findFirst({ orderBy: { id: "asc" } });
@@ -137,7 +146,7 @@ function mapInvoice(invoice: InvoiceWithRelations) {
       returnPolicy: invoice.returnPolicyNote,
     },
     customer: {
-      name: invoice.customerName || "Khách lẻ",
+      name: invoice.customerName || "Khách vãng lai",
       phone: invoice.customerPhone,
       email: invoice.customerEmail,
       address: invoice.shippingAddress,
@@ -188,7 +197,7 @@ export async function previewInvoice(orderId: number) {
     },
     seller: snapshot.seller,
     customer: {
-      name: snapshot.customerName || "Khách lẻ",
+      name: snapshot.customerName || "Khách vãng lai",
       phone: snapshot.customerPhone,
       email: snapshot.order.user?.email || null,
       address: snapshot.shippingAddress,

@@ -4,6 +4,7 @@ import {
   InvoiceDocument,
   type InvoiceView,
 } from "@/components/Invoice/InvoiceDocument";
+import { AdminSelect } from "@/components/Admin/AdminFields";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hook/use-toast";
 import {
@@ -135,16 +136,18 @@ export default function AdminInvoicePage() {
             Quay lại quản trị
           </Link>
           <div className="flex flex-wrap items-center gap-2">
-            <select
-              value={paper}
-              onChange={(event) =>
-                setPaper(event.target.value as "A4" | "80mm")
-              }
-              className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold"
-            >
-              <option value="A4">Khổ A4</option>
-              <option value="80mm">Khổ 80mm</option>
-            </select>
+            <div className="w-36">
+              <AdminSelect
+                name="invoice-paper"
+                value={paper}
+                options={[
+                  { value: "A4", label: "Khổ A4" },
+                  { value: "80mm", label: "Khổ 80mm" },
+                ]}
+                placeholder="Chọn khổ giấy"
+                onChange={(value) => setPaper(value as "A4" | "80mm")}
+              />
+            </div>
             <Button
               type="button"
               variant="ghost"
