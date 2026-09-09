@@ -1,2 +1,6 @@
--- DropIndex
-DROP INDEX "order_invoice_one_primary_issued_idx";
+-- Intentionally empty.
+-- `order_invoice_one_primary_issued_idx` is a hand-authored partial unique
+-- index created by `20260909120000_add_order_invoices`. Prisma cannot model
+-- partial indexes in schema.prisma and generated a DROP INDEX here because
+-- this migration sorts before the invoice migration. Keep the database
+-- constraint and make this migration safe for shadow databases.
