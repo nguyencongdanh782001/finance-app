@@ -58,6 +58,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import {
   type ComponentType,
   useEffect,
@@ -647,7 +648,7 @@ function OrderActions({
   const canEdit = order.source === "OFFLINE" && order.status !== "CANCELLED";
   const nextOnlineStatus =
     order.source === "ONLINE" ? NEXT_ONLINE_STATUS[order.status] : undefined;
-  const hasSecondaryActions = canEdit || Boolean(nextOnlineStatus);
+  const hasSecondaryActions = true;
 
   return (
     <div className="flex items-center justify-end gap-1">
@@ -681,6 +682,13 @@ function OrderActions({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/invoices/${order.id}`}>
+                <ReceiptText className="size-4 text-primary" />
+                {order.invoice ? "Xem hóa đơn" : "Xuất hóa đơn"}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             {nextOnlineStatus ? (
               <DropdownMenuItem
                 onClick={() => void onAdvanceStatus(order)}

@@ -193,6 +193,26 @@ export type Order = Prisma.OrderModel
  */
 export type OrderItem = Prisma.OrderItemModel
 /**
+ * Model OrderInvoice
+ * 
+ */
+export type OrderInvoice = Prisma.OrderInvoiceModel
+/**
+ * Model OrderInvoiceItem
+ * 
+ */
+export type OrderInvoiceItem = Prisma.OrderInvoiceItemModel
+/**
+ * Model InvoiceSequence
+ * 
+ */
+export type InvoiceSequence = Prisma.InvoiceSequenceModel
+/**
+ * Model StoreSetting
+ * 
+ */
+export type StoreSetting = Prisma.StoreSettingModel
+/**
  * Model InventoryTransaction
  * 
  */
