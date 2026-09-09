@@ -86,6 +86,10 @@ export const ModelName = {
   ProductFavoriteAdjustmentLog: 'ProductFavoriteAdjustmentLog',
   Order: 'Order',
   OrderItem: 'OrderItem',
+  OrderInvoice: 'OrderInvoice',
+  OrderInvoiceItem: 'OrderInvoiceItem',
+  InvoiceSequence: 'InvoiceSequence',
+  StoreSetting: 'StoreSetting',
   InventoryTransaction: 'InventoryTransaction',
   OrderStatusHistory: 'OrderStatusHistory',
   Warehouse: 'Warehouse',
@@ -783,6 +787,97 @@ export const OrderItemScalarFieldEnum = {
 } as const
 
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
+export const OrderInvoiceScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  invoiceNumber: 'invoiceNumber',
+  version: 'version',
+  status: 'status',
+  publicToken: 'publicToken',
+  publicAccessEnabled: 'publicAccessEnabled',
+  isPrimary: 'isPrimary',
+  orderCodeSnapshot: 'orderCodeSnapshot',
+  orderSourceSnapshot: 'orderSourceSnapshot',
+  orderStatusSnapshot: 'orderStatusSnapshot',
+  paymentMethodSnapshot: 'paymentMethodSnapshot',
+  paymentStatusSnapshot: 'paymentStatusSnapshot',
+  sellerName: 'sellerName',
+  sellerPhone: 'sellerPhone',
+  sellerEmail: 'sellerEmail',
+  sellerAddress: 'sellerAddress',
+  sellerLogoUrl: 'sellerLogoUrl',
+  sellerTaxCode: 'sellerTaxCode',
+  sellerFooterNote: 'sellerFooterNote',
+  returnPolicyNote: 'returnPolicyNote',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  customerEmail: 'customerEmail',
+  shippingAddress: 'shippingAddress',
+  subtotal: 'subtotal',
+  discountAmount: 'discountAmount',
+  shippingFee: 'shippingFee',
+  taxAmount: 'taxAmount',
+  totalAmount: 'totalAmount',
+  couponCodeSnapshot: 'couponCodeSnapshot',
+  note: 'note',
+  issuedAt: 'issuedAt',
+  issuedById: 'issuedById',
+  voidedAt: 'voidedAt',
+  voidedById: 'voidedById',
+  voidReason: 'voidReason',
+  sourceUpdatedAtSnapshot: 'sourceUpdatedAtSnapshot',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrderInvoiceScalarFieldEnum = (typeof OrderInvoiceScalarFieldEnum)[keyof typeof OrderInvoiceScalarFieldEnum]
+
+
+export const OrderInvoiceItemScalarFieldEnum = {
+  id: 'id',
+  invoiceId: 'invoiceId',
+  orderItemId: 'orderItemId',
+  productName: 'productName',
+  variantName: 'variantName',
+  colorName: 'colorName',
+  sizeName: 'sizeName',
+  sku: 'sku',
+  imageUrl: 'imageUrl',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  lineDiscount: 'lineDiscount',
+  lineTotal: 'lineTotal'
+} as const
+
+export type OrderInvoiceItemScalarFieldEnum = (typeof OrderInvoiceItemScalarFieldEnum)[keyof typeof OrderInvoiceItemScalarFieldEnum]
+
+
+export const InvoiceSequenceScalarFieldEnum = {
+  key: 'key',
+  value: 'value',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InvoiceSequenceScalarFieldEnum = (typeof InvoiceSequenceScalarFieldEnum)[keyof typeof InvoiceSequenceScalarFieldEnum]
+
+
+export const StoreSettingScalarFieldEnum = {
+  id: 'id',
+  storeName: 'storeName',
+  phone: 'phone',
+  email: 'email',
+  address: 'address',
+  logoUrl: 'logoUrl',
+  taxCode: 'taxCode',
+  invoiceFooter: 'invoiceFooter',
+  returnPolicy: 'returnPolicy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
 
 
 export const InventoryTransactionScalarFieldEnum = {

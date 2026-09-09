@@ -6,23 +6,25 @@ const userIdFrom = (request: Request) => Number(request.headers.get("x-user-id")
 
 const cartItemResponse = (item: {
   id: number; quantity: number; productId: number; variantId: number | null;
-  product: { title: string; imageUrl: string; sellPrice: unknown; quantity: number; status: string; images: { url: string }[]; variants: { id: number; color: string | null; size: string | null; sellPrice: unknown; quantity: number; reservedQuantity: number; images: { url: string }[] }[] };
-  variant: { color: string | null; size: string | null; sellPrice: unknown; quantity: number; reservedQuantity: number; images: { url: string }[] } | null;
+  product: { title: string; slug: string | null; imageUrl: string; sellPrice: unknown; quantity: number; status: string; images: { url: string }[]; variants: { id: number; sku: string; color: string | null; size: string | null; sellPrice: unknown; comparePrice: unknown; quantity: number; reservedQuantity: number; images: { url: string }[] }[] };
+  variant: { sku: string; color: string | null; size: string | null; sellPrice: unknown; comparePrice: unknown; quantity: number; reservedQuantity: number; images: { url: string }[] } | null;
 }) => {
   const variant = item.variant;
   const stock = Math.max(0, Number(variant?.quantity ?? item.product.quantity) - Number(variant?.reservedQuantity ?? 0));
-  return { id: item.id, key: `${item.productId}-${item.variantId ?? "base"}`, productId: item.productId, variantId: item.variantId ?? undefined, title: item.product.title, imageUrl: variant?.images[0]?.url || item.product.images[0]?.url || item.product.imageUrl, price: Number(variant?.sellPrice ?? item.product.sellPrice), variantLabel: [variant?.color, variant?.size].filter(Boolean).join(" · "), quantity: item.quantity, stock };
+  const price = Number(variant?.sellPrice ?? item.product.sellPrice);
+  const comparePrice = Number(variant?.comparePrice || 0);
+  return { id: item.id, key: `${item.productId}-${item.variantId ?? "base"}`, productId: item.productId, variantId: item.variantId ?? undefined, slug: item.product.slug, title: item.product.title, imageUrl: variant?.images[0]?.url || item.product.images[0]?.url || item.product.imageUrl, price, comparePrice: comparePrice > price ? comparePrice : null, variantLabel: [variant?.color, variant?.size].filter(Boolean).join(" · "), sku: variant?.sku || null, quantity: item.quantity, stock, status: item.product.status, isEligible: item.product.status === "PUBLIC" && Boolean(variant) && stock > 0 };
 };
 
 const include = {
   product: {
     select: {
-      title: true, imageUrl: true, sellPrice: true, quantity: true, status: true,
+      title: true, slug: true, imageUrl: true, sellPrice: true, quantity: true, status: true,
       images: { where: { variantId: null }, orderBy: { position: "asc" as const }, take: 1 },
-      variants: { select: { id: true, color: true, size: true, sellPrice: true, quantity: true, reservedQuantity: true, images: { orderBy: { position: "asc" as const }, take: 1 } } },
+      variants: { select: { id: true, sku: true, color: true, size: true, sellPrice: true, comparePrice: true, quantity: true, reservedQuantity: true, images: { orderBy: { position: "asc" as const }, take: 1 } } },
     },
   },
-  variant: { select: { color: true, size: true, sellPrice: true, quantity: true, reservedQuantity: true, images: { orderBy: { position: "asc" as const }, take: 1 } } },
+  variant: { select: { sku: true, color: true, size: true, sellPrice: true, comparePrice: true, quantity: true, reservedQuantity: true, images: { orderBy: { position: "asc" as const }, take: 1 } } },
 } as const;
 
 export async function GET(request: Request) {

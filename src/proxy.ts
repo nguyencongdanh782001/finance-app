@@ -3,10 +3,27 @@ import { ACCESS_TOKEN_COOKIE, ADMIN_ROLES } from "@/lib/auth/constants";
 import { verifyJwt } from "@/lib/auth/crypto";
 
 const AUTH_PATH_PREFIX = "/api/auth";
-const PUBLIC_GET_PATHS = ["/api/product", "/api/category", "/api/homepage", "/api/policies", "/api/banners", "/api/products/search-suggestions"];
+const PUBLIC_GET_PATHS = [
+  "/api/product",
+  "/api/category",
+  "/api/homepage",
+  "/api/policies",
+  "/api/banners",
+  "/api/products/search-suggestions",
+  "/api/products",
+  "/api/invoices/public",
+];
 const CUSTOMER_API_PATHS = ["/api/cart"];
+const CUSTOMER_CHECKOUT_API_PATHS = [
+  "/api/checkout/buy-now-intent",
+  "/api/checkout/cart-intent",
+  "/api/orders/checkout",
+];
 const isCustomerFavoriteApi = (pathname: string) =>
-  pathname === "/api/me/favorites" || /^\/api\/product\/\d+\/favorite$/.test(pathname);
+  pathname === "/api/me/favorites" ||
+  /^\/api\/product\/\d+\/favorite$/.test(pathname);
+const isCustomerInvoiceApi = (pathname: string) =>
+  /^\/api\/me\/orders\/\d+\/invoice$/.test(pathname);
 
 const allowedOrigins = () => {
   if (
@@ -108,12 +125,18 @@ export async function proxy(req: NextRequest) {
   const isCustomerCartApi = CUSTOMER_API_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
+  const isCustomerCheckoutApi = CUSTOMER_CHECKOUT_API_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
   const isCustomerFavoriteRequest = isCustomerFavoriteApi(pathname);
+  const isCustomerInvoiceRequest = isCustomerInvoiceApi(pathname);
 
   if (
     !isMembershipSelfApi &&
     !isCustomerCartApi &&
+    !isCustomerCheckoutApi &&
     !isCustomerFavoriteRequest &&
+    !isCustomerInvoiceRequest &&
     !ADMIN_ROLES.includes(payload.role as (typeof ADMIN_ROLES)[number])
   ) {
     return withCors(

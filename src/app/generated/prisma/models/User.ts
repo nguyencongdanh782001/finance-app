@@ -387,6 +387,8 @@ export type UserWhereInput = {
   orders?: Prisma.OrderListRelationFilter
   createdOrders?: Prisma.OrderListRelationFilter
   updatedOrders?: Prisma.OrderListRelationFilter
+  issuedInvoices?: Prisma.OrderInvoiceListRelationFilter
+  voidedInvoices?: Prisma.OrderInvoiceListRelationFilter
   orderStatusChanges?: Prisma.OrderStatusHistoryListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
@@ -435,6 +437,8 @@ export type UserOrderByWithRelationInput = {
   orders?: Prisma.OrderOrderByRelationAggregateInput
   createdOrders?: Prisma.OrderOrderByRelationAggregateInput
   updatedOrders?: Prisma.OrderOrderByRelationAggregateInput
+  issuedInvoices?: Prisma.OrderInvoiceOrderByRelationAggregateInput
+  voidedInvoices?: Prisma.OrderInvoiceOrderByRelationAggregateInput
   orderStatusChanges?: Prisma.OrderStatusHistoryOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
@@ -486,6 +490,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   orders?: Prisma.OrderListRelationFilter
   createdOrders?: Prisma.OrderListRelationFilter
   updatedOrders?: Prisma.OrderListRelationFilter
+  issuedInvoices?: Prisma.OrderInvoiceListRelationFilter
+  voidedInvoices?: Prisma.OrderInvoiceListRelationFilter
   orderStatusChanges?: Prisma.OrderStatusHistoryListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
@@ -592,6 +598,8 @@ export type UserCreateInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -639,6 +647,8 @@ export type UserUncheckedCreateInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -685,6 +695,8 @@ export type UserUpdateInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -732,6 +744,8 @@ export type UserUncheckedUpdateInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1217,6 +1231,38 @@ export type UserUpdateOneWithoutUpdatedOrdersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUpdatedOrdersInput, Prisma.UserUpdateWithoutUpdatedOrdersInput>, Prisma.UserUncheckedUpdateWithoutUpdatedOrdersInput>
 }
 
+export type UserCreateNestedOneWithoutIssuedInvoicesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIssuedInvoicesInput, Prisma.UserUncheckedCreateWithoutIssuedInvoicesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIssuedInvoicesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutVoidedInvoicesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVoidedInvoicesInput, Prisma.UserUncheckedCreateWithoutVoidedInvoicesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVoidedInvoicesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutIssuedInvoicesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIssuedInvoicesInput, Prisma.UserUncheckedCreateWithoutIssuedInvoicesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIssuedInvoicesInput
+  upsert?: Prisma.UserUpsertWithoutIssuedInvoicesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutIssuedInvoicesInput, Prisma.UserUpdateWithoutIssuedInvoicesInput>, Prisma.UserUncheckedUpdateWithoutIssuedInvoicesInput>
+}
+
+export type UserUpdateOneWithoutVoidedInvoicesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVoidedInvoicesInput, Prisma.UserUncheckedCreateWithoutVoidedInvoicesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVoidedInvoicesInput
+  upsert?: Prisma.UserUpsertWithoutVoidedInvoicesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVoidedInvoicesInput, Prisma.UserUpdateWithoutVoidedInvoicesInput>, Prisma.UserUncheckedUpdateWithoutVoidedInvoicesInput>
+}
+
 export type UserCreateNestedOneWithoutOrderStatusChangesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutOrderStatusChangesInput, Prisma.UserUncheckedCreateWithoutOrderStatusChangesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrderStatusChangesInput
@@ -1344,6 +1390,8 @@ export type UserCreateWithoutProductDraftsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1390,6 +1438,8 @@ export type UserUncheckedCreateWithoutProductDraftsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1451,6 +1501,8 @@ export type UserUpdateWithoutProductDraftsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1497,6 +1549,8 @@ export type UserUncheckedUpdateWithoutProductDraftsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1542,6 +1596,8 @@ export type UserCreateWithoutProductImportJobsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1588,6 +1644,8 @@ export type UserUncheckedCreateWithoutProductImportJobsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1649,6 +1707,8 @@ export type UserUpdateWithoutProductImportJobsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1695,6 +1755,8 @@ export type UserUncheckedUpdateWithoutProductImportJobsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1739,6 +1801,8 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1785,6 +1849,8 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1846,6 +1912,8 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1892,6 +1960,8 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1937,6 +2007,8 @@ export type UserCreateWithoutSessionsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1983,6 +2055,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2044,6 +2118,8 @@ export type UserUpdateWithoutSessionsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2090,6 +2166,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2135,6 +2213,8 @@ export type UserCreateWithoutMembershipInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2181,6 +2261,8 @@ export type UserUncheckedCreateWithoutMembershipInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2282,6 +2364,8 @@ export type UserCreateWithoutMembershipHistoriesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2328,6 +2412,8 @@ export type UserUncheckedCreateWithoutMembershipHistoriesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2389,6 +2475,8 @@ export type UserUpdateWithoutMembershipHistoriesInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2435,6 +2523,8 @@ export type UserUncheckedUpdateWithoutMembershipHistoriesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2480,6 +2570,8 @@ export type UserCreateWithoutBenefitRedemptionsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2526,6 +2618,8 @@ export type UserUncheckedCreateWithoutBenefitRedemptionsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2587,6 +2681,8 @@ export type UserUpdateWithoutBenefitRedemptionsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2633,6 +2729,8 @@ export type UserUncheckedUpdateWithoutBenefitRedemptionsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2677,6 +2775,8 @@ export type UserCreateWithoutOtpsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2723,6 +2823,8 @@ export type UserUncheckedCreateWithoutOtpsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2784,6 +2886,8 @@ export type UserUpdateWithoutOtpsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2830,6 +2934,8 @@ export type UserUncheckedUpdateWithoutOtpsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2875,6 +2981,8 @@ export type UserCreateWithoutAddressesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2921,6 +3029,8 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2982,6 +3092,8 @@ export type UserUpdateWithoutAddressesInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3028,6 +3140,8 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3073,6 +3187,8 @@ export type UserCreateWithoutCartsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3119,6 +3235,8 @@ export type UserUncheckedCreateWithoutCartsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3180,6 +3298,8 @@ export type UserUpdateWithoutCartsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3226,6 +3346,8 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3271,6 +3393,8 @@ export type UserCreateWithoutWishlistsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3317,6 +3441,8 @@ export type UserUncheckedCreateWithoutWishlistsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3378,6 +3504,8 @@ export type UserUpdateWithoutWishlistsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3424,6 +3552,8 @@ export type UserUncheckedUpdateWithoutWishlistsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3469,6 +3599,8 @@ export type UserCreateWithoutWishlistItemsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3515,6 +3647,8 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3576,6 +3710,8 @@ export type UserUpdateWithoutWishlistItemsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3622,6 +3758,8 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3668,6 +3806,8 @@ export type UserCreateWithoutFavoriteAdjustmentLogsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3714,6 +3854,8 @@ export type UserUncheckedCreateWithoutFavoriteAdjustmentLogsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3775,6 +3917,8 @@ export type UserUpdateWithoutFavoriteAdjustmentLogsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3821,6 +3965,8 @@ export type UserUncheckedUpdateWithoutFavoriteAdjustmentLogsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3865,6 +4011,8 @@ export type UserCreateWithoutOrdersInput = {
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3911,6 +4059,8 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3961,6 +4111,8 @@ export type UserCreateWithoutCreatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -4007,6 +4159,8 @@ export type UserUncheckedCreateWithoutCreatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -4057,6 +4211,8 @@ export type UserCreateWithoutUpdatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -4103,6 +4259,8 @@ export type UserUncheckedCreateWithoutUpdatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -4164,6 +4322,8 @@ export type UserUpdateWithoutOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -4210,6 +4370,8 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -4266,6 +4428,8 @@ export type UserUpdateWithoutCreatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -4312,6 +4476,8 @@ export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -4368,6 +4534,8 @@ export type UserUpdateWithoutUpdatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -4414,6 +4582,420 @@ export type UserUncheckedUpdateWithoutUpdatedOrdersInput = {
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
+  productImportJobs?: Prisma.ProductImportJobUncheckedUpdateManyWithoutCreatedByNestedInput
+  birthdayCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRecipientUserNestedInput
+  membershipHistories?: Prisma.MembershipHistoryUncheckedUpdateManyWithoutUserNestedInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserCreateWithoutIssuedInvoicesInput = {
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
+  productImportJobs?: Prisma.ProductImportJobCreateNestedManyWithoutCreatedByInput
+  birthdayCoupons?: Prisma.CouponCreateNestedManyWithoutRecipientUserInput
+  membershipHistories?: Prisma.MembershipHistoryCreateNestedManyWithoutUserInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionCreateNestedManyWithoutUserInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutIssuedInvoicesInput = {
+  id?: number
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  membershipId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
+  productImportJobs?: Prisma.ProductImportJobUncheckedCreateNestedManyWithoutCreatedByInput
+  birthdayCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRecipientUserInput
+  membershipHistories?: Prisma.MembershipHistoryUncheckedCreateNestedManyWithoutUserInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedCreateNestedManyWithoutUserInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutIssuedInvoicesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutIssuedInvoicesInput, Prisma.UserUncheckedCreateWithoutIssuedInvoicesInput>
+}
+
+export type UserCreateWithoutVoidedInvoicesInput = {
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
+  productImportJobs?: Prisma.ProductImportJobCreateNestedManyWithoutCreatedByInput
+  birthdayCoupons?: Prisma.CouponCreateNestedManyWithoutRecipientUserInput
+  membershipHistories?: Prisma.MembershipHistoryCreateNestedManyWithoutUserInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionCreateNestedManyWithoutUserInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutVoidedInvoicesInput = {
+  id?: number
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  membershipId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
+  productImportJobs?: Prisma.ProductImportJobUncheckedCreateNestedManyWithoutCreatedByInput
+  birthdayCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRecipientUserInput
+  membershipHistories?: Prisma.MembershipHistoryUncheckedCreateNestedManyWithoutUserInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedCreateNestedManyWithoutUserInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutVoidedInvoicesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutVoidedInvoicesInput, Prisma.UserUncheckedCreateWithoutVoidedInvoicesInput>
+}
+
+export type UserUpsertWithoutIssuedInvoicesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutIssuedInvoicesInput, Prisma.UserUncheckedUpdateWithoutIssuedInvoicesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutIssuedInvoicesInput, Prisma.UserUncheckedCreateWithoutIssuedInvoicesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutIssuedInvoicesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutIssuedInvoicesInput, Prisma.UserUncheckedUpdateWithoutIssuedInvoicesInput>
+}
+
+export type UserUpdateWithoutIssuedInvoicesInput = {
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
+  productImportJobs?: Prisma.ProductImportJobUpdateManyWithoutCreatedByNestedInput
+  birthdayCoupons?: Prisma.CouponUpdateManyWithoutRecipientUserNestedInput
+  membershipHistories?: Prisma.MembershipHistoryUpdateManyWithoutUserNestedInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUpdateManyWithoutUserNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutIssuedInvoicesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
+  productImportJobs?: Prisma.ProductImportJobUncheckedUpdateManyWithoutCreatedByNestedInput
+  birthdayCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRecipientUserNestedInput
+  membershipHistories?: Prisma.MembershipHistoryUncheckedUpdateManyWithoutUserNestedInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUpsertWithoutVoidedInvoicesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutVoidedInvoicesInput, Prisma.UserUncheckedUpdateWithoutVoidedInvoicesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutVoidedInvoicesInput, Prisma.UserUncheckedCreateWithoutVoidedInvoicesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutVoidedInvoicesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutVoidedInvoicesInput, Prisma.UserUncheckedUpdateWithoutVoidedInvoicesInput>
+}
+
+export type UserUpdateWithoutVoidedInvoicesInput = {
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
+  productImportJobs?: Prisma.ProductImportJobUpdateManyWithoutCreatedByNestedInput
+  birthdayCoupons?: Prisma.CouponUpdateManyWithoutRecipientUserNestedInput
+  membershipHistories?: Prisma.MembershipHistoryUpdateManyWithoutUserNestedInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUpdateManyWithoutUserNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutVoidedInvoicesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -4460,6 +5042,8 @@ export type UserCreateWithoutOrderStatusChangesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
@@ -4506,6 +5090,8 @@ export type UserUncheckedCreateWithoutOrderStatusChangesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -4567,6 +5153,8 @@ export type UserUpdateWithoutOrderStatusChangesInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
@@ -4613,6 +5201,8 @@ export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -4658,6 +5248,8 @@ export type UserCreateWithoutBirthdayCouponsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -4704,6 +5296,8 @@ export type UserUncheckedCreateWithoutBirthdayCouponsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -4765,6 +5359,8 @@ export type UserUpdateWithoutBirthdayCouponsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -4811,6 +5407,8 @@ export type UserUncheckedUpdateWithoutBirthdayCouponsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -4856,6 +5454,8 @@ export type UserCreateWithoutReviewsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
@@ -4902,6 +5502,8 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -4963,6 +5565,8 @@ export type UserUpdateWithoutReviewsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
@@ -5009,6 +5613,8 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -5054,6 +5660,8 @@ export type UserCreateWithoutNotificationsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
@@ -5100,6 +5708,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -5161,6 +5771,8 @@ export type UserUpdateWithoutNotificationsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
@@ -5207,6 +5819,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -5252,6 +5866,8 @@ export type UserCreateWithoutSearchHistoriesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -5298,6 +5914,8 @@ export type UserUncheckedCreateWithoutSearchHistoriesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -5359,6 +5977,8 @@ export type UserUpdateWithoutSearchHistoriesInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -5405,6 +6025,8 @@ export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -5450,6 +6072,8 @@ export type UserCreateWithoutRecentlyViewedProductsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -5496,6 +6120,8 @@ export type UserUncheckedCreateWithoutRecentlyViewedProductsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
   updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -5557,6 +6183,8 @@ export type UserUpdateWithoutRecentlyViewedProductsInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -5603,6 +6231,8 @@ export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -5672,6 +6302,8 @@ export type UserUpdateWithoutMembershipInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -5718,6 +6350,8 @@ export type UserUncheckedUpdateWithoutMembershipInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
   updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
   orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -5772,6 +6406,8 @@ export type UserCountOutputType = {
   orders: number
   createdOrders: number
   updatedOrders: number
+  issuedInvoices: number
+  voidedInvoices: number
   orderStatusChanges: number
   reviews: number
   notifications: number
@@ -5796,6 +6432,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   orders?: boolean | UserCountOutputTypeCountOrdersArgs
   createdOrders?: boolean | UserCountOutputTypeCountCreatedOrdersArgs
   updatedOrders?: boolean | UserCountOutputTypeCountUpdatedOrdersArgs
+  issuedInvoices?: boolean | UserCountOutputTypeCountIssuedInvoicesArgs
+  voidedInvoices?: boolean | UserCountOutputTypeCountVoidedInvoicesArgs
   orderStatusChanges?: boolean | UserCountOutputTypeCountOrderStatusChangesArgs
   reviews?: boolean | UserCountOutputTypeCountReviewsArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
@@ -5887,6 +6525,20 @@ export type UserCountOutputTypeCountCreatedOrdersArgs<ExtArgs extends runtime.Ty
  */
 export type UserCountOutputTypeCountUpdatedOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OrderWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountIssuedInvoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderInvoiceWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountVoidedInvoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderInvoiceWhereInput
 }
 
 /**
@@ -6002,6 +6654,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   createdOrders?: boolean | Prisma.User$createdOrdersArgs<ExtArgs>
   updatedOrders?: boolean | Prisma.User$updatedOrdersArgs<ExtArgs>
+  issuedInvoices?: boolean | Prisma.User$issuedInvoicesArgs<ExtArgs>
+  voidedInvoices?: boolean | Prisma.User$voidedInvoicesArgs<ExtArgs>
   orderStatusChanges?: boolean | Prisma.User$orderStatusChangesArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
@@ -6109,6 +6763,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   createdOrders?: boolean | Prisma.User$createdOrdersArgs<ExtArgs>
   updatedOrders?: boolean | Prisma.User$updatedOrdersArgs<ExtArgs>
+  issuedInvoices?: boolean | Prisma.User$issuedInvoicesArgs<ExtArgs>
+  voidedInvoices?: boolean | Prisma.User$voidedInvoicesArgs<ExtArgs>
   orderStatusChanges?: boolean | Prisma.User$orderStatusChangesArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
@@ -6143,6 +6799,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     orders: Prisma.$OrderPayload<ExtArgs>[]
     createdOrders: Prisma.$OrderPayload<ExtArgs>[]
     updatedOrders: Prisma.$OrderPayload<ExtArgs>[]
+    issuedInvoices: Prisma.$OrderInvoicePayload<ExtArgs>[]
+    voidedInvoices: Prisma.$OrderInvoicePayload<ExtArgs>[]
     orderStatusChanges: Prisma.$OrderStatusHistoryPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
@@ -6584,6 +7242,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdOrders<T extends Prisma.User$createdOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   updatedOrders<T extends Prisma.User$updatedOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$updatedOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  issuedInvoices<T extends Prisma.User$issuedInvoicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$issuedInvoicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderInvoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  voidedInvoices<T extends Prisma.User$voidedInvoicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$voidedInvoicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderInvoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderStatusChanges<T extends Prisma.User$orderStatusChangesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$orderStatusChangesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7299,6 +7959,54 @@ export type User$updatedOrdersArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * User.issuedInvoices
+ */
+export type User$issuedInvoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderInvoice
+   */
+  select?: Prisma.OrderInvoiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderInvoice
+   */
+  omit?: Prisma.OrderInvoiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInvoiceInclude<ExtArgs> | null
+  where?: Prisma.OrderInvoiceWhereInput
+  orderBy?: Prisma.OrderInvoiceOrderByWithRelationInput | Prisma.OrderInvoiceOrderByWithRelationInput[]
+  cursor?: Prisma.OrderInvoiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderInvoiceScalarFieldEnum | Prisma.OrderInvoiceScalarFieldEnum[]
+}
+
+/**
+ * User.voidedInvoices
+ */
+export type User$voidedInvoicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderInvoice
+   */
+  select?: Prisma.OrderInvoiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderInvoice
+   */
+  omit?: Prisma.OrderInvoiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInvoiceInclude<ExtArgs> | null
+  where?: Prisma.OrderInvoiceWhereInput
+  orderBy?: Prisma.OrderInvoiceOrderByWithRelationInput | Prisma.OrderInvoiceOrderByWithRelationInput[]
+  cursor?: Prisma.OrderInvoiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderInvoiceScalarFieldEnum | Prisma.OrderInvoiceScalarFieldEnum[]
 }
 
 /**

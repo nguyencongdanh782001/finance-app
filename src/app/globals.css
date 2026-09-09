@@ -606,3 +606,50 @@ body.scrolling--hidden::-webkit-scrollbar {
   background: var(--admin-primary-soft) !important;
   color: var(--admin-primary) !important;
 }
+
+.invoice-watermark {
+  position: absolute;
+  inset: 42% 0 auto;
+  z-index: 1;
+  display: none;
+  transform: rotate(-22deg);
+  color: rgb(190 24 93 / 18%);
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-align: center;
+  pointer-events: none;
+}
+
+@media print {
+  .invoice-print-shell {
+    background: white !important;
+    padding: 0 !important;
+  }
+
+  .invoice-print-shell [class~="print:hidden"] {
+    display: none !important;
+  }
+
+  .invoice-print-shell {
+    min-height: 0 !important;
+  }
+
+  .invoice-document {
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  .invoice-document.invoice-a4 {
+    width: 210mm !important;
+    max-width: none !important;
+  }
+
+  .invoice-document.invoice-thermal {
+    width: 80mm !important;
+  }
+
+  .invoice-watermark {
+    display: block !important;
+  }
+}

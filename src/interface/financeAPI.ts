@@ -284,6 +284,11 @@ export interface DailyOrder {
   cancelledAt: string | null;
   createdAt: string;
   updatedAt: string;
+  invoice: {
+    id: number;
+    status: "DRAFT" | "ISSUED" | "VOIDED";
+    invoiceNumber: string;
+  } | null;
   customer: {
     id: number;
     displayName: string | null;

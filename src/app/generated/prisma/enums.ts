@@ -156,6 +156,15 @@ export const OrderSource = {
 export type OrderSource = (typeof OrderSource)[keyof typeof OrderSource]
 
 
+export const InvoiceStatus = {
+  DRAFT: 'DRAFT',
+  ISSUED: 'ISSUED',
+  VOIDED: 'VOIDED'
+} as const
+
+export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
+
+
 export const OrderStatus = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',

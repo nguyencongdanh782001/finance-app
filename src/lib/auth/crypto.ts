@@ -53,6 +53,10 @@ export type AuthTokenPayload = {
   sessionId?: string;
   exp: number;
   iat: number;
+  intentType?: string;
+  variantId?: number;
+  quantity?: number;
+  cartItemIds?: number[];
 };
 
 export async function signJwt(

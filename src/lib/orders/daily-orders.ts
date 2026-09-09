@@ -460,6 +460,12 @@ const includeOrderDetail = {
       email: true,
     },
   },
+  invoices: {
+    where: { isPrimary: true },
+    select: { id: true, status: true, invoiceNumber: true },
+    orderBy: { version: "desc" as const },
+    take: 1,
+  },
 } satisfies Prisma.OrderInclude;
 
 export const serializeOrder = (
@@ -517,6 +523,7 @@ export const serializeOrder = (
           }
         : null,
     createdBy: order.createdBy,
+    invoice: order.invoices[0] || null,
     items: order.items.map((item) => ({
       id: item.id,
       productId: item.productId,
