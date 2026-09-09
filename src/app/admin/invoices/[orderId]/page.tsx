@@ -69,7 +69,10 @@ export default function AdminInvoicePage() {
       if (!response.ok)
         throw new Error(data.message || "Không thể phát hành hóa đơn.");
       setInvoice(data);
-      toast({ title: "Đã phát hành hóa đơn." });
+      toast({
+        title: "Đã phát hành hóa đơn.",
+        className: "w-fit bg-green-16 text-sm font-medium text-white",
+      });
     } catch (error) {
       toast({
         title:
