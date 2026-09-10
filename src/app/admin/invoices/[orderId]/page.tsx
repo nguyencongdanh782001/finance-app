@@ -17,11 +17,12 @@ import {
   ShieldX,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function AdminInvoicePage() {
   const { orderId } = useParams<{ orderId: string }>();
+  const searchParams = useSearchParams();
   const [invoice, setInvoice] = useState<InvoiceView | null>(null);
   const [paper, setPaper] = useState<"A4" | "80mm">("A4");
   const [loading, setLoading] = useState(true);
@@ -127,20 +128,23 @@ export default function AdminInvoicePage() {
     );
   if (!invoice) return null;
 
+  const requestedReturnTo = searchParams.get("returnTo");
+  const returnTo = requestedReturnTo?.startsWith("/admin/daily-detail/")
+    ? requestedReturnTo
+    : invoice.order.dailyId
+      ? `/admin/daily-detail/${invoice.order.dailyId}?tab=invoices`
+      : "/admin";
+
   return (
     <main className="invoice-print-shell min-h-screen bg-slate-100 p-4 sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3 print:hidden">
           <Link
-            href={
-              invoice?.order.dailyId
-                ? `/admin/daily-detail/${invoice.order.dailyId}?tab=invoices`
-                : "/admin"
-            }
+            href={returnTo}
             className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary"
           >
             <ArrowLeft className="size-4" />
-            Quay lại quản trị
+            Quay lại chi tiết ngày
           </Link>
           <div className="flex flex-wrap items-center gap-2">
             <div className="w-36">

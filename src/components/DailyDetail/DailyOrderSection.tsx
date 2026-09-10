@@ -644,6 +644,7 @@ function CancelDialog({
 
 function OrderActions({
   order,
+  dailyId,
   updatingOrderId,
   onView,
   onEdit,
@@ -651,6 +652,7 @@ function OrderActions({
   onAdvanceStatus,
 }: {
   order: DailyOrder;
+  dailyId?: number;
   updatingOrderId: number | null;
   onView: (order: DailyOrder) => void;
   onEdit: (order: DailyOrder) => void;
@@ -701,7 +703,13 @@ function OrderActions({
               asChild
               className="gap-2 rounded-lg px-3 py-2.5 font-semibold"
             >
-              <Link href={`/admin/invoices/${order.id}`}>
+              <Link
+                href={
+                  dailyId
+                    ? `/admin/invoices/${order.id}?returnTo=${encodeURIComponent(`/admin/daily-detail/${dailyId}?tab=invoices`)}`
+                    : `/admin/invoices/${order.id}`
+                }
+              >
                 <ReceiptText className="size-4 text-primary" />
                 {order.invoice ? "Xem hóa đơn" : "Xuất hóa đơn"}
               </Link>
@@ -745,6 +753,7 @@ function OrderActions({
 
 function OrderRow({
   order,
+  dailyId,
   updatingOrderId,
   onView,
   onEdit,
@@ -752,6 +761,7 @@ function OrderRow({
   onAdvanceStatus,
 }: {
   order: DailyOrder;
+  dailyId?: number;
   updatingOrderId: number | null;
   onView: (order: DailyOrder) => void;
   onEdit: (order: DailyOrder) => void;
@@ -828,6 +838,7 @@ function OrderRow({
       <div className="mt-3 flex justify-end">
         <OrderActions
           order={order}
+          dailyId={dailyId}
           updatingOrderId={updatingOrderId}
           onView={onView}
           onEdit={onEdit}
@@ -1389,6 +1400,7 @@ export default function DailyOrderSection({
                       ) : null}
                       <OrderActions
                         order={order}
+                        dailyId={dailyId}
                         updatingOrderId={updatingOrderId}
                         onView={openDetail}
                         onEdit={openEdit}
@@ -1405,6 +1417,7 @@ export default function DailyOrderSection({
                   <OrderRow
                     key={order.id}
                     order={order}
+                    dailyId={dailyId}
                     updatingOrderId={updatingOrderId}
                     onView={openDetail}
                     onEdit={openEdit}
