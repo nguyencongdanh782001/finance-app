@@ -222,7 +222,9 @@ export default function ProfileAccountPage() {
         })
         .catch(() => setLoadError("Không thể tải thông tin cá nhân."));
   }, [isAuthenticated, isInitializing, router]);
-  if (isInitializing || !isAuthenticated || !profile) return <AccountLoading />;
+  if (isInitializing || !isAuthenticated || !profile) {
+    return <AccountLoading variant="profile" />;
+  }
   const hasPhone = Boolean(profile.phone);
   const profileError = (field: keyof ProfileValues) =>
     profileFormik.touched[field] ? profileFormik.errors[field] : undefined;

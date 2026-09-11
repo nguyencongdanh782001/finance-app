@@ -1,7 +1,11 @@
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function AccountLoading() {
+export default function AccountLoading({
+  variant = "overview",
+}: {
+  variant?: "overview" | "profile";
+}) {
   return (
     <StorefrontShell>
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -24,13 +28,20 @@ export default function AccountLoading() {
           <section className="min-w-0 flex-1">
             <Skeleton className="h-8 w-64 bg-[#EADFE2]" />
             <Skeleton className="mt-3 h-4 w-80 max-w-full bg-[#F1E9EB]" />
-            <div className="mt-8 grid gap-4">
-              <Skeleton className="h-64 w-full rounded-2xl bg-[#F1DDE3]" />
-              <div className="grid gap-4 md:grid-cols-2">
-                <Skeleton className="h-32 rounded-2xl bg-[#F7EFF1]" />
-                <Skeleton className="h-32 rounded-2xl bg-[#F7EFF1]" />
+            {variant === "profile" ? (
+              <div className="mt-8 grid gap-5">
+                <Skeleton className="h-[520px] w-full rounded-2xl bg-[#F1DDE3]" />
+                <Skeleton className="h-[380px] w-full rounded-2xl bg-[#F7EFF1]" />
               </div>
-            </div>
+            ) : (
+              <div className="mt-8 grid gap-4">
+                <Skeleton className="h-64 w-full rounded-2xl bg-[#F1DDE3]" />
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Skeleton className="h-32 rounded-2xl bg-[#F7EFF1]" />
+                  <Skeleton className="h-32 rounded-2xl bg-[#F7EFF1]" />
+                </div>
+              </div>
+            )}
           </section>
         </div>
       </main>
