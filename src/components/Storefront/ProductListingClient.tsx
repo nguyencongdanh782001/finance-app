@@ -92,7 +92,6 @@ export default function ProductListingClient() {
     setLoading(true);
     setError(false);
     const query = new URLSearchParams({
-      public: "true",
       limit: "12",
       page: String(page),
       sort,
@@ -100,7 +99,7 @@ export default function ProductListingClient() {
     if (search) query.set("search", search);
     if (categoryId) query.set("categoryId", categoryId);
     if (gender) query.set("gender", gender);
-    fetch(`/api/product?${query}`, { signal })
+    fetch(`/api/products?${query}`, { signal })
       .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((data: ProductListResponse) => {
         setResult(data);

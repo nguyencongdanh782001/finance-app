@@ -11,9 +11,19 @@ import { policyTypeLabels, POLICY_TYPES } from "@/lib/content-policy";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Eye, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import RichTextEditor from "@/components/RichText/RichTextEditor";
 import { meaningfulText } from "@/lib/rich-text";
+
+const RichTextEditor = dynamic(
+  () => import("@/components/RichText/RichTextEditor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-60 animate-pulse rounded-xl border border-(--admin-border) bg-white" />
+    ),
+  },
+);
 
 type Policy = {
   id: number;

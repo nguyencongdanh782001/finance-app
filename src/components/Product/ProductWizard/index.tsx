@@ -1,6 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 import { Form, FormikProvider, useFormik, type FormikProps } from "formik";
+import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -31,7 +32,6 @@ import VariantGroupsEditor, {
   type VariantImageTarget,
 } from "@/components/Product/ProductWizard/VariantGroupsEditor";
 import ProductReviewStep from "@/components/Product/ProductWizard/ProductReviewStep";
-import RichTextEditor from "@/components/RichText/RichTextEditor";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { RESPONSE_CODES } from "@/constant/codes";
@@ -77,6 +77,15 @@ const EMPTY: ProductFormValues = {
 };
 const inputClass =
   "h-11 rounded-xl border-(--admin-border) bg-white px-3 text-sm";
+const RichTextEditor = dynamic(
+  () => import("@/components/RichText/RichTextEditor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-60 animate-pulse rounded-xl border border-(--admin-border) bg-white" />
+    ),
+  },
+);
 const clientId = () =>
   typeof crypto !== "undefined" && crypto.randomUUID
     ? crypto.randomUUID()

@@ -4,7 +4,6 @@ import { verifyJwt } from "@/lib/auth/crypto";
 
 const AUTH_PATH_PREFIX = "/api/auth";
 const PUBLIC_GET_PATHS = [
-  "/api/product",
   "/api/category",
   "/api/homepage",
   "/api/policies",
@@ -14,6 +13,12 @@ const PUBLIC_GET_PATHS = [
   "/api/invoices/public",
 ];
 const CUSTOMER_API_PATHS = ["/api/cart"];
+const CUSTOMER_ME_API_PATHS = [
+  "/api/me",
+  "/api/me/addresses",
+  "/api/me/orders",
+  "/api/me/purchased-products",
+];
 const CUSTOMER_CHECKOUT_API_PATHS = [
   "/api/checkout/buy-now-intent",
   "/api/checkout/cart-intent",
@@ -125,6 +130,9 @@ export async function proxy(req: NextRequest) {
   const isCustomerCartApi = CUSTOMER_API_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
+  const isCustomerMeApi = CUSTOMER_ME_API_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
   const isCustomerCheckoutApi = CUSTOMER_CHECKOUT_API_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
@@ -134,6 +142,7 @@ export async function proxy(req: NextRequest) {
   if (
     !isMembershipSelfApi &&
     !isCustomerCartApi &&
+    !isCustomerMeApi &&
     !isCustomerCheckoutApi &&
     !isCustomerFavoriteRequest &&
     !isCustomerInvoiceRequest &&

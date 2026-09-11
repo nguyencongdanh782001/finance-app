@@ -5,6 +5,7 @@ import { useCart } from "@/components/Storefront/CartProvider";
 import ProductSearch from "@/components/Storefront/ProductSearch";
 import { FavoriteChangedDetail } from "@/components/Storefront/ProductFavoriteButton";
 import { storefrontGenderLinks } from "@/components/Storefront/storefront-navigation";
+import { getStorefrontContent } from "@/components/Storefront/storefront-content-cache";
 import {
   Sheet,
   SheetContent,
@@ -36,8 +37,11 @@ export default function StorefrontHeader() {
   const customer = Boolean(isAuthenticated && user && !isAdminRole(user.role));
 
   useEffect(() => {
-    fetch("/api/homepage")
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
+    getStorefrontContent("homepage", () =>
+      fetch("/api/homepage").then((response) =>
+        response.ok ? response.json() : Promise.reject(),
+      ),
+    )
       .then(
         (data: {
           announcement?: {
@@ -108,7 +112,7 @@ export default function StorefrontHeader() {
     isAuthenticated && user
       ? isAdminRole(user.role)
         ? getDefaultRouteByRole(user.role)
-        : "/profile"
+        : "/account"
       : `/login?redirect=${encodeURIComponent(pathname)}`;
   const doLogout = async () => {
     await logout();
@@ -176,12 +180,31 @@ export default function StorefrontHeader() {
                   <UserRound className="size-5" />
                 </button>
                 {accountOpen && (
-                  <div className="absolute right-0 top-12 z-50 w-52 border border-[#EAE1E4] bg-white p-2 shadow-lg">
+                  <div className="absolute right-[-0.35rem] top-[calc(100%+0.85rem)] z-50 w-64 overflow-hidden rounded-[22px] border border-[#EAE1E4] bg-[#FFFDFC] p-2 shadow-[0_18px_45px_rgba(77,47,58,0.14)] before:absolute before:right-5 before:top-[-7px] before:size-3 before:rotate-45 before:border-l before:border-t before:border-[#EAE1E4] before:bg-[#FFFDFC]">
+                    <div className="relative z-10 flex items-center gap-3 rounded-[16px] bg-[#FFF3F6] px-3.5 py-3">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-sm font-extrabold text-[#A43E5F]">
+                        {(user?.displayName || "KH")
+                          .split(" ")
+                          .map((part) => part[0])
+                          .join("")
+                          .slice(-2)
+                          .toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-extrabold text-[#3B2D32]">
+                          {user?.displayName || "Tài khoản của tôi"}
+                        </p>
+                        <p className="mt-0.5 text-xs text-[#A43E5F]">
+                          Quản lý tài khoản
+                        </p>
+                      </div>
+                    </div>
                     <Link
                       href={accountHref}
                       onClick={() => setAccountOpen(false)}
-                      className="flex min-h-10 items-center px-3 text-sm font-semibold hover:bg-[#FCEEF3]"
+                      className="mt-2 flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-[#3B2D32] transition-colors hover:bg-[#FCEEF3] hover:text-[#A43E5F] focus-visible:bg-[#FCEEF3] focus-visible:outline-none"
                     >
+                      <UserRound className="size-4 text-[#D96C8A]" />
                       {isAdminRole(user?.role)
                         ? "Khu vực quản trị"
                         : "Tài khoản của tôi"}
@@ -191,14 +214,15 @@ export default function StorefrontHeader() {
                         <Link
                           href="/account/favorites"
                           onClick={() => setAccountOpen(false)}
-                          className="flex min-h-10 items-center px-3 text-sm font-semibold hover:bg-[#FCEEF3]"
+                          className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-[#3B2D32] transition-colors hover:bg-[#FCEEF3] hover:text-[#A43E5F] focus-visible:bg-[#FCEEF3] focus-visible:outline-none"
                         >
+                          <Heart className="size-4 text-[#D96C8A]" />
                           Sản phẩm yêu thích
                         </Link>
                         <button
                           type="button"
                           onClick={doLogout}
-                          className="flex min-h-10 w-full items-center gap-2 px-3 text-left text-sm font-semibold hover:bg-[#FCEEF3]"
+                          className="mt-1 flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-left text-sm font-semibold text-[#6F6066] transition-colors hover:bg-[#FCEEF3] hover:text-[#A43E5F] focus-visible:bg-[#FCEEF3] focus-visible:outline-none"
                         >
                           <LogOut className="size-4" /> Đăng xuất
                         </button>

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Quỳnh Nhi Store - Auth & Client API
+  title: Quỳnh Nhi Store - Client API
   version: 1.0.0
   description: |
     Tài liệu API dành cho xác thực và giao diện khách hàng.
@@ -211,18 +211,32 @@ paths:
               },
           }
 
-  /api/product:
+  /api/products:
     get:
       tags: [Products]
       summary: Lấy danh sách sản phẩm công khai
+      description: Chỉ trả về sản phẩm có trạng thái PUBLIC. Tham số status nếu được gửi lên sẽ bị bỏ qua.
       parameters:
         - { $ref: "#/components/parameters/Search" }
         - { $ref: "#/components/parameters/CategoryId" }
+        - { $ref: "#/components/parameters/CategorySlug" }
         - { $ref: "#/components/parameters/Page" }
         - { $ref: "#/components/parameters/Limit" }
         - name: gender
           in: query
-          schema: { type: string, enum: [WOMEN, MEN, UNISEX] }
+          schema: { type: string, enum: [WOMEN, MEN, UNISEX, KIDS] }
+        - name: color
+          in: query
+          schema: { type: string }
+        - name: size
+          in: query
+          schema: { type: string }
+        - name: minPrice
+          in: query
+          schema: { type: number, minimum: 0 }
+        - name: maxPrice
+          in: query
+          schema: { type: number, minimum: 0 }
         - name: sort
           in: query
           schema:
@@ -240,10 +254,6 @@ paths:
                 ],
               default: newest,
             }
-        - name: public
-          in: query
-          required: true
-          schema: { type: boolean, enum: [true] }
       responses:
         "200":
           description: Danh sách sản phẩm
@@ -256,23 +266,20 @@ paths:
                   data:
                     {
                       type: array,
-                      items: { $ref: "#/components/schemas/Product" },
+                      items: { $ref: "#/components/schemas/PublicProduct" },
                     }
                   pagination: { $ref: "#/components/schemas/Pagination" }
 
-  /api/product/{id}:
+  /api/products/{slug}:
     get:
       tags: [Products]
       summary: Lấy chi tiết sản phẩm công khai
+      description: Nếu sản phẩm không tồn tại hoặc không có trạng thái PUBLIC, API trả về 404.
       parameters:
-        - name: id
+        - name: slug
           in: path
           required: true
           schema: { type: string, example: ao-so-mi-nu }
-        - name: public
-          in: query
-          required: true
-          schema: { type: boolean, enum: [true] }
       responses:
         "200":
           {
@@ -280,7 +287,7 @@ paths:
             content:
               {
                 application/json:
-                  { schema: { $ref: "#/components/schemas/Product" } },
+                  { schema: { $ref: "#/components/schemas/PublicProduct" } },
               },
           }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -466,6 +473,7 @@ components:
   parameters:
     Search: { name: search, in: query, schema: { type: string } }
     CategoryId: { name: categoryId, in: query, schema: { type: integer } }
+    CategorySlug: { name: categorySlug, in: query, schema: { type: string } }
     Page:
       {
         name: page,
@@ -598,7 +606,7 @@ components:
         role: { type: string, enum: [CUSTOMER, ADMIN, SUPER_ADMIN] }
         displayName: { type: string, nullable: true }
         authProvider: { type: string, enum: [WEB, GOOGLE] }
-    Product:
+    PublicProduct:
       type: object
       properties:
         id: { type: integer }
@@ -608,15 +616,17 @@ components:
         sellPrice: { type: number }
         quantity: { type: integer }
         totalAvailableStock: { type: integer }
+        displayFavoriteCount: { type: integer, minimum: 0 }
+        isFavorited: { type: boolean }
         description: { type: string, nullable: true }
-        productStatus: { type: string, enum: [PUBLIC, PRIVATE, DISCONTINUED] }
         category: { $ref: "#/components/schemas/Category" }
         variants:
           {
             type: array,
-            items: { $ref: "#/components/schemas/ProductVariant" },
+            description: Chỉ gồm biến thể đang hoạt động và còn hàng để mua,
+            items: { $ref: "#/components/schemas/PublicProductVariant" },
           }
-    ProductVariant:
+    PublicProductVariant:
       type: object
       properties:
         id: { type: integer }
@@ -625,9 +635,9 @@ components:
         color: { type: string, nullable: true }
         colorCode: { type: string, nullable: true }
         sellPrice: { type: number }
-        quantity: { type: integer }
-        reservedQuantity: { type: integer }
-        isActive: { type: boolean }
+        comparePrice: { type: number, nullable: true }
+        quantity: { type: integer, description: Số lượng khả dụng hiện tại }
+        reservedQuantity: { type: integer, description: Số lượng đang được giữ }
     Category:
       type: object
       properties:
@@ -644,7 +654,10 @@ components:
         page: { type: integer }
         limit: { type: integer }
         total: { type: integer }
+        totalPages: { type: integer }
         totalPage: { type: integer }
+        hasNextPage: { type: boolean }
+        hasPreviousPage: { type: boolean }
     CartItem:
       type: object
       properties:

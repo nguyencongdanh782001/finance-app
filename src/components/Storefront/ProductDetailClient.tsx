@@ -85,7 +85,7 @@ export default function ProductDetailClient() {
     const controller = new AbortController();
     setProduct(null);
     setNotFound(false);
-    fetch(`/api/product/${params.id}?public=true`, {
+    fetch(`/api/products/${params.id}`, {
       signal: controller.signal,
     })
       .then((response) => (response.ok ? response.json() : Promise.reject()))
