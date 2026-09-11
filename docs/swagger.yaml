@@ -1,15 +1,9 @@
 openapi: 3.0.3
 info:
-  title: Quỳnh Nhi Store - Client API
-  version: 1.0.0
+  title: Quỳnh Nhi Store API
+  version: "1.0"
   description: |
-    Tài liệu API dành cho xác thực và giao diện khách hàng.
-    Các endpoint quản trị, báo cáo tài chính và cron job không được mô tả trong file này.
-servers:
-  - url: http://localhost:3000
-    description: Local
-  - url: https://quynhnhistore.com
-    description: Production
+    API documentation for Quỳnh Nhi Store
 tags:
   - name: Auth
     description: Đăng ký, đăng nhập và quản lý phiên
