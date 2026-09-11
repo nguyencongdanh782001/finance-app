@@ -488,6 +488,8 @@ model Product {
   @@index([isFeatured])
   @@index([isPublished])
   @@index([status])
+  @@index([status, categoryId])
+  @@index([status, createdAt])
   @@map("product")
 }
 

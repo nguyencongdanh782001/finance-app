@@ -5,6 +5,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import { isAdminRole } from "@/lib/auth/routing";
 import { usePathname, useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type MembershipData = {
   cycle: { year: number; start: string; end: string };
@@ -17,6 +18,13 @@ type MembershipData = {
       discountRate: number;
     } | null;
   };
+  currentRank: { name: string; minSpend: number } | null;
+  nextRank: { name: string; minSpend: number } | null;
+  eligibleSpend: number;
+  remainingSpend: number;
+  progressPercentage: number;
+  periodStart: string;
+  periodEnd: string;
   benefits: Array<{
     id: number;
     name: string;
@@ -33,6 +41,48 @@ type MembershipData = {
 
 const money = (value: number) => `${value.toLocaleString("vi-VN")}đ`;
 const date = (value: string) => new Date(value).toLocaleDateString("vi-VN");
+
+function MembershipSkeleton() {
+  return (
+    <main className="min-h-svh bg-[#FFF9FA] px-4 py-8 text-[#2D2226] sm:px-6">
+      <div className="mx-auto max-w-3xl">
+        <Skeleton className="h-3 w-32 bg-[#F1DDE3]" />
+        <Skeleton className="mt-3 h-8 w-64 bg-[#EADFE2]" />
+        <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-[#EAE1E4] sm:p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <Skeleton className="h-4 w-24 bg-[#EADFE2]" />
+              <Skeleton className="mt-3 h-8 w-40 bg-[#F1DDE3]" />
+            </div>
+            <Skeleton className="h-7 w-24 rounded-full bg-[#FCEEF3]" />
+          </div>
+          <div className="mt-7 flex justify-between gap-4">
+            <Skeleton className="h-4 w-40 bg-[#EADFE2]" />
+            <Skeleton className="h-4 w-8 bg-[#EADFE2]" />
+          </div>
+          <Skeleton className="mt-3 h-3 w-full rounded-full bg-[#F3E7EA]" />
+          <Skeleton className="mt-6 h-16 w-full rounded-xl bg-[#FFF3F6]" />
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <Skeleton className="h-16 rounded-lg bg-[#FAF8F8]" />
+            <Skeleton className="h-16 rounded-lg bg-[#FAF8F8]" />
+          </div>
+          <Skeleton className="mt-5 h-4 w-56 bg-[#EADFE2]" />
+        </section>
+        <section className="mt-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-[#EAE1E4] sm:p-6">
+          <Skeleton className="h-5 w-40 bg-[#EADFE2]" />
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Skeleton className="h-20 rounded-xl bg-[#FAF8F8]" />
+            <Skeleton className="h-20 rounded-xl bg-[#FAF8F8]" />
+          </div>
+        </section>
+        <section className="mt-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-[#EAE1E4] sm:p-6">
+          <Skeleton className="h-5 w-44 bg-[#EADFE2]" />
+          <Skeleton className="mt-5 h-8 w-full bg-[#FAF8F8]" />
+        </section>
+      </div>
+    </main>
+  );
+}
 
 export default function MembershipPage() {
   const { user, isAuthenticated, isInitializing } = useAuth();
@@ -64,11 +114,17 @@ export default function MembershipPage() {
         ),
       );
   }, [isAuthenticated, isInitializing, pathname, router, user]);
-  if (isInitializing || !isAuthenticated || !user || isAdminRole(user.role))
+  if (isInitializing)
+    return (
+      <StorefrontShell>
+        <MembershipSkeleton />
+      </StorefrontShell>
+    );
+  if (!isAuthenticated || !user || isAdminRole(user.role))
     return (
       <StorefrontShell>
         <main className="mx-auto max-w-3xl px-4 py-10 text-sm text-[#8B7A80]">
-          Đang kiểm tra phiên đăng nhập...
+          Đang chuyển đến trang đăng nhập...
         </main>
       </StorefrontShell>
     );
@@ -85,16 +141,10 @@ export default function MembershipPage() {
   if (!data)
     return (
       <StorefrontShell>
-        <main className="mx-auto max-w-3xl px-4 py-10 text-sm text-[#8B7A80]">
-          Đang tải membership...
-        </main>
+        <MembershipSkeleton />
       </StorefrontShell>
     );
-  const nextThreshold = data.current.membership?.minSpendAmount || 0;
-  const progress =
-    data.current.membership && nextThreshold
-      ? Math.min(100, Math.round((data.current.spending / nextThreshold) * 100))
-      : 0;
+  const progress = Math.max(0, Math.min(100, data.progressPercentage));
   return (
     <StorefrontShell>
       <main className="min-h-svh bg-[#FFF9FA] px-4 py-8 text-[#2D2226] sm:px-6">
@@ -121,7 +171,7 @@ export default function MembershipPage() {
               <div className="flex justify-between gap-3 text-sm">
                 <span>
                   Chi tiêu hợp lệ:{" "}
-                  <strong>{money(data.current.spending)}</strong>
+                  <strong>{money(data.eligibleSpend)}</strong>
                 </span>
                 <span>{progress}%</span>
               </div>
@@ -132,6 +182,32 @@ export default function MembershipPage() {
                 />
               </div>
             </div>
+            {data.nextRank ? (
+              <>
+                <p className="mt-5 rounded-xl bg-[#FFF3F6] px-4 py-3 text-base font-semibold leading-7 text-[#4A3039]">
+                  Chi tiêu thêm{" "}
+                  <strong className="text-lg text-[#A43E5F]">
+                    {money(data.remainingSpend)}
+                  </strong>{" "}
+                  để đạt hạng{" "}
+                  <strong className="text-[#A43E5F]">{data.nextRank.name}</strong>
+                </p>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-lg bg-[#FAF8F8] p-3">
+                    <p className="text-[#8B7A80]">{data.currentRank?.name || "Bắt đầu"}</p>
+                    <strong>{money(data.currentRank?.minSpend || 0)}</strong>
+                  </div>
+                  <div className="rounded-lg bg-[#FAF8F8] p-3 text-right">
+                    <p className="text-[#8B7A80]">{data.nextRank.name}</p>
+                    <strong>{money(data.nextRank.minSpend)}</strong>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="mt-5 rounded-xl bg-[#FFF3F6] px-4 py-3 text-sm font-semibold text-[#A43E5F]">
+                Bạn đang ở hạng thành viên cao nhất.
+              </p>
+            )}
             <p className="mt-4 text-sm text-[#65545B]">
               Ưu đãi mặc định:{" "}
               <strong>{data.current.membership?.discountRate || 0}%</strong>

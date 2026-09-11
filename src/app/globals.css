@@ -2,6 +2,34 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Account Center surfaces share the soft storefront shape language. */
+main:has(nav[aria-label="Tài khoản"]) section {
+  border-radius: 1.25rem;
+}
+
+main:has(nav[aria-label="Tài khoản"]) article {
+  border-radius: 1rem;
+}
+
+main:has(nav[aria-label="Tài khoản"]) form {
+  border-radius: 1.25rem;
+}
+
+main:has(nav[aria-label="Tài khoản"]) form input,
+main:has(nav[aria-label="Tài khoản"])
+  form
+  label
+  > button[aria-haspopup="dialog"],
+main:has(nav[aria-label="Tài khoản"]) form label > button[role="combobox"] {
+  border-radius: 0.75rem !important;
+}
+
+main:has(nav[aria-label="Tài khoản"])
+  button[data-slot="button"][aria-haspopup="dialog"],
+main:has(nav[aria-label="Tài khoản"]) button[role="combobox"] {
+  border-radius: 0.75rem !important;
+}
+
 .rich-text-editor .tiptap {
   min-height: inherit;
   padding: 1rem;

@@ -51,12 +51,14 @@ export async function PATCH(request: Request) {
       phone?: string;
       email?: string;
       password?: string;
+      confirmPassword?: string;
       currentPassword?: string;
     };
     const displayName = body.displayName?.trim() || "";
     const phone = normalizeVietnamesePhone(body.phone?.trim() || "");
     const email = normalizeEmail(body.email || "");
     const password = body.password || "";
+    const confirmPassword = body.confirmPassword || "";
     const currentPassword = body.currentPassword || "";
     const sensitiveChange = email !== (existingUser.email || "") || Boolean(password);
 
@@ -81,6 +83,12 @@ export async function PATCH(request: Request) {
     if (password && !isValidPassword(password)) {
       return NextResponse.json(
         { message: "Mật khẩu phải có ít nhất 8 ký tự." },
+        { status: 400 },
+      );
+    }
+    if (password && password !== confirmPassword) {
+      return NextResponse.json(
+        { message: "Mật khẩu xác nhận không khớp.", field: "confirmPassword" },
         { status: 400 },
       );
     }

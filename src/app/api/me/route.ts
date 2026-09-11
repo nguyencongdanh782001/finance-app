@@ -1,0 +1,29 @@
+import prisma from "@/lib/db";
+import { isValidVietnamesePhone, normalizeVietnamesePhone } from "@/lib/auth/validation";
+import { NextResponse } from "next/server";
+
+const serialize = (user: { id: number; phone: string | null; email: string | null; firstName: string | null; lastName: string | null; displayName: string | null; avatarUrl: string | null; birthday: Date | null; gender: string | null; phoneVerifiedAt: Date | null }) => ({ ...user, birthday: user.birthday?.toISOString() ?? null });
+
+export async function GET(request: Request) {
+  const userId = Number(request.headers.get("x-user-id"));
+  if (!userId || request.headers.get("x-user-role") !== "CUSTOMER") return NextResponse.json({ message: "Phiên đăng nhập không hợp lệ." }, { status: 401 });
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, phone: true, email: true, firstName: true, lastName: true, displayName: true, avatarUrl: true, birthday: true, gender: true, phoneVerifiedAt: true } });
+  return user ? NextResponse.json(serialize(user)) : NextResponse.json({ message: "Không tìm thấy tài khoản." }, { status: 404 });
+}
+
+export async function PATCH(request: Request) {
+  const userId = Number(request.headers.get("x-user-id"));
+  if (!userId || request.headers.get("x-user-role") !== "CUSTOMER") return NextResponse.json({ message: "Phiên đăng nhập không hợp lệ." }, { status: 401 });
+  try {
+    const body = await request.json();
+    const displayName = String(body.displayName ?? "").trim();
+    if (!displayName || displayName.length > 120) return NextResponse.json({ message: "Vui lòng nhập họ và tên hợp lệ." }, { status: 422 });
+    const existing = await prisma.user.findUnique({ where: { id: userId }, select: { phone: true } });
+    if (!existing) return NextResponse.json({ message: "Không tìm thấy tài khoản." }, { status: 404 });
+    const requestedPhone = body.phone == null ? existing.phone : normalizeVietnamesePhone(String(body.phone).trim());
+    if (!existing.phone && requestedPhone && !isValidVietnamesePhone(requestedPhone)) return NextResponse.json({ message: "Số điện thoại Việt Nam không hợp lệ." }, { status: 422 });
+    if (existing.phone && requestedPhone !== existing.phone) return NextResponse.json({ message: "Số điện thoại chỉ được thiết lập một lần và không thể thay đổi." }, { status: 409 });
+    const user = await prisma.user.update({ where: { id: userId }, data: { phone: requestedPhone || null, displayName, firstName: String(body.firstName ?? displayName).trim().slice(0, 80), lastName: String(body.lastName ?? "").trim().slice(0, 80), birthday: body.birthday ? new Date(body.birthday) : null, gender: ["FEMALE", "MALE", "OTHER", "UNSPECIFIED"].includes(body.gender) ? body.gender : "UNSPECIFIED" }, select: { id: true, phone: true, email: true, firstName: true, lastName: true, displayName: true, avatarUrl: true, birthday: true, gender: true, phoneVerifiedAt: true } });
+    return NextResponse.json(serialize(user));
+  } catch { return NextResponse.json({ message: "Không thể cập nhật thông tin lúc này." }, { status: 400 }); }
+}

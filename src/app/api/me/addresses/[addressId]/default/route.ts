@@ -1,0 +1,3 @@
+import prisma from "@/lib/db";
+import { NextResponse } from "next/server";
+export async function PATCH(request: Request, context: { params: Promise<{ addressId: string }> }) { const userId = Number(request.headers.get("x-user-id")); const id = Number((await context.params).addressId); const address = await prisma.userAddress.findFirst({ where: { id, userId }, select: { id: true } }); if (!address) return NextResponse.json({ message: "Không tìm thấy địa chỉ." }, { status: 404 }); await prisma.$transaction([prisma.userAddress.updateMany({ where: { userId }, data: { isDefaultShipping: false } }), prisma.userAddress.update({ where: { id }, data: { isDefaultShipping: true } })]); return NextResponse.json({ ok: true }); }

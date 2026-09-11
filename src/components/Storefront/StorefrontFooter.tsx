@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 import { storefrontFooterLinks } from "@/components/Storefront/storefront-navigation";
+import { getStorefrontContent } from "@/components/Storefront/storefront-content-cache";
 import { useEffect, useState } from "react";
 
 function FooterGroup({
@@ -44,8 +45,11 @@ export default function StorefrontFooter() {
     Array<{ title: string; slug: string }>
   >([]);
   useEffect(() => {
-    fetch("/api/policies?footer=true")
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
+    getStorefrontContent("footer-policies", () =>
+      fetch("/api/policies?footer=true").then((response) =>
+        response.ok ? response.json() : Promise.reject(),
+      ),
+    )
       .then((data: { items?: Array<{ title: string; slug: string }> }) =>
         setPolicies(data.items || []),
       )

@@ -17,10 +17,11 @@ type ProfileFormValues = {
   phone: string;
   email: string;
   password: string;
+  confirmPassword: string;
   currentPassword: string;
 };
 
-const emptyForm: ProfileFormValues = { displayName: "", phone: "", email: "", password: "", currentPassword: "" };
+const emptyForm: ProfileFormValues = { displayName: "", phone: "", email: "", password: "", confirmPassword: "", currentPassword: "" };
 const inputClassName = "h-10! rounded-lg! border-(--admin-border)! bg-white! px-3! text-sm! text-(--admin-text)! placeholder:text-(--admin-text-muted)! focus:border-(--admin-primary)! focus:ring-2! focus:ring-(--admin-primary)/10!";
 const validationInputClass = (hasError: boolean) => cn(inputClassName, hasError && "border-[#C64040]! focus:border-[#C64040]! focus:ring-red-100!");
 
@@ -29,6 +30,7 @@ const profileValidationSchema = (originalEmail: string) => Yup.object({
   phone: Yup.string().required("Vui lòng nhập số điện thoại.").test("vietnamese-phone", "Số điện thoại Việt Nam không hợp lệ.", (value) => isValidVietnamesePhone(normalizeVietnamesePhone(value || ""))),
   email: Yup.string().trim("Email không được có khoảng trắng ở đầu hoặc cuối.").email("Email không hợp lệ.").required("Vui lòng nhập email."),
   password: Yup.string().test("new-password", "Mật khẩu phải có ít nhất 8 ký tự.", (value) => !value || value.length >= 8),
+  confirmPassword: Yup.string().test("password-match", "Mật khẩu xác nhận không khớp.", function (value) { return !this.parent.password || value === this.parent.password; }),
   currentPassword: Yup.string().test("sensitive-change-authentication", "Vui lòng nhập mật khẩu hiện tại để xác thực thay đổi.", function (value) {
     const { email, password } = this.parent as ProfileFormValues;
     return email === originalEmail && !password ? true : Boolean(value);
@@ -54,7 +56,7 @@ export default function AdminProfilePage() {
       const response = await fetch("/api/admin/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ displayName: values.displayName, phone: values.phone, email: values.email, password: values.password, ...(sensitiveChange ? { currentPassword: values.currentPassword } : {}) }),
+        body: JSON.stringify({ displayName: values.displayName, phone: values.phone, email: values.email, password: values.password, confirmPassword: values.confirmPassword, ...(sensitiveChange ? { currentPassword: values.currentPassword } : {}) }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -63,7 +65,7 @@ export default function AdminProfilePage() {
         setMessageType("error");
         return;
       }
-      const nextValues = { displayName: data.displayName || "", phone: data.phone || "", email: data.email || "", password: "", currentPassword: "" };
+      const nextValues = { displayName: data.displayName || "", phone: data.phone || "", email: data.email || "", password: "", confirmPassword: "", currentPassword: "" };
       setInitialValues(nextValues);
       setOriginalEmail(nextValues.email);
       helpers.resetForm({ values: nextValues });
@@ -83,7 +85,7 @@ export default function AdminProfilePage() {
         const response = await fetch("/api/admin/profile");
         const data = await response.json();
         if (response.ok) {
-          const nextValues = { displayName: data.displayName || "", phone: data.phone || "", email: data.email || "", password: "", currentPassword: "" };
+          const nextValues = { displayName: data.displayName || "", phone: data.phone || "", email: data.email || "", password: "", confirmPassword: "", currentPassword: "" };
           setInitialValues(nextValues);
           setOriginalEmail(nextValues.email);
         } else {
@@ -127,6 +129,7 @@ export default function AdminProfilePage() {
                 <div className="mt-5 grid gap-4">
                   <label className="grid gap-1.5 text-sm font-semibold"><span>Mật khẩu hiện tại</span><div className="relative"><Input required={sensitiveChange} type={showCurrentPassword ? "text" : "password"} {...formik.getFieldProps("currentPassword")} autoComplete="current-password" placeholder="Nhập mật khẩu hiện tại" className={`${validationInputClass(Boolean(errorFor("currentPassword")))} pr-10!`} aria-invalid={Boolean(errorFor("currentPassword"))} /><button type="button" onClick={() => setShowCurrentPassword((value) => !value)} aria-label={showCurrentPassword ? "Ẩn mật khẩu hiện tại" : "Hiện mật khẩu hiện tại"} className="absolute inset-y-0 right-3 text-(--admin-text-muted) hover:text-(--admin-primary)">{showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button></div><span className="text-xs font-normal text-(--admin-text-muted)">Bắt buộc khi đổi email hoặc mật khẩu mới.</span>{errorFor("currentPassword") ? <span className="text-xs font-medium text-[#C64040]">{errorFor("currentPassword")}</span> : null}</label>
                   <label className="grid gap-1.5 text-sm font-semibold"><span>Mật khẩu mới</span><div className="relative"><Input type={showPassword ? "text" : "password"} {...formik.getFieldProps("password")} autoComplete="new-password" placeholder="Tối thiểu 8 ký tự" className={`${validationInputClass(Boolean(errorFor("password")))} pr-10!`} aria-invalid={Boolean(errorFor("password"))} /><button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Ẩn mật khẩu mới" : "Hiện mật khẩu mới"} className="absolute inset-y-0 right-3 text-(--admin-text-muted) hover:text-(--admin-primary)">{showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button></div><span className="text-xs font-normal text-(--admin-text-muted)">Tối thiểu 8 ký tự và không được trùng mật khẩu hiện tại.</span>{errorFor("password") ? <span className="text-xs font-medium text-[#C64040]">{errorFor("password")}</span> : null}</label>
+                  <label className="grid gap-1.5 text-sm font-semibold"><span>Xác nhận mật khẩu mới</span><Input required={Boolean(formik.values.password)} type="password" {...formik.getFieldProps("confirmPassword")} autoComplete="new-password" placeholder="Nhập lại mật khẩu mới" className={validationInputClass(Boolean(errorFor("confirmPassword")))} aria-invalid={Boolean(errorFor("confirmPassword"))} />{errorFor("confirmPassword") ? <span className="text-xs font-medium text-[#C64040]">{errorFor("confirmPassword")}</span> : null}</label>
                   {message ? <p className={cn("text-sm", messageType === "success" ? "text-emerald-700" : "text-[#C64040]")}>{message}</p> : null}
                 </div>
                 <Button type="submit" disabled={formik.isSubmitting || !formik.dirty} className="mt-5 h-10 bg-(--admin-primary) text-white hover:bg-(--admin-primary-hover) sm:w-fit sm:px-6">{formik.isSubmitting ? <><Loader2 className="size-4 animate-spin" /> Đang đổi...</> : "Đổi mật khẩu"}</Button>
