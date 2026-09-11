@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { ProductStatus } from "@/app/generated/prisma/client";
 import { publicProductSelect, serializePublicProduct } from "@/lib/products/product-list";
 
-export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const identifier = (await params).slug;
+export async function GET(request: Request, { params }: { params: Promise<{ productId: string }> }) {
+  const identifier = (await params).productId;
   const numericId = Number(identifier);
   const product = await prisma.product.findFirst({
     where: { status: ProductStatus.PUBLIC, ...(Number.isInteger(numericId) ? { OR: [{ id: numericId }, { slug: identifier }] } : { slug: identifier }) },
