@@ -65,13 +65,14 @@ const profileSchema = Yup.object({
   ),
   gender: Yup.string()
     .oneOf(["FEMALE", "MALE", "OTHER", "UNSPECIFIED"])
-    .required(),
+    .required("Vui lòng chọn giới tính.")
+    .defined("Vui lòng chọn giới tính."),
   phone: Yup.string().test(
     "vietnamese-phone",
     "Số điện thoại Việt Nam không hợp lệ.",
     (value) =>
       !value || isValidVietnamesePhone(normalizeVietnamesePhone(value)),
-  ),
+  ).required("Vui lòng nhập số điện thoại."),
 });
 const passwordSchema = Yup.object({
   currentPassword: Yup.string(),
@@ -155,7 +156,16 @@ export default function ProfileAccountPage() {
           body: JSON.stringify(values),
         });
         setProfile(data);
-        helpers.resetForm({ values: { ...values, phone: data.phone || "" } });
+        helpers.resetForm({
+          values: {
+            firstName: data.firstName || "",
+            lastName: data.lastName || "",
+            displayName: data.displayName || "",
+            birthday: data.birthday?.slice(0, 10) || "",
+            gender: data.gender || "UNSPECIFIED",
+            phone: data.phone || "",
+          },
+        });
         setProfileMessage("Đã cập nhật thông tin cá nhân.");
       } catch (error) {
         const apiError = error as ApiError;
@@ -315,7 +325,6 @@ export default function ProfileAccountPage() {
                   >
                     <Input
                       {...profileFormik.getFieldProps("phone")}
-                      required={!hasPhone}
                       readOnly={hasPhone}
                       inputMode="tel"
                       className={`${inputClass} ${hasPhone ? "bg-[#F7F3F4] text-[#8B7A80]" : ""} ${profileError("phone") ? invalidInputClass : ""}`}
