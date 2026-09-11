@@ -4,7 +4,19 @@ import { parse } from "yaml";
 
 const port = process.env.PORT || 3000;
 
-export const isSwaggerEnabled = () => process.env.ENABLE_SWAGGER === "true";
+export const isSwaggerEnabled = () => {
+  if (process.env.ENABLE_SWAGGER === "true") {
+    return true;
+  }
+
+  // Development and Vercel Preview deployments should expose the docs by
+  // default. Production remains opt-in through ENABLE_SWAGGER.
+  return (
+    process.env.NODE_ENV === "development" ||
+    process.env.NEXT_PUBLIC_NODE_ENV === "development" ||
+    process.env.VERCEL_ENV === "preview"
+  );
+};
 
 export async function getOpenApiDocument() {
   const document = parse(
