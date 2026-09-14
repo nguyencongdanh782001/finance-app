@@ -41,6 +41,39 @@ const stockOf = (
       Number(variant?.reservedQuantity ?? 0),
   );
 
+type CacheEntry<T> = { data: T; cachedAt: number };
+
+const productCache = new Map<string, CacheEntry<ProductApiItem>>();
+const relatedProductsCache = new Map<number, CacheEntry<ProductApiItem[]>>();
+const CLIENT_CACHE_TTL = 5 * 60 * 1000;
+const MAX_PRODUCT_CACHE_ENTRIES = 20;
+const MAX_RELATED_CACHE_ENTRIES = 20;
+
+function readCache<K, V>(cache: Map<K, CacheEntry<V>>, key: K) {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.cachedAt >= CLIENT_CACHE_TTL) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function writeCache<K, V>(
+  cache: Map<K, CacheEntry<V>>,
+  key: K,
+  data: V,
+  maxEntries: number,
+) {
+  cache.delete(key);
+  cache.set(key, { data, cachedAt: Date.now() });
+  while (cache.size > maxEntries) {
+    const oldestKey = cache.keys().next().value;
+    if (oldestKey === undefined) break;
+    cache.delete(oldestKey);
+  }
+}
+
 function LoadingState() {
   return (
     <main
@@ -88,13 +121,25 @@ export default function ProductDetailClient() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setProduct(null);
+    const cachedData = readCache(productCache, params.id);
+    if (cachedData) {
+      setProduct(cachedData);
+      setSelectedColor("");
+      setSelectedSize("");
+      setSelectedVariantId(null);
+      setActiveImage(cachedData.images?.[0]?.url || cachedData.imageUrl || "");
+      setImageZoom(1);
+      setDescriptionExpanded(false);
+    } else {
+      setProduct(null);
+    }
     setNotFound(false);
     fetch(`/api/products/${params.id}`, {
       signal: controller.signal,
     })
       .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((data: ProductApiItem) => {
+        writeCache(productCache, params.id, data, MAX_PRODUCT_CACHE_ENTRIES);
         setProduct(data);
         setSelectedColor("");
         setSelectedSize("");
@@ -105,8 +150,10 @@ export default function ProductDetailClient() {
       })
       .catch((reason) => {
         if (reason.name !== "AbortError") {
-          setProduct(null);
-          setNotFound(true);
+          if (!cachedData) {
+            setProduct(null);
+            setNotFound(true);
+          }
         }
       });
     return () => controller.abort();
@@ -114,10 +161,28 @@ export default function ProductDetailClient() {
 
   useEffect(() => {
     if (!product) return;
-    fetch(`/api/products/${product.id}/related?limit=8`)
+    const controller = new AbortController();
+    const cachedData = readCache(relatedProductsCache, product.id);
+    if (cachedData) setRelated(cachedData);
+    else setRelated([]);
+    fetch(`/api/products/${product.id}/related?limit=8`, {
+      signal: controller.signal,
+    })
       .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((data: { data?: ProductApiItem[] }) => setRelated(data.data || []))
-      .catch(() => setRelated([]));
+      .then((data: { data?: ProductApiItem[] }) => {
+        const items = data.data || [];
+        writeCache(
+          relatedProductsCache,
+          product.id,
+          items,
+          MAX_RELATED_CACHE_ENTRIES,
+        );
+        setRelated(items);
+      })
+      .catch((reason) => {
+        if (reason.name !== "AbortError" && !cachedData) setRelated([]);
+      });
+    return () => controller.abort();
   }, [product]);
 
   const variants = useMemo(
