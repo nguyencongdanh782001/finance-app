@@ -26,6 +26,7 @@ jobs:
       name: development
       url: ${{ steps.deploy.outputs.url }}
     env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
@@ -47,16 +48,22 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      - name: Validate Vercel credentials
+        run: |
+          test -n "$VERCEL_TOKEN" || { echo "VERCEL_TOKEN is not configured for the development environment."; exit 1; }
+          test -n "$VERCEL_ORG_ID" || { echo "VERCEL_ORG_ID is not configured for the development environment."; exit 1; }
+          test -n "$VERCEL_PROJECT_ID" || { echo "VERCEL_PROJECT_ID is not configured for the development environment."; exit 1; }
+
       - name: Pull Vercel preview environment
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
 
       - name: Build preview artifact
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token "$VERCEL_TOKEN"
 
       - name: Deploy preview artifact
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --token "$VERCEL_TOKEN")
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
   deploy-prod:
@@ -70,6 +77,7 @@ jobs:
       name: production
       url: ${{ steps.deploy.outputs.url }}
     env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
@@ -91,11 +99,17 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      - name: Validate Vercel credentials
+        run: |
+          test -n "$VERCEL_TOKEN" || { echo "VERCEL_TOKEN is not configured for the production environment."; exit 1; }
+          test -n "$VERCEL_ORG_ID" || { echo "VERCEL_ORG_ID is not configured for the production environment."; exit 1; }
+          test -n "$VERCEL_PROJECT_ID" || { echo "VERCEL_PROJECT_ID is not configured for the production environment."; exit 1; }
+
       - name: Pull Vercel production environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
 
       - name: Pull production environment variables for Prisma
-        run: vercel env pull .env.production.local --environment=production --yes --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel env pull .env.production.local --environment=production --yes --token "$VERCEL_TOKEN"
 
       - name: Apply production database migrations
         env:
@@ -110,10 +124,10 @@ jobs:
           npm run db:migrate:deploy
 
       - name: Build production artifact
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token "$VERCEL_TOKEN"
 
       - name: Deploy production artifact
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN")
           echo "url=$url" >> "$GITHUB_OUTPUT"
