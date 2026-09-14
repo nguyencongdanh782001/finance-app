@@ -4,8 +4,16 @@ import { meaningfulText } from "@/lib/rich-text";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = (
+  process.env.NODE_ENV === "production" &&
+  configuredSiteUrl?.includes("localhost")
+    ? "https://quynhnhistore.com"
+    : configuredSiteUrl || "https://quynhnhistore.com"
+).replace(/\/$/, "");
 const defaultImage = "/icons/icon-512.png";
+
+const absoluteUrl = (value: string) => new URL(value, siteUrl).toString();
 
 async function getPublicProduct(identifier: string) {
   const numericId = Number(identifier);
@@ -64,6 +72,8 @@ export async function generateMetadata({
     `Khám phá ${product.title} tại Quỳnh Nhi Store.`;
   const image = product.images[0]?.url || product.imageUrl || defaultImage;
   const canonical = `/products/${product.slug || product.id}`;
+  const absoluteImage = absoluteUrl(image);
+  const absoluteCanonical = absoluteUrl(canonical);
 
   return {
     title: `${product.title} | Quỳnh Nhi Store`,
@@ -74,22 +84,25 @@ export async function generateMetadata({
       "Quỳnh Nhi Store",
       "thời trang",
     ],
-    alternates: { canonical },
+    alternates: { canonical: absoluteCanonical },
     openGraph: {
       type: "website",
       title: `${product.title} | Quỳnh Nhi Store`,
       description: description.slice(0, 200),
-      url: canonical,
+      url: absoluteCanonical,
       siteName: "Quỳnh Nhi Store",
       images: [
-        { url: image, alt: product.images[0]?.altText || product.title },
+        {
+          url: absoluteImage,
+          alt: product.images[0]?.altText || product.title,
+        },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${product.title} | Quỳnh Nhi Store`,
       description: description.slice(0, 200),
-      images: [image],
+      images: [absoluteImage],
     },
   };
 }
@@ -115,21 +128,15 @@ export default async function ProductDetailPage({
         description: meaningfulText(
           product.descriptionHtml || product.description || "",
         ),
-        image: [new URL(image, siteUrl).toString()],
-        url: new URL(
-          `/products/${product.slug || product.id}`,
-          siteUrl,
-        ).toString(),
+        image: [absoluteUrl(image)],
+        url: absoluteUrl(`/products/${product.slug || product.id}`),
         category: product.category.name,
         offers: {
           "@type": "Offer",
           priceCurrency: "VND",
           price: Number(product.sellPrice),
           availability: `https://schema.org/${hasStock ? "InStock" : "OutOfStock"}`,
-          url: new URL(
-            `/products/${product.slug || product.id}`,
-            siteUrl,
-          ).toString(),
+          url: absoluteUrl(`/products/${product.slug || product.id}`),
           seller: { "@type": "Organization", name: "Quỳnh Nhi Store" },
         },
       }

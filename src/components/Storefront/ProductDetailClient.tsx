@@ -14,6 +14,8 @@ import {
   ShieldCheck,
   ShoppingBag,
   Truck,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import ProductCard from "@/components/Storefront/ProductCard";
@@ -79,6 +81,7 @@ export default function ProductDetailClient() {
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
+  const [imageZoom, setImageZoom] = useState(1);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -97,6 +100,7 @@ export default function ProductDetailClient() {
         setSelectedSize("");
         setSelectedVariantId(null);
         setActiveImage(data.images?.[0]?.url || data.imageUrl || "");
+        setImageZoom(1);
         setDescriptionExpanded(false);
       })
       .catch((reason) => {
@@ -152,24 +156,32 @@ export default function ProductDetailClient() {
     comparePrice > currentPrice
       ? Math.round((1 - currentPrice / comparePrice) * 100)
       : 0;
-  const colorImages = variants
-    .filter((variant) => variant.color === selectedColor)
-    .flatMap((variant) => variant.images || []);
-  const gallery = [
-    ...new Map(
+  const colorImages = useMemo(
+    () =>
+      variants
+        .filter((variant) => variant.color === selectedColor)
+        .flatMap((variant) => variant.images || []),
+    [variants, selectedColor],
+  );
+  const gallery = useMemo(
+    () =>
       [
         ...(selectedVariant?.images || []),
         ...colorImages,
         ...(product?.images || []),
-      ].map((image) => [image.url, image]),
-    ).values(),
-  ];
+      ].filter(
+        (image, index, images) =>
+          images.findIndex((item) => item.url === image.url) === index,
+      ),
+    [colorImages, product?.images, selectedVariantId, variants],
+  );
   useEffect(() => {
     const next = gallery[0]?.url || product?.imageUrl || "";
     setActiveImage((current) =>
       gallery.some((image) => image.url === current) ? current : next,
     );
     setImageFailed(false);
+    setImageZoom(1);
   }, [gallery, product?.imageUrl]);
   useEffect(() => {
     setQuantity((value) => Math.max(1, Math.min(value, Math.max(1, stock))));
@@ -357,19 +369,63 @@ export default function ProductDetailClient() {
                   ))}
                 </div>
                 <div className="relative order-1 h-[420px] w-full flex-none overflow-hidden rounded-2xl bg-[#F5EEF0] sm:order-2 sm:h-[620px] sm:min-w-0 sm:flex-1 lg:h-[720px]">
-                  {imageFailed ? (
-                    <div className="flex size-full items-center justify-center px-8 text-center text-sm font-semibold text-[#998B91]">
-                      Ảnh sản phẩm đang được cập nhật
+                  <div className="absolute inset-0 overflow-auto">
+                    {imageFailed ? (
+                      <div className="flex size-full items-center justify-center px-8 text-center text-sm font-semibold text-[#998B91]">
+                        Ảnh sản phẩm đang được cập nhật
+                      </div>
+                    ) : (
+                      <div
+                        className="flex min-h-full min-w-full items-start justify-center"
+                        style={{ width: `${imageZoom * 100}%` }}
+                      >
+                        <img
+                          src={activeImage || product.imageUrl}
+                          alt={product.title}
+                          onError={() => setImageFailed(true)}
+                          className="block h-auto w-full max-w-none"
+                          fetchPriority="high"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {!imageFailed ? (
+                    <div className="absolute bottom-3 left-3 z-10 flex w-fit items-center gap-1 rounded-xl bg-white/90 p-1 shadow-sm backdrop-blur">
+                      <button
+                        type="button"
+                        aria-label="Thu nhỏ ảnh"
+                        disabled={imageZoom <= 1}
+                        onClick={() =>
+                          setImageZoom((value) => Math.max(1, value - 0.25))
+                        }
+                        className="flex size-8 items-center justify-center rounded-lg text-[#6F6066] hover:bg-[#FCEEF3] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <ZoomOut className="size-4" />
+                      </button>
+                      <span className="min-w-12 text-center text-xs font-bold text-[#6F6066]">
+                        {Math.round(imageZoom * 100)}%
+                      </span>
+                      <button
+                        type="button"
+                        aria-label="Phóng to ảnh"
+                        disabled={imageZoom >= 2.5}
+                        onClick={() =>
+                          setImageZoom((value) => Math.min(2.5, value + 0.25))
+                        }
+                        className="flex size-8 items-center justify-center rounded-lg text-[#6F6066] hover:bg-[#FCEEF3] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <ZoomIn className="size-4" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Đặt lại kích thước ảnh"
+                        onClick={() => setImageZoom(1)}
+                        className="flex size-8 items-center justify-center rounded-lg text-[#6F6066] hover:bg-[#FCEEF3]"
+                      >
+                        <RotateCcw className="size-4" />
+                      </button>
                     </div>
-                  ) : (
-                    <img
-                      src={activeImage || product.imageUrl}
-                      alt={product.title}
-                      onError={() => setImageFailed(true)}
-                      className="absolute inset-0 size-full object-contain p-3 sm:p-5"
-                      fetchPriority="high"
-                    />
-                  )}
+                  ) : null}
                   {gallery.length > 1 ? (
                     <>
                       <button
