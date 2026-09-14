@@ -15,6 +15,7 @@ const serialize = (user: {
   avatarUrl: string | null;
   birthday: Date | null;
   gender: string | null;
+  authProvider: string;
   phoneVerifiedAt: Date | null;
 }) => ({ ...user, birthday: user.birthday?.toISOString() ?? null });
 
@@ -37,6 +38,7 @@ export async function GET(request: Request) {
       avatarUrl: true,
       birthday: true,
       gender: true,
+      authProvider: true,
       phoneVerifiedAt: true,
     },
   });
@@ -76,7 +78,7 @@ export async function PATCH(request: Request) {
       body.phone == null
         ? existing.phone || ""
         : normalizeVietnamesePhone(String(body.phone).trim());
-    if (!existing.phone && !requestedPhone)
+    if (!requestedPhone)
       return NextResponse.json(
         {
           message: "Vui lòng nhập số điện thoại.",
@@ -84,25 +86,13 @@ export async function PATCH(request: Request) {
         },
         { status: 422 },
       );
-    if (!existing.phone && !isValidVietnamesePhone(requestedPhone))
+    if (!isValidVietnamesePhone(requestedPhone))
       return NextResponse.json(
         {
           message: "Số điện thoại Việt Nam không hợp lệ.",
           fieldErrors: { phone: "Số điện thoại Việt Nam không hợp lệ." },
         },
         { status: 422 },
-      );
-    if (existing.phone && requestedPhone !== existing.phone)
-      return NextResponse.json(
-        {
-          message:
-            "Số điện thoại chỉ được thiết lập một lần và không thể thay đổi.",
-          fieldErrors: {
-            phone:
-              "Số điện thoại chỉ được thiết lập một lần và không thể thay đổi.",
-          },
-        },
-        { status: 409 },
       );
     const genderValue = String(body.gender ?? "");
     const validGenders = ["FEMALE", "MALE", "OTHER", "UNSPECIFIED"] as const;
@@ -139,6 +129,7 @@ export async function PATCH(request: Request) {
         avatarUrl: true,
         birthday: true,
         gender: true,
+        authProvider: true,
         phoneVerifiedAt: true,
       },
     });

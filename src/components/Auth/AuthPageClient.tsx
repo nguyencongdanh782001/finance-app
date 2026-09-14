@@ -310,7 +310,7 @@ function DatePickerSelect({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="max-h-64 w-(--radix-dropdown-menu-trigger-width) rounded-lg border-[#E9E2E5]"
+        className="z-[calc(var(--z-dialog)+2)] max-h-64 w-(--radix-dropdown-menu-trigger-width) rounded-lg border-[#E9E2E5]"
       >
         {options.map((option) => (
           <DropdownMenuItem

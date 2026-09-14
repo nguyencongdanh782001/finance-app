@@ -31,6 +31,8 @@ type Banner = {
 };
 type HomepageData = {
   banners: Banner[];
+  campaignBanners: Banner[];
+  categoryBanners: Banner[];
   announcement?: Banner | null;
   newArrivals: ProductApiItem[];
   featuredProducts: Array<{ product: ProductApiItem; title?: string | null }>;
@@ -116,6 +118,56 @@ function SectionHeading({
         </Link>
       )}
     </div>
+  );
+}
+
+function HomeBanner({ banner }: { banner: Banner }) {
+  return (
+    <section className="relative isolate overflow-hidden rounded-2xl bg-[#EDE3E1] px-6 py-12 sm:px-10 sm:py-16">
+      {banner.desktopImage || banner.imageUrl ? (
+        <picture>
+          {banner.mobileImage ? (
+            <source media="(max-width: 639px)" srcSet={banner.mobileImage} />
+          ) : null}
+          <img
+            src={banner.desktopImage || banner.imageUrl}
+            alt={banner.imageAlt || banner.title}
+            className="absolute inset-0 -z-20 size-full object-cover"
+          />
+        </picture>
+      ) : null}
+      {banner.desktopImage || banner.imageUrl ? (
+        <div
+          className="absolute inset-0 -z-10 bg-[#20181A]"
+          style={{ opacity: (banner.overlayOpacity ?? 20) / 100 }}
+        />
+      ) : null}
+      <div
+        className={`relative max-w-xl ${banner.textAlignment === "CENTER" ? "mx-auto text-center" : banner.textAlignment === "RIGHT" ? "ml-auto text-right" : ""} ${banner.textTheme === "DARK" ? "text-[#2D2226]" : "text-white"}`}
+      >
+        {banner.eyebrow ? (
+          <p className="text-xs font-bold uppercase tracking-[.22em] opacity-80">
+            {banner.eyebrow}
+          </p>
+        ) : null}
+        <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+          {banner.title}
+        </h2>
+        {banner.description ? (
+          <p className="mt-3 max-w-lg text-sm leading-6 opacity-85">
+            {banner.description}
+          </p>
+        ) : null}
+        {banner.primaryCtaLabel && banner.primaryCtaUrl ? (
+          <Link
+            href={banner.primaryCtaUrl}
+            className="mt-6 inline-flex min-h-11 items-center rounded-xl bg-[#D96C8A] px-5 text-sm font-extrabold text-white hover:bg-[#C85B7B]"
+          >
+            {banner.primaryCtaLabel}
+          </Link>
+        ) : null}
+      </div>
+    </section>
   );
 }
 
@@ -222,7 +274,7 @@ export default function StorefrontHomeClient() {
               {hero?.primaryCtaLabel || !hero ? (
                 <Link
                   href={hero?.primaryCtaUrl || hero?.linkUrl || "/products"}
-                  className="mt-8 inline-flex min-h-11 items-center gap-2 bg-[#D96C8A] px-6 py-3 text-sm font-extrabold text-white transition hover:bg-[#C85B7B]"
+                  className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#D96C8A] px-6 py-3 text-sm font-extrabold text-white transition hover:bg-[#C85B7B]"
                 >
                   {hero?.primaryCtaLabel || "Khám phá ngay"}{" "}
                   <ArrowRight className="size-4" />
@@ -243,7 +295,7 @@ export default function StorefrontHomeClient() {
                 <Link
                   key={gender}
                   href={`/products?gender=${gender}`}
-                  className="group relative aspect-[.9] overflow-hidden bg-[#EDE3E1]"
+                  className="group relative aspect-[.9] overflow-hidden rounded-2xl bg-[#EDE3E1]"
                 >
                   <ImageWithLoading
                     src={product?.imageUrl}
@@ -269,6 +321,15 @@ export default function StorefrontHomeClient() {
                     </span>
                   </div>
                 </Link>
+              ))}
+            </div>
+          </section>
+        )}
+        {data.campaignBanners.length > 0 && (
+          <section className="mx-auto max-w-7xl px-5 pb-16 sm:px-8 lg:pb-20">
+            <div className="grid gap-5">
+              {data.campaignBanners.map((banner) => (
+                <HomeBanner key={banner.id} banner={banner} />
               ))}
             </div>
           </section>
@@ -340,7 +401,7 @@ export default function StorefrontHomeClient() {
                 <Link
                   key={category.id}
                   href={`/products?categoryId=${category.id}`}
-                  className={`group relative overflow-hidden bg-[#EDE3E1] ${index === 0 ? "sm:col-span-2" : ""}`}
+                  className={`group relative overflow-hidden rounded-2xl bg-[#EDE3E1] ${index === 0 ? "sm:col-span-2" : ""}`}
                 >
                   <ImageWithLoading
                     src={category.products?.[0]?.imageUrl}
@@ -351,6 +412,15 @@ export default function StorefrontHomeClient() {
                     <p className="text-lg font-extrabold">{category.name}</p>
                   </div>
                 </Link>
+              ))}
+            </div>
+          </section>
+        )}
+        {data.categoryBanners.length > 0 && (
+          <section className="mx-auto max-w-7xl px-5 pb-16 sm:px-8 lg:pb-20">
+            <div className="grid gap-5">
+              {data.categoryBanners.map((banner) => (
+                <HomeBanner key={banner.id} banner={banner} />
               ))}
             </div>
           </section>

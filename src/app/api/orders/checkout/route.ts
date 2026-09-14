@@ -2,6 +2,7 @@
 import prisma from "@/lib/db";
 import { verifyJwt } from "@/lib/auth/crypto";
 import { NextResponse } from "next/server";
+import { calculateShippingQuote, validateCoordinates } from "@/lib/geoapify";
 
 const fail = (message: string, status = 400) => NextResponse.json({ message }, { status });
 
@@ -15,10 +16,14 @@ export async function POST(request: Request) {
   const receiverName = String(body.receiverName || "").trim();
   const receiverPhone = String(body.receiverPhone || "").trim();
   const receiverAddress = String(body.receiverAddress || "").trim();
+  const destinationLatitude = Number(body.destinationLatitude);
+  const destinationLongitude = Number(body.destinationLongitude);
   const paymentMethod = body.paymentMethod === "MOMO" ? "MOMO" : "COD";
   if (!receiverName || !receiverPhone || !receiverAddress) return fail("Vui lòng nhập đủ thông tin nhận hàng.");
+  if (!validateCoordinates(destinationLatitude, destinationLongitude)) return fail("Vui lòng chọn địa chỉ giao hàng từ danh sách gợi ý.", 422);
 
   try {
+    const quote = await calculateShippingQuote(destinationLatitude, destinationLongitude);
     const order = await prisma.$transaction(async (tx) => {
       const existing = await tx.order.findUnique({ where: { idempotencyKey: token }, select: { id: true, orderNumber: true } });
       if (existing) return existing;
@@ -35,7 +40,7 @@ export async function POST(request: Request) {
         }
         const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
         const orderNumber = `QN-${Date.now()}-${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
-        const created = await tx.order.create({ data: { orderNumber, idempotencyKey: token, userId, source: "ONLINE", status: "PENDING", subtotal, totalAmount: subtotal, remainingAmount: subtotal, paymentMethod, receiverName, receiverPhone, receiverAddress, items: { create: lines.map(({ item, price, cost, total }) => ({ productId: item.productId, variantId: item.variantId!, productTitle: item.product.title, productImageUrl: item.product.imageUrl, sku: item.variant!.sku, size: item.variant!.size, color: item.variant!.color, quantity: item.quantity, originalUnitPrice: price, unitPrice: price, unitCost: cost, totalPrice: total, lineSubtotal: total, lineCost: cost * item.quantity, lineProfit: (price - cost) * item.quantity })) } }, select: { id: true, orderNumber: true } });
+        const created = await tx.order.create({ data: { orderNumber, idempotencyKey: token, userId, source: "ONLINE", status: "PENDING", subtotal, shippingFee: quote.shippingFee, totalAmount: subtotal + quote.shippingFee, remainingAmount: subtotal + quote.shippingFee, receiverName, receiverPhone, receiverAddress, latitude: destinationLatitude, longitude: destinationLongitude, shippingDistanceMeters: quote.distanceMeters, shippingDistanceKm: quote.distanceKm, shippingEstimatedMinutes: quote.estimatedDurationMinutes, paymentMethod, items: { create: lines.map(({ item, price, cost, total }) => ({ productId: item.productId, variantId: item.variantId!, productTitle: item.product.title, productImageUrl: item.product.imageUrl, sku: item.variant!.sku, size: item.variant!.size, color: item.variant!.color, quantity: item.quantity, originalUnitPrice: price, unitPrice: price, unitCost: cost, totalPrice: total, lineSubtotal: total, lineCost: cost * item.quantity, lineProfit: (price - cost) * item.quantity })) } }, select: { id: true, orderNumber: true } });
         for (const { item, price, cost } of lines) await tx.inventoryTransaction.create({ data: { productId: item.productId, variantId: item.variantId, type: "SALE", quantity: -item.quantity, balanceAfter: Math.max(0, item.variant!.quantity - item.quantity), referenceType: "ORDER", referenceId: created.id, note: `Đặt hàng ${created.orderNumber}`, unitImportPrice: cost, unitSellPrice: price } });
         await tx.cartItem.deleteMany({ where: { cartId: cart!.id, id: { in: payload.cartItemIds || [] } } });
         return created;
@@ -51,7 +56,7 @@ export async function POST(request: Request) {
       const cost = Number(variant.importPrice);
       const total = price * quantity;
       const orderNumber = `QN-${Date.now()}-${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
-      const created = await tx.order.create({ data: { orderNumber, idempotencyKey: token, userId, source: "ONLINE", status: "PENDING", subtotal: total, totalAmount: total, remainingAmount: total, paymentMethod, receiverName, receiverPhone, receiverAddress, items: { create: { productId: variant.productId, variantId: variant.id, productTitle: variant.product.title, productImageUrl: variant.product.imageUrl, sku: variant.sku, size: variant.size, color: variant.color, quantity, originalUnitPrice: price, unitPrice: price, unitCost: cost, totalPrice: total, lineSubtotal: total, lineCost: cost * quantity, lineProfit: (price - cost) * quantity } } }, select: { id: true, orderNumber: true } });
+      const created = await tx.order.create({ data: { orderNumber, idempotencyKey: token, userId, source: "ONLINE", status: "PENDING", subtotal: total, shippingFee: quote.shippingFee, totalAmount: total + quote.shippingFee, remainingAmount: total + quote.shippingFee, receiverName, receiverPhone, receiverAddress, latitude: destinationLatitude, longitude: destinationLongitude, shippingDistanceMeters: quote.distanceMeters, shippingDistanceKm: quote.distanceKm, shippingEstimatedMinutes: quote.estimatedDurationMinutes, paymentMethod, items: { create: { productId: variant.productId, variantId: variant.id, productTitle: variant.product.title, productImageUrl: variant.product.imageUrl, sku: variant.sku, size: variant.size, color: variant.color, quantity, originalUnitPrice: price, unitPrice: price, unitCost: cost, totalPrice: total, lineSubtotal: total, lineCost: cost * quantity, lineProfit: (price - cost) * quantity } } }, select: { id: true, orderNumber: true } });
       await tx.inventoryTransaction.create({ data: { productId: variant.productId, variantId: variant.id, type: "SALE", quantity: -quantity, balanceAfter: Math.max(0, variant.quantity - quantity), referenceType: "ORDER", referenceId: created.id, note: `Đặt hàng ${created.orderNumber}`, unitImportPrice: cost, unitSellPrice: price } });
       return created;
     });

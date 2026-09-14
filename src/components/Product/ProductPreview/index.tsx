@@ -10,6 +10,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import RichTextRenderer from "@/components/RichText/RichTextRenderer";
 import { cn } from "@/lib/utils";
 import {
   formatPreviewPrice,
@@ -76,10 +77,7 @@ export default function ProductPreview({
     setPreviewMessage("");
   };
 
-  const description = product.description
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .trim();
+  const description = product.description.trim();
 
   return (
     <article
@@ -298,13 +296,10 @@ export default function ProductPreview({
       <section className={cn("border-t border-slate-100 p-4", !isMobileFrame && "sm:p-6")}>
         <h2 className="text-lg font-extrabold">Mô tả sản phẩm</h2>
         {description ? (
-          <div className="mt-3 space-y-3 text-sm leading-7 text-slate-600">
-            {description.split(/\n{2,}/).map((paragraph, index) => (
-              <p key={`${index}-${paragraph.slice(0, 20)}`} className="whitespace-pre-line">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <RichTextRenderer
+            html={description}
+            className="mt-3 text-sm leading-7 text-slate-600"
+          />
         ) : (
           <p className="mt-3 text-sm italic text-slate-400">
             Sản phẩm chưa có mô tả.

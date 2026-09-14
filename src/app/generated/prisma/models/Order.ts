@@ -45,6 +45,9 @@ export type OrderAvgAggregateOutputType = {
   couponId: number | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
+  shippingDistanceMeters: number | null
+  shippingDistanceKm: runtime.Decimal | null
+  shippingEstimatedMinutes: number | null
 }
 
 export type OrderSumAggregateOutputType = {
@@ -66,6 +69,9 @@ export type OrderSumAggregateOutputType = {
   couponId: number | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
+  shippingDistanceMeters: number | null
+  shippingDistanceKm: runtime.Decimal | null
+  shippingEstimatedMinutes: number | null
 }
 
 export type OrderMinAggregateOutputType = {
@@ -102,6 +108,9 @@ export type OrderMinAggregateOutputType = {
   receiverProvince: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
+  shippingDistanceMeters: number | null
+  shippingDistanceKm: runtime.Decimal | null
+  shippingEstimatedMinutes: number | null
   note: string | null
   placedAt: Date | null
   completedAt: Date | null
@@ -145,6 +154,9 @@ export type OrderMaxAggregateOutputType = {
   receiverProvince: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
+  shippingDistanceMeters: number | null
+  shippingDistanceKm: runtime.Decimal | null
+  shippingEstimatedMinutes: number | null
   note: string | null
   placedAt: Date | null
   completedAt: Date | null
@@ -188,6 +200,9 @@ export type OrderCountAggregateOutputType = {
   receiverProvince: number
   latitude: number
   longitude: number
+  shippingDistanceMeters: number
+  shippingDistanceKm: number
+  shippingEstimatedMinutes: number
   note: number
   placedAt: number
   completedAt: number
@@ -218,6 +233,9 @@ export type OrderAvgAggregateInputType = {
   couponId?: true
   latitude?: true
   longitude?: true
+  shippingDistanceMeters?: true
+  shippingDistanceKm?: true
+  shippingEstimatedMinutes?: true
 }
 
 export type OrderSumAggregateInputType = {
@@ -239,6 +257,9 @@ export type OrderSumAggregateInputType = {
   couponId?: true
   latitude?: true
   longitude?: true
+  shippingDistanceMeters?: true
+  shippingDistanceKm?: true
+  shippingEstimatedMinutes?: true
 }
 
 export type OrderMinAggregateInputType = {
@@ -275,6 +296,9 @@ export type OrderMinAggregateInputType = {
   receiverProvince?: true
   latitude?: true
   longitude?: true
+  shippingDistanceMeters?: true
+  shippingDistanceKm?: true
+  shippingEstimatedMinutes?: true
   note?: true
   placedAt?: true
   completedAt?: true
@@ -318,6 +342,9 @@ export type OrderMaxAggregateInputType = {
   receiverProvince?: true
   latitude?: true
   longitude?: true
+  shippingDistanceMeters?: true
+  shippingDistanceKm?: true
+  shippingEstimatedMinutes?: true
   note?: true
   placedAt?: true
   completedAt?: true
@@ -361,6 +388,9 @@ export type OrderCountAggregateInputType = {
   receiverProvince?: true
   latitude?: true
   longitude?: true
+  shippingDistanceMeters?: true
+  shippingDistanceKm?: true
+  shippingEstimatedMinutes?: true
   note?: true
   placedAt?: true
   completedAt?: true
@@ -491,6 +521,9 @@ export type OrderGroupByOutputType = {
   receiverProvince: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
+  shippingDistanceMeters: number | null
+  shippingDistanceKm: runtime.Decimal | null
+  shippingEstimatedMinutes: number | null
   note: string | null
   placedAt: Date
   completedAt: Date | null
@@ -557,6 +590,9 @@ export type OrderWhereInput = {
   receiverProvince?: Prisma.StringNullableFilter<"Order"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.IntNullableFilter<"Order"> | number | null
+  shippingDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.IntNullableFilter<"Order"> | number | null
   note?: Prisma.StringNullableFilter<"Order"> | string | null
   placedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -614,6 +650,9 @@ export type OrderOrderByWithRelationInput = {
   receiverProvince?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingDistanceMeters?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingEstimatedMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   placedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -674,6 +713,9 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   receiverProvince?: Prisma.StringNullableFilter<"Order"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.IntNullableFilter<"Order"> | number | null
+  shippingDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.IntNullableFilter<"Order"> | number | null
   note?: Prisma.StringNullableFilter<"Order"> | string | null
   placedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -731,6 +773,9 @@ export type OrderOrderByWithAggregationInput = {
   receiverProvince?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingDistanceMeters?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingEstimatedMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   placedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -782,6 +827,9 @@ export type OrderScalarWhereWithAggregatesInput = {
   receiverProvince?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   latitude?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.IntNullableWithAggregatesFilter<"Order"> | number | null
+  shippingDistanceKm?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.IntNullableWithAggregatesFilter<"Order"> | number | null
   note?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   placedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
@@ -818,6 +866,9 @@ export type OrderCreateInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -875,6 +926,9 @@ export type OrderUncheckedCreateInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -919,6 +973,9 @@ export type OrderUpdateInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -976,6 +1033,9 @@ export type OrderUncheckedUpdateInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1027,6 +1087,9 @@ export type OrderCreateManyInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -1063,6 +1126,9 @@ export type OrderUpdateManyMutationInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1106,6 +1172,9 @@ export type OrderUncheckedUpdateManyInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1169,6 +1238,9 @@ export type OrderCountOrderByAggregateInput = {
   receiverProvince?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  shippingDistanceMeters?: Prisma.SortOrder
+  shippingDistanceKm?: Prisma.SortOrder
+  shippingEstimatedMinutes?: Prisma.SortOrder
   note?: Prisma.SortOrder
   placedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
@@ -1197,6 +1269,9 @@ export type OrderAvgOrderByAggregateInput = {
   couponId?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  shippingDistanceMeters?: Prisma.SortOrder
+  shippingDistanceKm?: Prisma.SortOrder
+  shippingEstimatedMinutes?: Prisma.SortOrder
 }
 
 export type OrderMaxOrderByAggregateInput = {
@@ -1233,6 +1308,9 @@ export type OrderMaxOrderByAggregateInput = {
   receiverProvince?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  shippingDistanceMeters?: Prisma.SortOrder
+  shippingDistanceKm?: Prisma.SortOrder
+  shippingEstimatedMinutes?: Prisma.SortOrder
   note?: Prisma.SortOrder
   placedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
@@ -1276,6 +1354,9 @@ export type OrderMinOrderByAggregateInput = {
   receiverProvince?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  shippingDistanceMeters?: Prisma.SortOrder
+  shippingDistanceKm?: Prisma.SortOrder
+  shippingEstimatedMinutes?: Prisma.SortOrder
   note?: Prisma.SortOrder
   placedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
@@ -1304,6 +1385,9 @@ export type OrderSumOrderByAggregateInput = {
   couponId?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  shippingDistanceMeters?: Prisma.SortOrder
+  shippingDistanceKm?: Prisma.SortOrder
+  shippingEstimatedMinutes?: Prisma.SortOrder
 }
 
 export type OrderCreateNestedOneWithoutSoldContributionsInput = {
@@ -1715,6 +1799,9 @@ export type OrderCreateWithoutSoldContributionsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -1771,6 +1858,9 @@ export type OrderUncheckedCreateWithoutSoldContributionsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -1830,6 +1920,9 @@ export type OrderUpdateWithoutSoldContributionsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1886,6 +1979,9 @@ export type OrderUncheckedUpdateWithoutSoldContributionsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1929,6 +2025,9 @@ export type OrderCreateWithoutUserInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -1984,6 +2083,9 @@ export type OrderUncheckedCreateWithoutUserInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2038,6 +2140,9 @@ export type OrderCreateWithoutCreatedByInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2093,6 +2198,9 @@ export type OrderUncheckedCreateWithoutCreatedByInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2147,6 +2255,9 @@ export type OrderCreateWithoutUpdatedByInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2202,6 +2313,9 @@ export type OrderUncheckedCreateWithoutUpdatedByInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2282,6 +2396,9 @@ export type OrderScalarWhereInput = {
   receiverProvince?: Prisma.StringNullableFilter<"Order"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.IntNullableFilter<"Order"> | number | null
+  shippingDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.IntNullableFilter<"Order"> | number | null
   note?: Prisma.StringNullableFilter<"Order"> | string | null
   placedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -2350,6 +2467,9 @@ export type OrderCreateWithoutMembershipBenefitRedemptionsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2406,6 +2526,9 @@ export type OrderUncheckedCreateWithoutMembershipBenefitRedemptionsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2465,6 +2588,9 @@ export type OrderUpdateWithoutMembershipBenefitRedemptionsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2521,6 +2647,9 @@ export type OrderUncheckedUpdateWithoutMembershipBenefitRedemptionsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2564,6 +2693,9 @@ export type OrderCreateWithoutShippingAddressInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2619,6 +2751,9 @@ export type OrderUncheckedCreateWithoutShippingAddressInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2673,6 +2808,9 @@ export type OrderCreateWithoutBillingAddressInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2728,6 +2866,9 @@ export type OrderUncheckedCreateWithoutBillingAddressInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2814,6 +2955,9 @@ export type OrderCreateWithoutItemsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2870,6 +3014,9 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -2929,6 +3076,9 @@ export type OrderUpdateWithoutItemsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2985,6 +3135,9 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3028,6 +3181,9 @@ export type OrderCreateWithoutInvoicesInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3084,6 +3240,9 @@ export type OrderUncheckedCreateWithoutInvoicesInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3143,6 +3302,9 @@ export type OrderUpdateWithoutInvoicesInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3199,6 +3361,9 @@ export type OrderUncheckedUpdateWithoutInvoicesInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3242,6 +3407,9 @@ export type OrderCreateWithoutStatusHistoriesInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3298,6 +3466,9 @@ export type OrderUncheckedCreateWithoutStatusHistoriesInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3357,6 +3528,9 @@ export type OrderUpdateWithoutStatusHistoriesInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3413,6 +3587,9 @@ export type OrderUncheckedUpdateWithoutStatusHistoriesInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3456,6 +3633,9 @@ export type OrderCreateWithoutPaymentsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3512,6 +3692,9 @@ export type OrderUncheckedCreateWithoutPaymentsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3571,6 +3754,9 @@ export type OrderUpdateWithoutPaymentsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3627,6 +3813,9 @@ export type OrderUncheckedUpdateWithoutPaymentsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3670,6 +3859,9 @@ export type OrderCreateWithoutShipmentsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3726,6 +3918,9 @@ export type OrderUncheckedCreateWithoutShipmentsInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3785,6 +3980,9 @@ export type OrderUpdateWithoutShipmentsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3841,6 +4039,9 @@ export type OrderUncheckedUpdateWithoutShipmentsInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3884,6 +4085,9 @@ export type OrderCreateWithoutCouponInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -3939,6 +4143,9 @@ export type OrderUncheckedCreateWithoutCouponInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4009,6 +4216,9 @@ export type OrderCreateWithoutDiscountRedemptionInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4065,6 +4275,9 @@ export type OrderUncheckedCreateWithoutDiscountRedemptionInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4124,6 +4337,9 @@ export type OrderUpdateWithoutDiscountRedemptionInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4180,6 +4396,9 @@ export type OrderUncheckedUpdateWithoutDiscountRedemptionInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4229,6 +4448,9 @@ export type OrderCreateManyUserInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4271,6 +4493,9 @@ export type OrderCreateManyCreatedByInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4313,6 +4538,9 @@ export type OrderCreateManyUpdatedByInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4349,6 +4577,9 @@ export type OrderUpdateWithoutUserInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4404,6 +4635,9 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4454,6 +4688,9 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4490,6 +4727,9 @@ export type OrderUpdateWithoutCreatedByInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4545,6 +4785,9 @@ export type OrderUncheckedUpdateWithoutCreatedByInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4595,6 +4838,9 @@ export type OrderUncheckedUpdateManyWithoutCreatedByInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4631,6 +4877,9 @@ export type OrderUpdateWithoutUpdatedByInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4686,6 +4935,9 @@ export type OrderUncheckedUpdateWithoutUpdatedByInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4736,6 +4988,9 @@ export type OrderUncheckedUpdateManyWithoutUpdatedByInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4778,6 +5033,9 @@ export type OrderCreateManyShippingAddressInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4820,6 +5078,9 @@ export type OrderCreateManyBillingAddressInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -4856,6 +5117,9 @@ export type OrderUpdateWithoutShippingAddressInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4911,6 +5175,9 @@ export type OrderUncheckedUpdateWithoutShippingAddressInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4961,6 +5228,9 @@ export type OrderUncheckedUpdateManyWithoutShippingAddressInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4997,6 +5267,9 @@ export type OrderUpdateWithoutBillingAddressInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5052,6 +5325,9 @@ export type OrderUncheckedUpdateWithoutBillingAddressInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5102,6 +5378,9 @@ export type OrderUncheckedUpdateManyWithoutBillingAddressInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5144,6 +5423,9 @@ export type OrderCreateManyCouponInput = {
   receiverProvince?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: number | null
+  shippingDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: number | null
   note?: string | null
   placedAt?: Date | string
   completedAt?: Date | string | null
@@ -5180,6 +5462,9 @@ export type OrderUpdateWithoutCouponInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5235,6 +5520,9 @@ export type OrderUncheckedUpdateWithoutCouponInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5285,6 +5573,9 @@ export type OrderUncheckedUpdateManyWithoutCouponInput = {
   receiverProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  shippingDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingEstimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5413,6 +5704,9 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   receiverProvince?: boolean
   latitude?: boolean
   longitude?: boolean
+  shippingDistanceMeters?: boolean
+  shippingDistanceKm?: boolean
+  shippingEstimatedMinutes?: boolean
   note?: boolean
   placedAt?: boolean
   completedAt?: boolean
@@ -5471,6 +5765,9 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   receiverProvince?: boolean
   latitude?: boolean
   longitude?: boolean
+  shippingDistanceMeters?: boolean
+  shippingDistanceKm?: boolean
+  shippingEstimatedMinutes?: boolean
   note?: boolean
   placedAt?: boolean
   completedAt?: boolean
@@ -5520,6 +5817,9 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   receiverProvince?: boolean
   latitude?: boolean
   longitude?: boolean
+  shippingDistanceMeters?: boolean
+  shippingDistanceKm?: boolean
+  shippingEstimatedMinutes?: boolean
   note?: boolean
   placedAt?: boolean
   completedAt?: boolean
@@ -5569,6 +5869,9 @@ export type OrderSelectScalar = {
   receiverProvince?: boolean
   latitude?: boolean
   longitude?: boolean
+  shippingDistanceMeters?: boolean
+  shippingDistanceKm?: boolean
+  shippingEstimatedMinutes?: boolean
   note?: boolean
   placedAt?: boolean
   completedAt?: boolean
@@ -5578,7 +5881,7 @@ export type OrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "idempotencyKey" | "userId" | "createdById" | "updatedById" | "shippingAddressId" | "billingAddressId" | "status" | "source" | "subtotal" | "discountAmount" | "shippingFee" | "taxAmount" | "totalCost" | "profit" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "isPaid" | "paidAt" | "couponId" | "discountCodeSnapshot" | "receiverName" | "receiverPhone" | "receiverAddress" | "receiverWard" | "receiverDistrict" | "receiverProvince" | "latitude" | "longitude" | "note" | "placedAt" | "completedAt" | "deliveredAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "idempotencyKey" | "userId" | "createdById" | "updatedById" | "shippingAddressId" | "billingAddressId" | "status" | "source" | "subtotal" | "discountAmount" | "shippingFee" | "taxAmount" | "totalCost" | "profit" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "isPaid" | "paidAt" | "couponId" | "discountCodeSnapshot" | "receiverName" | "receiverPhone" | "receiverAddress" | "receiverWard" | "receiverDistrict" | "receiverProvince" | "latitude" | "longitude" | "shippingDistanceMeters" | "shippingDistanceKm" | "shippingEstimatedMinutes" | "note" | "placedAt" | "completedAt" | "deliveredAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   createdBy?: boolean | Prisma.Order$createdByArgs<ExtArgs>
@@ -5665,6 +5968,9 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     receiverProvince: string | null
     latitude: runtime.Decimal | null
     longitude: runtime.Decimal | null
+    shippingDistanceMeters: number | null
+    shippingDistanceKm: runtime.Decimal | null
+    shippingEstimatedMinutes: number | null
     note: string | null
     placedAt: Date
     completedAt: Date | null
@@ -6142,6 +6448,9 @@ export interface OrderFieldRefs {
   readonly receiverProvince: Prisma.FieldRef<"Order", 'String'>
   readonly latitude: Prisma.FieldRef<"Order", 'Decimal'>
   readonly longitude: Prisma.FieldRef<"Order", 'Decimal'>
+  readonly shippingDistanceMeters: Prisma.FieldRef<"Order", 'Int'>
+  readonly shippingDistanceKm: Prisma.FieldRef<"Order", 'Decimal'>
+  readonly shippingEstimatedMinutes: Prisma.FieldRef<"Order", 'Int'>
   readonly note: Prisma.FieldRef<"Order", 'String'>
   readonly placedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"Order", 'DateTime'>

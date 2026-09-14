@@ -20,6 +20,13 @@ import {
   Command,
 } from "@/components/ui/command";
 
+const normalizeSearchText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/gi, "d")
+    .toLocaleLowerCase("vi");
+
 export interface SelectProps extends React.InputHTMLAttributes<HTMLInputElement> {
   optionValue: { value: string; label: string; disabled?: boolean }[];
   placeholder: string;
@@ -205,7 +212,16 @@ const CustomSelect = React.forwardRef<
             onTouchMove={(e) => e.stopPropagation()}
           >
             <div className="p-1.5">
-              <Command className="max-h-50 xs:max-h-[300px]">
+              <Command
+                className="max-h-50 xs:max-h-[300px]"
+                filter={(value, search, keywords) => {
+                  const haystack = normalizeSearchText(
+                    [value, ...(keywords || [])].join(" "),
+                  );
+                  const needle = normalizeSearchText(search);
+                  return haystack.includes(needle) ? 1 : 0;
+                }}
+              >
                 {searchable && (
                   <div
                     className={`h-10 rounded-2xl border border-slate-100 bg-slate-50 ${searchClsx} `}
@@ -301,7 +317,9 @@ const CustomSelect = React.forwardRef<
         </Popover>
 
         {showError && (
-          <p className="text-red-1 text-sm mt-1">{getIn(errors, name)}</p>
+          <p className="text-red-1 mt-1 text-xs font-medium">
+            {getIn(errors, name)}
+          </p>
         )}
       </div>
     );

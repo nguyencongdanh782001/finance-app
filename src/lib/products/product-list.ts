@@ -87,6 +87,7 @@ export const productOrderBy = (sort: string): Prisma.ProductOrderByWithRelationI
 
 export const publicProductSelect = {
   id: true, title: true, slug: true, imageUrl: true, sellPrice: true, quantity: true,
+  description: true, descriptionHtml: true, descriptionContent: true,
   organicFavoriteCount: true, favoriteCountAdjustment: true, categoryId: true, gender: true,
   category: { select: { id: true, name: true, slug: true, color: true, icon: true } },
   images: { where: { variantId: null }, orderBy: { position: "asc" as const }, select: { id: true, url: true, publicId: true, altText: true, position: true, isPrimary: true } },

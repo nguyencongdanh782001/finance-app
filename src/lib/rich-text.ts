@@ -14,6 +14,8 @@ const allowedTags = [
   "em",
   "u",
   "s",
+  "span",
+  "mark",
   "blockquote",
   "ul",
   "ol",
@@ -42,6 +44,8 @@ export function sanitizeRichTextHtml(value: string) {
     allowedAttributes: {
       a: ["href", "title", "target", "rel"],
       img: ["src", "alt", "width", "height", "data-align"],
+      span: ["style"],
+      mark: ["style", "data-color"],
       th: ["colspan", "rowspan"],
       td: ["colspan", "rowspan"],
     },

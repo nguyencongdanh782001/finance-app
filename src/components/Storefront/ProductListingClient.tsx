@@ -42,7 +42,16 @@ const genderTitles: Record<string, string> = {
   UNISEX: "Thời trang Unisex",
 };
 
-type ListingBanner = { title: string; description?: string | null; desktopImage?: string | null; mobileImage?: string | null; imageUrl?: string | null; imageAlt?: string | null; primaryCtaLabel?: string | null; primaryCtaUrl?: string | null };
+type ListingBanner = {
+  title: string;
+  description?: string | null;
+  desktopImage?: string | null;
+  mobileImage?: string | null;
+  imageUrl?: string | null;
+  imageAlt?: string | null;
+  primaryCtaLabel?: string | null;
+  primaryCtaUrl?: string | null;
+};
 
 export default function ProductListingClient() {
   const params = useSearchParams();
@@ -60,8 +69,26 @@ export default function ProductListingClient() {
   const [draftCategory, setDraftCategory] = useState(categoryId);
   const [draftGender, setDraftGender] = useState(gender);
   const [applying, setApplying] = useState(false);
-  const [listingBanner, setListingBanner] = useState<ListingBanner | null>(null);
-  useEffect(() => { fetch("/api/banners").then((response) => response.ok ? response.json() : Promise.reject()).then((data: { banner?: ListingBanner | null }) => setListingBanner(data.banner || null)).catch(() => undefined); }, []);
+  const [listingBanner, setListingBanner] = useState<ListingBanner | null>(
+    null,
+  );
+  const [categoryBanner, setCategoryBanner] = useState<ListingBanner | null>(
+    null,
+  );
+  useEffect(() => {
+    fetch("/api/banners")
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then(
+        (data: {
+          banner?: ListingBanner | null;
+          categoryBanner?: ListingBanner | null;
+        }) => {
+          setListingBanner(data.banner || null);
+          setCategoryBanner(data.categoryBanner || null);
+        },
+      )
+      .catch(() => undefined);
+  }, []);
   const update = (key: string, value: string) => {
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value);
@@ -143,6 +170,7 @@ export default function ProductListingClient() {
   const activeCount = Number(Boolean(gender)) + Number(Boolean(categoryId));
   const title =
     activeCategory?.name || genderTitles[gender] || "Tất cả sản phẩm";
+  const activeBanner = categoryId ? categoryBanner : listingBanner;
   const total = result?.pagination.total || 0;
   const filterChip = (label: string, key: string) => (
     <span className="inline-flex items-center gap-1 rounded-full bg-[#FCEEF3] px-3 py-1.5 text-xs font-semibold text-[#A43E5F]">
@@ -165,7 +193,40 @@ export default function ProductListingClient() {
           </Link>
           <span className="mx-2">/</span>Sản phẩm
         </div>
-        {listingBanner ? <section className="relative mt-6 overflow-hidden rounded-2xl bg-[#EDE3E1] p-6 sm:p-8"><picture>{listingBanner.mobileImage ? <source media="(max-width: 639px)" srcSet={listingBanner.mobileImage} /> : null}<img src={listingBanner.desktopImage || listingBanner.imageUrl || ""} alt={listingBanner.imageAlt || listingBanner.title} className="absolute inset-0 size-full object-cover" /></picture><div className="relative max-w-lg text-white drop-shadow"><h2 className="text-2xl font-extrabold">{listingBanner.title}</h2>{listingBanner.description ? <p className="mt-2 text-sm leading-6">{listingBanner.description}</p> : null}{listingBanner.primaryCtaLabel && listingBanner.primaryCtaUrl ? <Link href={listingBanner.primaryCtaUrl} className="mt-4 inline-flex rounded-lg bg-[#D96C8A] px-4 py-2 text-sm font-bold">{listingBanner.primaryCtaLabel}</Link> : null}</div></section> : null}
+        {activeBanner ? (
+          <section className="relative mt-6 overflow-hidden rounded-2xl bg-[#EDE3E1] p-6 sm:p-8">
+            <picture>
+              {activeBanner.mobileImage ? (
+                <source
+                  media="(max-width: 639px)"
+                  srcSet={activeBanner.mobileImage}
+                />
+              ) : null}
+              <img
+                src={activeBanner.desktopImage || activeBanner.imageUrl || ""}
+                alt={activeBanner.imageAlt || activeBanner.title}
+                className="absolute inset-0 size-full object-cover"
+              />
+            </picture>
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="relative max-w-lg text-white drop-shadow">
+              <h2 className="text-2xl font-extrabold">{activeBanner.title}</h2>
+              {activeBanner.description ? (
+                <p className="mt-2 text-sm leading-6">
+                  {activeBanner.description}
+                </p>
+              ) : null}
+              {activeBanner.primaryCtaLabel && activeBanner.primaryCtaUrl ? (
+                <Link
+                  href={activeBanner.primaryCtaUrl}
+                  className="mt-4 inline-flex rounded-lg bg-[#D96C8A] px-4 py-2 text-sm font-bold"
+                >
+                  {activeBanner.primaryCtaLabel}
+                </Link>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
@@ -321,7 +382,7 @@ export default function ProductListingClient() {
               <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-5 xl:grid-cols-4">
                 {Array.from({ length: 8 }, (_, index) => (
                   <div key={index} className="space-y-3">
-                    <Skeleton className="storefront-skeleton aspect-[4/5] rounded-none" />
+                    <Skeleton className="storefront-skeleton aspect-[4/5] rounded-xl" />
                     <Skeleton className="storefront-skeleton h-4 w-3/4" />
                     <Skeleton className="storefront-skeleton h-4 w-1/2" />
                   </div>

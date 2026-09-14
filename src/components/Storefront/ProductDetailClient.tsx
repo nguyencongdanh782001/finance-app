@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Minus,
   Plus,
   RotateCcw,
@@ -80,6 +81,7 @@ export default function ProductDetailClient() {
   const [imageFailed, setImageFailed] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -95,6 +97,7 @@ export default function ProductDetailClient() {
         setSelectedSize("");
         setSelectedVariantId(null);
         setActiveImage(data.images?.[0]?.url || data.imageUrl || "");
+        setDescriptionExpanded(false);
       })
       .catch((reason) => {
         if (reason.name !== "AbortError") {
@@ -295,6 +298,7 @@ export default function ProductDetailClient() {
   const canBuy = !variants.length
     ? Number(product.quantity) > 0
     : Boolean(selectedVariant && stock > 0);
+  const descriptionHtml = product.descriptionHtml || product.description || "";
   const imageIndex = Math.max(
     0,
     gallery.findIndex((image) => image.url === activeImage),
@@ -328,7 +332,7 @@ export default function ProductDetailClient() {
               {product.title}
             </span>
           </nav>
-      <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,.75fr)] lg:gap-16">
+          <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,.75fr)] lg:gap-16">
             <section className="min-w-0" aria-label="Hình ảnh sản phẩm">
               <div className="flex min-w-0 flex-col gap-4 sm:flex-row">
                 <div className="order-2 flex w-full shrink-0 gap-2 overflow-x-auto sm:order-1 sm:w-[88px] sm:flex-col">
@@ -339,7 +343,7 @@ export default function ProductDetailClient() {
                       aria-label={`Xem ảnh ${index + 1}`}
                       aria-current={activeImage === image.url}
                       onClick={() => setActiveImage(image.url)}
-                      className={`size-20 shrink-0 overflow-hidden border-2 bg-white sm:size-[80px] ${activeImage === image.url ? "border-[#D96C8A]" : "border-transparent"}`}
+                      className={`size-20 shrink-0 overflow-hidden rounded-lg border-2 bg-white sm:size-[80px] ${activeImage === image.url ? "border-[#D96C8A]" : "border-transparent"}`}
                     >
                       <img
                         src={image.url}
@@ -352,7 +356,7 @@ export default function ProductDetailClient() {
                     </button>
                   ))}
                 </div>
-                <div className="relative order-1 h-[420px] w-full flex-none overflow-hidden bg-[#F5EEF0] sm:order-2 sm:h-[620px] sm:min-w-0 sm:flex-1 lg:h-[720px]">
+                <div className="relative order-1 h-[420px] w-full flex-none overflow-hidden rounded-2xl bg-[#F5EEF0] sm:order-2 sm:h-[620px] sm:min-w-0 sm:flex-1 lg:h-[720px]">
                   {imageFailed ? (
                     <div className="flex size-full items-center justify-center px-8 text-center text-sm font-semibold text-[#998B91]">
                       Ảnh sản phẩm đang được cập nhật
@@ -429,9 +433,9 @@ export default function ProductDetailClient() {
                   </>
                 ) : null}
               </div>
-              {product.description ? (
+              {descriptionHtml ? (
                 <RichTextRenderer
-                  html={product.description}
+                  html={descriptionHtml}
                   compact
                   className="mt-4 max-h-24 overflow-hidden text-sm leading-6 text-[#6F6066]"
                 />
@@ -461,7 +465,7 @@ export default function ProductDetailClient() {
                             aria-pressed={selectedColor === color}
                             aria-label={`Màu ${color}${hasStock ? "" : " - hết hàng"}`}
                             onClick={() => selectColor(color)}
-                            className={`flex min-h-11 items-center gap-2 border px-3 py-2 text-sm font-semibold ${selectedColor === color ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]" : "border-[#EAE1E4] bg-white text-[#6F6066]"} disabled:cursor-not-allowed disabled:opacity-40`}
+                            className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors ${selectedColor === color ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]" : "border-[#EAE1E4] bg-white text-[#6F6066] hover:border-[#F4B5C5] hover:bg-[#FFF7F9]"} disabled:cursor-not-allowed disabled:opacity-40`}
                           >
                             <i
                               className="size-5 rounded-full border border-white shadow-[0_0_0_1px_#EAE1E4]"
@@ -493,7 +497,7 @@ export default function ProductDetailClient() {
                               disabled={!itemStock}
                               aria-pressed={selectedVariantId === variant.id}
                               onClick={() => selectSize(variant)}
-                              className={`min-h-11 min-w-12 border px-3 text-sm font-bold ${selectedVariantId === variant.id ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]" : "border-[#EAE1E4] bg-white text-[#6F6066]"} disabled:cursor-not-allowed disabled:bg-[#FAF8F8] disabled:text-[#998B91] disabled:line-through`}
+                              className={`min-h-11 min-w-12 rounded-lg border px-3 text-sm font-bold transition-colors ${selectedVariantId === variant.id ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]" : "border-[#EAE1E4] bg-white text-[#6F6066] hover:border-[#F4B5C5] hover:bg-[#FFF7F9]"} disabled:cursor-not-allowed disabled:bg-[#FAF8F8] disabled:text-[#998B91] disabled:line-through`}
                             >
                               {variant.size}
                             </button>
@@ -513,18 +517,20 @@ export default function ProductDetailClient() {
                   SKU: {selectedVariant.sku}
                 </p>
               ) : null}
-              <p
-                className={`mt-2 text-sm font-semibold ${!canBuy ? "text-[#C84F64]" : stock <= 3 ? "text-[#C84F64]" : "text-[#398866]"}`}
-              >
-                {!canBuy
-                  ? "Sản phẩm hiện đang hết hàng"
-                  : stock <= 3
-                    ? `Chỉ còn ${stock} sản phẩm`
-                    : "Còn hàng"}
-              </p>
+              {(!variants.length || selectedVariant) && (
+                <p
+                  className={`mt-2 text-sm font-semibold ${!canBuy ? "text-[#C84F64]" : stock <= 3 ? "text-[#C84F64]" : "text-[#398866]"}`}
+                >
+                  {!canBuy
+                    ? "Sản phẩm hiện đang hết hàng"
+                    : stock <= 3
+                      ? `Chỉ còn ${stock} sản phẩm`
+                      : "Còn hàng"}
+                </p>
+              )}
               <div className="mt-5 flex items-center gap-4">
                 <span className="text-sm font-bold">Số lượng</span>
-                <div className="flex items-center border border-[#EAE1E4]">
+                <div className="flex items-center overflow-hidden rounded-xl border border-[#EAE1E4]">
                   <button
                     type="button"
                     aria-label="Giảm số lượng"
@@ -573,7 +579,7 @@ export default function ProductDetailClient() {
                   type="button"
                   disabled={!canBuy}
                   onClick={() => void addToCart()}
-                  className="flex h-12 items-center justify-center gap-2 border border-[#D96C8A] px-4 text-sm font-bold text-[#A43E5F] hover:bg-[#FCEEF3] disabled:cursor-not-allowed disabled:opacity-45"
+                  className="flex h-12 items-center justify-center gap-2 rounded-xl border border-[#D96C8A] px-4 text-sm font-bold text-[#A43E5F] hover:bg-[#FCEEF3] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   <ShoppingBag className="size-4" />
                   Thêm vào giỏ
@@ -582,7 +588,7 @@ export default function ProductDetailClient() {
                   type="button"
                   disabled={!canBuy}
                   onClick={() => void buyNow()}
-                  className="h-12 bg-[#D96C8A] px-4 text-sm font-bold text-white hover:bg-[#C85B7B] disabled:cursor-not-allowed disabled:opacity-45"
+                  className="h-12 rounded-xl bg-[#D96C8A] px-4 text-sm font-bold text-white hover:bg-[#C85B7B] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   Mua ngay
                 </button>
@@ -606,13 +612,34 @@ export default function ProductDetailClient() {
               </div>
             </section>
           </div>
-          {product.description ? (
+          {descriptionHtml ? (
             <section className="mt-14 border-t border-[#EAE1E4] pt-8">
               <h2 className="text-xl font-extrabold">Thông tin sản phẩm</h2>
-              <RichTextRenderer
-                html={product.description}
-                className="product-description mt-5 max-w-3xl text-[#6F6066]"
-              />
+              <div
+                className={`relative mt-5 max-w-3xl overflow-hidden transition-[max-height] duration-300 ${descriptionExpanded ? "max-h-[2000px]" : "max-h-64"}`}
+              >
+                <RichTextRenderer
+                  html={descriptionHtml}
+                  className="product-description text-[#6F6066]"
+                />
+                {!descriptionExpanded ? (
+                  <div
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-[#FAF8F8] via-[#FAF8F8]/85 to-transparent"
+                    aria-hidden="true"
+                  />
+                ) : null}
+              </div>
+              <button
+                type="button"
+                onClick={() => setDescriptionExpanded((expanded) => !expanded)}
+                className="mt-4 inline-flex items-center gap-1.5 rounded-lg px-1 py-2 text-sm font-bold text-[#A43E5F] transition hover:text-[#D96C8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D96C8A]/30"
+                aria-expanded={descriptionExpanded}
+              >
+                {descriptionExpanded ? "Thu gọn" : "Xem thêm"}
+                <ChevronDown
+                  className={`size-4 transition-transform ${descriptionExpanded ? "rotate-180" : ""}`}
+                />
+              </button>
             </section>
           ) : null}
           {related.length ? (
@@ -644,7 +671,7 @@ export default function ProductDetailClient() {
             type="button"
             disabled={!canBuy}
             onClick={() => void addToCart()}
-            className="h-11 border border-[#D96C8A] text-xs font-bold text-[#A43E5F] disabled:opacity-45"
+            className="h-11 rounded-xl border border-[#D96C8A] text-xs font-bold text-[#A43E5F] disabled:opacity-45"
           >
             Thêm vào giỏ
           </button>
@@ -652,7 +679,7 @@ export default function ProductDetailClient() {
             type="button"
             disabled={!canBuy}
             onClick={() => void buyNow()}
-            className="h-11 bg-[#D96C8A] text-xs font-bold text-white disabled:opacity-45"
+            className="h-11 rounded-xl bg-[#D96C8A] text-xs font-bold text-white disabled:opacity-45"
           >
             Mua ngay
           </button>
