@@ -472,7 +472,7 @@ function OrderDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92svh] max-w-2xl rounded-xl border-slate-200 bg-white p-0 shadow-xl">
+      <DialogContent className="shop-order-modal max-h-[92svh] max-w-2xl rounded-xl border-slate-200 bg-white p-0 shadow-xl">
         <div className="sticky top-0 z-10 border-b border-slate-100 bg-white p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
