@@ -350,7 +350,7 @@ export default function ProductDetailClient() {
                         alt={
                           image.altText || `${product.title} - ảnh ${index + 1}`
                         }
-                        className="size-full object-cover"
+                        className="size-full object-contain p-1"
                         loading={index > 2 ? "lazy" : "eager"}
                       />
                     </button>
@@ -366,7 +366,7 @@ export default function ProductDetailClient() {
                       src={activeImage || product.imageUrl}
                       alt={product.title}
                       onError={() => setImageFailed(true)}
-                      className="absolute inset-0 size-full object-cover"
+                      className="absolute inset-0 size-full object-contain p-3 sm:p-5"
                       fetchPriority="high"
                     />
                   )}
