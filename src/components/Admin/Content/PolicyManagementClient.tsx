@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { policyTypeLabels, POLICY_TYPES } from "@/lib/content-policy";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Eye, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -102,7 +103,7 @@ export function PolicyList() {
       ) : null}
       <section className="admin-surface overflow-hidden rounded-2xl">
         {loading ? (
-          <div className="p-8 text-center text-sm">Đang tải chính sách...</div>
+          <PolicyListSkeleton />
         ) : policies.length === 0 ? (
           <div className="p-10 text-center">
             <p className="font-semibold">Chưa có chính sách nào</p>
@@ -165,6 +166,32 @@ export function PolicyList() {
           </div>
         )}
       </section>
+    </div>
+  );
+}
+
+function PolicyListSkeleton() {
+  return (
+    <div className="grid gap-3 p-4">
+      {Array.from({ length: 5 }, (_, index) => (
+        <div
+          key={index}
+          className="flex flex-col gap-4 rounded-xl border border-(--admin-border) p-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="grid min-w-0 flex-1 gap-2">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-48 max-w-[65%]" />
+              <Skeleton className="h-6 w-20 rounded-full" />
+            </div>
+            <Skeleton className="h-4 w-72 max-w-[90%]" />
+          </div>
+          <div className="flex shrink-0 items-center gap-1">
+            <Skeleton className="size-8 rounded-md" />
+            <Skeleton className="size-8 rounded-md" />
+            <Skeleton className="size-8 rounded-md" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

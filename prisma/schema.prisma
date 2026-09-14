@@ -1236,6 +1236,9 @@ model Order {
   receiverProvince String?
   latitude         Decimal?
   longitude        Decimal?
+  shippingDistanceMeters Int?
+  shippingDistanceKm Decimal?
+  shippingEstimatedMinutes Int?
 
   items                        OrderItem[]
   soldContributions            DailySoldProductContribution[]

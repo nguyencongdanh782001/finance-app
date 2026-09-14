@@ -7,6 +7,7 @@ import AccountSidebar from "@/components/Account/AccountSidebar";
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Toaster } from "@/components/ui/toaster";
 import {
   Select,
   SelectContent,
@@ -20,6 +21,7 @@ import {
 } from "@/lib/auth/validation";
 import { Form, FormikProvider, useFormik } from "formik";
 import * as Yup from "yup";
+import { toast } from "@/hook/use-toast";
 import { LockKeyhole, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,6 +36,7 @@ type Profile = {
   avatarUrl: string | null;
   birthday: string | null;
   gender: string | null;
+  authProvider: "WEB" | "GOOGLE";
 };
 type ProfileValues = {
   firstName: string;
@@ -65,13 +68,14 @@ const profileSchema = Yup.object({
   ),
   gender: Yup.string()
     .oneOf(["FEMALE", "MALE", "OTHER", "UNSPECIFIED"])
-    .required(),
+    .required("Vui lòng chọn giới tính.")
+    .defined("Vui lòng chọn giới tính."),
   phone: Yup.string().test(
     "vietnamese-phone",
     "Số điện thoại Việt Nam không hợp lệ.",
     (value) =>
       !value || isValidVietnamesePhone(normalizeVietnamesePhone(value)),
-  ),
+  ).required("Vui lòng nhập số điện thoại."),
 });
 const passwordSchema = Yup.object({
   currentPassword: Yup.string(),
@@ -127,11 +131,10 @@ function Field({
 }
 
 export default function ProfileAccountPage() {
-  const { isAuthenticated, isInitializing } = useAuth();
+  const { user, isAuthenticated, isInitializing } = useAuth();
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loadError, setLoadError] = useState("");
-  const [profileMessage, setProfileMessage] = useState("");
   const [profileErrorMessage, setProfileErrorMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
@@ -144,10 +147,8 @@ export default function ProfileAccountPage() {
       gender: "UNSPECIFIED",
       phone: "",
     },
-    enableReinitialize: true,
     validationSchema: profileSchema,
     onSubmit: async (values, helpers) => {
-      setProfileMessage("");
       setProfileErrorMessage("");
       try {
         const data = await request("/api/me", {
@@ -155,8 +156,21 @@ export default function ProfileAccountPage() {
           body: JSON.stringify(values),
         });
         setProfile(data);
-        helpers.resetForm({ values: { ...values, phone: data.phone || "" } });
-        setProfileMessage("Đã cập nhật thông tin cá nhân.");
+        helpers.resetForm({
+          values: {
+            firstName: data.firstName || "",
+            lastName: data.lastName || "",
+            displayName: data.displayName || "",
+            birthday: data.birthday?.slice(0, 10) || "",
+            gender: data.gender || "UNSPECIFIED",
+            phone: data.phone || "",
+          },
+        });
+        toast({
+          title: "Đã cập nhật thông tin cá nhân",
+          className: "bg-green-16 text-white text-sm font-medium w-fit",
+          duration: 3000,
+        });
       } catch (error) {
         const apiError = error as ApiError;
         Object.entries(apiError.fieldErrors || {}).forEach(([field, message]) =>
@@ -222,14 +236,22 @@ export default function ProfileAccountPage() {
         })
         .catch(() => setLoadError("Không thể tải thông tin cá nhân."));
   }, [isAuthenticated, isInitializing, router]);
-  if (isInitializing || !isAuthenticated || !profile) return <AccountLoading />;
-  const hasPhone = Boolean(profile.phone);
+  if (isInitializing || !isAuthenticated || !profile) {
+    return (
+      <AccountLoading
+        variant="profile"
+        showPassword={user?.authProvider === "WEB"}
+      />
+    );
+  }
   const profileError = (field: keyof ProfileValues) =>
     profileFormik.touched[field] ? profileFormik.errors[field] : undefined;
   const passwordError = (field: keyof PasswordValues) =>
     passwordFormik.touched[field] ? passwordFormik.errors[field] : undefined;
   return (
-    <StorefrontShell>
+    <>
+      <Toaster />
+      <StorefrontShell>
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 text-sm text-[#6F6066]">
           Trang chủ <span className="px-2">/</span> Tài khoản{" "}
@@ -305,18 +327,20 @@ export default function ProfileAccountPage() {
                   <Field
                     label="Số điện thoại"
                     error={profileError("phone")}
-                    hint={
-                      hasPhone
-                        ? "Số điện thoại đã được thiết lập và không thể thay đổi."
-                        : undefined
-                    }
                   >
                     <Input
                       {...profileFormik.getFieldProps("phone")}
-                      required={!hasPhone}
-                      readOnly={hasPhone}
+                      type="tel"
                       inputMode="tel"
-                      className={`${inputClass} ${hasPhone ? "bg-[#F7F3F4] text-[#8B7A80]" : ""} ${profileError("phone") ? invalidInputClass : ""}`}
+                      maxLength={10}
+                      pattern="0(3|5|7|8|9)[0-9]{8}"
+                      onChange={(event) => {
+                        profileFormik.setFieldValue(
+                          "phone",
+                          event.target.value.replace(/\D/g, "").slice(0, 10),
+                        );
+                      }}
+                      className={`${inputClass} ${profileError("phone") ? invalidInputClass : ""}`}
                       aria-invalid={Boolean(profileError("phone"))}
                     />
                   </Field>
@@ -355,11 +379,6 @@ export default function ProfileAccountPage() {
                     {profileErrorMessage}
                   </p>
                 ) : null}
-                {profileMessage ? (
-                  <p className="mt-5 text-sm font-semibold text-[#4B8063]">
-                    {profileMessage}
-                  </p>
-                ) : null}
                 <Button
                   type="submit"
                   variant="brand"
@@ -370,8 +389,9 @@ export default function ProfileAccountPage() {
                 </Button>
               </Form>
             </FormikProvider>
-            <FormikProvider value={passwordFormik}>
-              <Form className="mt-5 rounded-2xl border border-[#EAE1E4] bg-white p-5 shadow-[0_8px_24px_rgba(77,47,58,0.04)] sm:p-8">
+            {profile.authProvider !== "GOOGLE" ? (
+              <FormikProvider value={passwordFormik}>
+                <Form className="mt-5 rounded-2xl border border-[#EAE1E4] bg-white p-5 shadow-[0_8px_24px_rgba(77,47,58,0.04)] sm:p-8">
                 <div className="flex items-center gap-3 border-b border-[#F1E9EB] pb-5">
                   <span className="flex size-10 items-center justify-center rounded-full bg-[#FCEEF3] text-[#D96C8A]">
                     <LockKeyhole className="size-5" />
@@ -441,11 +461,13 @@ export default function ProfileAccountPage() {
                     ? "Đang cập nhật..."
                     : "Đổi mật khẩu"}
                 </Button>
-              </Form>
-            </FormikProvider>
+                </Form>
+              </FormikProvider>
+            ) : null}
           </div>
         </div>
       </main>
-    </StorefrontShell>
+      </StorefrontShell>
+    </>
   );
 }

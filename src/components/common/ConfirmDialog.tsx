@@ -1,6 +1,7 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
+import * as React from "react";
+import { AlertTriangle, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,7 +21,7 @@ type ConfirmDialogProps = {
   confirmLabel?: string;
   cancelLabel?: string;
   tone?: "danger" | "primary";
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
 };
 
 export default function ConfirmDialog({
@@ -33,6 +34,7 @@ export default function ConfirmDialog({
   tone = "danger",
   onConfirm,
 }: ConfirmDialogProps) {
+  const [isConfirming, setIsConfirming] = React.useState(false);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md overflow-hidden rounded-2xl border border-(--admin-border) bg-white p-0 shadow-2xl">
@@ -60,6 +62,7 @@ export default function ConfirmDialog({
             <Button
               type="button"
               variant="ghost"
+              disabled={isConfirming}
               className="border border-(--admin-border) bg-white"
             >
               {cancelLabel}
@@ -68,12 +71,21 @@ export default function ConfirmDialog({
           <Button
             type="button"
             variant={tone === "danger" ? "adminDanger" : "adminPrimary"}
-            onClick={() => {
-              onConfirm();
-              onOpenChange(false);
+            disabled={isConfirming}
+            onClick={async () => {
+              setIsConfirming(true);
+              try {
+                await onConfirm();
+                onOpenChange(false);
+              } finally {
+                setIsConfirming(false);
+              }
             }}
           >
-            {confirmLabel}
+            {isConfirming ? (
+              <LoaderCircle className="size-4 animate-spin" />
+            ) : null}
+            {isConfirming ? "Đang xử lý..." : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

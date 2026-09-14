@@ -34,7 +34,7 @@ export default function ProductCard({
   return (
     <article className="group min-w-0">
       <Link href={`/products/${product.slug || product.id}`} className="block">
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#F5EEF0]">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#F5EEF0]">
           {!imageReady && !imageFailed && (
             <div
               aria-hidden="true"

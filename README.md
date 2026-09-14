@@ -38,3 +38,19 @@ Production deployments run `prisma migrate deploy` automatically in the GitHub A
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 # finance-app
+
+## Địa chỉ và phí giao hàng
+
+Địa chỉ dùng Geoapify Address Autocomplete và Geoapify Routing API. API key chỉ được dùng ở server qua các endpoint `/api/locations/autocomplete` và `/api/shipping/quote`; frontend không nhận hoặc gọi Geoapify trực tiếp.
+
+Thiết lập backend:
+
+```env
+GEOAPIFY_API_KEY=""
+SHOP_LATITUDE="11.275790867301161"
+SHOP_LONGITUDE="106.5892647696457"
+```
+
+Autocomplete bắt đầu từ ba ký tự và debounce 600ms. Chỉ địa chỉ đã chọn từ gợi ý mới có tọa độ để tính phí. Phí mặc định là 15.000đ cho tối đa 3km, cộng 5.000đ cho mỗi km phát sinh (làm tròn lên), tối đa 50km. Checkout luôn tính lại quote ở server và lưu khoảng cách/phí vào order snapshot.
+
+Google OAuth (`NEXT_PUBLIC_GOOGLE_CLIENT_ID`) vẫn được giữ nguyên. Không cần bản đồ cho luồng giao hàng; nếu thêm bản đồ sau này phải dùng OSM/Leaflet và giữ attribution.

@@ -10,6 +10,8 @@ const PUBLIC_GET_PATHS = [
   "/api/banners",
   "/api/products/search-suggestions",
   "/api/products",
+  "/api/locations/autocomplete",
+  "/api/locations/administrative",
   "/api/invoices/public",
 ];
 const CUSTOMER_API_PATHS = ["/api/cart"];
@@ -23,6 +25,7 @@ const CUSTOMER_CHECKOUT_API_PATHS = [
   "/api/checkout/buy-now-intent",
   "/api/checkout/cart-intent",
   "/api/orders/checkout",
+  "/api/shipping/quote",
 ];
 const isCustomerFavoriteApi = (pathname: string) =>
   pathname === "/api/me/favorites" ||
