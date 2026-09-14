@@ -1593,7 +1593,7 @@ export function OfflineOrderEditor({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex h-dvh max-h-dvh max-w-none flex-col overflow-hidden bg-[#F8F5F6] p-0 shadow-none xl:h-[min(94dvh,900px)] xl:w-[min(95vw,1440px)] xl:rounded-2xl xl:border xl:border-[#EAE1E4] xl:shadow-xl"
+        className="shop-order-modal flex h-dvh max-h-dvh max-w-none flex-col overflow-hidden bg-[#F8F5F6] p-0 shadow-none xl:h-[min(94dvh,900px)] xl:w-[min(95vw,1440px)] xl:rounded-2xl xl:border xl:border-[#EAE1E4] xl:shadow-xl"
         style={
           {
             "--pos-background": COLORS.background,
@@ -1677,7 +1677,7 @@ export function OfflineOrderEditor({
         <Sheet open={cartOpen} onOpenChange={setCartOpen}>
           <SheetContent
             side="right"
-            className="z-(--z-dialog) h-dvh w-full! max-w-full! overflow-hidden p-0 sm:w-[min(92vw,560px)]!"
+            className="shop-order-modal z-(--z-dialog) h-dvh w-full! max-w-full! overflow-hidden p-0 sm:w-[min(92vw,560px)]!"
           >
             <SheetTitle className="sr-only">Đơn hàng hiện tại</SheetTitle>
             <SheetDescription className="sr-only">
