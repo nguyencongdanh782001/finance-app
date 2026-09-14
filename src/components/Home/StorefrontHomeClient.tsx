@@ -47,6 +47,9 @@ type HomepageData = {
   }>;
 };
 
+const HOMEPAGE_CACHE_TTL = 5 * 60 * 1000;
+let homepageCache: { data: HomepageData; cachedAt: number } | null = null;
+
 function ImageWithLoading({
   src,
   alt,
@@ -178,12 +181,27 @@ export default function StorefrontHomeClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const load = () => {
-    setLoading(true);
+    const cached =
+      homepageCache && Date.now() - homepageCache.cachedAt < HOMEPAGE_CACHE_TTL
+        ? homepageCache
+        : null;
+    if (!cached) homepageCache = null;
+    if (cached) {
+      setData(cached.data);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     setError(false);
     fetch("/api/homepage")
       .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((value: HomepageData) => setData(value))
-      .catch(() => setError(true))
+      .then((value: HomepageData) => {
+        homepageCache = { data: value, cachedAt: Date.now() };
+        setData(value);
+      })
+      .catch(() => {
+        if (!cached) setError(true);
+      })
       .finally(() => setLoading(false));
   };
   useEffect(() => {
