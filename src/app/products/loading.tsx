@@ -1,5 +1,0 @@
-import StorefrontShell from "@/components/Storefront/StorefrontShell";
-
-export default function ProductsLoading() {
-  return <StorefrontShell><main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8" aria-busy="true"><div className="storefront-skeleton h-3 w-28" /><div className="mt-5 storefront-skeleton h-10 w-64" /><div className="mt-3 storefront-skeleton h-4 w-96 max-w-full" /><div className="mt-7 storefront-skeleton h-10 w-full" /><div className="mt-6 grid gap-8 lg:grid-cols-[240px_1fr]"><aside className="hidden lg:block"><div className="storefront-skeleton h-6 w-24" /><div className="mt-5 storefront-skeleton h-52 w-full" /></aside><div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-5 xl:grid-cols-4">{Array.from({ length: 8 }, (_, index) => <div key={index} className="space-y-3"><div className="storefront-skeleton aspect-[4/5]" /><div className="storefront-skeleton h-4 w-3/4" /><div className="storefront-skeleton h-4 w-1/2" /></div>)}</div></div></main></StorefrontShell>;
-}
