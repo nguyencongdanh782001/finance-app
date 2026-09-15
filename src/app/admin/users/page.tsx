@@ -15,7 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, Loader2, Search, ShieldCheck, UserRound } from "lucide-react";
+import {
+  ArrowUpRight,
+  Loader2,
+  Search,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -78,14 +84,14 @@ function StatusBadge({ status }: { status: User["status"] }) {
 
 function UserSkeleton() {
   return (
-    <div className="rounded-xl border border-(--admin-border) bg-white p-4">
-      <div className="flex items-center gap-3">
+    <div className="min-w-0 rounded-xl border border-(--admin-border) bg-white p-3 sm:p-4">
+      <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
         <Skeleton className="size-10 rounded-full" />
-        <div className="grid flex-1 gap-2">
-          <Skeleton className="h-4 w-40 rounded-md" />
-          <Skeleton className="h-3 w-56 rounded-md" />
+        <div className="grid min-w-0 gap-2">
+          <Skeleton className="h-4 w-full max-w-40 rounded-md" />
+          <Skeleton className="h-3 w-full max-w-56 rounded-md" />
         </div>
-        <Skeleton className="h-6 w-24 rounded-full" />
+        <Skeleton className="h-6 w-20 max-w-full rounded-full sm:w-24" />
       </div>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Skeleton className="h-8 rounded-md" />
