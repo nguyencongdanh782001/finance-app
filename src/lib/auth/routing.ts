@@ -24,6 +24,9 @@ export const getSafeReturnPath = (returnPath: string | null) => {
   return returnPath;
 };
 
+export const buildLoginUrl = (currentUrl: string) =>
+  `/login?callbackUrl=${encodeURIComponent(getSafeReturnPath(currentUrl) || "/")}`;
+
 export const getRouteAfterAuth = (user: RouteUser, returnPath: string) => {
   if (isAdminRole(user?.role)) {
     return "/admin";

@@ -232,6 +232,15 @@ export const CouponType = {
 export type CouponType = (typeof CouponType)[keyof typeof CouponType]
 
 
+export const ShippingDistanceRoundingMode = {
+  EXACT: 'EXACT',
+  UP_TO_0_5_KM: 'UP_TO_0_5_KM',
+  UP_TO_1_KM: 'UP_TO_1_KM'
+} as const
+
+export type ShippingDistanceRoundingMode = (typeof ShippingDistanceRoundingMode)[keyof typeof ShippingDistanceRoundingMode]
+
+
 export const CouponSource = {
   MANUAL: 'MANUAL',
   BIRTHDAY: 'BIRTHDAY'

@@ -213,6 +213,16 @@ export type InvoiceSequence = Prisma.InvoiceSequenceModel
  */
 export type StoreSetting = Prisma.StoreSettingModel
 /**
+ * Model ShippingConfiguration
+ * 
+ */
+export type ShippingConfiguration = Prisma.ShippingConfigurationModel
+/**
+ * Model ShippingPromotion
+ * 
+ */
+export type ShippingPromotion = Prisma.ShippingPromotionModel
+/**
  * Model InventoryTransaction
  * 
  */

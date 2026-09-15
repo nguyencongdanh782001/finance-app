@@ -1,67 +1,487 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/db";
 import { verifyJwt } from "@/lib/auth/crypto";
 import { NextResponse } from "next/server";
 import { calculateShippingQuote, validateCoordinates } from "@/lib/geoapify";
+import { validateDiscount } from "@/lib/discounts";
+import {
+  createShippingCalculation,
+  getShippingConfiguration,
+} from "@/lib/shipping";
 
-const fail = (message: string, status = 400) => NextResponse.json({ message }, { status });
+const fail = (message: string, status = 400) =>
+  NextResponse.json({ message }, { status });
 
 export async function POST(request: Request) {
   const userId = Number(request.headers.get("x-user-id"));
-  if (!Number.isInteger(userId) || userId < 1 || request.headers.get("x-user-role") !== "CUSTOMER") return fail("Vui lòng đăng nhập để đặt hàng.", 401);
+  if (
+    !Number.isInteger(userId) ||
+    userId < 1 ||
+    request.headers.get("x-user-role") !== "CUSTOMER"
+  )
+    return fail("Vui lòng đăng nhập để đặt hàng.", 401);
   const body = await request.json().catch(() => ({}));
   const token = String(body.intent || "");
   const payload = await verifyJwt(token).catch(() => null);
-  if (!payload || !["BUY_NOW", "CART"].includes(payload.intentType || "") || payload.sub !== String(userId)) return fail("Phiên thanh toán đã hết hạn.", 401);
-  const receiverName = String(body.receiverName || "").trim();
-  const receiverPhone = String(body.receiverPhone || "").trim();
-  const receiverAddress = String(body.receiverAddress || "").trim();
-  const destinationLatitude = Number(body.destinationLatitude);
-  const destinationLongitude = Number(body.destinationLongitude);
+  if (
+    !payload ||
+    !["BUY_NOW", "CART"].includes(payload.intentType || "") ||
+    payload.sub !== String(userId)
+  )
+    return fail("Phiên thanh toán đã hết hạn.", 401);
+  let receiverName = String(body.receiverName || "").trim();
+  let receiverPhone = String(body.receiverPhone || "").trim();
+  let receiverAddress = String(body.receiverAddress || "").trim();
+  let destinationLatitude = Number(body.destinationLatitude);
+  let destinationLongitude = Number(body.destinationLongitude);
+  const addressId = Number(body.addressId);
+  if (Number.isInteger(addressId) && addressId > 0) {
+    const savedAddress = await prisma.userAddress.findFirst({
+      where: { id: addressId, userId },
+      select: {
+        fullName: true,
+        phone: true,
+        line1: true,
+        ward: true,
+        district: true,
+        city: true,
+        latitude: true,
+        longitude: true,
+      },
+    });
+    if (!savedAddress) return fail("Địa chỉ giao hàng không hợp lệ.", 422);
+    receiverName = savedAddress.fullName;
+    receiverPhone = savedAddress.phone;
+    receiverAddress = [
+      savedAddress.line1,
+      savedAddress.ward,
+      savedAddress.district,
+      savedAddress.city,
+    ]
+      .filter(Boolean)
+      .join(", ");
+    destinationLatitude = Number(savedAddress.latitude);
+    destinationLongitude = Number(savedAddress.longitude);
+  }
   const paymentMethod = body.paymentMethod === "MOMO" ? "MOMO" : "COD";
-  if (!receiverName || !receiverPhone || !receiverAddress) return fail("Vui lòng nhập đủ thông tin nhận hàng.");
-  if (!validateCoordinates(destinationLatitude, destinationLongitude)) return fail("Vui lòng chọn địa chỉ giao hàng từ danh sách gợi ý.", 422);
+  const couponCode = String(body.couponCode || "").trim();
+  if (!receiverName || !receiverPhone || !receiverAddress)
+    return fail("Vui lòng nhập đủ thông tin nhận hàng.");
+  if (!validateCoordinates(destinationLatitude, destinationLongitude))
+    return fail("Vui lòng chọn địa chỉ giao hàng từ danh sách gợi ý.", 422);
 
   try {
-    const quote = await calculateShippingQuote(destinationLatitude, destinationLongitude);
+    let quote = await calculateShippingQuote(
+      destinationLatitude,
+      destinationLongitude,
+    );
+    let shippingCalculation: any = null;
+    const resolveShipping = async (eligibleOrderValue: number) => {
+      const config = await getShippingConfiguration();
+      if (config.latitude == null || config.longitude == null) return;
+      shippingCalculation = await createShippingCalculation({
+        destinationLatitude,
+        destinationLongitude,
+        eligibleOrderValue,
+      });
+      quote = {
+        ...quote,
+        distanceMeters: shippingCalculation.route.distanceMeters,
+        distanceKm: shippingCalculation.route.distanceMeters / 1000,
+        roundedDistanceKm: shippingCalculation.calculation.roundedDistanceKm,
+        estimatedDurationSeconds:
+          shippingCalculation.route.estimatedDurationSeconds,
+        estimatedDurationMinutes:
+          shippingCalculation.route.estimatedDurationMinutes,
+        shippingFee: shippingCalculation.calculation.finalShippingFee,
+      };
+    };
     const order = await prisma.$transaction(async (tx) => {
-      const existing = await tx.order.findUnique({ where: { idempotencyKey: token }, select: { id: true, orderNumber: true } });
+      const existing = await tx.order.findUnique({
+        where: { idempotencyKey: token },
+        select: { id: true, orderNumber: true },
+      });
       if (existing) return existing;
       if (payload.intentType === "CART") {
-        const cart = await tx.cart.findFirst({ where: { userId, status: "ACTIVE" }, select: { id: true } });
-        const cartItems = cart ? await tx.cartItem.findMany({ where: { cartId: cart.id, id: { in: payload.cartItemIds || [] } }, include: { product: true, variant: true } }) : [];
-        if (cartItems.length !== (payload.cartItemIds || []).length || cartItems.some((item) => !item.variant || !item.variant.isActive || item.product.status !== "PUBLIC")) throw new Error("Sản phẩm trong giỏ hàng không còn khả dụng.");
-        const lines = [] as Array<{ item: (typeof cartItems)[number]; price: number; cost: number; total: number }>;
+        const cart = await tx.cart.findFirst({
+          where: { userId, status: "ACTIVE" },
+          select: { id: true },
+        });
+        const cartItems = cart
+          ? await tx.cartItem.findMany({
+              where: { cartId: cart.id, id: { in: payload.cartItemIds || [] } },
+              include: { product: true, variant: true },
+            })
+          : [];
+        if (
+          cartItems.length !== (payload.cartItemIds || []).length ||
+          cartItems.some(
+            (item) =>
+              !item.variant ||
+              !item.variant.isActive ||
+              item.product.status !== "PUBLIC",
+          )
+        )
+          throw new Error("Sản phẩm trong giỏ hàng không còn khả dụng.");
+        const lines = [] as Array<{
+          item: (typeof cartItems)[number];
+          price: number;
+          cost: number;
+          total: number;
+        }>;
         for (const item of cartItems) {
           const variant = item.variant!;
-          const update = await tx.productVariant.updateMany({ where: { id: variant.id, isActive: true, quantity: { gte: item.quantity + variant.reservedQuantity } }, data: { quantity: { decrement: item.quantity } } });
+          const update = await tx.productVariant.updateMany({
+            where: {
+              id: variant.id,
+              isActive: true,
+              quantity: { gte: item.quantity + variant.reservedQuantity },
+            },
+            data: { quantity: { decrement: item.quantity } },
+          });
           if (!update.count) throw new Error("Số lượng sản phẩm không còn đủ.");
-          const price = Number(variant.sellPrice); const cost = Number(variant.importPrice); lines.push({ item, price, cost, total: price * item.quantity });
+          const price = Number(variant.sellPrice);
+          const cost = Number(variant.importPrice);
+          lines.push({ item, price, cost, total: price * item.quantity });
         }
         const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
-        const orderNumber = `QN-${Date.now()}-${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
-        const created = await tx.order.create({ data: { orderNumber, idempotencyKey: token, userId, source: "ONLINE", status: "PENDING", subtotal, shippingFee: quote.shippingFee, totalAmount: subtotal + quote.shippingFee, remainingAmount: subtotal + quote.shippingFee, receiverName, receiverPhone, receiverAddress, latitude: destinationLatitude, longitude: destinationLongitude, shippingDistanceMeters: quote.distanceMeters, shippingDistanceKm: quote.distanceKm, shippingEstimatedMinutes: quote.estimatedDurationMinutes, paymentMethod, items: { create: lines.map(({ item, price, cost, total }) => ({ productId: item.productId, variantId: item.variantId!, productTitle: item.product.title, productImageUrl: item.product.imageUrl, sku: item.variant!.sku, size: item.variant!.size, color: item.variant!.color, quantity: item.quantity, originalUnitPrice: price, unitPrice: price, unitCost: cost, totalPrice: total, lineSubtotal: total, lineCost: cost * item.quantity, lineProfit: (price - cost) * item.quantity })) } }, select: { id: true, orderNumber: true } });
-        for (const { item, price, cost } of lines) await tx.inventoryTransaction.create({ data: { productId: item.productId, variantId: item.variantId, type: "SALE", quantity: -item.quantity, balanceAfter: Math.max(0, item.variant!.quantity - item.quantity), referenceType: "ORDER", referenceId: created.id, note: `Đặt hàng ${created.orderNumber}`, unitImportPrice: cost, unitSellPrice: price } });
-        await tx.cartItem.deleteMany({ where: { cartId: cart!.id, id: { in: payload.cartItemIds || [] } } });
+        await resolveShipping(subtotal);
+        const discount = couponCode
+          ? await validateDiscount(
+              couponCode,
+              lines.map((line) => ({
+                productId: line.item.productId,
+                unitPrice: line.price,
+                quantity: line.item.quantity,
+              })),
+              tx,
+              userId,
+            )
+          : null;
+        if (discount) {
+          const reserved = await tx.coupon.updateMany({
+            where: {
+              id: discount.coupon.id,
+              isActive: true,
+              OR: [
+                { usageLimit: null },
+                { usageLimit: { gt: discount.coupon.usedCount } },
+              ],
+            },
+            data: { usedCount: { increment: 1 } },
+          });
+          if (!reserved.count)
+            throw new Error("Mã giảm giá đã hết lượt sử dụng.");
+        }
+        const couponDiscount = discount?.discountAmount || 0;
+        const membership = await tx.user.findUnique({
+          where: { id: userId },
+          select: { membership: { select: { discountRate: true } } },
+        });
+        const membershipDiscount = membership?.membership
+          ? Math.min(
+              subtotal,
+              Math.floor(
+                (subtotal * Number(membership.membership.discountRate)) / 100,
+              ),
+            )
+          : 0;
+        const discountAmount = couponDiscount + membershipDiscount;
+        const orderNumber = `QN-${Date.now()}-${Math.floor(Math.random() * 1000)
+          .toString()
+          .padStart(3, "0")}`;
+        const payable = Math.max(
+          0,
+          subtotal - discountAmount + quote.shippingFee,
+        );
+        const created = await tx.order.create({
+          data: {
+            orderNumber,
+            idempotencyKey: token,
+            userId,
+            shippingAddressId:
+              Number.isInteger(addressId) && addressId > 0
+                ? addressId
+                : undefined,
+            source: "ONLINE",
+            status: "PENDING",
+            subtotal,
+            discountAmount: couponDiscount,
+            couponId: discount?.coupon.id,
+            discountCodeSnapshot: discount?.code,
+            shippingFee: quote.shippingFee,
+            totalAmount: payable,
+            remainingAmount: payable,
+            receiverName,
+            receiverPhone,
+            receiverAddress,
+            latitude: destinationLatitude,
+            longitude: destinationLongitude,
+            shippingDistanceMeters: quote.distanceMeters,
+            shippingDistanceKm: quote.distanceKm,
+            shippingEstimatedMinutes: quote.estimatedDurationMinutes,
+            shippingOriginAddress:
+              shippingCalculation?.config.formattedAddress || null,
+            shippingOriginLatitude:
+              shippingCalculation?.config.latitude ?? null,
+            shippingOriginLongitude:
+              shippingCalculation?.config.longitude ?? null,
+            shippingDestinationLatitude: destinationLatitude,
+            shippingDestinationLongitude: destinationLongitude,
+            shippingRawDistanceMeters: quote.distanceMeters,
+            shippingRoundedDistanceKm: quote.roundedDistanceKm,
+            shippingFreeDistanceKm:
+              shippingCalculation?.calculation.freeDistanceKm || 0,
+            shippingChargeableDistanceKm:
+              shippingCalculation?.calculation.chargeableDistanceKm ||
+              quote.roundedDistanceKm,
+            shippingBaseFee: shippingCalculation?.calculation.baseFee || null,
+            shippingPricePerKm:
+              shippingCalculation?.calculation.pricePerKm || null,
+            shippingFeeBeforePromotion:
+              shippingCalculation?.calculation.shippingFeeBeforePromotion ||
+              quote.shippingFee,
+            shippingDiscount:
+              shippingCalculation?.calculation.shippingDiscount || 0,
+            shippingPromotionId:
+              shippingCalculation?.calculation.appliedPromotionId || null,
+            shippingPromotionName:
+              shippingCalculation?.calculation.appliedPromotion?.name || null,
+            shippingQuoteProvider: "GEOAPIFY",
+            shippingCalculatedAt: new Date(),
+            paymentMethod,
+            paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
+            discountRedemption: discount
+              ? {
+                  create: {
+                    couponId: discount.coupon.id,
+                    codeSnapshot: discount.code,
+                    discountTypeSnapshot: discount.coupon.type,
+                    discountValueSnapshot: discount.coupon.value,
+                    discountAmount,
+                    subtotalSnapshot: subtotal,
+                  },
+                }
+              : undefined,
+            items: {
+              create: lines.map(({ item, price, cost, total }) => ({
+                productId: item.productId,
+                variantId: item.variantId!,
+                productTitle: item.product.title,
+                productImageUrl: item.product.imageUrl,
+                sku: item.variant!.sku,
+                size: item.variant!.size,
+                color: item.variant!.color,
+                quantity: item.quantity,
+                originalUnitPrice: price,
+                unitPrice: price,
+                unitCost: cost,
+                totalPrice: total,
+                lineSubtotal: total,
+                lineCost: cost * item.quantity,
+                lineProfit: (price - cost) * item.quantity,
+              })),
+            },
+          },
+          select: { id: true, orderNumber: true },
+        });
+        for (const { item, price, cost } of lines)
+          await tx.inventoryTransaction.create({
+            data: {
+              productId: item.productId,
+              variantId: item.variantId,
+              type: "SALE",
+              quantity: -item.quantity,
+              balanceAfter: Math.max(0, item.variant!.quantity - item.quantity),
+              referenceType: "ORDER",
+              referenceId: created.id,
+              note: `Đặt hàng ${created.orderNumber}`,
+              unitImportPrice: cost,
+              unitSellPrice: price,
+            },
+          });
+        await tx.cartItem.deleteMany({
+          where: { cartId: cart!.id, id: { in: payload.cartItemIds || [] } },
+        });
         return created;
       }
-      if (!payload.variantId || !payload.quantity) throw new Error("Phiên mua ngay đã hết hạn.");
+      if (!payload.variantId || !payload.quantity)
+        throw new Error("Phiên mua ngay đã hết hạn.");
       const variantId = payload.variantId;
       const quantity = payload.quantity;
-      const variant = await tx.productVariant.findUnique({ where: { id: variantId }, include: { product: true } });
-      if (!variant || !variant.isActive || variant.product.status !== "PUBLIC") throw new Error("Sản phẩm không còn khả dụng.");
-      const stockUpdate = await tx.productVariant.updateMany({ where: { id: variant.id, isActive: true, quantity: { gte: quantity + variant.reservedQuantity } }, data: { quantity: { decrement: quantity } } });
-      if (!stockUpdate.count) throw new Error("Số lượng sản phẩm không còn đủ.");
+      const variant = await tx.productVariant.findUnique({
+        where: { id: variantId },
+        include: { product: true },
+      });
+      if (!variant || !variant.isActive || variant.product.status !== "PUBLIC")
+        throw new Error("Sản phẩm không còn khả dụng.");
+      const stockUpdate = await tx.productVariant.updateMany({
+        where: {
+          id: variant.id,
+          isActive: true,
+          quantity: { gte: quantity + variant.reservedQuantity },
+        },
+        data: { quantity: { decrement: quantity } },
+      });
+      if (!stockUpdate.count)
+        throw new Error("Số lượng sản phẩm không còn đủ.");
       const price = Number(variant.sellPrice);
       const cost = Number(variant.importPrice);
       const total = price * quantity;
-      const orderNumber = `QN-${Date.now()}-${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
-      const created = await tx.order.create({ data: { orderNumber, idempotencyKey: token, userId, source: "ONLINE", status: "PENDING", subtotal: total, shippingFee: quote.shippingFee, totalAmount: total + quote.shippingFee, remainingAmount: total + quote.shippingFee, receiverName, receiverPhone, receiverAddress, latitude: destinationLatitude, longitude: destinationLongitude, shippingDistanceMeters: quote.distanceMeters, shippingDistanceKm: quote.distanceKm, shippingEstimatedMinutes: quote.estimatedDurationMinutes, paymentMethod, items: { create: { productId: variant.productId, variantId: variant.id, productTitle: variant.product.title, productImageUrl: variant.product.imageUrl, sku: variant.sku, size: variant.size, color: variant.color, quantity, originalUnitPrice: price, unitPrice: price, unitCost: cost, totalPrice: total, lineSubtotal: total, lineCost: cost * quantity, lineProfit: (price - cost) * quantity } } }, select: { id: true, orderNumber: true } });
-      await tx.inventoryTransaction.create({ data: { productId: variant.productId, variantId: variant.id, type: "SALE", quantity: -quantity, balanceAfter: Math.max(0, variant.quantity - quantity), referenceType: "ORDER", referenceId: created.id, note: `Đặt hàng ${created.orderNumber}`, unitImportPrice: cost, unitSellPrice: price } });
+      await resolveShipping(total);
+      const discount = couponCode
+        ? await validateDiscount(
+            couponCode,
+            [{ productId: variant.productId, unitPrice: price, quantity }],
+            tx,
+            userId,
+          )
+        : null;
+      if (discount) {
+        const reserved = await tx.coupon.updateMany({
+          where: {
+            id: discount.coupon.id,
+            isActive: true,
+            OR: [
+              { usageLimit: null },
+              { usageLimit: { gt: discount.coupon.usedCount } },
+            ],
+          },
+          data: { usedCount: { increment: 1 } },
+        });
+        if (!reserved.count)
+          throw new Error("Mã giảm giá đã hết lượt sử dụng.");
+      }
+      const couponDiscount = discount?.discountAmount || 0;
+      const membership = await tx.user.findUnique({
+        where: { id: userId },
+        select: { membership: { select: { discountRate: true } } },
+      });
+      const membershipDiscount = membership?.membership
+        ? Math.min(
+            total,
+            Math.floor(
+              (total * Number(membership.membership.discountRate)) / 100,
+            ),
+          )
+        : 0;
+      const discountAmount = couponDiscount + membershipDiscount;
+      const payable = Math.max(0, total - discountAmount + quote.shippingFee);
+      const orderNumber = `QN-${Date.now()}-${Math.floor(Math.random() * 1000)
+        .toString()
+        .padStart(3, "0")}`;
+      const created = await tx.order.create({
+        data: {
+          orderNumber,
+          idempotencyKey: token,
+          userId,
+          shippingAddressId:
+            Number.isInteger(addressId) && addressId > 0
+              ? addressId
+              : undefined,
+          source: "ONLINE",
+          status: "PENDING",
+          subtotal: total,
+          discountAmount: couponDiscount,
+          couponId: discount?.coupon.id,
+          discountCodeSnapshot: discount?.code,
+          shippingFee: quote.shippingFee,
+          totalAmount: payable,
+          remainingAmount: payable,
+          receiverName,
+          receiverPhone,
+          receiverAddress,
+          latitude: destinationLatitude,
+          longitude: destinationLongitude,
+          shippingDistanceMeters: quote.distanceMeters,
+          shippingDistanceKm: quote.distanceKm,
+          shippingEstimatedMinutes: quote.estimatedDurationMinutes,
+          shippingOriginAddress:
+            shippingCalculation?.config.formattedAddress || null,
+          shippingOriginLatitude: shippingCalculation?.config.latitude ?? null,
+          shippingOriginLongitude:
+            shippingCalculation?.config.longitude ?? null,
+          shippingDestinationLatitude: destinationLatitude,
+          shippingDestinationLongitude: destinationLongitude,
+          shippingRawDistanceMeters: quote.distanceMeters,
+          shippingRoundedDistanceKm: quote.roundedDistanceKm,
+          shippingFreeDistanceKm:
+            shippingCalculation?.calculation.freeDistanceKm || 0,
+          shippingChargeableDistanceKm:
+            shippingCalculation?.calculation.chargeableDistanceKm ||
+            quote.roundedDistanceKm,
+          shippingBaseFee: shippingCalculation?.calculation.baseFee || null,
+          shippingPricePerKm:
+            shippingCalculation?.calculation.pricePerKm || null,
+          shippingFeeBeforePromotion:
+            shippingCalculation?.calculation.shippingFeeBeforePromotion ||
+            quote.shippingFee,
+          shippingDiscount:
+            shippingCalculation?.calculation.shippingDiscount || 0,
+          shippingPromotionId:
+            shippingCalculation?.calculation.appliedPromotionId || null,
+          shippingPromotionName:
+            shippingCalculation?.calculation.appliedPromotion?.name || null,
+          shippingQuoteProvider: "GEOAPIFY",
+          shippingCalculatedAt: new Date(),
+          paymentMethod,
+          paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
+          discountRedemption: discount
+            ? {
+                create: {
+                  couponId: discount.coupon.id,
+                  codeSnapshot: discount.code,
+                  discountTypeSnapshot: discount.coupon.type,
+                  discountValueSnapshot: discount.coupon.value,
+                  discountAmount,
+                  subtotalSnapshot: total,
+                },
+              }
+            : undefined,
+          items: {
+            create: {
+              productId: variant.productId,
+              variantId: variant.id,
+              productTitle: variant.product.title,
+              productImageUrl: variant.product.imageUrl,
+              sku: variant.sku,
+              size: variant.size,
+              color: variant.color,
+              quantity,
+              originalUnitPrice: price,
+              unitPrice: price,
+              unitCost: cost,
+              totalPrice: total,
+              lineSubtotal: total,
+              lineCost: cost * quantity,
+              lineProfit: (price - cost) * quantity,
+            },
+          },
+        },
+        select: { id: true, orderNumber: true },
+      });
+      await tx.inventoryTransaction.create({
+        data: {
+          productId: variant.productId,
+          variantId: variant.id,
+          type: "SALE",
+          quantity: -quantity,
+          balanceAfter: Math.max(0, variant.quantity - quantity),
+          referenceType: "ORDER",
+          referenceId: created.id,
+          note: `Đặt hàng ${created.orderNumber}`,
+          unitImportPrice: cost,
+          unitSellPrice: price,
+        },
+      });
       return created;
     });
     return NextResponse.json(order, { status: 201 });
   } catch (cause) {
-    return fail(cause instanceof Error ? cause.message : "Không thể tạo đơn hàng.", 409);
+    return fail(
+      cause instanceof Error ? cause.message : "Không thể tạo đơn hàng.",
+      409,
+    );
   }
 }

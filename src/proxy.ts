@@ -24,6 +24,8 @@ const CUSTOMER_ME_API_PATHS = [
 const CUSTOMER_CHECKOUT_API_PATHS = [
   "/api/checkout/buy-now-intent",
   "/api/checkout/cart-intent",
+  "/api/checkout/preview",
+  "/api/customer/coupons",
   "/api/orders/checkout",
   "/api/shipping/quote",
 ];

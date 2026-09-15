@@ -512,7 +512,9 @@ export default function AuthPageClient({
   const searchParams = useSearchParams();
   const { user, isAuthenticated, isInitializing, setAuthenticatedSession } =
     useAuth();
-  const redirectTo = getSafeReturnPath(searchParams.get("redirect"));
+  const redirectTo = getSafeReturnPath(
+    searchParams.get("callbackUrl") || searchParams.get("redirect"),
+  );
   const isLoginOrRegister = pathname === "/login" || pathname === "/register";
   const shouldRedirectAuthenticatedUser =
     isLoginOrRegister || (pathname === "/" && isAdminRole(user?.role));
@@ -560,7 +562,7 @@ export default function AuthPageClient({
       return;
     }
 
-    const destination = getDefaultRouteByRole(user.role);
+    const destination = getRouteAfterAuth(user, redirectTo);
 
     if (pathname !== destination) {
       router.replace(destination);

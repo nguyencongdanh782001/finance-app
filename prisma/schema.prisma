@@ -170,6 +170,12 @@ enum CouponType {
   FREE_SHIPPING
 }
 
+enum ShippingDistanceRoundingMode {
+  EXACT
+  UP_TO_0_5_KM
+  UP_TO_1_KM
+}
+
 enum CouponSource {
   MANUAL
   BIRTHDAY
@@ -1239,6 +1245,24 @@ model Order {
   shippingDistanceMeters Int?
   shippingDistanceKm Decimal?
   shippingEstimatedMinutes Int?
+  shippingOriginAddress String?
+  shippingOriginLatitude Decimal?
+  shippingOriginLongitude Decimal?
+  shippingDestinationLatitude Decimal?
+  shippingDestinationLongitude Decimal?
+  shippingRawDistanceMeters Int?
+  shippingRoundedDistanceKm Decimal?
+  shippingFreeDistanceKm Decimal?
+  shippingChargeableDistanceKm Decimal?
+  shippingBaseFee Int?
+  shippingPricePerKm Int?
+  shippingFeeBeforePromotion Int?
+  shippingDiscount Int?
+  shippingPromotionId Int?
+  shippingPromotion ShippingPromotion? @relation(fields: [shippingPromotionId], references: [id], onDelete: SetNull)
+  shippingPromotionName String?
+  shippingQuoteProvider String?
+  shippingCalculatedAt DateTime?
 
   items                        OrderItem[]
   soldContributions            DailySoldProductContribution[]
@@ -1261,6 +1285,7 @@ model Order {
   @@index([createdById])
   @@index([updatedById])
   @@index([shippingAddressId])
+  @@index([shippingPromotionId])
   @@index([billingAddressId])
   @@index([couponId])
   @@index([status])
@@ -1417,6 +1442,56 @@ model StoreSetting {
   updatedAt       DateTime @updatedAt
 
   @@map("store_setting")
+}
+
+model ShippingConfiguration {
+  id Int @id @default(1)
+
+  enabled Boolean @default(true)
+  shopName String?
+  formattedAddress String?
+  streetAddress String?
+  ward String?
+  district String?
+  province String?
+  latitude Decimal?
+  longitude Decimal?
+  placeId String?
+  baseFee Int @default(10000)
+  pricePerKm Int @default(5000)
+  maximumDeliveryDistanceKm Decimal @default(30)
+  distanceRoundingMode ShippingDistanceRoundingMode @default(UP_TO_0_5_KM)
+  feeRoundingStep Int @default(1000)
+  minimumShippingFee Int?
+  maximumShippingFee Int?
+  updatedById Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("shipping_configuration")
+}
+
+model ShippingPromotion {
+  id Int @id @default(autoincrement())
+  name String
+  description String?
+  minimumOrderValue Int
+  freeDistanceKm Decimal
+  maximumShippingDiscount Int?
+  priority Int @default(0)
+  isActive Boolean @default(true)
+  startsAt DateTime?
+  endsAt DateTime?
+  createdById Int?
+  updatedById Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@index([isActive, startsAt, endsAt])
+  @@index([minimumOrderValue])
+  @@map("shipping_promotion")
 }
 
 model InventoryTransaction {

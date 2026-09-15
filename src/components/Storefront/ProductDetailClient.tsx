@@ -2,7 +2,12 @@
 
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft,
@@ -28,6 +33,7 @@ import type {
   ProductVariantApiItem,
 } from "@/interface/product";
 import { Skeleton } from "@/components/ui/skeleton";
+import { buildLoginUrl } from "@/lib/auth/routing";
 
 const money = (value: number | string) =>
   `${Number(value).toLocaleString("vi-VN")}đ`;
@@ -98,10 +104,11 @@ function LoadingState() {
 
 export default function ProductDetailClient() {
   const params = useParams<{ id: string }>();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { add } = useCart();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isInitializing, user } = useAuth();
   const selectorRef = useRef<HTMLDivElement>(null);
   const [product, setProduct] = useState<ProductApiItem | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -118,15 +125,49 @@ export default function ProductDetailClient() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [buyNowProcessing, setBuyNowProcessing] = useState(false);
+  const resumeHandledRef = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
+    resumeHandledRef.current = false;
+    const productQuery = new URLSearchParams(window.location.search);
+    const restoreSelection = (data: ProductApiItem) => {
+      const color = productQuery.get("color") || "";
+      const size = productQuery.get("size") || "";
+      const activeVariants = (data.variants || []).filter(
+        (variant) => variant.isActive,
+      );
+      const requiresColor = activeVariants.some((variant) => variant.color);
+      const requiresSize = activeVariants.some((variant) => variant.size);
+      const restoredVariant = data.variants?.find(
+        (variant) =>
+          variant.isActive &&
+          (!requiresColor || Boolean(color)) &&
+          (!requiresSize || Boolean(size)) &&
+          (!requiresColor || variant.color === color) &&
+          (!requiresSize || variant.size === size),
+      );
+      const firstAvailableVariant =
+        activeVariants.find((variant) => stockOf(variant, data) > 0) ||
+        activeVariants[0] ||
+        null;
+      const defaultVariant =
+        restoredVariant && stockOf(restoredVariant, data) > 0
+          ? restoredVariant
+          : firstAvailableVariant;
+      setSelectedColor(defaultVariant?.color || "");
+      setSelectedSize(defaultVariant?.size || "");
+      setSelectedVariantId(defaultVariant?.id || null);
+      const parsedQuantity = Number(productQuery.get("quantity"));
+      if (Number.isInteger(parsedQuantity) && parsedQuantity > 0) {
+        setQuantity(parsedQuantity);
+      }
+    };
     const cachedData = readCache(productCache, params.id);
     if (cachedData) {
       setProduct(cachedData);
-      setSelectedColor("");
-      setSelectedSize("");
-      setSelectedVariantId(null);
+      restoreSelection(cachedData);
       setActiveImage(cachedData.images?.[0]?.url || cachedData.imageUrl || "");
       setImageZoom(1);
       setDescriptionExpanded(false);
@@ -141,9 +182,7 @@ export default function ProductDetailClient() {
       .then((data: ProductApiItem) => {
         writeCache(productCache, params.id, data, MAX_PRODUCT_CACHE_ENTRIES);
         setProduct(data);
-        setSelectedColor("");
-        setSelectedSize("");
-        setSelectedVariantId(null);
+        restoreSelection(data);
         setActiveImage(data.images?.[0]?.url || data.imageUrl || "");
         setImageZoom(1);
         setDescriptionExpanded(false);
@@ -252,6 +291,75 @@ export default function ProductDetailClient() {
     setQuantity((value) => Math.max(1, Math.min(value, Math.max(1, stock))));
   }, [stock, selectedVariantId]);
 
+  const createBuyNowSession = async (
+    variantId: number,
+    nextQuantity: number,
+  ) => {
+    setBuyNowProcessing(true);
+    const response = await fetch("/api/checkout/buy-now-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variantId, quantity: nextQuantity }),
+    });
+    const data = await response.json().catch(() => ({}));
+    setBuyNowProcessing(false);
+    if (!response.ok) {
+      setError(data.message || "Không thể tạo phiên thanh toán.");
+      return false;
+    }
+    router.replace(`/checkout?session=${encodeURIComponent(data.token)}`);
+    return true;
+  };
+
+  useEffect(() => {
+    if (
+      searchParams.get("resume") !== "buy-now" ||
+      !product ||
+      isInitializing ||
+      !isAuthenticated ||
+      user?.role !== "CUSTOMER" ||
+      resumeHandledRef.current ||
+      buyNowProcessing
+    ) {
+      return;
+    }
+    const clearResume = () => {
+      const nextParams = new URLSearchParams(searchParams.toString());
+      nextParams.delete("resume");
+      router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+    };
+    if (!selectedVariant) {
+      setError("Phân loại sản phẩm không tồn tại. Vui lòng chọn lại biến thể.");
+      clearResume();
+      return;
+    }
+    if (!stock) {
+      setError("Sản phẩm đã hết hàng.");
+      clearResume();
+      return;
+    }
+    if (quantity > stock) {
+      setQuantity(stock);
+      setError(`Số lượng tối đa hiện có là ${stock}. Vui lòng kiểm tra lại.`);
+      clearResume();
+      return;
+    }
+    resumeHandledRef.current = true;
+    void createBuyNowSession(selectedVariant.id, quantity);
+  }, [
+    buyNowProcessing,
+    isAuthenticated,
+    isInitializing,
+    pathname,
+    product,
+    quantity,
+    router,
+    searchParams,
+    selectedVariant,
+    stock,
+    user?.role,
+  ]);
+
   if (!product)
     return (
       <StorefrontShell>
@@ -297,11 +405,19 @@ export default function ProductDetailClient() {
           )?.id || null
         : null,
     );
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("color", color);
+    nextParams.delete("size");
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
     setError("");
   };
   const selectSize = (variant: ProductVariantApiItem) => {
     setSelectedSize(variant.size || "");
     setSelectedVariantId(variant.id);
+    const nextParams = new URLSearchParams(searchParams.toString());
+    if (selectedColor) nextParams.set("color", selectedColor);
+    if (variant.size) nextParams.set("size", variant.size);
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
     setError("");
   };
   const requireVariant = () => {
@@ -339,11 +455,19 @@ export default function ProductDetailClient() {
     }
     return true;
   };
-  const returnPath = `${window.location.pathname}${searchParams.toString() ? `?${searchParams}` : ""}`;
+  const selectionUrl = (resumeBuyNow = false) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    if (selectedColor) nextParams.set("color", selectedColor);
+    if (selectedSize) nextParams.set("size", selectedSize);
+    nextParams.set("quantity", String(quantity));
+    if (resumeBuyNow) nextParams.set("resume", "buy-now");
+    return `${pathname}?${nextParams.toString()}`;
+  };
   const addToCart = async () => {
     setMessage("");
+    if (isInitializing) return;
     if (!isAuthenticated || user?.role !== "CUSTOMER")
-      return router.push(`/login?redirect=${encodeURIComponent(returnPath)}`);
+      return router.push(buildLoginUrl(selectionUrl()));
     if (!requireVariant()) return;
     if (quantity > stock) return setError("Số lượng sản phẩm không còn đủ.");
     setMessage(
@@ -354,24 +478,23 @@ export default function ProductDetailClient() {
   };
   const buyNow = async () => {
     setMessage("");
+    if (isInitializing) return;
+    const productUrl = selectionUrl(true);
     if (!isAuthenticated || user?.role !== "CUSTOMER")
-      return router.push(`/login?redirect=${encodeURIComponent(returnPath)}`);
+      return router.push(buildLoginUrl(productUrl));
     if (!requireVariant() || !selectedVariant) return;
-    const response = await fetch("/api/checkout/buy-now-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ variantId: selectedVariant.id, quantity }),
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok)
-      return setError(
-        data.message || "Không thể tiếp tục thanh toán. Vui lòng thử lại.",
-      );
-    router.push(`/checkout?intent=${encodeURIComponent(data.token)}`);
+    await createBuyNowSession(selectedVariant.id, quantity);
   };
   const categoryHref = product.category?.id
     ? `/products?categoryId=${product.category.id}`
     : "/products";
+  const setCheckoutQuantity = (nextQuantity: number) => {
+    const normalized = Math.max(1, Math.min(nextQuantity, Math.max(1, stock)));
+    setQuantity(normalized);
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("quantity", String(normalized));
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  };
   const canBuy = !variants.length
     ? Number(product.quantity) > 0
     : Boolean(selectedVariant && stock > 0);
@@ -656,9 +779,7 @@ export default function ProductDetailClient() {
                     type="button"
                     aria-label="Giảm số lượng"
                     disabled={quantity <= 1}
-                    onClick={() =>
-                      setQuantity((value) => Math.max(1, value - 1))
-                    }
+                    onClick={() => setCheckoutQuantity(quantity - 1)}
                     className="flex size-11 items-center justify-center disabled:opacity-35"
                   >
                     <Minus className="size-4" />
@@ -670,9 +791,7 @@ export default function ProductDetailClient() {
                     type="button"
                     aria-label="Tăng số lượng"
                     disabled={!canBuy || quantity >= stock}
-                    onClick={() =>
-                      setQuantity((value) => Math.min(stock, value + 1))
-                    }
+                    onClick={() => setCheckoutQuantity(quantity + 1)}
                     className="flex size-11 items-center justify-center disabled:opacity-35"
                   >
                     <Plus className="size-4" />
@@ -698,7 +817,7 @@ export default function ProductDetailClient() {
               <div className="mt-5 grid gap-2 sm:grid-cols-2">
                 <button
                   type="button"
-                  disabled={!canBuy}
+                  disabled={!canBuy || isInitializing || buyNowProcessing}
                   onClick={() => void addToCart()}
                   className="flex h-12 items-center justify-center gap-2 rounded-xl border border-[#D96C8A] px-4 text-sm font-bold text-[#A43E5F] hover:bg-[#FCEEF3] disabled:cursor-not-allowed disabled:opacity-45"
                 >
@@ -707,11 +826,13 @@ export default function ProductDetailClient() {
                 </button>
                 <button
                   type="button"
-                  disabled={!canBuy}
+                  disabled={!canBuy || isInitializing || buyNowProcessing}
                   onClick={() => void buyNow()}
                   className="h-12 rounded-xl bg-[#D96C8A] px-4 text-sm font-bold text-white hover:bg-[#C85B7B] disabled:cursor-not-allowed disabled:opacity-45"
                 >
-                  Mua ngay
+                  {buyNowProcessing
+                    ? "Đang chuyển đến thanh toán..."
+                    : "Mua ngay"}
                 </button>
               </div>
               <div className="mt-6 grid gap-3 border-t border-[#EAE1E4] pt-5 text-sm text-[#6F6066]">
@@ -790,7 +911,7 @@ export default function ProductDetailClient() {
         <div className="mx-auto grid max-w-md grid-cols-2 gap-2">
           <button
             type="button"
-            disabled={!canBuy}
+            disabled={!canBuy || isInitializing || buyNowProcessing}
             onClick={() => void addToCart()}
             className="h-11 rounded-xl border border-[#D96C8A] text-xs font-bold text-[#A43E5F] disabled:opacity-45"
           >
@@ -798,11 +919,11 @@ export default function ProductDetailClient() {
           </button>
           <button
             type="button"
-            disabled={!canBuy}
+            disabled={!canBuy || isInitializing || buyNowProcessing}
             onClick={() => void buyNow()}
             className="h-11 rounded-xl bg-[#D96C8A] text-xs font-bold text-white disabled:opacity-45"
           >
-            Mua ngay
+            {buyNowProcessing ? "Đang chuyển..." : "Mua ngay"}
           </button>
         </div>
       </div>

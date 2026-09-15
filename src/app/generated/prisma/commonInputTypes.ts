@@ -749,6 +749,23 @@ export type EnumPaymentStatusNullableWithAggregatesFilter<$PrismaModel = never> 
   _max?: Prisma.NestedEnumPaymentStatusNullableFilter<$PrismaModel>
 }
 
+export type EnumShippingDistanceRoundingModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShippingDistanceRoundingMode | Prisma.EnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShippingDistanceRoundingModeFilter<$PrismaModel> | $Enums.ShippingDistanceRoundingMode
+}
+
+export type EnumShippingDistanceRoundingModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShippingDistanceRoundingMode | Prisma.EnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShippingDistanceRoundingModeWithAggregatesFilter<$PrismaModel> | $Enums.ShippingDistanceRoundingMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShippingDistanceRoundingModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShippingDistanceRoundingModeFilter<$PrismaModel>
+}
+
 export type EnumInventoryTransactionTypeFilter<$PrismaModel = never> = {
   equals?: $Enums.InventoryTransactionType | Prisma.EnumInventoryTransactionTypeFieldRefInput<$PrismaModel>
   in?: $Enums.InventoryTransactionType[] | Prisma.ListEnumInventoryTransactionTypeFieldRefInput<$PrismaModel>
@@ -1696,6 +1713,23 @@ export type NestedEnumPaymentStatusNullableWithAggregatesFilter<$PrismaModel = n
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPaymentStatusNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPaymentStatusNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumShippingDistanceRoundingModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShippingDistanceRoundingMode | Prisma.EnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShippingDistanceRoundingModeFilter<$PrismaModel> | $Enums.ShippingDistanceRoundingMode
+}
+
+export type NestedEnumShippingDistanceRoundingModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShippingDistanceRoundingMode | Prisma.EnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShippingDistanceRoundingMode[] | Prisma.ListEnumShippingDistanceRoundingModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShippingDistanceRoundingModeWithAggregatesFilter<$PrismaModel> | $Enums.ShippingDistanceRoundingMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShippingDistanceRoundingModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShippingDistanceRoundingModeFilter<$PrismaModel>
 }
 
 export type NestedEnumInventoryTransactionTypeFilter<$PrismaModel = never> = {

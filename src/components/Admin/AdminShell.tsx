@@ -22,6 +22,7 @@ import {
   Users,
   Megaphone,
   ScrollText,
+  Truck,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +54,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     group: "Khách hàng & ưu đãi",
     icon: Percent,
     matches: (pathname) => pathname.startsWith("/admin/discounts"),
+  },
+  {
+    href: "/admin/shipping",
+    label: "Vận chuyển",
+    group: "Quản lý cửa hàng",
+    icon: Truck,
+    matches: (pathname) => pathname.startsWith("/admin/shipping"),
   },
   {
     href: "/admin/memberships/benefits",
@@ -115,6 +123,7 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/profile")) return "Thông tin cá nhân";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";
   if (pathname.startsWith("/admin/categories")) return "Danh mục";
+  if (pathname.startsWith("/admin/shipping")) return "Vận chuyển";
   if (pathname.startsWith("/admin/content/banners")) return "Banner";
   if (pathname.startsWith("/admin/content/policies")) return "Chính sách";
   if (pathname.startsWith("/admin/daily-detail/")) return "Chi tiết ngày";

@@ -90,6 +90,8 @@ export const ModelName = {
   OrderInvoiceItem: 'OrderInvoiceItem',
   InvoiceSequence: 'InvoiceSequence',
   StoreSetting: 'StoreSetting',
+  ShippingConfiguration: 'ShippingConfiguration',
+  ShippingPromotion: 'ShippingPromotion',
   InventoryTransaction: 'InventoryTransaction',
   OrderStatusHistory: 'OrderStatusHistory',
   Warehouse: 'Warehouse',
@@ -754,6 +756,23 @@ export const OrderScalarFieldEnum = {
   shippingDistanceMeters: 'shippingDistanceMeters',
   shippingDistanceKm: 'shippingDistanceKm',
   shippingEstimatedMinutes: 'shippingEstimatedMinutes',
+  shippingOriginAddress: 'shippingOriginAddress',
+  shippingOriginLatitude: 'shippingOriginLatitude',
+  shippingOriginLongitude: 'shippingOriginLongitude',
+  shippingDestinationLatitude: 'shippingDestinationLatitude',
+  shippingDestinationLongitude: 'shippingDestinationLongitude',
+  shippingRawDistanceMeters: 'shippingRawDistanceMeters',
+  shippingRoundedDistanceKm: 'shippingRoundedDistanceKm',
+  shippingFreeDistanceKm: 'shippingFreeDistanceKm',
+  shippingChargeableDistanceKm: 'shippingChargeableDistanceKm',
+  shippingBaseFee: 'shippingBaseFee',
+  shippingPricePerKm: 'shippingPricePerKm',
+  shippingFeeBeforePromotion: 'shippingFeeBeforePromotion',
+  shippingDiscount: 'shippingDiscount',
+  shippingPromotionId: 'shippingPromotionId',
+  shippingPromotionName: 'shippingPromotionName',
+  shippingQuoteProvider: 'shippingQuoteProvider',
+  shippingCalculatedAt: 'shippingCalculatedAt',
   note: 'note',
   placedAt: 'placedAt',
   completedAt: 'completedAt',
@@ -881,6 +900,53 @@ export const StoreSettingScalarFieldEnum = {
 } as const
 
 export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
+
+
+export const ShippingConfigurationScalarFieldEnum = {
+  id: 'id',
+  enabled: 'enabled',
+  shopName: 'shopName',
+  formattedAddress: 'formattedAddress',
+  streetAddress: 'streetAddress',
+  ward: 'ward',
+  district: 'district',
+  province: 'province',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  placeId: 'placeId',
+  baseFee: 'baseFee',
+  pricePerKm: 'pricePerKm',
+  maximumDeliveryDistanceKm: 'maximumDeliveryDistanceKm',
+  distanceRoundingMode: 'distanceRoundingMode',
+  feeRoundingStep: 'feeRoundingStep',
+  minimumShippingFee: 'minimumShippingFee',
+  maximumShippingFee: 'maximumShippingFee',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingConfigurationScalarFieldEnum = (typeof ShippingConfigurationScalarFieldEnum)[keyof typeof ShippingConfigurationScalarFieldEnum]
+
+
+export const ShippingPromotionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  minimumOrderValue: 'minimumOrderValue',
+  freeDistanceKm: 'freeDistanceKm',
+  maximumShippingDiscount: 'maximumShippingDiscount',
+  priority: 'priority',
+  isActive: 'isActive',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingPromotionScalarFieldEnum = (typeof ShippingPromotionScalarFieldEnum)[keyof typeof ShippingPromotionScalarFieldEnum]
 
 
 export const InventoryTransactionScalarFieldEnum = {

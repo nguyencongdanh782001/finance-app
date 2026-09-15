@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
     "start": "next start",
-    "test": "node --no-warnings --test --experimental-strip-types src/lib/sold-products/sold-products.test.ts src/lib/products/product-draft-validation.test.ts src/lib/products/product-status.test.ts src/lib/products/product-preview.test.ts src/lib/products/variant-groups.test.ts src/lib/products/variant-removal.test.ts src/lib/products/import/parser.test.ts src/lib/orders/shop-order-products.test.ts src/lib/rich-text.test.ts src/lib/geoapify.test.ts",
+    "test": "node --no-warnings --test --experimental-strip-types src/lib/sold-products/sold-products.test.ts src/lib/products/product-draft-validation.test.ts src/lib/products/product-status.test.ts src/lib/products/product-preview.test.ts src/lib/products/variant-groups.test.ts src/lib/products/variant-removal.test.ts src/lib/products/import/parser.test.ts src/lib/orders/shop-order-products.test.ts src/lib/rich-text.test.ts src/lib/geoapify.test.ts src/lib/shipping.test.ts",
     "type-check": "tsc --noEmit"
   },
   "lint-staged": {
