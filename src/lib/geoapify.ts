@@ -18,6 +18,34 @@ type GeoapifyFeature = {
   geometry?: { coordinates?: unknown };
 };
 
+const ROUTE_CACHE_TTL_MS = 5 * 60 * 1000;
+const ROUTE_CACHE_MAX_ENTRIES = 300;
+const routeCache = new Map<
+  string,
+  { route: ShippingRoute; expiresAt: number }
+>();
+
+const routeCacheKey = (...coordinates: number[]) =>
+  coordinates.map((coordinate) => coordinate.toFixed(5)).join(":");
+
+function readCachedRoute(key: string) {
+  const entry = routeCache.get(key);
+  if (!entry) return null;
+  if (entry.expiresAt <= Date.now()) {
+    routeCache.delete(key);
+    return null;
+  }
+  return entry.route;
+}
+
+function writeCachedRoute(key: string, route: ShippingRoute) {
+  if (routeCache.size >= ROUTE_CACHE_MAX_ENTRIES) {
+    const oldestKey = routeCache.keys().next().value;
+    if (oldestKey) routeCache.delete(oldestKey);
+  }
+  routeCache.set(key, { route, expiresAt: Date.now() + ROUTE_CACHE_TTL_MS });
+}
+
 const timeoutSignal = (milliseconds: number) =>
   AbortSignal.timeout(milliseconds);
 
@@ -119,6 +147,7 @@ export function validateCoordinates(latitude: number, longitude: number) {
   return (
     Number.isFinite(latitude) &&
     Number.isFinite(longitude) &&
+    !(latitude === 0 && longitude === 0) &&
     latitude >= -90 &&
     latitude <= 90 &&
     longitude >= -180 &&
@@ -175,6 +204,14 @@ export async function getDrivingRoute(
   ) {
     throw new Error("Tọa độ giao hàng không hợp lệ.");
   }
+  const cacheKey = routeCacheKey(
+    originLatitude,
+    originLongitude,
+    destinationLatitude,
+    destinationLongitude,
+  );
+  const cachedRoute = readCachedRoute(cacheKey);
+  if (cachedRoute) return cachedRoute;
   const url = new URL(`${GEOAPIFY_BASE_URL}/routing`);
   url.searchParams.set(
     "waypoints",
@@ -203,9 +240,11 @@ export async function getDrivingRoute(
   ) {
     throw new Error("Không tìm được tuyến đường đến địa chỉ này.");
   }
-  return {
+  const route = {
     distanceMeters: Math.round(distanceMeters),
     estimatedDurationSeconds: Math.round(estimatedDurationSeconds),
     estimatedDurationMinutes: Math.ceil(estimatedDurationSeconds / 60),
   };
+  writeCachedRoute(cacheKey, route);
+  return route;
 }

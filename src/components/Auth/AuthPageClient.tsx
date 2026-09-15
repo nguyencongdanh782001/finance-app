@@ -44,6 +44,7 @@ import {
   Sparkles,
   UserRound,
   VenusAndMars,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -335,6 +336,8 @@ export function AuthDatePicker({
   placeholder = "Chọn ngày sinh",
   className,
   onChange,
+  clearable = false,
+  onClear,
 }: {
   value: string;
   hasError?: boolean;
@@ -343,6 +346,8 @@ export function AuthDatePicker({
   placeholder?: string;
   className?: string;
   onChange: (value: string) => void;
+  clearable?: boolean;
+  onClear?: () => void;
 }) {
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -401,7 +406,7 @@ export function AuthDatePicker({
           variant="authField"
           size="authField"
           aria-invalid={hasError}
-          className={`min-w-0 ${className || ""} ${
+          className={`relative min-w-0 ${className || ""} ${
             hasError ? "border-[#C64040]" : ""
           }`}
         >
@@ -412,7 +417,31 @@ export function AuthDatePicker({
           >
             {value ? formatBirthdayLabel(value) : placeholder}
           </span>
-          <ChevronDown className="size-5 text-[#9B9296]" />
+          {clearable && value ? (
+            <span
+              role="button"
+              tabIndex={0}
+              aria-label="Xoá ngày đã chọn"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onClear?.();
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onClear?.();
+                }
+              }}
+              className="absolute right-2 flex size-5 shrink-0 items-center justify-center rounded text-[#9B9296] hover:bg-[#FFF3F6] hover:text-[#D96C8A]"
+            >
+              <X className="size-3.5" />
+            </span>
+          ) : (
+            <ChevronDown className="absolute right-2 size-4 text-[#9B9296]" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent

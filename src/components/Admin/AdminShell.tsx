@@ -56,13 +56,6 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     matches: (pathname) => pathname.startsWith("/admin/discounts"),
   },
   {
-    href: "/admin/shipping",
-    label: "Vận chuyển",
-    group: "Quản lý cửa hàng",
-    icon: Truck,
-    matches: (pathname) => pathname.startsWith("/admin/shipping"),
-  },
-  {
     href: "/admin/memberships/benefits",
     label: "Quyền lợi membership",
     group: "Khách hàng & ưu đãi",
@@ -98,6 +91,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     group: "Quản lý cửa hàng",
     icon: FolderTree,
     matches: (pathname) => pathname.startsWith("/admin/categories"),
+  },
+  {
+    href: "/admin/shipping",
+    label: "Vận chuyển",
+    group: "Vận chuyển",
+    icon: Truck,
+    matches: (pathname) => pathname.startsWith("/admin/shipping"),
   },
   {
     href: "/admin/content/banners",

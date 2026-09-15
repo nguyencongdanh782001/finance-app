@@ -56,6 +56,8 @@ export async function POST(request: Request) {
                       title: true,
                       imageUrl: true,
                       status: true,
+                      sellPrice: true,
+                      quantity: true,
                     },
                   },
                   variant: {
@@ -71,7 +73,14 @@ export async function POST(request: Request) {
           where: { id: payload.variantId },
           include: {
             product: {
-              select: { id: true, title: true, imageUrl: true, status: true },
+              select: {
+                id: true,
+                title: true,
+                imageUrl: true,
+                status: true,
+                sellPrice: true,
+                quantity: true,
+              },
             },
             images: { orderBy: { position: "asc" }, take: 1 },
           },
@@ -85,18 +94,21 @@ export async function POST(request: Request) {
         : Number(payload.quantity);
     return {
       variantId: variant?.id,
-      productId: variant?.productId,
+      productId: variant?.productId ?? item.product.id,
       title: item.product.title,
       imageUrl: variant?.images?.[0]?.url || item.product.imageUrl,
       variantLabel: [variant?.color, variant?.size].filter(Boolean).join(" · "),
       sku: variant?.sku || null,
       quantity,
-      price: Number(variant?.sellPrice || 0),
+      price: Number(variant?.sellPrice ?? item.product.sellPrice ?? 0),
       available: Math.max(
         0,
-        Number(variant?.quantity || 0) - Number(variant?.reservedQuantity || 0),
+        variant
+          ? Number(variant.quantity) - Number(variant.reservedQuantity || 0)
+          : Number(item.product.quantity),
       ),
-      valid: item.product.status === "PUBLIC" && Boolean(variant?.isActive),
+      valid:
+        item.product.status === "PUBLIC" && (variant ? variant.isActive : true),
     };
   });
   if (
@@ -163,7 +175,11 @@ export async function POST(request: Request) {
   if (validateCoordinates(latitude, longitude)) {
     try {
       const shippingConfig = await getShippingConfiguration();
-      if (shippingConfig.latitude != null && shippingConfig.longitude != null) {
+      if (
+        shippingConfig.latitude != null &&
+        shippingConfig.longitude != null &&
+        validateCoordinates(shippingConfig.latitude, shippingConfig.longitude)
+      ) {
         shippingCalculation = await createShippingCalculation({
           destinationLatitude: latitude,
           destinationLongitude: longitude,

@@ -28,6 +28,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const money = (value: number) =>
   `${Math.round(value).toLocaleString("vi-VN")}đ`;
+
+const hasUsableCoordinates = (latitude: number, longitude: number) =>
+  Number.isFinite(latitude) &&
+  Number.isFinite(longitude) &&
+  !(latitude === 0 && longitude === 0);
 type Item = {
   variantId: number;
   quantity: number;
@@ -175,10 +180,12 @@ export default function CheckoutClient() {
   const [provinces, setProvinces] = useState<AdministrativeProvince[]>([]);
   const [addressError, setAddressError] = useState("");
   const [addressesOpen, setAddressesOpen] = useState(false);
+  const [addressRevision, setAddressRevision] = useState(0);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
   const skipCouponPreviewRef = useRef(false);
+  const previewAbortRef = useRef<AbortController | null>(null);
   const couponTriggerRef = useRef<HTMLButtonElement>(null);
   const [paymentMethod, setPaymentMethod] = useState<"COD" | "MOMO">("COD");
   const [preview, setPreview] = useState<Preview | null>(null);
@@ -215,6 +222,7 @@ export default function CheckoutClient() {
           : [...current, data],
       );
       setSelectedId(data.id);
+      setAddressRevision((revision) => revision + 1);
       setAddressOpen(false);
       setEditing(null);
       setAddressError("");
@@ -247,9 +255,10 @@ export default function CheckoutClient() {
     }
     setError("");
     const load = async () => {
-      const first = await fetch(
-        `/api/checkout/cart-intent?token=${encodeURIComponent(token)}`,
-      );
+      const [first, addressResponse] = await Promise.all([
+        fetch(`/api/checkout/cart-intent?token=${encodeURIComponent(token)}`),
+        fetch("/api/me/addresses"),
+      ]);
       let checkout;
       if (first.ok) checkout = await first.json();
       else {
@@ -275,7 +284,6 @@ export default function CheckoutClient() {
       }
       setItems(checkout.items || []);
       setError("");
-      const addressResponse = await fetch("/api/me/addresses");
       if (addressResponse.ok) {
         const list = (await addressResponse.json()) as Address[];
         setAddresses(list);
@@ -300,14 +308,73 @@ export default function CheckoutClient() {
     (item) => item.name === addressFormik.values.city,
   );
   const coordinates = selected
-    ? {
-        latitude: Number(selected.latitude),
-        longitude: Number(selected.longitude),
-      }
+    ? hasUsableCoordinates(
+        Number(selected.latitude),
+        Number(selected.longitude),
+      )
+      ? {
+          latitude: Number(selected.latitude),
+          longitude: Number(selected.longitude),
+        }
+      : { latitude: 0, longitude: 0 }
     : {
         latitude: Number(manual.latitude),
         longitude: Number(manual.longitude),
       };
+
+  useEffect(() => {
+    if (
+      !selected ||
+      hasUsableCoordinates(
+        Number(selected.latitude),
+        Number(selected.longitude),
+      )
+    )
+      return;
+    const addressQueries = [
+      [selected.line1, selected.ward, selected.district, selected.city],
+      [selected.line1, selected.ward, selected.city],
+      [selected.line1, selected.district, selected.city],
+      [selected.line1, selected.city],
+      [selected.ward, selected.district, selected.city],
+      [selected.district, selected.city],
+      [selected.city],
+    ]
+      .map((parts) => parts.filter(Boolean).join(", "))
+      .filter(
+        (query, index, queries) =>
+          query.length >= 3 && queries.indexOf(query) === index,
+      );
+    if (!addressQueries.length) return;
+    let active = true;
+    const resolveAddress = async () => {
+      for (const query of addressQueries) {
+        const response = await fetch(
+          `/api/locations/autocomplete?text=${encodeURIComponent(query)}`,
+        );
+        if (!response.ok) continue;
+        const data = (await response.json()) as { suggestions?: Suggestion[] };
+        const suggestion = data.suggestions?.[0];
+        if (!active || !suggestion) continue;
+        setAddresses((current) =>
+          current.map((address) =>
+            address.id === selected.id
+              ? {
+                  ...address,
+                  latitude: suggestion.latitude,
+                  longitude: suggestion.longitude,
+                }
+              : address,
+          ),
+        );
+        return;
+      }
+    };
+    void resolveAddress().catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [selected]);
   const receiver = selected
     ? {
         receiverName: selected.fullName,
@@ -328,23 +395,30 @@ export default function CheckoutClient() {
       };
 
   useEffect(() => {
+    previewAbortRef.current?.abort();
+    previewAbortRef.current = null;
     if (skipCouponPreviewRef.current) {
       skipCouponPreviewRef.current = false;
       return;
     }
     if (
       !items.length ||
-      !Number.isFinite(coordinates.latitude) ||
-      !Number.isFinite(coordinates.longitude)
+      !hasUsableCoordinates(coordinates.latitude, coordinates.longitude)
     ) {
       setPreview(null);
+      setPreviewLoading(Boolean(items.length && selectedId));
       return;
     }
+    setPreviewLoading(true);
+    let controller: AbortController | null = null;
     const timer = window.setTimeout(() => {
-      setPreviewLoading(true);
+      const requestController = new AbortController();
+      controller = requestController;
+      previewAbortRef.current = requestController;
       fetch("/api/checkout/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: requestController.signal,
         body: JSON.stringify({
           intent: token,
           ...coordinates,
@@ -356,22 +430,34 @@ export default function CheckoutClient() {
           if (!response.ok) throw new Error(data.message);
           setPreview(data);
         })
-        .catch((cause) =>
+        .catch((cause) => {
+          if (cause instanceof DOMException && cause.name === "AbortError")
+            return;
           setError(
             cause instanceof Error
               ? cause.message
               : "Chưa thể tính phí giao hàng.",
-          ),
-        )
-        .finally(() => setPreviewLoading(false));
+          );
+        })
+        .finally(() => {
+          if (previewAbortRef.current === controller) {
+            previewAbortRef.current = null;
+            setPreviewLoading(false);
+          }
+        });
     }, 300);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      controller?.abort();
+    };
   }, [
     appliedCoupon,
     coordinates.latitude,
     coordinates.longitude,
     items.length,
+    selectedId,
     token,
+    addressRevision,
   ]);
 
   const applyCoupon = async (code: string) => {
@@ -545,7 +631,7 @@ export default function CheckoutClient() {
                       ).map((address) => (
                         <div
                           key={address.id}
-                          className={`rounded-xl border p-4 ${selectedId === address.id ? "border-[#D96C8A] bg-[#FFF8FA]" : "border-[#EAE1E4]"}`}
+                          className={`relative rounded-xl border p-4 ${selectedId === address.id ? "border-[#D96C8A] bg-[#FFF8FA]" : "border-[#EAE1E4]"}`}
                         >
                           <button
                             type="button"
@@ -559,7 +645,7 @@ export default function CheckoutClient() {
                                 <Check className="size-3" />
                               ) : null}
                             </span>
-                            <span className="min-w-0 flex-1">
+                            <span className="min-w-0 flex-1 pr-20">
                               <strong className="block text-sm">
                                 {address.fullName} · {address.phone}
                               </strong>
@@ -574,7 +660,7 @@ export default function CheckoutClient() {
                                   .join(", ")}
                               </span>
                               {address.isDefaultShipping ? (
-                                <small className="mt-2 inline-flex rounded-full bg-[#FCEEF3] px-2 py-1 font-bold text-[#A43E5F]">
+                                <small className="absolute right-4 top-4 inline-flex rounded-full bg-[#FCEEF3] px-2 py-1 font-bold text-[#A43E5F]">
                                   Mặc định
                                 </small>
                               ) : null}
@@ -860,6 +946,12 @@ export default function CheckoutClient() {
                           : "Chưa tính"}
                     </dd>
                   </div>
+                  {!summary.shipping.available &&
+                  preview?.shipping.unavailableReason ? (
+                    <p className="text-right text-xs font-medium text-[#C84F64]">
+                      {preview.shipping.unavailableReason}
+                    </p>
+                  ) : null}
                 </dl>
                 <div className="mt-5 flex justify-between border-t border-[#EAE1E4] pt-4">
                   <span className="font-bold">Tổng thanh toán</span>

@@ -35,6 +35,8 @@ export async function PATCH(
     );
   try {
     const b = await request.json();
+    const latitude = String(b.latitude ?? "").trim();
+    const longitude = String(b.longitude ?? "").trim();
     const data = {
       fullName: String(b.fullName || "").trim(),
       phone: String(b.phone || "").trim(),
@@ -45,10 +47,12 @@ export async function PATCH(
       line1: String(b.line1 || "").trim(),
       line2: String(b.line2 || "").trim() || null,
       postalCode: String(b.postalCode || "").trim() || null,
-      latitude: Number.isFinite(Number(b.latitude)) ? Number(b.latitude) : null,
-      longitude: Number.isFinite(Number(b.longitude))
-        ? Number(b.longitude)
-        : null,
+      latitude:
+        latitude && Number.isFinite(Number(latitude)) ? Number(latitude) : null,
+      longitude:
+        longitude && Number.isFinite(Number(longitude))
+          ? Number(longitude)
+          : null,
       isDefaultShipping: Boolean(b.isDefaultShipping),
     };
     const result = await prisma.$transaction(async (tx) => {

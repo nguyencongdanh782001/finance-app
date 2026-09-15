@@ -45,6 +45,8 @@ export interface SelectProps extends React.InputHTMLAttributes<HTMLInputElement>
   onOpenChangeManual?: (open: boolean) => void;
   side?: "bottom" | "top" | "right" | "left";
   fullWidth?: boolean;
+  errorClassName?: string;
+  placeholderClassName?: string;
 }
 
 const CustomSelect = React.forwardRef<
@@ -74,6 +76,8 @@ const CustomSelect = React.forwardRef<
       side,
       onOpenChangeManual,
       fullWidth = false,
+      errorClassName = "text-red-1",
+      placeholderClassName = "text-slate-300!",
     },
     _ref,
   ) => {
@@ -167,7 +171,7 @@ const CustomSelect = React.forwardRef<
               type="button"
               variant="input"
               name={name}
-              className={`truncate! text-left text-11px disabled:opacity-50 bg-slate-50! rounded-[14px]! text-slate-700! hover:bg-slate-50! shadow-none! ${fullWidth ? "w-full! min-w-0!" : ""} ${showError ? "border-red-1!" : "border-slate-100!"} ${inputClassName} ${(multipliable && (value.length === 0 || value[0] === "")) || !value ? "text-slate-300!" : ""} grid`}
+              className={`truncate! text-left text-11px disabled:opacity-50 bg-slate-50! rounded-[14px]! text-slate-700! hover:bg-slate-50! shadow-none! ${fullWidth ? "w-full! min-w-0!" : ""} ${showError ? "border-red-1!" : "border-slate-100!"} ${inputClassName} ${(multipliable && (value.length === 0 || value[0] === "")) || !value ? placeholderClassName : ""} grid`}
               style={{
                 gridTemplateColumns: "minmax(0, 1fr) auto",
               }}
@@ -175,7 +179,9 @@ const CustomSelect = React.forwardRef<
             >
               <div className="flex min-w-0 items-center gap-1.5 truncate">
                 {startIcon}
-                <p className={`label h-5 min-w-0 truncate ${lblClassName}`}>
+                <p
+                  className={`label h-5 min-w-0 truncate ${lblClassName} ${(!multipliable && !value) || (multipliable && (value.length === 0 || value[0] === "")) ? placeholderClassName : ""}`}
+                >
                   {multipliable && renderMultiLbl()}
                   {!multipliable &&
                     (value
@@ -317,7 +323,7 @@ const CustomSelect = React.forwardRef<
         </Popover>
 
         {showError && (
-          <p className="text-red-1 mt-1 text-xs font-medium">
+          <p className={`${errorClassName} mt-1 text-xs font-medium`}>
             {getIn(errors, name)}
           </p>
         )}

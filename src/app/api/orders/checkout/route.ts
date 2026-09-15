@@ -79,7 +79,12 @@ export async function POST(request: Request) {
     let shippingCalculation: any = null;
     const resolveShipping = async (eligibleOrderValue: number) => {
       const config = await getShippingConfiguration();
-      if (config.latitude == null || config.longitude == null) return;
+      if (
+        config.latitude == null ||
+        config.longitude == null ||
+        !validateCoordinates(config.latitude, config.longitude)
+      )
+        return;
       shippingCalculation = await createShippingCalculation({
         destinationLatitude,
         destinationLongitude,
@@ -118,9 +123,11 @@ export async function POST(request: Request) {
           cartItems.length !== (payload.cartItemIds || []).length ||
           cartItems.some(
             (item) =>
-              !item.variant ||
-              !item.variant.isActive ||
-              item.product.status !== "PUBLIC",
+              item.product.status !== "PUBLIC" ||
+              Boolean(item.variant && !item.variant.isActive) ||
+              (item.variant
+                ? item.variant.quantity - item.variant.reservedQuantity
+                : item.product.quantity) < item.quantity,
           )
         )
           throw new Error("Sản phẩm trong giỏ hàng không còn khả dụng.");
@@ -131,18 +138,27 @@ export async function POST(request: Request) {
           total: number;
         }>;
         for (const item of cartItems) {
-          const variant = item.variant!;
-          const update = await tx.productVariant.updateMany({
-            where: {
-              id: variant.id,
-              isActive: true,
-              quantity: { gte: item.quantity + variant.reservedQuantity },
-            },
-            data: { quantity: { decrement: item.quantity } },
-          });
+          const variant = item.variant;
+          const update = variant
+            ? await tx.productVariant.updateMany({
+                where: {
+                  id: variant.id,
+                  isActive: true,
+                  quantity: { gte: item.quantity + variant.reservedQuantity },
+                },
+                data: { quantity: { decrement: item.quantity } },
+              })
+            : await tx.product.updateMany({
+                where: {
+                  id: item.productId,
+                  status: "PUBLIC",
+                  quantity: { gte: item.quantity },
+                },
+                data: { quantity: { decrement: item.quantity } },
+              });
           if (!update.count) throw new Error("Số lượng sản phẩm không còn đủ.");
-          const price = Number(variant.sellPrice);
-          const cost = Number(variant.importPrice);
+          const price = Number(variant?.sellPrice ?? item.product.sellPrice);
+          const cost = Number(variant?.importPrice ?? item.product.importPrice);
           lines.push({ item, price, cost, total: price * item.quantity });
         }
         const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
@@ -267,12 +283,12 @@ export async function POST(request: Request) {
             items: {
               create: lines.map(({ item, price, cost, total }) => ({
                 productId: item.productId,
-                variantId: item.variantId!,
+                variantId: item.variantId,
                 productTitle: item.product.title,
                 productImageUrl: item.product.imageUrl,
-                sku: item.variant!.sku,
-                size: item.variant!.size,
-                color: item.variant!.color,
+                sku: item.variant?.sku || null,
+                size: item.variant?.size || null,
+                color: item.variant?.color || null,
                 quantity: item.quantity,
                 originalUnitPrice: price,
                 unitPrice: price,
@@ -293,7 +309,11 @@ export async function POST(request: Request) {
               variantId: item.variantId,
               type: "SALE",
               quantity: -item.quantity,
-              balanceAfter: Math.max(0, item.variant!.quantity - item.quantity),
+              balanceAfter: Math.max(
+                0,
+                (item.variant?.quantity ?? item.product.quantity) -
+                  item.quantity,
+              ),
               referenceType: "ORDER",
               referenceId: created.id,
               note: `Đặt hàng ${created.orderNumber}`,

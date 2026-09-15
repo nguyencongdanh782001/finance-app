@@ -13,6 +13,9 @@ import {
 const money = (value: number) =>
   `${Math.round(value).toLocaleString("vi-VN")}đ`;
 
+const isCartItemAvailable = (item: StorefrontCartItem) =>
+  item.status === "PUBLIC" && item.stock > 0 && item.stock >= item.quantity;
+
 function QuantityControl({
   item,
   available,
@@ -72,7 +75,7 @@ function CartItemRow({
   onUpdate: (quantity: number) => void;
   pending: boolean;
 }) {
-  const available = item.isEligible !== false && item.stock >= item.quantity;
+  const available = isCartItemAvailable(item);
   const unavailableMessage =
     item.status !== "PUBLIC"
       ? "Sản phẩm không còn khả dụng"
@@ -95,7 +98,7 @@ function CartItemRow({
           checked={selected}
           disabled={!available}
           onChange={onSelect}
-          className="size-4 accent-[#D96C8A]"
+          className={`size-4 accent-[#D96C8A] ${available ? "cursor-pointer" : "cursor-not-allowed"}`}
         />
       </label>
       <Link
@@ -257,13 +260,7 @@ export default function CartPage() {
   const [initialized, setInitialized] = useState(false);
   const [error, setError] = useState("");
   const [updatingKey, setUpdatingKey] = useState<string | null>(null);
-  const eligible = useMemo(
-    () =>
-      items.filter(
-        (item) => item.isEligible !== false && item.stock >= item.quantity,
-      ),
-    [items],
-  );
+  const eligible = useMemo(() => items.filter(isCartItemAvailable), [items]);
   useEffect(() => {
     setSelected((current) => {
       if (initialized)
@@ -276,10 +273,7 @@ export default function CartPage() {
     });
   }, [eligible, initialized, items.length]);
   const selectedItems = items.filter(
-    (item) =>
-      selected.has(item.id) &&
-      item.isEligible !== false &&
-      item.stock >= item.quantity,
+    (item) => selected.has(item.id) && isCartItemAvailable(item),
   );
   const total = selectedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
