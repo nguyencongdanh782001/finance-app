@@ -63,7 +63,9 @@ jobs:
       - name: Deploy preview artifact
         id: deploy
         run: |
+          echo "Deploy preview started: $(TZ=Asia/Ho_Chi_Minh date '+%Y-%m-%d %H:%M:%S %Z')"
           url=$(vercel deploy --prebuilt --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN")
+          echo "Deploy preview finished: $(TZ=Asia/Ho_Chi_Minh date '+%Y-%m-%d %H:%M:%S %Z')"
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
   deploy-prod:
@@ -129,5 +131,7 @@ jobs:
       - name: Deploy production artifact
         id: deploy
         run: |
+          echo "Deploy production started: $(TZ=Asia/Ho_Chi_Minh date '+%Y-%m-%d %H:%M:%S %Z')"
           url=$(vercel deploy --prebuilt --prod --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN")
+          echo "Deploy production finished: $(TZ=Asia/Ho_Chi_Minh date '+%Y-%m-%d %H:%M:%S %Z')"
           echo "url=$url" >> "$GITHUB_OUTPUT"
