@@ -867,6 +867,7 @@ export default function DailyOrderSection({
   const dailyId = data?.id;
   const [orders, setOrders] = useState<DailyOrderListResponse | null>(null);
   const [products, setProducts] = useState<ShopOrderProductOption[]>([]);
+  const [productSearch, setProductSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
@@ -981,32 +982,12 @@ export default function DailyOrderSection({
       setIsProductLoading(true);
       const firstPage = await financeAPI.getProductList({
         page: 1,
-        limit: 100,
+        limit: 40,
+        search: productSearch || undefined,
       });
 
       if (firstPage.code === RESPONSE_CODES.success && firstPage.data) {
-        const allProducts = [...firstPage.data.data];
-        const totalPages = firstPage.data.pagination.totalPage;
-
-        for (let page = 2; page <= totalPages; page += 1) {
-          const nextPage = await financeAPI.getProductList({
-            page,
-            limit: 100,
-          });
-
-          if (nextPage.code !== RESPONSE_CODES.success || !nextPage.data) {
-            toast({
-              title: "Không tải đủ danh sách sản phẩm. Vui lòng thử lại.",
-              className: "bg-red-1 text-white text-sm font-medium",
-              duration: 3000,
-            });
-            break;
-          }
-
-          allProducts.push(...nextPage.data.data);
-        }
-
-        setProducts(mapShopOrderProducts(allProducts));
+        setProducts(mapShopOrderProducts(firstPage.data.data));
       } else {
         toast({
           title: "Không tải được sản phẩm để tạo đơn tại shop.",
@@ -1019,7 +1000,7 @@ export default function DailyOrderSection({
     };
 
     void fetchProducts();
-  }, [reload]);
+  }, [productSearch, reload]);
 
   const submitOrder = async (
     payload: OfflineOrderPayload,
@@ -1458,6 +1439,7 @@ export default function DailyOrderSection({
         order={selectedOrder}
         onOpenChange={setIsFormOpen}
         onSubmit={submitOrder}
+        onProductSearchChange={setProductSearch}
       />
       <OrderDetailDialog
         order={selectedOrder}

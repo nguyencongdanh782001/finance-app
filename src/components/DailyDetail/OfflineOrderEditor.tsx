@@ -507,12 +507,14 @@ function ProductSearchPanel({
   loading,
   onAdd,
   onRemoveProduct,
+  onSearchChange,
 }: {
   products: ShopOrderProductOption[];
   selectedItems: EditableOrderItem[];
   loading: boolean;
   onAdd: (option: ShopOrderLineOption, quantity?: number) => void;
   onRemoveProduct: (productId: number) => void;
+  onSearchChange?: (search: string) => void;
 }) {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -525,6 +527,10 @@ function ProductSearchPanel({
     const timeout = window.setTimeout(() => setDebouncedSearch(search), 200);
     return () => window.clearTimeout(timeout);
   }, [search]);
+
+  useEffect(() => {
+    onSearchChange?.(debouncedSearch.trim());
+  }, [debouncedSearch, onSearchChange]);
 
   useEffect(() => {
     searchRef.current?.focus();
@@ -1331,6 +1337,7 @@ export function OfflineOrderEditor({
   order,
   onOpenChange,
   onSubmit,
+  onProductSearchChange,
 }: {
   open: boolean;
   mode: OfflineOrderEditorMode;
@@ -1339,6 +1346,7 @@ export function OfflineOrderEditor({
   order: DailyOrder | null;
   onOpenChange: (open: boolean) => void;
   onSubmit: SubmitOrder;
+  onProductSearchChange?: (search: string) => void;
 }) {
   const [form, setForm] = useState<OrderFormState>(emptyForm);
   const [cartOpen, setCartOpen] = useState(false);
@@ -1645,6 +1653,7 @@ export function OfflineOrderEditor({
                   couponCode: "",
                 }))
               )}
+              onSearchChange={onProductSearchChange}
             />
           </div>
           <div className="hidden min-h-0 xl:block">{cart}</div>

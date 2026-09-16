@@ -1,21 +1,38 @@
 import prisma from "@/lib/db";
+import { unstable_cache } from "next/cache";
 import { NextResponse } from "next/server";
+
+const getCachedPublicCategories = unstable_cache(
+  () =>
+    prisma.category.findMany({
+      where: { isActive: true },
+      orderBy: { name: "asc" },
+      include: {
+        parent: { select: { id: true, name: true } },
+        _count: { select: { products: { where: { status: "PUBLIC" } } } },
+      },
+    }),
+  ["public-categories"],
+  { revalidate: 300, tags: ["categories"] },
+);
 
 export async function GET(request: Request) {
   const publicOnly = new URL(request.url).searchParams.get("public") === "true";
-  const categories = await prisma.category.findMany({
-    orderBy: {
-      name: "asc",
-    },
-    include: {
-      parent: { select: { id: true, name: true } },
-      _count: {
-        select: {
-          products: publicOnly ? { where: { status: "PUBLIC" } } : true,
+  const categories = publicOnly
+    ? await getCachedPublicCategories()
+    : await prisma.category.findMany({
+        orderBy: {
+          name: "asc",
         },
-      },
-    },
-  });
+        include: {
+          parent: { select: { id: true, name: true } },
+          _count: {
+            select: {
+              products: publicOnly ? { where: { status: "PUBLIC" } } : true,
+            },
+          },
+        },
+      });
 
   return NextResponse.json(categories);
 }
