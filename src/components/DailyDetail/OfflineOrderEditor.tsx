@@ -546,10 +546,13 @@ function ProductSearchPanel({
     [products],
   );
   const normalizedSearch = debouncedSearch.trim().toLocaleLowerCase("vi");
+  const searchTokens = normalizedSearch.split(/\s+/).filter(Boolean);
+  const isSearching = loading || search.trim() !== debouncedSearch.trim();
   const filtered = products.filter(
     (product) =>
       (category === "ALL" || product.categoryName === category) &&
-      (!normalizedSearch || product.searchableText.includes(normalizedSearch)),
+      (!searchTokens.length ||
+        searchTokens.every((token) => product.searchableText.includes(token))),
   );
 
   const chooseProduct = (product: ShopOrderProductOption) => {
@@ -604,7 +607,13 @@ function ProductSearchPanel({
             onManualChange={setSearch}
             onManualClear={() => setSearch("")}
             clearable
-            icon={<Search className="ml-3 size-4 shrink-0 text-[#9B8C91]" />}
+            icon={
+              isSearching ? (
+                <Loader2 className="ml-3 size-4 shrink-0 animate-spin text-[#D96C8A]" />
+              ) : (
+                <Search className="ml-3 size-4 shrink-0 text-[#9B8C91]" />
+              )
+            }
             placeholder="Tìm tên sản phẩm, SKU hoặc mã vạch..."
             aria-label="Tìm sản phẩm"
             classNameContainer="h-10 rounded-lg border border-[#EAE1E4] bg-white focus-within:border-[#D96C8A] focus-within:ring-2 focus-within:ring-[#D96C8A]/15"
@@ -622,7 +631,7 @@ function ProductSearchPanel({
       </div>
 
       <div className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-contain bg-white px-2 py-1 touch-pan-y sm:px-4 max-sm:bg-[#F8F5F6] max-sm:p-3 max-sm:pb-36">
-        {loading && !products.length ? (
+        {isSearching ? (
           Array.from({ length: 6 }, (_, index) => (
             <ProductResultSkeleton key={index} />
           ))
@@ -1190,7 +1199,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="min-h-44 flex-[1_1_40%] overflow-y-auto px-4 sm:px-5 xl:min-h-48">
+      <div className="max-h-[32dvh] min-h-0 flex-none overflow-y-auto px-4 sm:px-5 xl:min-h-48 xl:flex-[1_1_40%]">
         {form.items.length ? (
           form.items.map((item, index) => (
             <OrderCartItem
@@ -1201,7 +1210,7 @@ function OrderCart({
             />
           ))
         ) : (
-          <div className="flex h-full min-h-56 items-center justify-center text-center">
+          <div className="flex h-full min-h-40 items-center justify-center text-center xl:min-h-56">
             <div>
               <PackageCheck className="mx-auto size-6 text-[#B7A9AE]" />
               <p className="mt-2 text-sm font-semibold text-[#65545B]">
