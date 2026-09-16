@@ -43,6 +43,11 @@ const ONLINE_STATUS_FLOW = {
   [OrderStatus.CONFIRMED]: OrderStatus.DELIVERED,
 } as const;
 
+const ORDER_TRANSACTION_OPTIONS = {
+  maxWait: 10_000,
+  timeout: 20_000,
+};
+
 const getVietnamDateParts = (date: Date) => {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Ho_Chi_Minh",
@@ -765,7 +770,7 @@ export async function createOfflineOrder(
     }
 
     return serializeOrder(order);
-  });
+  }, ORDER_TRANSACTION_OPTIONS);
 }
 
 export async function updateOfflineOrder(
@@ -898,7 +903,7 @@ export async function updateOfflineOrder(
     }
 
     return serializeOrder(order);
-  });
+  }, ORDER_TRANSACTION_OPTIONS);
 }
 
 export async function cancelOfflineOrder(orderId: number, adminId: number) {
@@ -954,7 +959,7 @@ export async function cancelOfflineOrder(orderId: number, adminId: number) {
     });
 
     return serializeOrder(order);
-  });
+  }, ORDER_TRANSACTION_OPTIONS);
 }
 
 export async function updateOnlineOrderStatus(
@@ -1011,7 +1016,7 @@ export async function updateOnlineOrderStatus(
     });
 
     return serializeOrder(order);
-  });
+  }, ORDER_TRANSACTION_OPTIONS);
 }
 
 export async function getOrderDetail(orderId: number) {
