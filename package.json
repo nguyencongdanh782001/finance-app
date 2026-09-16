@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build --webpack",
+    "db:backup:prod": "bash scripts/backup-prod-db.sh",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:clone-prod-to-dev": "bash scripts/clone-prod-to-dev-db.sh",
     "dev": "next dev --webpack",

@@ -45,3 +45,4 @@ next-env.d.ts
 
 # local production database backups
 production-backup*.sql
+production-backup*.dump
