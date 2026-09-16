@@ -106,7 +106,8 @@ export async function POST(request: Request) {
         shippingFee: shippingCalculation.calculation.finalShippingFee,
       };
     };
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(
+      async (tx) => {
       const existing = await tx.order.findUnique({
         where: { idempotencyKey: token },
         select: { id: true, orderNumber: true },
@@ -508,7 +509,12 @@ export async function POST(request: Request) {
         order: created,
         eventKey: `NEW_ONLINE_ORDER:${created.id}`,
       };
-    });
+      },
+      {
+        maxWait: 10_000,
+        timeout: 20_000,
+      },
+    );
     if (result.eventKey) {
       const outbox = await prisma.notificationOutbox.findUnique({
         where: { eventKey: result.eventKey },
