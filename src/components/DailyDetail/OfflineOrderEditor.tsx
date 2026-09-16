@@ -630,7 +630,7 @@ function ProductSearchPanel({
         </div>
       </div>
 
-      <div className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-contain bg-white px-2 py-1 touch-pan-y sm:px-4 max-sm:bg-[#F8F5F6] max-sm:p-3 max-sm:pb-36">
+      <div className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-contain bg-white px-2 py-1 touch-pan-y sm:px-4 max-sm:bg-[#F8F5F6] max-sm:px-4 max-sm:pb-[calc(10rem+env(safe-area-inset-bottom))] max-sm:pt-3">
         {isSearching ? (
           Array.from({ length: 6 }, (_, index) => (
             <ProductResultSkeleton key={index} />
@@ -1199,7 +1199,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="max-h-[32dvh] min-h-0 flex-none overflow-y-auto px-4 sm:px-5 xl:min-h-48 xl:flex-[1_1_40%]">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 sm:px-5 xl:min-h-48 xl:flex-[1_1_40%]">
         {form.items.length ? (
           form.items.map((item, index) => (
             <OrderCartItem
