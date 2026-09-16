@@ -55,11 +55,27 @@ export function buildSharedProductFilters(query: ProductListQuery): Prisma.Produ
   const filters: Prisma.ProductWhereInput = {};
   const variantFilters: Prisma.ProductVariantWhereInput[] = [];
   if (query.search) {
-    filters.OR = [
-      { title: { contains: query.search, mode: "insensitive" } },
-      { slug: { contains: query.search, mode: "insensitive" } },
-      { variants: { some: { OR: [{ sku: { contains: query.search, mode: "insensitive" } }, { barcode: { contains: query.search, mode: "insensitive" } }] } } },
-    ];
+    // Match every part independently so searches such as "ao len den" still
+    // work when those words are not adjacent in the product data.
+    const searchTokens = query.search.split(/\s+/).filter(Boolean);
+    filters.AND = searchTokens.map((token) => ({
+      OR: [
+        { title: { contains: token, mode: "insensitive" } },
+        { slug: { contains: token, mode: "insensitive" } },
+        {
+          variants: {
+            some: {
+              OR: [
+                { sku: { contains: token, mode: "insensitive" } },
+                { barcode: { contains: token, mode: "insensitive" } },
+                { color: { contains: token, mode: "insensitive" } },
+                { size: { contains: token, mode: "insensitive" } },
+              ],
+            },
+          },
+        },
+      ],
+    }));
   }
   if (query.categoryId && Number.isInteger(query.categoryId)) filters.categoryId = query.categoryId;
   if (query.categorySlug) filters.category = { slug: query.categorySlug };
