@@ -1695,7 +1695,7 @@ export function OfflineOrderEditor({
         <Sheet open={cartOpen} onOpenChange={setCartOpen}>
           <SheetContent
             side="right"
-            className="shop-order-modal z-(--z-dialog) h-dvh w-full! max-w-full! overflow-hidden p-0 sm:w-[min(92vw,560px)]!"
+            className="shop-order-modal z-(--z-dialog) h-svh w-full! max-w-full! overflow-hidden p-0 sm:h-dvh sm:w-[min(92vw,560px)]!"
           >
             <SheetTitle className="sr-only">Đơn hàng hiện tại</SheetTitle>
             <SheetDescription className="sr-only">
