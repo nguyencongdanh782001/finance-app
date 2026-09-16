@@ -139,8 +139,12 @@ export default function ProductListingClient() {
         }
       })
       .finally(() => {
-        setLoading(false);
-        setApplying(false);
+        // Strict Mode aborts the first development request. Do not let that
+        // request hide the skeleton while the active request is still loading.
+        if (!signal?.aborted) {
+          setLoading(false);
+          setApplying(false);
+        }
       });
   };
   useEffect(() => {

@@ -1,3 +1,6 @@
 {
-  "crons": [{ "path": "/api/cron/birthday-coupons", "schedule": "5 17 * * *" }]
+  "crons": [
+    { "path": "/api/cron/birthday-coupons", "schedule": "5 17 * * *" },
+    { "path": "/api/cron/admin-notifications", "schedule": "*/5 * * * *" }
+  ]
 }

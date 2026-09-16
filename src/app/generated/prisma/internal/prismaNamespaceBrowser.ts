@@ -90,6 +90,8 @@ export const ModelName = {
   OrderInvoiceItem: 'OrderInvoiceItem',
   InvoiceSequence: 'InvoiceSequence',
   StoreSetting: 'StoreSetting',
+  ShippingConfiguration: 'ShippingConfiguration',
+  ShippingPromotion: 'ShippingPromotion',
   InventoryTransaction: 'InventoryTransaction',
   OrderStatusHistory: 'OrderStatusHistory',
   Warehouse: 'Warehouse',
@@ -107,6 +109,10 @@ export const ModelName = {
   Review: 'Review',
   ReviewImage: 'ReviewImage',
   Notification: 'Notification',
+  AdminNotification: 'AdminNotification',
+  AdminNotificationRecipient: 'AdminNotificationRecipient',
+  PushSubscription: 'PushSubscription',
+  NotificationOutbox: 'NotificationOutbox',
   SearchHistory: 'SearchHistory',
   RecentlyViewedProduct: 'RecentlyViewedProduct',
   HomepageBanner: 'HomepageBanner',
@@ -754,6 +760,23 @@ export const OrderScalarFieldEnum = {
   shippingDistanceMeters: 'shippingDistanceMeters',
   shippingDistanceKm: 'shippingDistanceKm',
   shippingEstimatedMinutes: 'shippingEstimatedMinutes',
+  shippingOriginAddress: 'shippingOriginAddress',
+  shippingOriginLatitude: 'shippingOriginLatitude',
+  shippingOriginLongitude: 'shippingOriginLongitude',
+  shippingDestinationLatitude: 'shippingDestinationLatitude',
+  shippingDestinationLongitude: 'shippingDestinationLongitude',
+  shippingRawDistanceMeters: 'shippingRawDistanceMeters',
+  shippingRoundedDistanceKm: 'shippingRoundedDistanceKm',
+  shippingFreeDistanceKm: 'shippingFreeDistanceKm',
+  shippingChargeableDistanceKm: 'shippingChargeableDistanceKm',
+  shippingBaseFee: 'shippingBaseFee',
+  shippingPricePerKm: 'shippingPricePerKm',
+  shippingFeeBeforePromotion: 'shippingFeeBeforePromotion',
+  shippingDiscount: 'shippingDiscount',
+  shippingPromotionId: 'shippingPromotionId',
+  shippingPromotionName: 'shippingPromotionName',
+  shippingQuoteProvider: 'shippingQuoteProvider',
+  shippingCalculatedAt: 'shippingCalculatedAt',
   note: 'note',
   placedAt: 'placedAt',
   completedAt: 'completedAt',
@@ -881,6 +904,53 @@ export const StoreSettingScalarFieldEnum = {
 } as const
 
 export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
+
+
+export const ShippingConfigurationScalarFieldEnum = {
+  id: 'id',
+  enabled: 'enabled',
+  shopName: 'shopName',
+  formattedAddress: 'formattedAddress',
+  streetAddress: 'streetAddress',
+  ward: 'ward',
+  district: 'district',
+  province: 'province',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  placeId: 'placeId',
+  baseFee: 'baseFee',
+  pricePerKm: 'pricePerKm',
+  maximumDeliveryDistanceKm: 'maximumDeliveryDistanceKm',
+  distanceRoundingMode: 'distanceRoundingMode',
+  feeRoundingStep: 'feeRoundingStep',
+  minimumShippingFee: 'minimumShippingFee',
+  maximumShippingFee: 'maximumShippingFee',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingConfigurationScalarFieldEnum = (typeof ShippingConfigurationScalarFieldEnum)[keyof typeof ShippingConfigurationScalarFieldEnum]
+
+
+export const ShippingPromotionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  minimumOrderValue: 'minimumOrderValue',
+  freeDistanceKm: 'freeDistanceKm',
+  maximumShippingDiscount: 'maximumShippingDiscount',
+  priority: 'priority',
+  isActive: 'isActive',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingPromotionScalarFieldEnum = (typeof ShippingPromotionScalarFieldEnum)[keyof typeof ShippingPromotionScalarFieldEnum]
 
 
 export const InventoryTransactionScalarFieldEnum = {
@@ -1141,6 +1211,69 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const AdminNotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  orderId: 'orderId',
+  eventKey: 'eventKey',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminNotificationScalarFieldEnum = (typeof AdminNotificationScalarFieldEnum)[keyof typeof AdminNotificationScalarFieldEnum]
+
+
+export const AdminNotificationRecipientScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  userId: 'userId',
+  isRead: 'isRead',
+  readAt: 'readAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminNotificationRecipientScalarFieldEnum = (typeof AdminNotificationRecipientScalarFieldEnum)[keyof typeof AdminNotificationRecipientScalarFieldEnum]
+
+
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  deviceName: 'deviceName',
+  userAgent: 'userAgent',
+  platform: 'platform',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const NotificationOutboxScalarFieldEnum = {
+  id: 'id',
+  eventKey: 'eventKey',
+  eventType: 'eventType',
+  aggregateId: 'aggregateId',
+  notificationId: 'notificationId',
+  payload: 'payload',
+  status: 'status',
+  attempts: 'attempts',
+  nextRetryAt: 'nextRetryAt',
+  processedAt: 'processedAt',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationOutboxScalarFieldEnum = (typeof NotificationOutboxScalarFieldEnum)[keyof typeof NotificationOutboxScalarFieldEnum]
 
 
 export const SearchHistoryScalarFieldEnum = {

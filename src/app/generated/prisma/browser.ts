@@ -213,6 +213,16 @@ export type InvoiceSequence = Prisma.InvoiceSequenceModel
  */
 export type StoreSetting = Prisma.StoreSettingModel
 /**
+ * Model ShippingConfiguration
+ * 
+ */
+export type ShippingConfiguration = Prisma.ShippingConfigurationModel
+/**
+ * Model ShippingPromotion
+ * 
+ */
+export type ShippingPromotion = Prisma.ShippingPromotionModel
+/**
  * Model InventoryTransaction
  * 
  */
@@ -297,6 +307,26 @@ export type ReviewImage = Prisma.ReviewImageModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model AdminNotification
+ * 
+ */
+export type AdminNotification = Prisma.AdminNotificationModel
+/**
+ * Model AdminNotificationRecipient
+ * 
+ */
+export type AdminNotificationRecipient = Prisma.AdminNotificationRecipientModel
+/**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
+ * Model NotificationOutbox
+ * 
+ */
+export type NotificationOutbox = Prisma.NotificationOutboxModel
 /**
  * Model SearchHistory
  * 

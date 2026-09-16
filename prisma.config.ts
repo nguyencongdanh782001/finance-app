@@ -7,7 +7,7 @@ const isProductionDeployment =
   process.env.VERCEL_ENV === "production" ||
   process.env.NEXT_PUBLIC_NODE_ENV === "production";
 const databaseUrl = isProductionDeployment
-  ? process.env["PRO_DATABASE_URL"]
+  ? process.env["PRO_DIRECT_DATABASE_URL"] || process.env["PRO_DATABASE_URL"]
   : process.env["DEV_DATABASE_URL"] || process.env["DATABASE_URL"];
 
 export default defineConfig({

@@ -61,6 +61,7 @@ import {
 import Link from "next/link";
 import {
   type ComponentType,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -866,6 +867,7 @@ export default function DailyOrderSection({
   const dailyId = data?.id;
   const [orders, setOrders] = useState<DailyOrderListResponse | null>(null);
   const [products, setProducts] = useState<ShopOrderProductOption[]>([]);
+  const [productSearch, setProductSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
@@ -896,37 +898,48 @@ export default function DailyOrderSection({
     paymentStatus !== "ALL" ||
     paymentMethod !== "ALL";
 
-  const fetchOrders = async (showLoading = true) => {
-    if (!dailyId) {
-      return;
-    }
+  const fetchOrders = useCallback(
+    async (showLoading = true) => {
+      if (!dailyId) {
+        return;
+      }
 
-    if (showLoading) {
-      setIsLoading(true);
-    }
+      if (showLoading) {
+        setIsLoading(true);
+      }
 
-    const res = await financeAPI.getDailyOrders(dailyId, {
-      search: debouncedSearch || undefined,
-      source: invoiceOnly ? "ALL" : activeTab,
-      status: invoiceOnly || activeTab === "OFFLINE" ? "ALL" : status,
-      paymentStatus,
-      paymentMethod,
-    });
-
-    if (res.code === RESPONSE_CODES.success && res.data) {
-      setOrders(res.data);
-    } else {
-      toast({
-        title:
-          (res.data as { message?: string } | undefined)?.message ||
-          "Không tải được danh sách đơn hàng",
-        className: "bg-red-1 text-white text-sm font-medium",
-        duration: 3000,
+      const res = await financeAPI.getDailyOrders(dailyId, {
+        search: debouncedSearch || undefined,
+        source: invoiceOnly ? "ALL" : activeTab,
+        status: invoiceOnly || activeTab === "OFFLINE" ? "ALL" : status,
+        paymentStatus,
+        paymentMethod,
       });
-    }
 
-    setIsLoading(false);
-  };
+      if (res.code === RESPONSE_CODES.success && res.data) {
+        setOrders(res.data);
+      } else {
+        toast({
+          title:
+            (res.data as { message?: string } | undefined)?.message ||
+            "Không tải được danh sách đơn hàng",
+          className: "bg-red-1 text-white text-sm font-medium",
+          duration: 3000,
+        });
+      }
+
+      setIsLoading(false);
+    },
+    [
+      activeTab,
+      debouncedSearch,
+      dailyId,
+      invoiceOnly,
+      paymentMethod,
+      paymentStatus,
+      status,
+    ],
+  );
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setDebouncedSearch(search), 300);
@@ -936,15 +949,22 @@ export default function DailyOrderSection({
 
   useEffect(() => {
     void fetchOrders();
-  }, [
-    dailyId,
-    debouncedSearch,
-    activeTab,
-    invoiceOnly,
-    status,
-    paymentStatus,
-    paymentMethod,
-  ]);
+  }, [fetchOrders]);
+
+  useEffect(() => {
+    const handleAdminOrderNotification = () => {
+      void fetchOrders(false);
+    };
+    window.addEventListener(
+      "admin-order-notification",
+      handleAdminOrderNotification,
+    );
+    return () =>
+      window.removeEventListener(
+        "admin-order-notification",
+        handleAdminOrderNotification,
+      );
+  }, [fetchOrders]);
 
   useEffect(() => {
     if (tableScrollerRef.current) {
@@ -962,32 +982,12 @@ export default function DailyOrderSection({
       setIsProductLoading(true);
       const firstPage = await financeAPI.getProductList({
         page: 1,
-        limit: 100,
+        limit: 40,
+        search: productSearch || undefined,
       });
 
       if (firstPage.code === RESPONSE_CODES.success && firstPage.data) {
-        const allProducts = [...firstPage.data.data];
-        const totalPages = firstPage.data.pagination.totalPage;
-
-        for (let page = 2; page <= totalPages; page += 1) {
-          const nextPage = await financeAPI.getProductList({
-            page,
-            limit: 100,
-          });
-
-          if (nextPage.code !== RESPONSE_CODES.success || !nextPage.data) {
-            toast({
-              title: "Không tải đủ danh sách sản phẩm. Vui lòng thử lại.",
-              className: "bg-red-1 text-white text-sm font-medium",
-              duration: 3000,
-            });
-            break;
-          }
-
-          allProducts.push(...nextPage.data.data);
-        }
-
-        setProducts(mapShopOrderProducts(allProducts));
+        setProducts(mapShopOrderProducts(firstPage.data.data));
       } else {
         toast({
           title: "Không tải được sản phẩm để tạo đơn tại shop.",
@@ -1000,7 +1000,7 @@ export default function DailyOrderSection({
     };
 
     void fetchProducts();
-  }, [reload]);
+  }, [productSearch, reload]);
 
   const submitOrder = async (
     payload: OfflineOrderPayload,
@@ -1439,6 +1439,7 @@ export default function DailyOrderSection({
         order={selectedOrder}
         onOpenChange={setIsFormOpen}
         onSubmit={submitOrder}
+        onProductSearchChange={setProductSearch}
       />
       <OrderDetailDialog
         order={selectedOrder}

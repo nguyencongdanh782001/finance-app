@@ -1,25 +1,1373 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable jsx-a11y/role-has-required-aria-props */
-import Link from "next/link";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import StorefrontShell from "@/components/Storefront/StorefrontShell";
 
-const money = (value: number) => `${value.toLocaleString("vi-VN")}đ`;
-type IntentItem = { variantId: number; quantity: number; title: string; price: number; imageUrl: string; variantLabel: string; available: number };
-type Suggestion = { id: string; formattedAddress: string; latitude: number; longitude: number };
-type Quote = { distanceKm: number; estimatedDurationMinutes: number; shippingFee: number };
+/* eslint-disable @next/next/no-img-element */
+import Link from "next/link";
+import { FormikProvider, useFormik } from "formik";
+import * as Yup from "yup";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  ShieldCheck,
+  Tag,
+  LoaderCircle,
+  X,
+} from "lucide-react";
+import StorefrontShell from "@/components/Storefront/StorefrontShell";
+import { Button } from "@/components/ui/button";
+import { Input as AccountInput } from "@/components/ui/input";
+import CouponSelector from "@/components/Storefront/CouponSelector";
+import AutoCompleteField from "@/components/common/CustomFields/AutoCompleteField";
+import CustomSelect from "@/components/common/CustomFields/CustomSelect";
+import type { CustomSelectProps } from "@/interface/Field";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { useRouter, useSearchParams } from "next/navigation";
+
+const money = (value: number) =>
+  `${Math.round(value).toLocaleString("vi-VN")}đ`;
+
+const hasUsableCoordinates = (latitude: number, longitude: number) =>
+  Number.isFinite(latitude) &&
+  Number.isFinite(longitude) &&
+  !(latitude === 0 && longitude === 0);
+type Item = {
+  variantId: number;
+  quantity: number;
+  title: string;
+  price: number;
+  imageUrl: string;
+  variantLabel: string;
+  available: number;
+  sku?: string | null;
+};
+type Address = {
+  id: number;
+  fullName: string;
+  phone: string;
+  province: string | null;
+  city: string;
+  district: string | null;
+  ward: string | null;
+  line1: string;
+  line2: string | null;
+  latitude: number | string | null;
+  longitude: number | string | null;
+  isDefaultShipping: boolean;
+};
+type Preview = {
+  subtotal: number;
+  membershipDiscount: number;
+  couponDiscount: number;
+  shippingFee: number;
+  payableTotal: number;
+  appliedCoupon: { code: string; discountAmount: number } | null;
+  shipping: {
+    available: boolean;
+    estimatedDistanceKm?: number;
+    estimatedDeliveryText?: string;
+    unavailableReason?: string;
+    roundedDistanceKm?: number;
+    freeDistanceKm?: number;
+    chargeableDistanceKm?: number;
+    shippingFeeBeforePromotion?: number;
+    shippingDiscount?: number;
+    baseFee?: number;
+    distanceFee?: number;
+  };
+};
+type Suggestion = {
+  id: string;
+  formattedAddress: string;
+  latitude: number;
+  longitude: number;
+};
+type AdministrativeProvince = {
+  code: number;
+  name: string;
+  wards: { code: number; name: string; province_code: number }[];
+};
+const emptyAddress = {
+  fullName: "",
+  phone: "",
+  city: "",
+  district: "",
+  ward: "",
+  line1: "",
+  line2: "",
+  latitude: "",
+  longitude: "",
+  isDefaultShipping: false,
+};
+const addressSchema = Yup.object({
+  fullName: Yup.string().trim().required("Vui lòng nhập tên người nhận."),
+  phone: Yup.string()
+    .matches(/^0\d{9,10}$/, "Số điện thoại không hợp lệ.")
+    .required("Vui lòng nhập số điện thoại."),
+  city: Yup.string().trim().required("Vui lòng nhập tỉnh/thành phố."),
+  line1: Yup.string().trim().required("Vui lòng nhập địa chỉ cụ thể."),
+});
+
+const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
+  <input
+    {...props}
+    className={`h-11 rounded-xl border border-[#EAE1E4] bg-white px-3 text-base outline-none focus:border-[#D96C8A] ${props.className || ""}`}
+  />
+);
+const addressInputClass =
+  "h-11! rounded-lg! border-[#E5E1E4]! bg-white! px-3! py-0! text-sm! font-medium! text-[#3B2D32]! shadow-none! outline-none! placeholder:text-[#A99BA0]! focus:border-[#D96C8A]! focus:ring-2! focus:ring-[#D96C8A]/15!";
+const addressErrorClass = "text-red-1";
+const addressErrorBorderClass = "border-red-1!";
+function AccountAddressSelect({
+  name,
+  value,
+  options,
+  placeholder,
+  disabled,
+  onChange,
+  hasError = false,
+}: {
+  name: string;
+  value: string;
+  options: { value: string; label: string }[];
+  placeholder: string;
+  disabled?: boolean;
+  onChange: (value: string) => void;
+  hasError?: boolean;
+}) {
+  const formik = useFormik({
+    initialValues: { selection: value },
+    enableReinitialize: true,
+    onSubmit: () => undefined,
+  });
+  return (
+    <FormikProvider value={formik}>
+      <AutoCompleteField<CustomSelectProps>
+        component={CustomSelect}
+        version="field"
+        name="selection"
+        searchable
+        fullWidth
+        placeholder={placeholder}
+        optionValue={options}
+        inputClassName={`${addressInputClass} ${hasError ? addressErrorBorderClass : ""}`}
+        className={`h-11! w-full! min-w-0! rounded-xl! ${hasError ? addressErrorBorderClass : ""}`}
+        disabled={disabled}
+        onManualSelect={(selected) => onChange(selected || "")}
+      />
+    </FormikProvider>
+  );
+}
+
+function CheckoutAddressAutocomplete({
+  value,
+  context,
+  hasError,
+  onChange,
+  onSelect,
+  onBlur,
+}: {
+  value: string;
+  context: string;
+  hasError?: boolean;
+  onChange: (value: string) => void;
+  onSelect: (suggestion: Suggestion) => void;
+  onBlur: () => void;
+}) {
+  const [text, setText] = useState(value);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [selectedPoint, setSelectedPoint] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [focusVersion, setFocusVersion] = useState(0);
+
+  useEffect(() => setText(value), [value]);
+  useEffect(() => {
+    const query = [text.trim(), context.trim()].filter(Boolean).join(", ");
+    if (query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      setSearching(true);
+      try {
+        const response = await fetch(
+          `/api/locations/autocomplete?text=${encodeURIComponent(query)}`,
+          { signal: controller.signal },
+        );
+        const data = response.ok
+          ? ((await response.json()) as { suggestions?: Suggestion[] })
+          : { suggestions: [] };
+        if (!controller.signal.aborted) setSuggestions(data.suggestions || []);
+      } catch {
+        if (!controller.signal.aborted) setSuggestions([]);
+      } finally {
+        if (!controller.signal.aborted) setSearching(false);
+      }
+    }, 450);
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [context, focusVersion, text]);
+
+  return (
+    <div className="relative">
+      <AccountInput
+        variant="border"
+        name="line1"
+        value={text}
+        onFocus={() => setFocusVersion((version) => version + 1)}
+        onChange={(event) => {
+          setText(event.target.value);
+          setSelectedPoint(null);
+          onChange(event.target.value);
+        }}
+        onBlur={() => {
+          window.setTimeout(() => setSuggestions([]), 120);
+          onBlur();
+        }}
+        aria-invalid={hasError}
+        placeholder="Nhập địa chỉ và chọn gợi ý"
+        className={`${addressInputClass} ${hasError ? addressErrorBorderClass : ""}`}
+      />
+      {searching ? (
+        <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-[#8B7A80]">
+          Đang tìm...
+        </span>
+      ) : null}
+      {suggestions.length ? (
+        <div className="absolute inset-x-0 top-full z-30 mt-1 grid max-h-56 overflow-y-auto rounded-xl border border-[#EAE1E4] bg-white p-1.5 shadow-[0_12px_30px_rgba(89,44,59,0.12)]">
+          {suggestions.map((suggestion) => (
+            <button
+              type="button"
+              key={suggestion.id}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                setText(suggestion.formattedAddress);
+                setSuggestions([]);
+                setSelectedPoint({
+                  latitude: suggestion.latitude,
+                  longitude: suggestion.longitude,
+                });
+                onSelect(suggestion);
+              }}
+              className="rounded-lg px-3 py-2.5 text-left text-xs leading-5 text-[#4D4045] transition hover:bg-[#FCEEF3]"
+            >
+              {suggestion.formattedAddress}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      {selectedPoint ? (
+        <div className="mt-2 overflow-hidden rounded-xl border border-[#EAE1E4] bg-[#F8F5F6]">
+          <iframe
+            title="Vị trí địa chỉ giao hàng"
+            src={`https://www.google.com/maps?q=${selectedPoint.latitude},${selectedPoint.longitude}&z=16&output=embed`}
+            className="h-44 w-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+          <p className="px-3 py-2 text-xs text-[#6F6066]">
+            Vị trí đã chọn trên bản đồ
+          </p>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 export default function CheckoutClient() {
-  const params = useSearchParams(); const router = useRouter(); const token = params.get("intent") || "";
-  const [items, setItems] = useState<IntentItem[]>([]); const [form, setForm] = useState({ receiverName: "", receiverPhone: "", receiverAddress: "", paymentMethod: "COD" });
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]); const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null); const [quote, setQuote] = useState<Quote | null>(null);
-  const [searching, setSearching] = useState(false); const [error, setError] = useState(""); const [busy, setBusy] = useState(false); const requestId = useRef(0);
-  useEffect(() => { if (!token) { setError("Phiên thanh toán không hợp lệ."); return; } const load = async () => { const cart = await fetch(`/api/checkout/cart-intent?token=${encodeURIComponent(token)}`); if (cart.ok) { const data = await cart.json(); setItems(data.items || []); return; } const buyNow = await fetch(`/api/checkout/buy-now-intent?token=${encodeURIComponent(token)}`); const data = await buyNow.json().catch(() => ({})); if (!buyNow.ok) throw new Error(data.message || "Phiên thanh toán đã hết hạn."); setItems([{ variantId: data.variantId, quantity: data.quantity, title: data.title, price: data.price, imageUrl: data.imageUrl, variantLabel: data.variantLabel, available: data.available }]); }; load().catch((cause) => setError(cause instanceof Error ? cause.message : "Không thể tải thông tin thanh toán.")); }, [token]);
-  useEffect(() => { const text = form.receiverAddress.trim(); if ([...text].length < 3) { setSuggestions([]); setSearching(false); return; } const controller = new AbortController(); const current = ++requestId.current; const timer = window.setTimeout(async () => { setSearching(true); try { const response = await fetch(`/api/locations/autocomplete?text=${encodeURIComponent(text)}`, { signal: controller.signal }); if (!response.ok) throw new Error("Không thể tìm địa chỉ."); const data = await response.json(); if (current === requestId.current) setSuggestions(data.suggestions || []); } catch (cause) { if (!controller.signal.aborted && current === requestId.current) setError(cause instanceof Error ? cause.message : "Không thể tìm địa chỉ."); } finally { if (current === requestId.current) setSearching(false); } }, 600); return () => { controller.abort(); window.clearTimeout(timer); }; }, [form.receiverAddress]);
-  const selectSuggestion = async (suggestion: Suggestion) => { setForm((current) => ({ ...current, receiverAddress: suggestion.formattedAddress })); setSuggestions([]); setCoordinates({ latitude: suggestion.latitude, longitude: suggestion.longitude }); setError(""); try { const response = await fetch("/api/shipping/quote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ destinationLatitude: suggestion.latitude, destinationLongitude: suggestion.longitude }) }); const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.message || "Không thể tính phí giao hàng."); setQuote(data); } catch (cause) { setCoordinates(null); setQuote(null); setError(cause instanceof Error ? cause.message : "Không thể tính phí giao hàng."); } };
-  const submit = async (event: FormEvent) => { event.preventDefault(); if (!coordinates || !quote) { setError("Vui lòng chọn địa chỉ từ danh sách gợi ý để tính phí giao hàng."); return; } setBusy(true); setError(""); const response = await fetch("/api/orders/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ intent: token, ...form, ...coordinates }) }); const data = await response.json().catch(() => ({})); setBusy(false); if (!response.ok) return setError(data.message || "Không thể tạo đơn hàng."); router.replace(`/checkout/success?order=${encodeURIComponent(data.orderNumber)}`); };
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0); const total = subtotal + (quote?.shippingFee || 0);
-  return <StorefrontShell><main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8"><h1 className="text-2xl font-extrabold">Thanh toán</h1>{error ? <p className="mt-5 bg-[#FFF1F3] p-4 text-sm font-semibold text-[#C84F64]">{error}</p> : null}{items.length ? <form onSubmit={submit} className="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]"><div className="order-2 grid gap-4 lg:order-1"><label className="grid gap-1.5 text-sm font-semibold">Họ tên<input required value={form.receiverName} onChange={(event) => setForm({ ...form, receiverName: event.target.value })} className="h-11 border border-[#EAE1E4] bg-white px-3 outline-none focus:border-[#D96C8A]" /></label><label className="grid gap-1.5 text-sm font-semibold">Số điện thoại<input required value={form.receiverPhone} onChange={(event) => setForm({ ...form, receiverPhone: event.target.value })} className="h-11 border border-[#EAE1E4] bg-white px-3 outline-none focus:border-[#D96C8A]" /></label><div className="relative"><label className="grid gap-1.5 text-sm font-semibold">Địa chỉ nhận hàng<textarea required value={form.receiverAddress} onChange={(event) => { setForm({ ...form, receiverAddress: event.target.value }); setCoordinates(null); setQuote(null); }} className="min-h-24 border border-[#EAE1E4] bg-white p-3 outline-none focus:border-[#D96C8A]" /></label>{searching ? <p className="mt-1 text-xs text-[#6F6066]">Đang tìm địa chỉ...</p> : null}{suggestions.length ? <div className="absolute z-20 mt-1 grid w-full gap-1 border border-[#EAE1E4] bg-white p-1 shadow-lg" role="listbox">{suggestions.map((suggestion) => <button type="button" role="option" key={suggestion.id} onClick={() => void selectSuggestion(suggestion)} className="p-2 text-left text-xs hover:bg-[#FCEEF3]">{suggestion.formattedAddress}</button>)}</div> : null}</div>{quote ? <div className="border border-[#EAE1E4] bg-[#FFF8FA] p-4 text-sm"><p className="font-bold text-[#A43E5F]">Phí giao hàng: {money(quote.shippingFee)}</p><p className="mt-1 text-[#6F6066]">Quãng đường lái xe khoảng {quote.distanceKm.toFixed(1)} km · {quote.estimatedDurationMinutes} phút</p></div> : <p className="text-xs text-[#8B7A80]">Chọn địa chỉ trong danh sách gợi ý để tính phí giao hàng.</p>}<label className="grid gap-1.5 text-sm font-semibold">Phương thức thanh toán<select value={form.paymentMethod} onChange={(event) => setForm({ ...form, paymentMethod: event.target.value })} className="h-11 border border-[#EAE1E4] bg-white px-3"><option value="COD">Thanh toán khi nhận hàng</option><option value="MOMO">MoMo</option></select></label><button disabled={busy || !quote} className="h-12 bg-[#D96C8A] text-sm font-bold text-white disabled:opacity-50">{busy ? "Đang tạo đơn..." : "Đặt hàng"}</button></div><aside className="order-1 h-fit border border-[#EAE1E4] bg-white p-4 lg:order-2"><h2 className="text-sm font-extrabold">Sản phẩm đã chọn</h2><div className="mt-3 space-y-3">{items.map((item) => <div key={item.variantId} className="flex gap-3"><img src={item.imageUrl} alt={item.title} className="size-16 object-cover" /><div className="min-w-0 text-xs"><p className="line-clamp-2 font-bold">{item.title}</p><p className="mt-1 text-[#6F6066]">{item.variantLabel} · SL {item.quantity}</p><p className="mt-1 font-bold text-[#A43E5F]">{money(item.price * item.quantity)}</p></div></div>)}</div><p className="mt-4 border-t border-[#EAE1E4] pt-4 text-sm">Tạm tính: {money(subtotal)}</p><p className="mt-1 text-sm">Phí giao hàng: {money(quote?.shippingFee || 0)}</p><p className="mt-2 text-lg font-extrabold text-[#A43E5F]">Tổng: {money(total)}</p></aside></form> : null}<Link href="/cart" className="mt-6 inline-block text-sm font-bold text-[#A43E5F]">← Quay lại giỏ hàng</Link></main></StorefrontShell>;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { isAuthenticated, isInitializing } = useAuth();
+  const token = searchParams.get("session") || searchParams.get("intent") || "";
+  const [items, setItems] = useState<Item[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [manual, setManual] = useState({
+    fullName: "",
+    phone: "",
+    address: "",
+    latitude: "",
+    longitude: "",
+  });
+  const [addressForm, setAddressForm] = useState(emptyAddress);
+  const [editing, setEditing] = useState<number | null>(null);
+  const [addressOpen, setAddressOpen] = useState(false);
+  const [provinces, setProvinces] = useState<AdministrativeProvince[]>([]);
+  const [addressError, setAddressError] = useState("");
+  const [addressesOpen, setAddressesOpen] = useState(false);
+  const [addressRevision, setAddressRevision] = useState(0);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [couponOpen, setCouponOpen] = useState(false);
+  const skipCouponPreviewRef = useRef(false);
+  const previewAbortRef = useRef<AbortController | null>(null);
+  const couponTriggerRef = useRef<HTMLButtonElement>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "MOMO">("COD");
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [shippingDetailsOpen, setShippingDetailsOpen] = useState(false);
+  const addressFormik = useFormik({
+    initialValues: addressForm,
+    enableReinitialize: true,
+    validationSchema: addressSchema,
+    onSubmit: async (values) => {
+      setAddressError("");
+      setSaving(true);
+      const response = await fetch(
+        editing ? `/api/me/addresses/${editing}` : "/api/me/addresses",
+        {
+          method: editing ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        },
+      );
+      const data = await response.json().catch(() => ({}));
+      setSaving(false);
+      if (!response.ok) {
+        setAddressError(data.message || "Không thể lưu địa chỉ.");
+        return;
+      }
+      setAddresses((current) =>
+        editing
+          ? current.map((item) => (item.id === editing ? data : item))
+          : [...current, data],
+      );
+      setSelectedId(data.id);
+      setAddressRevision((revision) => revision + 1);
+      setAddressOpen(false);
+      setEditing(null);
+      setAddressError("");
+    },
+  });
+
+  useEffect(() => {
+    if (!addressOpen || provinces.length) return;
+    fetch("/api/locations/administrative")
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then((data: AdministrativeProvince[]) => setProvinces(data))
+      .catch(() =>
+        setAddressError(
+          "Không thể tải danh sách tỉnh thành. Bạn vẫn có thể nhập thủ công.",
+        ),
+      );
+  }, [addressOpen, provinces.length]);
+
+  useEffect(() => {
+    if (!isInitializing && !isAuthenticated) {
+      router.replace(`/login?redirect=${encodeURIComponent("/checkout")}`);
+    }
+  }, [isAuthenticated, isInitializing, router]);
+
+  useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      setError("Bạn chưa chọn sản phẩm để thanh toán.");
+      return;
+    }
+    setError("");
+    const load = async () => {
+      const [first, addressResponse] = await Promise.all([
+        fetch(`/api/checkout/cart-intent?token=${encodeURIComponent(token)}`),
+        fetch("/api/me/addresses"),
+      ]);
+      let checkout;
+      if (first.ok) checkout = await first.json();
+      else {
+        const buy = await fetch(
+          `/api/checkout/buy-now-intent?token=${encodeURIComponent(token)}`,
+        );
+        const data = await buy.json();
+        if (!buy.ok)
+          throw new Error(data.message || "Phiên thanh toán đã hết hạn.");
+        checkout = {
+          items: [
+            {
+              variantId: data.variantId,
+              quantity: data.quantity,
+              title: data.title,
+              price: data.price,
+              imageUrl: data.imageUrl,
+              variantLabel: data.variantLabel,
+              available: data.available,
+            },
+          ],
+        };
+      }
+      setItems(checkout.items || []);
+      setError("");
+      if (addressResponse.ok) {
+        const list = (await addressResponse.json()) as Address[];
+        setAddresses(list);
+        setSelectedId(
+          (list.find((item) => item.isDefaultShipping) || list[0])?.id || null,
+        );
+      }
+    };
+    void load()
+      .catch((cause) =>
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Không thể tải thông tin thanh toán.",
+        ),
+      )
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  const selected = addresses.find((item) => item.id === selectedId) || null;
+  const selectedProvince = provinces.find(
+    (item) => item.name === addressFormik.values.city,
+  );
+  const coordinates = selected
+    ? hasUsableCoordinates(
+        Number(selected.latitude),
+        Number(selected.longitude),
+      )
+      ? {
+          latitude: Number(selected.latitude),
+          longitude: Number(selected.longitude),
+        }
+      : { latitude: 0, longitude: 0 }
+    : {
+        latitude: Number(manual.latitude),
+        longitude: Number(manual.longitude),
+      };
+
+  useEffect(() => {
+    if (
+      !selected ||
+      hasUsableCoordinates(
+        Number(selected.latitude),
+        Number(selected.longitude),
+      )
+    )
+      return;
+    const addressQueries = [
+      [selected.line1, selected.ward, selected.district, selected.city],
+      [selected.line1, selected.ward, selected.city],
+      [selected.line1, selected.district, selected.city],
+      [selected.line1, selected.city],
+      [selected.ward, selected.district, selected.city],
+      [selected.district, selected.city],
+    ]
+      .map((parts) => parts.filter(Boolean).join(", "))
+      .filter(
+        (query, index, queries) =>
+          query.length >= 3 && queries.indexOf(query) === index,
+      );
+    if (!addressQueries.length) return;
+    let active = true;
+    const resolveAddress = async () => {
+      for (const query of addressQueries) {
+        const response = await fetch(
+          `/api/locations/autocomplete?text=${encodeURIComponent(query)}`,
+        );
+        if (!response.ok) continue;
+        const data = (await response.json()) as { suggestions?: Suggestion[] };
+        const suggestion = data.suggestions?.[0];
+        if (!active || !suggestion) continue;
+        setAddresses((current) =>
+          current.map((address) =>
+            address.id === selected.id
+              ? {
+                  ...address,
+                  latitude: suggestion.latitude,
+                  longitude: suggestion.longitude,
+                }
+              : address,
+          ),
+        );
+        return;
+      }
+      if (active) {
+        setPreviewLoading(false);
+        setError(
+          "Không xác định được tọa độ địa chỉ. Vui lòng chọn lại địa chỉ gợi ý.",
+        );
+      }
+    };
+    void resolveAddress().catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [selected]);
+  const receiver = selected
+    ? {
+        receiverName: selected.fullName,
+        receiverPhone: selected.phone,
+        receiverAddress: [
+          selected.line1,
+          selected.ward,
+          selected.district,
+          selected.city,
+        ]
+          .filter(Boolean)
+          .join(", "),
+      }
+    : {
+        receiverName: manual.fullName,
+        receiverPhone: manual.phone,
+        receiverAddress: manual.address,
+      };
+
+  useEffect(() => {
+    previewAbortRef.current?.abort();
+    previewAbortRef.current = null;
+    if (skipCouponPreviewRef.current) {
+      skipCouponPreviewRef.current = false;
+      return;
+    }
+    setError("");
+    if (
+      !items.length ||
+      !hasUsableCoordinates(coordinates.latitude, coordinates.longitude)
+    ) {
+      setPreview(null);
+      setPreviewLoading(Boolean(items.length && selectedId));
+      return;
+    }
+    setPreviewLoading(true);
+    let controller: AbortController | null = null;
+    const timer = window.setTimeout(() => {
+      const requestController = new AbortController();
+      controller = requestController;
+      previewAbortRef.current = requestController;
+      fetch("/api/checkout/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: requestController.signal,
+        body: JSON.stringify({
+          intent: token,
+          ...coordinates,
+          couponCode: appliedCoupon,
+        }),
+      })
+        .then(async (response) => {
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+          setPreview(data);
+        })
+        .catch((cause) => {
+          if (cause instanceof DOMException && cause.name === "AbortError")
+            return;
+          setError(
+            cause instanceof Error
+              ? cause.message
+              : "Chưa thể tính phí giao hàng.",
+          );
+        })
+        .finally(() => {
+          if (previewAbortRef.current === controller) {
+            previewAbortRef.current = null;
+            setPreviewLoading(false);
+          }
+        });
+    }, 300);
+    return () => {
+      window.clearTimeout(timer);
+      controller?.abort();
+    };
+  }, [
+    appliedCoupon,
+    coordinates.latitude,
+    coordinates.longitude,
+    items.length,
+    selectedId,
+    token,
+    addressRevision,
+  ]);
+
+  const applyCoupon = async (code: string) => {
+    setPreviewLoading(true);
+    setError("");
+    try {
+      const response = await fetch("/api/checkout/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          intent: token,
+          ...coordinates,
+          couponCode: code,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Mã giảm giá không hợp lệ.");
+      skipCouponPreviewRef.current = true;
+      setAppliedCoupon(code);
+      setPreview(data);
+      return true;
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Mã giảm giá không hợp lệ.",
+      );
+      return false;
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const lookup = (value: string) => {
+    setManual((current) => ({
+      ...current,
+      address: value,
+      latitude: "",
+      longitude: "",
+    }));
+    if (value.trim().length < 3) return setSuggestions([]);
+    fetch(`/api/locations/autocomplete?text=${encodeURIComponent(value)}`)
+      .then((response) => (response.ok ? response.json() : { suggestions: [] }))
+      .then((data) => setSuggestions(data.suggestions || []))
+      .catch(() => setSuggestions([]));
+  };
+  const submit = async () => {
+    if (
+      !receiver.receiverName ||
+      !receiver.receiverPhone ||
+      !receiver.receiverAddress ||
+      !Number.isFinite(coordinates.latitude) ||
+      !Number.isFinite(coordinates.longitude)
+    )
+      return setError("Vui lòng chọn hoặc nhập địa chỉ giao hàng hợp lệ.");
+    if (!preview?.shipping.available || previewLoading)
+      return setError("Chưa thể tính phí giao hàng. Vui lòng thử lại.");
+    setBusy(true);
+    const response = await fetch("/api/orders/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        intent: token,
+        addressId: selectedId || undefined,
+        ...receiver,
+        ...coordinates,
+        paymentMethod,
+        couponCode: appliedCoupon,
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    setBusy(false);
+    if (!response.ok)
+      return setError(data.message || "Không thể tạo đơn hàng.");
+    window.location.assign(
+      `/checkout/success?order=${encodeURIComponent(data.orderNumber)}`,
+    );
+  };
+  const subtotal = useMemo(
+    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [items],
+  );
+  const summary = preview || {
+    subtotal,
+    membershipDiscount: 0,
+    couponDiscount: 0,
+    shippingFee: 0,
+    payableTotal: subtotal,
+    shipping: { available: false },
+  };
+  if (loading)
+    return (
+      <StorefrontShell>
+        <main className="mx-auto max-w-6xl px-4 py-10">
+          <div className="storefront-skeleton h-8 w-40" />
+          <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_380px]">
+            <div className="space-y-4">
+              <div className="storefront-skeleton h-48 rounded-2xl" />
+              <div className="storefront-skeleton h-64 rounded-2xl" />
+            </div>
+            <div className="storefront-skeleton h-72 rounded-2xl" />
+          </div>
+        </main>
+      </StorefrontShell>
+    );
+  return (
+    <StorefrontShell>
+      <main className="pb-32">
+        <header className="border-b border-[#EAE1E4] bg-white">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <Link
+              href="/cart"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[#A43E5F]"
+            >
+              <ArrowLeft className="size-4" /> Quay lại giỏ hàng
+            </Link>
+            <span className="flex items-center gap-2 text-sm font-bold">
+              <ShieldCheck className="size-4 text-[#3F8F6B]" /> Thanh toán an
+              toàn
+            </span>
+          </div>
+        </header>
+        <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-extrabold">Thanh toán</h1>
+          {error ? (
+            <p
+              role="alert"
+              className="mt-4 rounded-xl bg-[#FFF1F3] px-4 py-3 text-sm font-semibold text-[#C94F62]"
+            >
+              {error}
+            </p>
+          ) : null}
+          {!items.length ? (
+            <div className="mt-10 rounded-2xl border border-[#EAE1E4] bg-white p-10 text-center">
+              <p className="font-bold">Bạn chưa chọn sản phẩm để thanh toán</p>
+              <Link
+                href="/cart"
+                className="mt-5 inline-flex rounded-xl bg-[#D96C8A] px-5 py-3 text-sm font-bold text-white"
+              >
+                Quay lại giỏ hàng
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+              <div className="space-y-5">
+                <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="text-lg font-extrabold">
+                      Địa chỉ giao hàng
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditing(null);
+                        setAddressForm(emptyAddress);
+                        setAddressError("");
+                        setAddressOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1 text-sm font-bold text-[#A43E5F]"
+                    >
+                      <Plus className="size-4" /> Thêm địa chỉ
+                    </button>
+                  </div>
+                  {addresses.length ? (
+                    <div className="mt-4 grid gap-3">
+                      {(addressesOpen
+                        ? addresses
+                        : addresses.filter(
+                            (address) =>
+                              address.id === (selectedId || addresses[0]?.id),
+                          )
+                      ).map((address) => (
+                        <div
+                          key={address.id}
+                          className={`relative rounded-xl border p-4 ${selectedId === address.id ? "border-[#D96C8A] bg-[#FFF8FA]" : "border-[#EAE1E4]"}`}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setSelectedId(address.id)}
+                            className="flex w-full gap-3 text-left"
+                          >
+                            <span
+                              className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border ${selectedId === address.id ? "border-[#D96C8A] bg-[#D96C8A] text-white" : "border-[#CDBFC4]"}`}
+                            >
+                              {selectedId === address.id ? (
+                                <Check className="size-3" />
+                              ) : null}
+                            </span>
+                            <span className="min-w-0 flex-1 pr-20">
+                              <strong className="block text-sm">
+                                {address.fullName} · {address.phone}
+                              </strong>
+                              <span className="mt-1 block text-sm text-[#6F6066]">
+                                {[
+                                  address.line1,
+                                  address.ward,
+                                  address.district,
+                                  address.city,
+                                ]
+                                  .filter(Boolean)
+                                  .join(", ")}
+                              </span>
+                              {address.isDefaultShipping ? (
+                                <small className="absolute right-4 top-4 inline-flex rounded-full bg-[#FCEEF3] px-2 py-1 font-bold text-[#A43E5F]">
+                                  Mặc định
+                                </small>
+                              ) : null}
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditing(address.id);
+                              setAddressForm({
+                                ...emptyAddress,
+                                fullName: address.fullName,
+                                phone: address.phone,
+                                city: address.city,
+                                district: address.district || "",
+                                ward: address.ward || "",
+                                line1: address.line1,
+                                latitude: String(address.latitude || ""),
+                                longitude: String(address.longitude || ""),
+                                isDefaultShipping: address.isDefaultShipping,
+                              });
+                              setAddressError("");
+                              setAddressOpen(true);
+                            }}
+                            className="ml-8 mt-2 text-xs font-bold text-[#A43E5F]"
+                          >
+                            Chỉnh sửa
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-4 text-sm text-[#6F6066]">
+                      Chưa có địa chỉ đã lưu. Nhập địa chỉ giao hàng bên dưới.
+                    </p>
+                  )}
+                  {!selected && (
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <Input
+                        value={manual.fullName}
+                        onChange={(event) =>
+                          setManual({ ...manual, fullName: event.target.value })
+                        }
+                        placeholder="Tên người nhận"
+                      />
+                      <Input
+                        value={manual.phone}
+                        onChange={(event) =>
+                          setManual({ ...manual, phone: event.target.value })
+                        }
+                        placeholder="Số điện thoại"
+                      />
+                      <div className="relative sm:col-span-2">
+                        <textarea
+                          value={manual.address}
+                          onChange={(event) => lookup(event.target.value)}
+                          placeholder="Địa chỉ cụ thể"
+                          className="min-h-24 w-full rounded-xl border border-[#EAE1E4] p-3 text-base outline-none focus:border-[#D96C8A]"
+                        />
+                        {suggestions.length ? (
+                          <div className="absolute z-20 mt-1 w-full rounded-xl border border-[#EAE1E4] bg-white p-1 shadow-lg">
+                            {suggestions.map((suggestion) => (
+                              <button
+                                type="button"
+                                key={suggestion.id}
+                                onClick={() => {
+                                  setManual({
+                                    ...manual,
+                                    address: suggestion.formattedAddress,
+                                    latitude: String(suggestion.latitude),
+                                    longitude: String(suggestion.longitude),
+                                  });
+                                  setSuggestions([]);
+                                }}
+                                className="block w-full p-3 text-left text-sm hover:bg-[#FCEEF3]"
+                              >
+                                {suggestion.formattedAddress}
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
+                  {addresses.length > 1 ? (
+                    <button
+                      type="button"
+                      onClick={() => setAddressesOpen((value) => !value)}
+                      className="mt-3 flex w-full items-center justify-center gap-1 border-t border-[#EAE1E4] pt-3 text-sm font-bold text-[#A43E5F]"
+                      aria-expanded={addressesOpen}
+                    >
+                      {addressesOpen
+                        ? "Thu gọn danh sách"
+                        : `Xem ${addresses.length - 1} địa chỉ khác`}
+                      <ChevronDown
+                        className={`size-4 transition-transform ${addressesOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                  ) : null}
+                </section>
+                <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+                  <h2 className="text-lg font-extrabold">Sản phẩm đặt mua</h2>
+                  <div className="mt-4 divide-y divide-[#EAE1E4]">
+                    {items.map((item) => (
+                      <div
+                        key={item.variantId}
+                        className="flex gap-3 py-4 first:pt-0"
+                      >
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="size-16 rounded-lg object-cover"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="line-clamp-2 text-sm font-bold">
+                            {item.title}
+                          </p>
+                          <p className="mt-1 text-xs text-[#6F6066]">
+                            {item.variantLabel || "Biến thể"} · SL{" "}
+                            {item.quantity}
+                          </p>
+                          <p className="mt-1 text-sm font-bold text-[#A43E5F]">
+                            {money(item.price * item.quantity)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+                <button
+                  ref={couponTriggerRef}
+                  type="button"
+                  onClick={() => setCouponOpen(true)}
+                  className={`flex w-full items-center gap-3 rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D96C8A] ${appliedCoupon ? "border-[#F3C8D5] bg-[#FFF8FA]" : "border-[#EAE1E4] bg-white hover:border-[#D96C8A]"}`}
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FCEEF3] text-[#D96C8A]">
+                    <Tag className="size-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <strong className="block text-sm font-extrabold">
+                      Mã giảm giá
+                    </strong>
+                    <span className="mt-1 block truncate text-sm text-[#6F6066]">
+                      {appliedCoupon
+                        ? `${appliedCoupon} · Đã giảm ${money(preview?.couponDiscount || 0)}`
+                        : "Chọn hoặc nhập mã giảm giá"}
+                    </span>
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1 text-sm font-bold text-[#A43E5F]">
+                    {appliedCoupon ? "Thay đổi" : "Chọn mã"}
+                    <ChevronRight className="size-4" />
+                  </span>
+                </button>
+                {error && appliedCoupon && error.includes("mã") ? (
+                  <p
+                    role="alert"
+                    className="mt-2 text-sm font-semibold text-[#C94F62]"
+                  >
+                    {error}
+                  </p>
+                ) : null}
+                <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+                  <h2 className="text-lg font-extrabold">
+                    Phương thức thanh toán
+                  </h2>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {(
+                      [
+                        [
+                          "COD",
+                          "Thanh toán khi nhận hàng",
+                          "Thanh toán cho nhân viên giao hàng.",
+                        ],
+                        [
+                          "MOMO",
+                          "Ví MoMo",
+                          "Thanh toán trực tuyến sau khi đặt hàng.",
+                        ],
+                      ] as const
+                    ).map(([value, title, description]) => (
+                      <button
+                        type="button"
+                        key={value}
+                        disabled={value === "MOMO"}
+                        onClick={() => setPaymentMethod(value)}
+                        className={`rounded-xl border p-4 text-left disabled:cursor-not-allowed disabled:opacity-50 ${paymentMethod === value ? "border-[#D96C8A] bg-[#FFF8FA]" : "border-[#EAE1E4]"}`}
+                      >
+                        <strong className="block text-sm">{title}</strong>
+                        <span className="mt-1 block text-xs text-[#6F6066]">
+                          {value === "MOMO"
+                            ? "Tạm thời chưa hỗ trợ thanh toán online."
+                            : description}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              </div>
+              <aside className="h-fit rounded-2xl border border-[#EAE1E4] bg-white p-5 lg:sticky lg:top-24">
+                <h2 className="text-lg font-extrabold">Thông tin thanh toán</h2>
+                <dl className="mt-5 space-y-3 text-sm text-[#6F6066]">
+                  <div className="flex justify-between">
+                    <dt>Tạm tính</dt>
+                    <dd className="font-bold text-[#2D2226]">
+                      {money(summary.subtotal)}
+                    </dd>
+                  </div>
+                  {preview?.shipping.available ? (
+                    <div className="border-t border-[#EAE1E4] pt-3">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShippingDetailsOpen((value) => !value)
+                        }
+                        className="flex w-full items-center justify-between text-left text-sm"
+                      >
+                        <span>Khoảng cách giao hàng</span>
+                        <span className="font-bold text-[#2D2226]">
+                          {preview.shipping.estimatedDistanceKm?.toFixed(1)}km{" "}
+                          <ChevronDown
+                            className={`ml-1 inline size-4 transition-transform ${shippingDetailsOpen ? "rotate-180" : ""}`}
+                          />
+                        </span>
+                      </button>
+                      {shippingDetailsOpen ? (
+                        <div className="mt-3 space-y-2 rounded-xl bg-[#FFF8FA] p-3 text-xs text-[#6F6066]">
+                          <div className="flex justify-between">
+                            <span>Khoảng cách tính phí</span>
+                            <strong>
+                              {preview.shipping.chargeableDistanceKm?.toFixed(
+                                1,
+                              )}
+                              km
+                            </strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Phí cơ bản</span>
+                            <strong>
+                              {money(preview.shipping.baseFee || 0)}
+                            </strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Phí theo khoảng cách</span>
+                            <strong>
+                              {money(preview.shipping.distanceFee || 0)}
+                            </strong>
+                          </div>
+                          {preview.shipping.freeDistanceKm ? (
+                            <div className="flex justify-between text-[#3F8F6B]">
+                              <span>Miễn phí</span>
+                              <strong>
+                                {preview.shipping.freeDistanceKm}km
+                              </strong>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  {summary.membershipDiscount ? (
+                    <div className="flex justify-between">
+                      <dt>Ưu đãi thành viên</dt>
+                      <dd className="font-bold text-[#3F8F6B]">
+                        -{money(summary.membershipDiscount)}
+                      </dd>
+                    </div>
+                  ) : null}
+                  {summary.couponDiscount ? (
+                    <div className="flex justify-between">
+                      <dt>Mã giảm giá</dt>
+                      <dd className="font-bold text-[#3F8F6B]">
+                        -{money(summary.couponDiscount)}
+                      </dd>
+                    </div>
+                  ) : null}
+                  <div className="flex justify-between">
+                    <dt>Phí giao hàng</dt>
+                    <dd className="font-bold">
+                      {previewLoading
+                        ? "Đang tính..."
+                        : summary.shipping.available
+                          ? money(summary.shippingFee)
+                          : "Chưa tính"}
+                    </dd>
+                  </div>
+                  {!summary.shipping.available &&
+                  preview?.shipping.unavailableReason ? (
+                    <p className="text-right text-xs font-medium text-[#C84F64]">
+                      {preview.shipping.unavailableReason}
+                    </p>
+                  ) : null}
+                </dl>
+                <div className="mt-5 flex justify-between border-t border-[#EAE1E4] pt-4">
+                  <span className="font-bold">Tổng thanh toán</span>
+                  <strong className="text-xl text-[#A43E5F]">
+                    {money(summary.payableTotal)}
+                  </strong>
+                </div>
+                {summary.shipping.available ? (
+                  <p className="mt-2 text-xs text-[#6F6066]">
+                    Khoảng {summary.shipping.estimatedDistanceKm?.toFixed(1)}km
+                    · {summary.shipping.estimatedDeliveryText}
+                  </p>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => void submit()}
+                  disabled={
+                    busy || previewLoading || !preview?.shipping.available
+                  }
+                  className="mt-5 hidden h-12 w-full rounded-xl bg-[#D96C8A] text-sm font-bold text-white disabled:opacity-50 lg:block"
+                >
+                  {busy ? "Đang tạo đơn hàng..." : "Đặt hàng"}
+                </button>
+                <p className="mt-4 text-xs leading-5 text-[#998B91]">
+                  Bằng việc đặt hàng, bạn đồng ý với{" "}
+                  <Link
+                    href="/policies?policy=terms"
+                    className="font-bold text-[#A43E5F]"
+                  >
+                    chính sách mua hàng
+                  </Link>
+                  .
+                </p>
+              </aside>
+            </div>
+          )}
+        </div>
+        {items.length ? (
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#EAE1E4] bg-white/95 px-4 py-3 pb-[max(12px,env(safe-area-inset-bottom))] shadow-lg backdrop-blur lg:hidden">
+            <div className="mx-auto flex max-w-xl items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] text-[#998B91]">Tổng thanh toán</p>
+                <p className="truncate text-base font-extrabold text-[#A43E5F]">
+                  {money(summary.payableTotal)}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => void submit()}
+                disabled={
+                  busy || previewLoading || !preview?.shipping.available
+                }
+                className="h-11 rounded-xl bg-[#D96C8A] px-5 text-sm font-bold text-white disabled:opacity-50"
+              >
+                {busy ? "Đang đặt..." : "Đặt hàng"}
+              </button>
+            </div>
+          </div>
+        ) : null}
+        <CouponSelector
+          open={couponOpen}
+          onOpenChange={setCouponOpen}
+          intent={token}
+          selectedCode={appliedCoupon}
+          onApply={applyCoupon}
+          triggerRef={couponTriggerRef}
+        />
+        {addressOpen ? (
+          <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#2D2226]/35 sm:items-center sm:p-4">
+            <form
+              onSubmit={addressFormik.handleSubmit}
+              className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-2xl bg-white p-5 sm:rounded-2xl sm:p-8"
+            >
+              <div className="flex justify-between">
+                <h2 className="text-lg font-extrabold">
+                  {editing ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setAddressOpen(false)}
+                  aria-label="Đóng"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+              <div className="mt-6 grid items-start gap-4 sm:grid-cols-2">
+                <label className="grid gap-2 text-sm font-bold">
+                  Tên người nhận
+                  <AccountInput
+                    variant="border"
+                    name="fullName"
+                    value={addressFormik.values.fullName}
+                    onChange={addressFormik.handleChange}
+                    onBlur={addressFormik.handleBlur}
+                    aria-invalid={Boolean(
+                      addressFormik.touched.fullName &&
+                      addressFormik.errors.fullName,
+                    )}
+                    placeholder="Nhập họ và tên người nhận"
+                    className={`${addressInputClass} ${addressFormik.touched.fullName && addressFormik.errors.fullName ? addressErrorBorderClass : ""}`}
+                  />
+                  {addressFormik.touched.fullName &&
+                  addressFormik.errors.fullName ? (
+                    <span
+                      className={`text-xs font-medium ${addressErrorClass}`}
+                    >
+                      {addressFormik.errors.fullName}
+                    </span>
+                  ) : null}
+                </label>
+                <label className="grid gap-2 text-sm font-bold">
+                  Số điện thoại
+                  <AccountInput
+                    variant="border"
+                    name="phone"
+                    inputMode="tel"
+                    value={addressFormik.values.phone}
+                    onChange={addressFormik.handleChange}
+                    onBlur={addressFormik.handleBlur}
+                    aria-invalid={Boolean(
+                      addressFormik.touched.phone && addressFormik.errors.phone,
+                    )}
+                    placeholder="Nhập số điện thoại"
+                    className={`${addressInputClass} ${addressFormik.touched.phone && addressFormik.errors.phone ? addressErrorBorderClass : ""}`}
+                  />
+                  {addressFormik.touched.phone && addressFormik.errors.phone ? (
+                    <span
+                      className={`text-xs font-medium ${addressErrorClass}`}
+                    >
+                      {addressFormik.errors.phone}
+                    </span>
+                  ) : null}
+                </label>
+                <label className="grid gap-2 text-sm font-bold">
+                  Tỉnh/Thành phố
+                  <AccountAddressSelect
+                    name="city"
+                    value={addressFormik.values.city}
+                    placeholder="Tìm tỉnh/thành phố"
+                    options={provinces.map((province) => ({
+                      value: province.name,
+                      label: province.name,
+                    }))}
+                    hasError={Boolean(
+                      addressFormik.touched.city && addressFormik.errors.city,
+                    )}
+                    onChange={(city) =>
+                      addressFormik.setValues({
+                        ...addressFormik.values,
+                        city,
+                        district: "",
+                        ward: "",
+                        latitude: "",
+                        longitude: "",
+                      })
+                    }
+                  />
+                  {addressFormik.touched.city && addressFormik.errors.city ? (
+                    <span
+                      className={`text-xs font-medium ${addressErrorClass}`}
+                    >
+                      {addressFormik.errors.city}
+                    </span>
+                  ) : null}
+                </label>
+                <label className="grid gap-2 text-sm font-bold">
+                  Phường/Xã
+                  <AccountAddressSelect
+                    name="ward"
+                    value={addressFormik.values.ward}
+                    placeholder="Tìm phường/xã"
+                    disabled={!selectedProvince}
+                    options={
+                      selectedProvince?.wards.map((ward) => ({
+                        value: ward.name,
+                        label: ward.name,
+                      })) || []
+                    }
+                    onChange={(ward) =>
+                      addressFormik.setValues({
+                        ...addressFormik.values,
+                        ward,
+                        latitude: "",
+                        longitude: "",
+                      })
+                    }
+                  />
+                </label>
+                <label className="grid gap-2 text-sm font-bold sm:col-span-2">
+                  Địa chỉ cụ thể
+                  <CheckoutAddressAutocomplete
+                    value={addressFormik.values.line1}
+                    context={[
+                      addressFormik.values.ward,
+                      addressFormik.values.city,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                    hasError={Boolean(
+                      addressFormik.touched.line1 && addressFormik.errors.line1,
+                    )}
+                    onChange={(line1) =>
+                      addressFormik.setValues({
+                        ...addressFormik.values,
+                        line1,
+                        latitude: "",
+                        longitude: "",
+                      })
+                    }
+                    onSelect={(suggestion) =>
+                      addressFormik.setValues({
+                        ...addressFormik.values,
+                        line1: suggestion.formattedAddress,
+                        latitude: String(suggestion.latitude),
+                        longitude: String(suggestion.longitude),
+                      })
+                    }
+                    onBlur={() => addressFormik.setFieldTouched("line1", true)}
+                  />
+                  {addressFormik.touched.line1 && addressFormik.errors.line1 ? (
+                    <span
+                      className={`text-xs font-medium ${addressErrorClass}`}
+                    >
+                      {addressFormik.errors.line1}
+                    </span>
+                  ) : null}
+                </label>
+                <label className="grid gap-2 text-sm font-bold sm:col-span-2">
+                  Ghi chú
+                  <AccountInput
+                    variant="border"
+                    name="line2"
+                    value={addressFormik.values.line2}
+                    onChange={addressFormik.handleChange}
+                    onBlur={addressFormik.handleBlur}
+                    placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao"
+                    className={addressInputClass}
+                  />
+                </label>
+              </div>
+              <label className="mt-5 flex min-h-11 items-center gap-3 text-sm font-bold">
+                <input
+                  type="checkbox"
+                  checked={addressFormik.values.isDefaultShipping}
+                  onChange={addressFormik.handleChange}
+                  name="isDefaultShipping"
+                  disabled={!addresses.length}
+                  className="size-4 accent-[#D96C8A]"
+                />
+                {!addresses.length
+                  ? "Địa chỉ duy nhất luôn là mặc định"
+                  : "Đặt làm địa chỉ mặc định"}
+              </label>
+              {addressError ? (
+                <p
+                  role="alert"
+                  className="mt-4 text-sm font-semibold text-red-1"
+                >
+                  {addressError}
+                </p>
+              ) : null}
+              <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setAddressOpen(false)}
+                  disabled={saving}
+                  className="h-11"
+                >
+                  Hủy
+                </Button>
+                <Button
+                  type="submit"
+                  variant="brand"
+                  disabled={saving}
+                  className="h-11 gap-2"
+                >
+                  {saving ? (
+                    <LoaderCircle className="size-4 animate-spin" />
+                  ) : null}
+                  Lưu địa chỉ
+                </Button>
+              </div>
+            </form>
+          </div>
+        ) : null}
+      </main>
+    </StorefrontShell>
+  );
 }

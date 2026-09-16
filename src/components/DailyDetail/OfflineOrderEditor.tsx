@@ -507,12 +507,14 @@ function ProductSearchPanel({
   loading,
   onAdd,
   onRemoveProduct,
+  onSearchChange,
 }: {
   products: ShopOrderProductOption[];
   selectedItems: EditableOrderItem[];
   loading: boolean;
   onAdd: (option: ShopOrderLineOption, quantity?: number) => void;
   onRemoveProduct: (productId: number) => void;
+  onSearchChange?: (search: string) => void;
 }) {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -525,6 +527,10 @@ function ProductSearchPanel({
     const timeout = window.setTimeout(() => setDebouncedSearch(search), 200);
     return () => window.clearTimeout(timeout);
   }, [search]);
+
+  useEffect(() => {
+    onSearchChange?.(debouncedSearch.trim());
+  }, [debouncedSearch, onSearchChange]);
 
   useEffect(() => {
     searchRef.current?.focus();
@@ -1184,7 +1190,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 sm:px-5">
+      <div className="min-h-44 flex-[1_1_40%] overflow-y-auto px-4 sm:px-5 xl:min-h-48">
         {form.items.length ? (
           form.items.map((item, index) => (
             <OrderCartItem
@@ -1209,7 +1215,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="shrink-0 border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5">
+      <div className="min-h-0 flex-[1_1_60%] overflow-y-auto border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5">
         <div className="border-b border-[#EAE1E4] py-3">
           <label className="text-xs font-bold text-[#2D2226]">
             Khách hàng / số điện thoại
@@ -1331,6 +1337,7 @@ export function OfflineOrderEditor({
   order,
   onOpenChange,
   onSubmit,
+  onProductSearchChange,
 }: {
   open: boolean;
   mode: OfflineOrderEditorMode;
@@ -1339,6 +1346,7 @@ export function OfflineOrderEditor({
   order: DailyOrder | null;
   onOpenChange: (open: boolean) => void;
   onSubmit: SubmitOrder;
+  onProductSearchChange?: (search: string) => void;
 }) {
   const [form, setForm] = useState<OrderFormState>(emptyForm);
   const [cartOpen, setCartOpen] = useState(false);
@@ -1645,6 +1653,7 @@ export function OfflineOrderEditor({
                   couponCode: "",
                 }))
               )}
+              onSearchChange={onProductSearchChange}
             />
           </div>
           <div className="hidden min-h-0 xl:block">{cart}</div>

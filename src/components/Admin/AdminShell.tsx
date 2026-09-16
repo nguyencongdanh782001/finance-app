@@ -1,6 +1,8 @@
 "use client";
 
 import AdminAccountMenu from "@/components/Auth/AdminAccountMenu";
+import AdminNotificationCenter from "@/components/Admin/AdminNotificationCenter";
+import { Toaster } from "@/components/ui/toaster";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -22,6 +24,7 @@ import {
   Users,
   Megaphone,
   ScrollText,
+  Truck,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -92,6 +95,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     matches: (pathname) => pathname.startsWith("/admin/categories"),
   },
   {
+    href: "/admin/shipping",
+    label: "Vận chuyển",
+    group: "Vận chuyển",
+    icon: Truck,
+    matches: (pathname) => pathname.startsWith("/admin/shipping"),
+  },
+  {
     href: "/admin/content/banners",
     label: "Banner",
     group: "Nội dung website",
@@ -113,8 +123,12 @@ const getPageTitle = (pathname: string) => {
   if (pathname === "/admin/memberships") return "Hạng membership";
   if (pathname.startsWith("/admin/users")) return "Người dùng";
   if (pathname.startsWith("/admin/profile")) return "Thông tin cá nhân";
+  if (pathname.startsWith("/admin/notifications")) return "Thông báo";
+  if (pathname.startsWith("/admin/settings/notifications")) return "Cài đặt thông báo";
+  if (pathname.startsWith("/admin/orders/")) return "Chi tiết đơn hàng";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";
   if (pathname.startsWith("/admin/categories")) return "Danh mục";
+  if (pathname.startsWith("/admin/shipping")) return "Vận chuyển";
   if (pathname.startsWith("/admin/content/banners")) return "Banner";
   if (pathname.startsWith("/admin/content/policies")) return "Chính sách";
   if (pathname.startsWith("/admin/daily-detail/")) return "Chi tiết ngày";
@@ -235,11 +249,15 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               {getPageTitle(pathname)}
             </p>
           </div>
-          <AdminAccountMenu />
+          <div className="flex items-center gap-2">
+            <AdminNotificationCenter />
+            <AdminAccountMenu />
+          </div>
         </header>
 
         <main className="w-full max-w-full min-w-0">{children}</main>
       </div>
+      <Toaster />
     </div>
   );
 }

@@ -18,6 +18,34 @@ type GeoapifyFeature = {
   geometry?: { coordinates?: unknown };
 };
 
+const ROUTE_CACHE_TTL_MS = 5 * 60 * 1000;
+const ROUTE_CACHE_MAX_ENTRIES = 300;
+const routeCache = new Map<
+  string,
+  { route: ShippingRoute; expiresAt: number }
+>();
+
+const routeCacheKey = (...coordinates: number[]) =>
+  coordinates.map((coordinate) => coordinate.toFixed(5)).join(":");
+
+function readCachedRoute(key: string) {
+  const entry = routeCache.get(key);
+  if (!entry) return null;
+  if (entry.expiresAt <= Date.now()) {
+    routeCache.delete(key);
+    return null;
+  }
+  return entry.route;
+}
+
+function writeCachedRoute(key: string, route: ShippingRoute) {
+  if (routeCache.size >= ROUTE_CACHE_MAX_ENTRIES) {
+    const oldestKey = routeCache.keys().next().value;
+    if (oldestKey) routeCache.delete(oldestKey);
+  }
+  routeCache.set(key, { route, expiresAt: Date.now() + ROUTE_CACHE_TTL_MS });
+}
+
 const timeoutSignal = (milliseconds: number) =>
   AbortSignal.timeout(milliseconds);
 
@@ -74,23 +102,29 @@ export async function autocompleteAddress(text: string) {
     const longitude = numberProperty(p.lon);
     const formattedAddress = typeof p.formatted === "string" ? p.formatted : "";
     if (latitude === null || longitude === null || !formattedAddress) return [];
-    return [{
-      id: String(p.place_id || `${latitude}:${longitude}:${index}`),
-      formattedAddress,
-      addressLine1: typeof p.address_line1 === "string" ? p.address_line1 : undefined,
-      addressLine2: typeof p.address_line2 === "string" ? p.address_line2 : undefined,
-      houseNumber: typeof p.housenumber === "string" ? p.housenumber : undefined,
-      street: typeof p.street === "string" ? p.street : undefined,
-      ward: typeof p.suburb === "string" ? p.suburb : undefined,
-      district: typeof p.district === "string" ? p.district : undefined,
-      city: typeof p.city === "string" ? p.city : undefined,
-      state: typeof p.state === "string" ? p.state : undefined,
-      postcode: typeof p.postcode === "string" ? p.postcode : undefined,
-      country: typeof p.country === "string" ? p.country : undefined,
-      countryCode: typeof p.country_code === "string" ? p.country_code : undefined,
-      latitude,
-      longitude,
-    } satisfies AddressSuggestion];
+    return [
+      {
+        id: String(p.place_id || `${latitude}:${longitude}:${index}`),
+        formattedAddress,
+        addressLine1:
+          typeof p.address_line1 === "string" ? p.address_line1 : undefined,
+        addressLine2:
+          typeof p.address_line2 === "string" ? p.address_line2 : undefined,
+        houseNumber:
+          typeof p.housenumber === "string" ? p.housenumber : undefined,
+        street: typeof p.street === "string" ? p.street : undefined,
+        ward: typeof p.suburb === "string" ? p.suburb : undefined,
+        district: typeof p.district === "string" ? p.district : undefined,
+        city: typeof p.city === "string" ? p.city : undefined,
+        state: typeof p.state === "string" ? p.state : undefined,
+        postcode: typeof p.postcode === "string" ? p.postcode : undefined,
+        country: typeof p.country === "string" ? p.country : undefined,
+        countryCode:
+          typeof p.country_code === "string" ? p.country_code : undefined,
+        latitude,
+        longitude,
+      } satisfies AddressSuggestion,
+    ];
   });
 }
 
@@ -103,27 +137,85 @@ export type ShippingQuote = {
   shippingFee: number;
   currency: "VND";
 };
+export type ShippingRoute = {
+  distanceMeters: number;
+  estimatedDurationSeconds: number;
+  estimatedDurationMinutes: number;
+};
 
 export function validateCoordinates(latitude: number, longitude: number) {
-  return Number.isFinite(latitude) && Number.isFinite(longitude) &&
-    latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
+  return (
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    !(latitude === 0 && longitude === 0) &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180
+  );
 }
 
 export function calculateShippingFee(distanceKm: number) {
   if (distanceKm > SHIPPING_CONFIG.maximumDeliveryDistanceKm) {
     throw new Error("Địa chỉ nằm ngoài phạm vi giao hàng.");
   }
-  if (distanceKm <= SHIPPING_CONFIG.baseDistanceKm) return SHIPPING_CONFIG.baseFee;
-  return SHIPPING_CONFIG.baseFee +
-    Math.ceil(distanceKm - SHIPPING_CONFIG.baseDistanceKm) * SHIPPING_CONFIG.additionalFeePerKm;
+  if (distanceKm <= SHIPPING_CONFIG.baseDistanceKm)
+    return SHIPPING_CONFIG.baseFee;
+  return (
+    SHIPPING_CONFIG.baseFee +
+    Math.ceil(distanceKm - SHIPPING_CONFIG.baseDistanceKm) *
+      SHIPPING_CONFIG.additionalFeePerKm
+  );
 }
 
-export async function calculateShippingQuote(latitude: number, longitude: number): Promise<ShippingQuote> {
-  if (!validateCoordinates(latitude, longitude)) throw new Error("Tọa độ giao hàng không hợp lệ.");
+export async function calculateShippingQuote(
+  latitude: number,
+  longitude: number,
+): Promise<ShippingQuote> {
+  if (!validateCoordinates(latitude, longitude))
+    throw new Error("Tọa độ giao hàng không hợp lệ.");
+  const route = await getDrivingRoute(
+    SHOP_LOCATION.latitude,
+    SHOP_LOCATION.longitude,
+    latitude,
+    longitude,
+  );
+  const distanceKm = route.distanceMeters / 1_000;
+  return {
+    distanceMeters: route.distanceMeters,
+    distanceKm,
+    roundedDistanceKm: Math.ceil(distanceKm * 10) / 10,
+    estimatedDurationSeconds: route.estimatedDurationSeconds,
+    estimatedDurationMinutes: route.estimatedDurationMinutes,
+    shippingFee: calculateShippingFee(distanceKm),
+    currency: "VND",
+  };
+}
+
+export async function getDrivingRoute(
+  originLatitude: number,
+  originLongitude: number,
+  destinationLatitude: number,
+  destinationLongitude: number,
+): Promise<ShippingRoute> {
+  if (
+    !validateCoordinates(originLatitude, originLongitude) ||
+    !validateCoordinates(destinationLatitude, destinationLongitude)
+  ) {
+    throw new Error("Tọa độ giao hàng không hợp lệ.");
+  }
+  const cacheKey = routeCacheKey(
+    originLatitude,
+    originLongitude,
+    destinationLatitude,
+    destinationLongitude,
+  );
+  const cachedRoute = readCachedRoute(cacheKey);
+  if (cachedRoute) return cachedRoute;
   const url = new URL(`${GEOAPIFY_BASE_URL}/routing`);
   url.searchParams.set(
     "waypoints",
-    `${SHOP_LOCATION.latitude},${SHOP_LOCATION.longitude}|${latitude},${longitude}`,
+    `${originLatitude},${originLongitude}|${destinationLatitude},${destinationLongitude}`,
   );
   url.searchParams.set("mode", "drive");
   url.searchParams.set("apiKey", apiKey());
@@ -133,22 +225,26 @@ export async function calculateShippingQuote(latitude: number, longitude: number
     headers: { Accept: "application/json" },
     cache: "no-store",
   });
-  if (!response.ok) throw new Error(`Geoapify routing failed (${response.status}).`);
-  const body = (await response.json()) as { features?: Array<{ properties?: { distance?: unknown; time?: unknown } }> };
+  if (!response.ok)
+    throw new Error(`Geoapify routing failed (${response.status}).`);
+  const body = (await response.json()) as {
+    features?: Array<{ properties?: { distance?: unknown; time?: unknown } }>;
+  };
   const properties = body.features?.[0]?.properties;
   const distanceMeters = numberProperty(properties?.distance);
   const estimatedDurationSeconds = numberProperty(properties?.time);
-  if (distanceMeters === null || estimatedDurationSeconds === null || distanceMeters < 0) {
+  if (
+    distanceMeters === null ||
+    estimatedDurationSeconds === null ||
+    distanceMeters < 0
+  ) {
     throw new Error("Không tìm được tuyến đường đến địa chỉ này.");
   }
-  const distanceKm = distanceMeters / 1_000;
-  return {
+  const route = {
     distanceMeters: Math.round(distanceMeters),
-    distanceKm,
-    roundedDistanceKm: Math.ceil(distanceKm * 10) / 10,
     estimatedDurationSeconds: Math.round(estimatedDurationSeconds),
     estimatedDurationMinutes: Math.ceil(estimatedDurationSeconds / 60),
-    shippingFee: calculateShippingFee(distanceKm),
-    currency: "VND",
   };
+  writeCachedRoute(cacheKey, route);
+  return route;
 }
