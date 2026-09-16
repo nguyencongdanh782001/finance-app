@@ -9,6 +9,10 @@ import {
   createShippingCalculation,
   getShippingConfiguration,
 } from "@/lib/shipping";
+import {
+  createNewOnlineOrderNotification,
+  dispatchNotificationOutboxBestEffort,
+} from "@/lib/admin-notifications";
 
 const fail = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -102,12 +106,12 @@ export async function POST(request: Request) {
         shippingFee: shippingCalculation.calculation.finalShippingFee,
       };
     };
-    const order = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const existing = await tx.order.findUnique({
         where: { idempotencyKey: token },
         select: { id: true, orderNumber: true },
       });
-      if (existing) return existing;
+      if (existing) return { order: existing, eventKey: null };
       if (payload.intentType === "CART") {
         const cart = await tx.cart.findFirst({
           where: { userId, status: "ACTIVE" },
@@ -324,7 +328,11 @@ export async function POST(request: Request) {
         await tx.cartItem.deleteMany({
           where: { cartId: cart!.id, id: { in: payload.cartItemIds || [] } },
         });
-        return created;
+        await createNewOnlineOrderNotification(tx, created);
+        return {
+          order: created,
+          eventKey: `NEW_ONLINE_ORDER:${created.id}`,
+        };
       }
       if (!payload.variantId || !payload.quantity)
         throw new Error("Phiên mua ngay đã hết hạn.");
@@ -495,9 +503,20 @@ export async function POST(request: Request) {
           unitSellPrice: price,
         },
       });
-      return created;
+      await createNewOnlineOrderNotification(tx, created);
+      return {
+        order: created,
+        eventKey: `NEW_ONLINE_ORDER:${created.id}`,
+      };
     });
-    return NextResponse.json(order, { status: 201 });
+    if (result.eventKey) {
+      const outbox = await prisma.notificationOutbox.findUnique({
+        where: { eventKey: result.eventKey },
+        select: { id: true },
+      });
+      if (outbox) void dispatchNotificationOutboxBestEffort(outbox.id);
+    }
+    return NextResponse.json(result.order, { status: 201 });
   } catch (cause) {
     return fail(
       cause instanceof Error ? cause.message : "Không thể tạo đơn hàng.",

@@ -1,6 +1,8 @@
 "use client";
 
 import AdminAccountMenu from "@/components/Auth/AdminAccountMenu";
+import AdminNotificationCenter from "@/components/Admin/AdminNotificationCenter";
+import { Toaster } from "@/components/ui/toaster";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -121,6 +123,9 @@ const getPageTitle = (pathname: string) => {
   if (pathname === "/admin/memberships") return "Hạng membership";
   if (pathname.startsWith("/admin/users")) return "Người dùng";
   if (pathname.startsWith("/admin/profile")) return "Thông tin cá nhân";
+  if (pathname.startsWith("/admin/notifications")) return "Thông báo";
+  if (pathname.startsWith("/admin/settings/notifications")) return "Cài đặt thông báo";
+  if (pathname.startsWith("/admin/orders/")) return "Chi tiết đơn hàng";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";
   if (pathname.startsWith("/admin/categories")) return "Danh mục";
   if (pathname.startsWith("/admin/shipping")) return "Vận chuyển";
@@ -244,11 +249,15 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               {getPageTitle(pathname)}
             </p>
           </div>
-          <AdminAccountMenu />
+          <div className="flex items-center gap-2">
+            <AdminNotificationCenter />
+            <AdminAccountMenu />
+          </div>
         </header>
 
         <main className="w-full max-w-full min-w-0">{children}</main>
       </div>
+      <Toaster />
     </div>
   );
 }

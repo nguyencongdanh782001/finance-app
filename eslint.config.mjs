@@ -26,6 +26,7 @@ export default defineConfig([
     "vite.config.ts",
     "public/sw.js",
     "public/workbox-*.js",
+    "public/worker-*.js",
   ]),
 
   /* ================= Base ================= */

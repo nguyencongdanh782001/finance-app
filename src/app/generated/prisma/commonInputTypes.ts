@@ -919,6 +919,40 @@ export type EnumNotificationPriorityWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumNotificationPriorityFilter<$PrismaModel>
 }
 
+export type EnumAdminNotificationTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.AdminNotificationType | Prisma.EnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAdminNotificationTypeFilter<$PrismaModel> | $Enums.AdminNotificationType
+}
+
+export type EnumAdminNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AdminNotificationType | Prisma.EnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAdminNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.AdminNotificationType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAdminNotificationTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAdminNotificationTypeFilter<$PrismaModel>
+}
+
+export type EnumNotificationOutboxStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.NotificationOutboxStatus | Prisma.EnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNotificationOutboxStatusFilter<$PrismaModel> | $Enums.NotificationOutboxStatus
+}
+
+export type EnumNotificationOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.NotificationOutboxStatus | Prisma.EnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNotificationOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.NotificationOutboxStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumNotificationOutboxStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumNotificationOutboxStatusFilter<$PrismaModel>
+}
+
 export type EnumBannerTextAlignmentFilter<$PrismaModel = never> = {
   equals?: $Enums.BannerTextAlignment | Prisma.EnumBannerTextAlignmentFieldRefInput<$PrismaModel>
   in?: $Enums.BannerTextAlignment[] | Prisma.ListEnumBannerTextAlignmentFieldRefInput<$PrismaModel>
@@ -1883,6 +1917,40 @@ export type NestedEnumNotificationPriorityWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumNotificationPriorityFilter<$PrismaModel>
   _max?: Prisma.NestedEnumNotificationPriorityFilter<$PrismaModel>
+}
+
+export type NestedEnumAdminNotificationTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.AdminNotificationType | Prisma.EnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAdminNotificationTypeFilter<$PrismaModel> | $Enums.AdminNotificationType
+}
+
+export type NestedEnumAdminNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AdminNotificationType | Prisma.EnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AdminNotificationType[] | Prisma.ListEnumAdminNotificationTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAdminNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.AdminNotificationType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAdminNotificationTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAdminNotificationTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumNotificationOutboxStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.NotificationOutboxStatus | Prisma.EnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNotificationOutboxStatusFilter<$PrismaModel> | $Enums.NotificationOutboxStatus
+}
+
+export type NestedEnumNotificationOutboxStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.NotificationOutboxStatus | Prisma.EnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.NotificationOutboxStatus[] | Prisma.ListEnumNotificationOutboxStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumNotificationOutboxStatusWithAggregatesFilter<$PrismaModel> | $Enums.NotificationOutboxStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumNotificationOutboxStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumNotificationOutboxStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumBannerTextAlignmentFilter<$PrismaModel = never> = {

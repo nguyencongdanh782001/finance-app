@@ -308,6 +308,26 @@ export type ReviewImage = Prisma.ReviewImageModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model AdminNotification
+ * 
+ */
+export type AdminNotification = Prisma.AdminNotificationModel
+/**
+ * Model AdminNotificationRecipient
+ * 
+ */
+export type AdminNotificationRecipient = Prisma.AdminNotificationRecipientModel
+/**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
+ * Model NotificationOutbox
+ * 
+ */
+export type NotificationOutbox = Prisma.NotificationOutboxModel
+/**
  * Model SearchHistory
  * 
  */

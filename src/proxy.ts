@@ -29,6 +29,7 @@ const CUSTOMER_CHECKOUT_API_PATHS = [
   "/api/orders/checkout",
   "/api/shipping/quote",
 ];
+const CRON_API_PATHS = ["/api/cron/admin-notifications"];
 const isCustomerFavoriteApi = (pathname: string) =>
   pathname === "/api/me/favorites" ||
   /^\/api\/product\/\d+\/favorite$/.test(pathname);
@@ -84,6 +85,10 @@ export async function proxy(req: NextRequest) {
   }
 
   if (pathname.startsWith(AUTH_PATH_PREFIX)) {
+    return withCors(NextResponse.next(), req);
+  }
+
+  if (CRON_API_PATHS.includes(pathname)) {
     return withCors(NextResponse.next(), req);
   }
 

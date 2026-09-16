@@ -109,6 +109,10 @@ export const ModelName = {
   Review: 'Review',
   ReviewImage: 'ReviewImage',
   Notification: 'Notification',
+  AdminNotification: 'AdminNotification',
+  AdminNotificationRecipient: 'AdminNotificationRecipient',
+  PushSubscription: 'PushSubscription',
+  NotificationOutbox: 'NotificationOutbox',
   SearchHistory: 'SearchHistory',
   RecentlyViewedProduct: 'RecentlyViewedProduct',
   HomepageBanner: 'HomepageBanner',
@@ -1207,6 +1211,69 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const AdminNotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  orderId: 'orderId',
+  eventKey: 'eventKey',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminNotificationScalarFieldEnum = (typeof AdminNotificationScalarFieldEnum)[keyof typeof AdminNotificationScalarFieldEnum]
+
+
+export const AdminNotificationRecipientScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  userId: 'userId',
+  isRead: 'isRead',
+  readAt: 'readAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminNotificationRecipientScalarFieldEnum = (typeof AdminNotificationRecipientScalarFieldEnum)[keyof typeof AdminNotificationRecipientScalarFieldEnum]
+
+
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  deviceName: 'deviceName',
+  userAgent: 'userAgent',
+  platform: 'platform',
+  isActive: 'isActive',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const NotificationOutboxScalarFieldEnum = {
+  id: 'id',
+  eventKey: 'eventKey',
+  eventType: 'eventType',
+  aggregateId: 'aggregateId',
+  notificationId: 'notificationId',
+  payload: 'payload',
+  status: 'status',
+  attempts: 'attempts',
+  nextRetryAt: 'nextRetryAt',
+  processedAt: 'processedAt',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationOutboxScalarFieldEnum = (typeof NotificationOutboxScalarFieldEnum)[keyof typeof NotificationOutboxScalarFieldEnum]
 
 
 export const SearchHistoryScalarFieldEnum = {

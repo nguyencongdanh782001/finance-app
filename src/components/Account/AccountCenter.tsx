@@ -1035,14 +1035,28 @@ const addressErrorClass = "text-red-1";
 const addressErrorBorderClass = "border-red-1!";
 
 function GeoapifyAddressPicker({
+  value,
   onSelect,
+  onChange,
+  onBlur,
+  hasError = false,
 }: {
+  value: string;
   onSelect: (suggestion: AddressSuggestion) => void;
+  onChange: (value: string) => void;
+  onBlur?: () => void;
+  hasError?: boolean;
 }) {
-  const [text, setText] = useState("");
+  const [text, setText] = useState(value);
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  const [selectedPoint, setSelectedPoint] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [focusVersion, setFocusVersion] = useState(0);
   const requestId = useRef(0);
+  useEffect(() => setText(value), [value]);
   useEffect(() => {
     const query = text.trim();
     if ([...query].length < 3) {
@@ -1076,72 +1090,89 @@ function GeoapifyAddressPicker({
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [text]);
+  }, [focusVersion, text]);
   return (
-    <div className="mb-5 rounded-2xl border border-[#F4B5C5] bg-[#FFF8FA] p-4">
-      <div className="flex items-start gap-3">
-        <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FCEEF3] text-[#A43E5F]">
-          <MapPin className="size-4" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-extrabold text-[#3B2D32]">
-            Tìm địa chỉ nhanh
-          </p>
-          <p className="mt-1 text-xs leading-5 text-[#8B7A80]">
-            Nhập địa chỉ và chọn một gợi ý để tự điền thông tin.
-          </p>
-          <div className="relative mt-3">
-            <Input
-              value={text}
-              onChange={(event) => setText(event.target.value)}
-              placeholder="Ví dụ: 571/1, đường Nguyễn Huệ"
-              aria-label="Tìm địa chỉ"
-              aria-autocomplete="list"
-              className="h-11! rounded-xl! border-[#EAE1E4]! bg-white! px-3! font-normal! placeholder:text-[#A99BA0]! focus:border-[#D96C8A]!"
-              classNameContainer="rounded-xl bg-white"
-            />
-            {status === "loading" ? (
-              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-[#8B7A80]">
-                Đang tìm...
-              </span>
-            ) : null}
+    <div className="relative">
+      <div className="relative">
+        <Input
+          value={text}
+          onChange={(event) => {
+            setText(event.target.value);
+            setSelectedPoint(null);
+            onChange(event.target.value);
+          }}
+          onFocus={() => setFocusVersion((version) => version + 1)}
+          onBlur={() => {
+            window.setTimeout(() => setSuggestions([]), 120);
+            onBlur?.();
+          }}
+          placeholder="Số nhà, tên đường"
+          aria-label="Địa chỉ cụ thể"
+          aria-autocomplete="list"
+          className={`${addressInputClass} ${hasError ? addressErrorBorderClass : ""}`}
+        />
+        {status === "loading" ? (
+          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-normal text-[#8B7A80]">
+            Đang tìm...
+          </span>
+        ) : null}
+        {suggestions.length ? (
+          <div
+            className="absolute inset-x-0 top-full z-20 mt-1 grid max-h-60 gap-1 overflow-y-auto rounded-xl border border-[#EAE1E4] bg-white p-1.5 shadow-[0_12px_30px_rgba(89,44,59,0.10)]"
+            role="listbox"
+          >
+            {suggestions.map((suggestion) => (
+              <button
+                type="button"
+                key={suggestion.id}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  onSelect(suggestion);
+                  setText(suggestion.formattedAddress);
+                  onChange(
+                    suggestion.addressLine1 || suggestion.formattedAddress,
+                  );
+                  setSuggestions([]);
+                  setSelectedPoint({
+                    latitude: suggestion.latitude,
+                    longitude: suggestion.longitude,
+                  });
+                }}
+                className="rounded-lg px-3 py-2.5 text-left text-xs leading-5 text-[#4D4045] transition hover:bg-[#FCEEF3]"
+              >
+                {suggestion.formattedAddress}
+              </button>
+            ))}
           </div>
-          {status === "error" ? (
-            <p className="mt-2 text-xs font-medium text-red-600">
-              Không thể tìm địa chỉ. Bạn có thể nhập thủ công.
-            </p>
-          ) : null}
-          {suggestions.length ? (
-            <div
-              className="mt-2 grid gap-1 rounded-xl border border-[#EAE1E4] bg-white p-1.5 shadow-[0_12px_30px_rgba(89,44,59,0.10)]"
-              role="listbox"
-            >
-              {suggestions.map((suggestion) => (
-                <button
-                  type="button"
-                  key={suggestion.id}
-                  onClick={() => {
-                    onSelect(suggestion);
-                    setText(suggestion.formattedAddress);
-                    setSuggestions([]);
-                  }}
-                  className="rounded-lg px-3 py-2.5 text-left text-xs leading-5 text-[#4D4045] transition hover:bg-[#FCEEF3]"
-                >
-                  {suggestion.formattedAddress}
-                </button>
-              ))}
-            </div>
-          ) : null}
-          {status !== "loading" &&
-          status !== "error" &&
-          !suggestions.length &&
-          [...text].length >= 3 ? (
-            <p className="mt-2 text-xs text-[#8B7A80]">
-              Không tìm thấy gợi ý phù hợp.
-            </p>
-          ) : null}
-        </div>
+        ) : null}
       </div>
+      {status === "error" ? (
+        <p className="mt-2 text-xs font-medium text-red-600">
+          Không thể tìm địa chỉ. Bạn có thể nhập thủ công.
+        </p>
+      ) : null}
+      {selectedPoint ? (
+        <div className="mt-2 overflow-hidden rounded-xl border border-[#EAE1E4] bg-[#F8F5F6]">
+          <iframe
+            title="Vị trí địa chỉ trên bản đồ"
+            src={`https://www.google.com/maps?q=${selectedPoint.latitude},${selectedPoint.longitude}&z=16&output=embed`}
+            className="h-44 w-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+          <p className="px-3 py-2 text-xs text-[#6F6066]">
+            Vị trí đã chọn trên bản đồ
+          </p>
+        </div>
+      ) : null}
+      {status !== "loading" &&
+      status !== "error" &&
+      !suggestions.length &&
+      [...text].length >= 3 ? (
+        <p className="mt-2 text-xs font-normal text-[#8B7A80]">
+          Không tìm thấy gợi ý phù hợp.
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -1317,23 +1348,42 @@ function AddressForm({
             </Field>
             <label className="grid gap-2 text-sm font-bold sm:col-span-2">
               Địa chỉ cụ thể
-              <Input
-                variant="border"
-                name="line1"
-                placeholder="Số nhà, tên đường"
+              <GeoapifyAddressPicker
                 value={formik.values.line1}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                aria-invalid={Boolean(
-                  formik.touched.line1 && formik.errors.line1,
-                )}
-                className={`${addressInputClass} ${formik.touched.line1 && formik.errors.line1 ? addressErrorBorderClass : ""}`}
+                onChange={(line1) => formik.setFieldValue("line1", line1)}
+                onBlur={() => formik.setFieldTouched("line1", true)}
+                hasError={Boolean(formik.touched.line1 && formik.errors.line1)}
+                onSelect={(suggestion) =>
+                  formik.setValues({
+                    ...formik.values,
+                    line1:
+                      suggestion.addressLine1 || suggestion.formattedAddress,
+                    city:
+                      suggestion.state || suggestion.city || formik.values.city,
+                    ward: suggestion.ward || formik.values.ward,
+                    district: suggestion.district || formik.values.district,
+                    latitude: suggestion.latitude,
+                    longitude: suggestion.longitude,
+                  })
+                }
               />
               {formik.touched.line1 && formik.errors.line1 ? (
                 <span className={`text-xs font-medium ${addressErrorClass}`}>
                   {formik.errors.line1}
                 </span>
               ) : null}
+            </label>
+            <label className="grid gap-2 text-sm font-bold sm:col-span-2">
+              Ghi chú
+              <Input
+                variant="border"
+                name="line2"
+                placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao"
+                value={formik.values.line2 || ""}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={addressInputClass}
+              />
             </label>
           </div>
           <label className="mt-5 flex min-h-11 items-center gap-3 text-sm font-bold">

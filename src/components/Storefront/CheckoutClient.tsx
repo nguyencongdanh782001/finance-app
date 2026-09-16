@@ -52,6 +52,7 @@ type Address = {
   district: string | null;
   ward: string | null;
   line1: string;
+  line2: string | null;
   latitude: number | string | null;
   longitude: number | string | null;
   isDefaultShipping: boolean;
@@ -95,6 +96,7 @@ const emptyAddress = {
   district: "",
   ward: "",
   line1: "",
+  line2: "",
   latitude: "",
   longitude: "",
   isDefaultShipping: false,
@@ -156,6 +158,127 @@ function AccountAddressSelect({
         onManualSelect={(selected) => onChange(selected || "")}
       />
     </FormikProvider>
+  );
+}
+
+function CheckoutAddressAutocomplete({
+  value,
+  context,
+  hasError,
+  onChange,
+  onSelect,
+  onBlur,
+}: {
+  value: string;
+  context: string;
+  hasError?: boolean;
+  onChange: (value: string) => void;
+  onSelect: (suggestion: Suggestion) => void;
+  onBlur: () => void;
+}) {
+  const [text, setText] = useState(value);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [selectedPoint, setSelectedPoint] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [focusVersion, setFocusVersion] = useState(0);
+
+  useEffect(() => setText(value), [value]);
+  useEffect(() => {
+    const query = [text.trim(), context.trim()].filter(Boolean).join(", ");
+    if (query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      setSearching(true);
+      try {
+        const response = await fetch(
+          `/api/locations/autocomplete?text=${encodeURIComponent(query)}`,
+          { signal: controller.signal },
+        );
+        const data = response.ok
+          ? ((await response.json()) as { suggestions?: Suggestion[] })
+          : { suggestions: [] };
+        if (!controller.signal.aborted) setSuggestions(data.suggestions || []);
+      } catch {
+        if (!controller.signal.aborted) setSuggestions([]);
+      } finally {
+        if (!controller.signal.aborted) setSearching(false);
+      }
+    }, 450);
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [context, focusVersion, text]);
+
+  return (
+    <div className="relative">
+      <AccountInput
+        variant="border"
+        name="line1"
+        value={text}
+        onFocus={() => setFocusVersion((version) => version + 1)}
+        onChange={(event) => {
+          setText(event.target.value);
+          setSelectedPoint(null);
+          onChange(event.target.value);
+        }}
+        onBlur={() => {
+          window.setTimeout(() => setSuggestions([]), 120);
+          onBlur();
+        }}
+        aria-invalid={hasError}
+        placeholder="Nhập địa chỉ và chọn gợi ý"
+        className={`${addressInputClass} ${hasError ? addressErrorBorderClass : ""}`}
+      />
+      {searching ? (
+        <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-[#8B7A80]">
+          Đang tìm...
+        </span>
+      ) : null}
+      {suggestions.length ? (
+        <div className="absolute inset-x-0 top-full z-30 mt-1 grid max-h-56 overflow-y-auto rounded-xl border border-[#EAE1E4] bg-white p-1.5 shadow-[0_12px_30px_rgba(89,44,59,0.12)]">
+          {suggestions.map((suggestion) => (
+            <button
+              type="button"
+              key={suggestion.id}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                setText(suggestion.formattedAddress);
+                setSuggestions([]);
+                setSelectedPoint({
+                  latitude: suggestion.latitude,
+                  longitude: suggestion.longitude,
+                });
+                onSelect(suggestion);
+              }}
+              className="rounded-lg px-3 py-2.5 text-left text-xs leading-5 text-[#4D4045] transition hover:bg-[#FCEEF3]"
+            >
+              {suggestion.formattedAddress}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      {selectedPoint ? (
+        <div className="mt-2 overflow-hidden rounded-xl border border-[#EAE1E4] bg-[#F8F5F6]">
+          <iframe
+            title="Vị trí địa chỉ giao hàng"
+            src={`https://www.google.com/maps?q=${selectedPoint.latitude},${selectedPoint.longitude}&z=16&output=embed`}
+            className="h-44 w-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+          <p className="px-3 py-2 text-xs text-[#6F6066]">
+            Vị trí đã chọn trên bản đồ
+          </p>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -338,7 +461,6 @@ export default function CheckoutClient() {
       [selected.line1, selected.city],
       [selected.ward, selected.district, selected.city],
       [selected.district, selected.city],
-      [selected.city],
     ]
       .map((parts) => parts.filter(Boolean).join(", "))
       .filter(
@@ -368,6 +490,12 @@ export default function CheckoutClient() {
           ),
         );
         return;
+      }
+      if (active) {
+        setPreviewLoading(false);
+        setError(
+          "Không xác định được tọa độ địa chỉ. Vui lòng chọn lại địa chỉ gợi ý.",
+        );
       }
     };
     void resolveAddress().catch(() => undefined);
@@ -401,6 +529,7 @@ export default function CheckoutClient() {
       skipCouponPreviewRef.current = false;
       return;
     }
+    setError("");
     if (
       !items.length ||
       !hasUsableCoordinates(coordinates.latitude, coordinates.longitude)
@@ -1142,17 +1271,34 @@ export default function CheckoutClient() {
                 </label>
                 <label className="grid gap-2 text-sm font-bold sm:col-span-2">
                   Địa chỉ cụ thể
-                  <AccountInput
-                    variant="border"
-                    name="line1"
+                  <CheckoutAddressAutocomplete
                     value={addressFormik.values.line1}
-                    onChange={addressFormik.handleChange}
-                    onBlur={addressFormik.handleBlur}
-                    aria-invalid={Boolean(
+                    context={[
+                      addressFormik.values.ward,
+                      addressFormik.values.city,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                    hasError={Boolean(
                       addressFormik.touched.line1 && addressFormik.errors.line1,
                     )}
-                    placeholder="Số nhà, tên đường"
-                    className={`${addressInputClass} ${addressFormik.touched.line1 && addressFormik.errors.line1 ? addressErrorBorderClass : ""}`}
+                    onChange={(line1) =>
+                      addressFormik.setValues({
+                        ...addressFormik.values,
+                        line1,
+                        latitude: "",
+                        longitude: "",
+                      })
+                    }
+                    onSelect={(suggestion) =>
+                      addressFormik.setValues({
+                        ...addressFormik.values,
+                        line1: suggestion.formattedAddress,
+                        latitude: String(suggestion.latitude),
+                        longitude: String(suggestion.longitude),
+                      })
+                    }
+                    onBlur={() => addressFormik.setFieldTouched("line1", true)}
                   />
                   {addressFormik.touched.line1 && addressFormik.errors.line1 ? (
                     <span
@@ -1161,6 +1307,18 @@ export default function CheckoutClient() {
                       {addressFormik.errors.line1}
                     </span>
                   ) : null}
+                </label>
+                <label className="grid gap-2 text-sm font-bold sm:col-span-2">
+                  Ghi chú
+                  <AccountInput
+                    variant="border"
+                    name="line2"
+                    value={addressFormik.values.line2}
+                    onChange={addressFormik.handleChange}
+                    onBlur={addressFormik.handleBlur}
+                    placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao"
+                    className={addressInputClass}
+                  />
                 </label>
               </div>
               <label className="mt-5 flex min-h-11 items-center gap-3 text-sm font-bold">
@@ -1203,7 +1361,7 @@ export default function CheckoutClient() {
                   {saving ? (
                     <LoaderCircle className="size-4 animate-spin" />
                   ) : null}
-                  {saving ? "Đang lưu..." : "Lưu địa chỉ"}
+                  Lưu địa chỉ
                 </Button>
               </div>
             </form>

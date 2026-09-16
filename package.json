@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build --webpack",
+    "db:migrate:deploy": "prisma migrate deploy",
     "db:clone-prod-to-dev": "bash scripts/clone-prod-to-dev-db.sh",
     "dev": "next dev --webpack",
     "format": "prettier --write .",
@@ -67,6 +68,7 @@
     "sanitize-html": "^2.17.7",
     "swagger-ui-react": "^5.32.15",
     "tailwind-merge": "^3.4.0",
+    "web-push": "^3.6.7",
     "yaml": "^2.9.0",
     "yup": "^1.7.1",
     "zod": "^4.3.6"
@@ -80,6 +82,7 @@
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.1",
     "@types/swagger-ui-react": "^5.18.0",
+    "@types/web-push": "^3.6.4",
     "@types/webpack": "^5.28.5",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",

@@ -14,6 +14,7 @@ export default withPWA({
   skipWaiting: true,
   cacheStartUrl: false,
   dynamicStartUrl: false,
+  customWorkerDir: "worker",
   buildExcludes: [/.*\.js$/],
   disable: process.env.NODE_ENV === "development",
 })(nextConfig);

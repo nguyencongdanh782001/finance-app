@@ -260,6 +260,27 @@ export const NotificationType = {
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
 
 
+export const AdminNotificationType = {
+  NEW_ONLINE_ORDER: 'NEW_ONLINE_ORDER',
+  ONLINE_PAYMENT_SUCCESS: 'ONLINE_PAYMENT_SUCCESS',
+  ONLINE_PAYMENT_FAILED: 'ONLINE_PAYMENT_FAILED',
+  ORDER_CANCELLED: 'ORDER_CANCELLED'
+} as const
+
+export type AdminNotificationType = (typeof AdminNotificationType)[keyof typeof AdminNotificationType]
+
+
+export const NotificationOutboxStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  SENT: 'SENT',
+  PARTIALLY_SENT: 'PARTIALLY_SENT',
+  FAILED: 'FAILED'
+} as const
+
+export type NotificationOutboxStatus = (typeof NotificationOutboxStatus)[keyof typeof NotificationOutboxStatus]
+
+
 export const NotificationPriority = {
   LOW: 'LOW',
   NORMAL: 'NORMAL',

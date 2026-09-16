@@ -189,6 +189,21 @@ enum NotificationType {
   SYSTEM
 }
 
+enum AdminNotificationType {
+  NEW_ONLINE_ORDER
+  ONLINE_PAYMENT_SUCCESS
+  ONLINE_PAYMENT_FAILED
+  ORDER_CANCELLED
+}
+
+enum NotificationOutboxStatus {
+  PENDING
+  PROCESSING
+  SENT
+  PARTIALLY_SENT
+  FAILED
+}
+
 enum NotificationPriority {
   LOW
   NORMAL
@@ -439,31 +454,31 @@ model Product {
   favoriteCountAdjustment Int @default(0)
 
   /// E-commerce fields
-  slug             String?                 @unique
-  description      String?
+  slug               String?                 @unique
+  description        String?
   descriptionContent Json?
-  descriptionHtml String?
-  productStatus    LegacyProductStatus?    @default(DRAFT)
-  visibility       LegacyProductVisibility @default(PUBLIC)
-  status           ProductStatus           @default(PRIVATE)
-  brand            String?
-  material         String?
-  careInstructions String?
-  gender           ProductGender?
-  seoTitle         String?
-  seoDescription   String?
-  seoKeywords      String?
-  isFeatured       Boolean                 @default(false)
-  viewCount        Int                     @default(0)
-  soldCount        Int                     @default(0)
-  publishedAt      DateTime?
-  isPublished      Boolean                 @default(false)
-  tags             Json?
-  videoUrl         String?
-  weight           Decimal?
-  length           Decimal?
-  width            Decimal?
-  height           Decimal?
+  descriptionHtml    String?
+  productStatus      LegacyProductStatus?    @default(DRAFT)
+  visibility         LegacyProductVisibility @default(PUBLIC)
+  status             ProductStatus           @default(PRIVATE)
+  brand              String?
+  material           String?
+  careInstructions   String?
+  gender             ProductGender?
+  seoTitle           String?
+  seoDescription     String?
+  seoKeywords        String?
+  isFeatured         Boolean                 @default(false)
+  viewCount          Int                     @default(0)
+  soldCount          Int                     @default(0)
+  publishedAt        DateTime?
+  isPublished        Boolean                 @default(false)
+  tags               Json?
+  videoUrl           String?
+  weight             Decimal?
+  length             Decimal?
+  width              Decimal?
+  height             Decimal?
 
   /// Relations
   dailySales               DailySoldProduct[]
@@ -584,29 +599,31 @@ model User {
   membershipId Int?
   membership   Membership? @relation(fields: [membershipId], references: [id], onDelete: SetNull)
 
-  sessions               UserSession[]
-  otps                   Otp[]
-  passwordResetTokens    PasswordResetToken[]
-  addresses              UserAddress[]
-  carts                  Cart[]
-  wishlists              Wishlist[]
-  wishlistItems          WishlistItem[]
-  orders                 Order[]
-  createdOrders          Order[]                       @relation("OrderCreatedBy")
-  updatedOrders          Order[]                       @relation("OrderUpdatedBy")
-  issuedInvoices         OrderInvoice[]                @relation("InvoiceIssuedBy")
-  voidedInvoices         OrderInvoice[]                @relation("InvoiceVoidedBy")
-  orderStatusChanges     OrderStatusHistory[]
-  reviews                Review[]
-  notifications          Notification[]
-  searchHistories        SearchHistory[]
-  recentlyViewedProducts RecentlyViewedProduct[]
-  productDrafts          ProductDraft[]
-  productImportJobs      ProductImportJob[]
-  birthdayCoupons        Coupon[]                      @relation("BirthdayCoupons")
-  membershipHistories    MembershipHistory[]
-  benefitRedemptions     MembershipBenefitRedemption[]
-  favoriteAdjustmentLogs ProductFavoriteAdjustmentLog[] @relation("ProductFavoriteAdjustmentAdmin")
+  sessions                    UserSession[]
+  otps                        Otp[]
+  passwordResetTokens         PasswordResetToken[]
+  addresses                   UserAddress[]
+  carts                       Cart[]
+  wishlists                   Wishlist[]
+  wishlistItems               WishlistItem[]
+  orders                      Order[]
+  createdOrders               Order[]                        @relation("OrderCreatedBy")
+  updatedOrders               Order[]                        @relation("OrderUpdatedBy")
+  issuedInvoices              OrderInvoice[]                 @relation("InvoiceIssuedBy")
+  voidedInvoices              OrderInvoice[]                 @relation("InvoiceVoidedBy")
+  orderStatusChanges          OrderStatusHistory[]
+  reviews                     Review[]
+  notifications               Notification[]
+  searchHistories             SearchHistory[]
+  recentlyViewedProducts      RecentlyViewedProduct[]
+  productDrafts               ProductDraft[]
+  productImportJobs           ProductImportJob[]
+  birthdayCoupons             Coupon[]                       @relation("BirthdayCoupons")
+  membershipHistories         MembershipHistory[]
+  benefitRedemptions          MembershipBenefitRedemption[]
+  favoriteAdjustmentLogs      ProductFavoriteAdjustmentLog[] @relation("ProductFavoriteAdjustmentAdmin")
+  adminNotificationRecipients AdminNotificationRecipient[]
+  pushSubscriptions           PushSubscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1172,16 +1189,16 @@ model WishlistItem {
 }
 
 model ProductFavoriteAdjustmentLog {
-  id                    Int      @id @default(autoincrement())
-  productId             Int
-  adminId               Int
-  previousAdjustment    Int
-  newAdjustment         Int
-  organicCount          Int
-  previousDisplayCount  Int
-  newDisplayCount       Int
-  reason                String?
-  createdAt             DateTime @default(now())
+  id                   Int      @id @default(autoincrement())
+  productId            Int
+  adminId              Int
+  previousAdjustment   Int
+  newAdjustment        Int
+  organicCount         Int
+  previousDisplayCount Int
+  newDisplayCount      Int
+  reason               String?
+  createdAt            DateTime @default(now())
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   admin   User    @relation("ProductFavoriteAdjustmentAdmin", fields: [adminId], references: [id], onDelete: Restrict)
@@ -1234,35 +1251,35 @@ model Order {
   discountRedemption   DiscountRedemption?
   discountCodeSnapshot String?
 
-  receiverName     String?
-  receiverPhone    String?
-  receiverAddress  String?
-  receiverWard     String?
-  receiverDistrict String?
-  receiverProvince String?
-  latitude         Decimal?
-  longitude        Decimal?
-  shippingDistanceMeters Int?
-  shippingDistanceKm Decimal?
-  shippingEstimatedMinutes Int?
-  shippingOriginAddress String?
-  shippingOriginLatitude Decimal?
-  shippingOriginLongitude Decimal?
-  shippingDestinationLatitude Decimal?
+  receiverName                 String?
+  receiverPhone                String?
+  receiverAddress              String?
+  receiverWard                 String?
+  receiverDistrict             String?
+  receiverProvince             String?
+  latitude                     Decimal?
+  longitude                    Decimal?
+  shippingDistanceMeters       Int?
+  shippingDistanceKm           Decimal?
+  shippingEstimatedMinutes     Int?
+  shippingOriginAddress        String?
+  shippingOriginLatitude       Decimal?
+  shippingOriginLongitude      Decimal?
+  shippingDestinationLatitude  Decimal?
   shippingDestinationLongitude Decimal?
-  shippingRawDistanceMeters Int?
-  shippingRoundedDistanceKm Decimal?
-  shippingFreeDistanceKm Decimal?
+  shippingRawDistanceMeters    Int?
+  shippingRoundedDistanceKm    Decimal?
+  shippingFreeDistanceKm       Decimal?
   shippingChargeableDistanceKm Decimal?
-  shippingBaseFee Int?
-  shippingPricePerKm Int?
-  shippingFeeBeforePromotion Int?
-  shippingDiscount Int?
-  shippingPromotionId Int?
-  shippingPromotion ShippingPromotion? @relation(fields: [shippingPromotionId], references: [id], onDelete: SetNull)
-  shippingPromotionName String?
-  shippingQuoteProvider String?
-  shippingCalculatedAt DateTime?
+  shippingBaseFee              Int?
+  shippingPricePerKm           Int?
+  shippingFeeBeforePromotion   Int?
+  shippingDiscount             Int?
+  shippingPromotionId          Int?
+  shippingPromotion            ShippingPromotion? @relation(fields: [shippingPromotionId], references: [id], onDelete: SetNull)
+  shippingPromotionName        String?
+  shippingQuoteProvider        String?
+  shippingCalculatedAt         DateTime?
 
   items                        OrderItem[]
   soldContributions            DailySoldProductContribution[]
@@ -1271,6 +1288,7 @@ model Order {
   shipments                    Shipping[]
   statusHistories              OrderStatusHistory[]
   invoices                     OrderInvoice[]
+  adminNotifications           AdminNotification[]
 
   note String?
 
@@ -1342,55 +1360,55 @@ model OrderItem {
 }
 
 model OrderInvoice {
-  id                       Int           @id @default(autoincrement())
-  orderId                  Int
-  invoiceNumber            String        @unique
-  version                  Int           @default(1)
-  status                   InvoiceStatus @default(DRAFT)
-  publicToken              String?       @unique
-  publicAccessEnabled      Boolean       @default(true)
-  isPrimary                Boolean       @default(true)
+  id                  Int           @id @default(autoincrement())
+  orderId             Int
+  invoiceNumber       String        @unique
+  version             Int           @default(1)
+  status              InvoiceStatus @default(DRAFT)
+  publicToken         String?       @unique
+  publicAccessEnabled Boolean       @default(true)
+  isPrimary           Boolean       @default(true)
 
-  orderCodeSnapshot        String
-  orderSourceSnapshot      OrderSource
-  orderStatusSnapshot      OrderStatus
-  paymentMethodSnapshot    PaymentMethod?
-  paymentStatusSnapshot    PaymentStatus?
+  orderCodeSnapshot     String
+  orderSourceSnapshot   OrderSource
+  orderStatusSnapshot   OrderStatus
+  paymentMethodSnapshot PaymentMethod?
+  paymentStatusSnapshot PaymentStatus?
 
-  sellerName               String?
-  sellerPhone              String?
-  sellerEmail              String?
-  sellerAddress            String?
-  sellerLogoUrl             String?
-  sellerTaxCode             String?
-  sellerFooterNote          String?
-  returnPolicyNote          String?
+  sellerName       String?
+  sellerPhone      String?
+  sellerEmail      String?
+  sellerAddress    String?
+  sellerLogoUrl    String?
+  sellerTaxCode    String?
+  sellerFooterNote String?
+  returnPolicyNote String?
 
-  customerName             String?
-  customerPhone            String?
-  customerEmail            String?
-  shippingAddress          String?
-  subtotal                 Decimal       @default(0)
-  discountAmount           Decimal       @default(0)
-  shippingFee              Decimal       @default(0)
-  taxAmount                Decimal       @default(0)
-  totalAmount              Decimal       @default(0)
-  couponCodeSnapshot       String?
-  note                     String?
+  customerName       String?
+  customerPhone      String?
+  customerEmail      String?
+  shippingAddress    String?
+  subtotal           Decimal @default(0)
+  discountAmount     Decimal @default(0)
+  shippingFee        Decimal @default(0)
+  taxAmount          Decimal @default(0)
+  totalAmount        Decimal @default(0)
+  couponCodeSnapshot String?
+  note               String?
 
-  issuedAt                 DateTime?
-  issuedById               Int?
-  voidedAt                 DateTime?
-  voidedById               Int?
-  voidReason               String?
-  sourceUpdatedAtSnapshot  DateTime
-  createdAt                DateTime      @default(now())
-  updatedAt                DateTime      @updatedAt
+  issuedAt                DateTime?
+  issuedById              Int?
+  voidedAt                DateTime?
+  voidedById              Int?
+  voidReason              String?
+  sourceUpdatedAtSnapshot DateTime
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
-  order                    Order         @relation(fields: [orderId], references: [id], onDelete: Restrict)
-  issuedBy                 User?         @relation("InvoiceIssuedBy", fields: [issuedById], references: [id], onDelete: SetNull)
-  voidedBy                 User?         @relation("InvoiceVoidedBy", fields: [voidedById], references: [id], onDelete: SetNull)
-  items                    OrderInvoiceItem[]
+  order    Order              @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  issuedBy User?              @relation("InvoiceIssuedBy", fields: [issuedById], references: [id], onDelete: SetNull)
+  voidedBy User?              @relation("InvoiceVoidedBy", fields: [voidedById], references: [id], onDelete: SetNull)
+  items    OrderInvoiceItem[]
 
   @@unique([orderId, version])
   @@index([orderId, status])
@@ -1399,22 +1417,22 @@ model OrderInvoice {
 }
 
 model OrderInvoiceItem {
-  id             Int      @id @default(autoincrement())
-  invoiceId      Int
-  orderItemId    Int?
-  productName    String
-  variantName    String?
-  colorName      String?
-  sizeName       String?
-  sku            String?
-  imageUrl       String?
-  quantity       Int
-  unitPrice      Decimal
-  lineDiscount   Decimal  @default(0)
-  lineTotal      Decimal
+  id           Int     @id @default(autoincrement())
+  invoiceId    Int
+  orderItemId  Int?
+  productName  String
+  variantName  String?
+  colorName    String?
+  sizeName     String?
+  sku          String?
+  imageUrl     String?
+  quantity     Int
+  unitPrice    Decimal
+  lineDiscount Decimal @default(0)
+  lineTotal    Decimal
 
-  invoice        OrderInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  orderItem      OrderItem?   @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  invoice   OrderInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  orderItem OrderItem?   @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
 
   @@index([invoiceId])
   @@map("order_invoice_item")
@@ -1429,17 +1447,17 @@ model InvoiceSequence {
 }
 
 model StoreSetting {
-  id              Int      @id @default(1)
-  storeName       String?
-  phone           String?
-  email           String?
-  address         String?
-  logoUrl         String?
-  taxCode         String?
-  invoiceFooter   String?
-  returnPolicy    String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id            Int      @id @default(1)
+  storeName     String?
+  phone         String?
+  email         String?
+  address       String?
+  logoUrl       String?
+  taxCode       String?
+  invoiceFooter String?
+  returnPolicy  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("store_setting")
 }
@@ -1447,45 +1465,45 @@ model StoreSetting {
 model ShippingConfiguration {
   id Int @id @default(1)
 
-  enabled Boolean @default(true)
-  shopName String?
-  formattedAddress String?
-  streetAddress String?
-  ward String?
-  district String?
-  province String?
-  latitude Decimal?
-  longitude Decimal?
-  placeId String?
-  baseFee Int @default(10000)
-  pricePerKm Int @default(5000)
-  maximumDeliveryDistanceKm Decimal @default(30)
-  distanceRoundingMode ShippingDistanceRoundingMode @default(UP_TO_0_5_KM)
-  feeRoundingStep Int @default(1000)
-  minimumShippingFee Int?
-  maximumShippingFee Int?
-  updatedById Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  enabled                   Boolean                      @default(true)
+  shopName                  String?
+  formattedAddress          String?
+  streetAddress             String?
+  ward                      String?
+  district                  String?
+  province                  String?
+  latitude                  Decimal?
+  longitude                 Decimal?
+  placeId                   String?
+  baseFee                   Int                          @default(10000)
+  pricePerKm                Int                          @default(5000)
+  maximumDeliveryDistanceKm Decimal                      @default(30)
+  distanceRoundingMode      ShippingDistanceRoundingMode @default(UP_TO_0_5_KM)
+  feeRoundingStep           Int                          @default(1000)
+  minimumShippingFee        Int?
+  maximumShippingFee        Int?
+  updatedById               Int?
+  createdAt                 DateTime                     @default(now())
+  updatedAt                 DateTime                     @updatedAt
 
   @@map("shipping_configuration")
 }
 
 model ShippingPromotion {
-  id Int @id @default(autoincrement())
-  name String
-  description String?
-  minimumOrderValue Int
-  freeDistanceKm Decimal
+  id                      Int       @id @default(autoincrement())
+  name                    String
+  description             String?
+  minimumOrderValue       Int
+  freeDistanceKm          Decimal
   maximumShippingDiscount Int?
-  priority Int @default(0)
-  isActive Boolean @default(true)
-  startsAt DateTime?
-  endsAt DateTime?
-  createdById Int?
-  updatedById Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  priority                Int       @default(0)
+  isActive                Boolean   @default(true)
+  startsAt                DateTime?
+  endsAt                  DateTime?
+  createdById             Int?
+  updatedById             Int?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
   orders Order[]
 
@@ -1901,6 +1919,82 @@ model Notification {
   @@map("notification")
 }
 
+model AdminNotification {
+  id        String                @id @default(cuid())
+  type      AdminNotificationType
+  title     String
+  message   String
+  orderId   Int?
+  eventKey  String                @unique
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  order        Order?                       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  recipients   AdminNotificationRecipient[]
+  outboxEvents NotificationOutbox[]
+
+  @@index([type, createdAt])
+  @@index([orderId])
+  @@map("admin_notification")
+}
+
+model AdminNotificationRecipient {
+  id             String    @id @default(cuid())
+  notificationId String
+  userId         Int
+  isRead         Boolean   @default(false)
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  notification AdminNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([userId, isRead, createdAt])
+  @@map("admin_notification_recipient")
+}
+
+model PushSubscription {
+  id         String    @id @default(cuid())
+  userId     Int
+  endpoint   String    @unique
+  p256dh     String
+  auth       String
+  deviceName String?
+  userAgent  String?
+  platform   String?
+  isActive   Boolean   @default(true)
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isActive])
+  @@map("push_subscription")
+}
+
+model NotificationOutbox {
+  id             String                   @id @default(cuid())
+  eventKey       String                   @unique
+  eventType      AdminNotificationType
+  aggregateId    Int
+  notificationId String
+  payload        Json
+  status         NotificationOutboxStatus @default(PENDING)
+  attempts       Int                      @default(0)
+  nextRetryAt    DateTime?
+  processedAt    DateTime?
+  lastError      String?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  notification AdminNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([status, nextRetryAt])
+  @@map("notification_outbox")
+}
+
 model SearchHistory {
   id Int @id @default(autoincrement())
 
@@ -1942,32 +2036,32 @@ model RecentlyViewedProduct {
 model HomepageBanner {
   id Int @id @default(autoincrement())
 
-  internalName  String                @default("Banner trang chủ")
-  title         String
-  subtitle      String?
-  eyebrow       String?
-  description   String?
-  imageUrl      String
-  desktopImage  String?
-  mobileImage   String?
-  imagePublicId String?
+  internalName        String                  @default("Banner trang chủ")
+  title               String
+  subtitle            String?
+  eyebrow             String?
+  description         String?
+  imageUrl            String
+  desktopImage        String?
+  mobileImage         String?
+  imagePublicId       String?
   mobileImagePublicId String?
-  imageAlt      String                @default("")
-  linkUrl       String?
-  primaryCtaLabel String?
-  primaryCtaUrl   String?
-  secondaryCtaLabel String?
-  secondaryCtaUrl   String?
-  textAlignment BannerTextAlignment   @default(LEFT)
-  textTheme     BannerTextTheme       @default(LIGHT)
-  overlayOpacity Int                  @default(20)
-  placement     HomepageBannerPlacement @default(HERO)
-  position      Int                     @default(0)
-  isActive      Boolean                 @default(true)
-  startsAt      DateTime?
-  endsAt        DateTime?
-  createdById   Int?
-  updatedById   Int?
+  imageAlt            String                  @default("")
+  linkUrl             String?
+  primaryCtaLabel     String?
+  primaryCtaUrl       String?
+  secondaryCtaLabel   String?
+  secondaryCtaUrl     String?
+  textAlignment       BannerTextAlignment     @default(LEFT)
+  textTheme           BannerTextTheme         @default(LIGHT)
+  overlayOpacity      Int                     @default(20)
+  placement           HomepageBannerPlacement @default(HERO)
+  position            Int                     @default(0)
+  isActive            Boolean                 @default(true)
+  startsAt            DateTime?
+  endsAt              DateTime?
+  createdById         Int?
+  updatedById         Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1981,27 +2075,27 @@ model HomepageBanner {
 }
 
 model StorePolicy {
-  id              Int          @id @default(autoincrement())
-  type            PolicyType
-  title           String
-  slug            String       @unique
-  summary         String?
-  summaryJson     Json?
-  summaryHtml     String?
-  summaryText     String?
-  content         Json
-  contentJson     Json?
-  contentHtml     String?
-  status          PolicyStatus @default(DRAFT)
-  showInFooter    Boolean      @default(true)
-  footerOrder     Int          @default(0)
-  seoTitle        String?
-  seoDescription  String?
-  publishedAt     DateTime?
-  createdById     Int?
-  updatedById     Int?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id             Int          @id @default(autoincrement())
+  type           PolicyType
+  title          String
+  slug           String       @unique
+  summary        String?
+  summaryJson    Json?
+  summaryHtml    String?
+  summaryText    String?
+  content        Json
+  contentJson    Json?
+  contentHtml    String?
+  status         PolicyStatus @default(DRAFT)
+  showInFooter   Boolean      @default(true)
+  footerOrder    Int          @default(0)
+  seoTitle       String?
+  seoDescription String?
+  publishedAt    DateTime?
+  createdById    Int?
+  updatedById    Int?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([status, showInFooter, footerOrder])
   @@index([type])

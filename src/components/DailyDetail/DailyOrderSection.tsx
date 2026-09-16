@@ -61,6 +61,7 @@ import {
 import Link from "next/link";
 import {
   type ComponentType,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -896,37 +897,48 @@ export default function DailyOrderSection({
     paymentStatus !== "ALL" ||
     paymentMethod !== "ALL";
 
-  const fetchOrders = async (showLoading = true) => {
-    if (!dailyId) {
-      return;
-    }
+  const fetchOrders = useCallback(
+    async (showLoading = true) => {
+      if (!dailyId) {
+        return;
+      }
 
-    if (showLoading) {
-      setIsLoading(true);
-    }
+      if (showLoading) {
+        setIsLoading(true);
+      }
 
-    const res = await financeAPI.getDailyOrders(dailyId, {
-      search: debouncedSearch || undefined,
-      source: invoiceOnly ? "ALL" : activeTab,
-      status: invoiceOnly || activeTab === "OFFLINE" ? "ALL" : status,
-      paymentStatus,
-      paymentMethod,
-    });
-
-    if (res.code === RESPONSE_CODES.success && res.data) {
-      setOrders(res.data);
-    } else {
-      toast({
-        title:
-          (res.data as { message?: string } | undefined)?.message ||
-          "Không tải được danh sách đơn hàng",
-        className: "bg-red-1 text-white text-sm font-medium",
-        duration: 3000,
+      const res = await financeAPI.getDailyOrders(dailyId, {
+        search: debouncedSearch || undefined,
+        source: invoiceOnly ? "ALL" : activeTab,
+        status: invoiceOnly || activeTab === "OFFLINE" ? "ALL" : status,
+        paymentStatus,
+        paymentMethod,
       });
-    }
 
-    setIsLoading(false);
-  };
+      if (res.code === RESPONSE_CODES.success && res.data) {
+        setOrders(res.data);
+      } else {
+        toast({
+          title:
+            (res.data as { message?: string } | undefined)?.message ||
+            "Không tải được danh sách đơn hàng",
+          className: "bg-red-1 text-white text-sm font-medium",
+          duration: 3000,
+        });
+      }
+
+      setIsLoading(false);
+    },
+    [
+      activeTab,
+      debouncedSearch,
+      dailyId,
+      invoiceOnly,
+      paymentMethod,
+      paymentStatus,
+      status,
+    ],
+  );
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setDebouncedSearch(search), 300);
@@ -936,15 +948,22 @@ export default function DailyOrderSection({
 
   useEffect(() => {
     void fetchOrders();
-  }, [
-    dailyId,
-    debouncedSearch,
-    activeTab,
-    invoiceOnly,
-    status,
-    paymentStatus,
-    paymentMethod,
-  ]);
+  }, [fetchOrders]);
+
+  useEffect(() => {
+    const handleAdminOrderNotification = () => {
+      void fetchOrders(false);
+    };
+    window.addEventListener(
+      "admin-order-notification",
+      handleAdminOrderNotification,
+    );
+    return () =>
+      window.removeEventListener(
+        "admin-order-notification",
+        handleAdminOrderNotification,
+      );
+  }, [fetchOrders]);
 
   useEffect(() => {
     if (tableScrollerRef.current) {
