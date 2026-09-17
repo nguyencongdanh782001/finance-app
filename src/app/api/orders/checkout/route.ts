@@ -3,12 +3,7 @@
 import prisma from "@/lib/db";
 import { verifyJwt } from "@/lib/auth/crypto";
 import { NextResponse } from "next/server";
-import { calculateShippingQuote, validateCoordinates } from "@/lib/geoapify";
 import { validateDiscount } from "@/lib/discounts";
-import {
-  createShippingCalculation,
-  getShippingConfiguration,
-} from "@/lib/shipping";
 import {
   createNewOnlineOrderNotification,
   dispatchNotificationOutboxBestEffort,
@@ -72,39 +67,17 @@ export async function POST(request: Request) {
   const couponCode = String(body.couponCode || "").trim();
   if (!receiverName || !receiverPhone || !receiverAddress)
     return fail("Vui lòng nhập đủ thông tin nhận hàng.");
-  if (!validateCoordinates(destinationLatitude, destinationLongitude))
-    return fail("Vui lòng chọn địa chỉ giao hàng từ danh sách gợi ý.", 422);
-
   try {
-    let quote = await calculateShippingQuote(
-      destinationLatitude,
-      destinationLongitude,
-    );
-    let shippingCalculation: any = null;
+    const shippingCalculation: any = null;
     const resolveShipping = async (eligibleOrderValue: number) => {
-      const config = await getShippingConfiguration();
-      if (
-        config.latitude == null ||
-        config.longitude == null ||
-        !validateCoordinates(config.latitude, config.longitude)
-      )
-        return;
-      shippingCalculation = await createShippingCalculation({
-        destinationLatitude,
-        destinationLongitude,
-        eligibleOrderValue,
-      });
-      quote = {
-        ...quote,
-        distanceMeters: shippingCalculation.route.distanceMeters,
-        distanceKm: shippingCalculation.route.distanceMeters / 1000,
-        roundedDistanceKm: shippingCalculation.calculation.roundedDistanceKm,
-        estimatedDurationSeconds:
-          shippingCalculation.route.estimatedDurationSeconds,
-        estimatedDurationMinutes:
-          shippingCalculation.route.estimatedDurationMinutes,
-        shippingFee: shippingCalculation.calculation.finalShippingFee,
-      };
+      void eligibleOrderValue;
+    };
+    const quote = {
+      shippingFee: 0,
+      distanceMeters: 0,
+      distanceKm: 0,
+      roundedDistanceKm: 0,
+      estimatedDurationMinutes: 0,
     };
     const result = await prisma.$transaction(
       async (tx) => {

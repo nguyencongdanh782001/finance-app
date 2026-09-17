@@ -1199,7 +1199,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="max-h-[45svh] min-h-0 flex-auto basis-0 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-5 xl:max-h-none xl:min-h-48 xl:flex-[1_1_45%] 3xl:flex-[1_1_auto]">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y px-4 pb-3 sm:px-5 xl:min-h-48 xl:flex-[1_1_45%] 3xl:flex-[1_1_auto]">
         {form.items.length ? (
           form.items.map((item, index) => (
             <OrderCartItem
@@ -1224,7 +1224,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="min-h-0 flex-1 basis-0 overflow-y-auto overscroll-contain touch-pan-y border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5 xl:flex-[1_1_55%] 3xl:flex-[1_1_auto]">
+      <div className="h-125 shrink-0 overflow-hidden border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5 xl:h-auto xl:min-h-0 xl:flex-[1_1_55%] xl:overflow-y-auto xl:overscroll-contain 3xl:flex-[1_1_auto]">
         <div className="border-b border-[#EAE1E4] py-3">
           <label className="text-xs font-bold text-[#2D2226]">
             Khách hàng / số điện thoại
