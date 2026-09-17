@@ -201,7 +201,7 @@ function ProductResultRow({
       disabled={isUnavailable || isMaxedOut}
       onClick={() => onChoose(product)}
       className={cn(
-        "group flex min-h-20 w-full min-w-0 items-center gap-3 overflow-hidden border-b border-[#EAE1E4] px-2 py-3 text-left outline-none transition last:border-b-0 hover:bg-[#FCFAFB] focus-visible:bg-[#FCEEF3] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D96C8A]/35 disabled:cursor-not-allowed disabled:opacity-50 max-sm:mb-2 max-sm:rounded-xl max-sm:border max-sm:bg-white max-sm:p-3",
+        "group flex min-h-20 w-full min-w-0 items-center gap-3 overflow-hidden border-b border-[#EAE1E4] px-2 py-3 text-left outline-none transition hover:bg-[#FCFAFB] focus-visible:bg-[#FCEEF3] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D96C8A]/35 disabled:cursor-not-allowed disabled:opacity-50 max-sm:mb-2 max-sm:rounded-xl max-sm:border max-sm:bg-white max-sm:p-3",
         selected.length && "border-[#D96C8A] bg-[#FCEEF3] hover:bg-[#FCEEF3]",
       )}
     >
@@ -630,7 +630,7 @@ function ProductSearchPanel({
         </div>
       </div>
 
-      <div className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-contain bg-white px-2 py-1 touch-pan-y sm:px-4 max-sm:bg-[#F8F5F6] max-sm:px-4 max-sm:pb-[calc(10rem+env(safe-area-inset-bottom))] max-sm:pt-3">
+      <div className="min-h-0 flex-1 basis-0 overflow-y-auto overscroll-contain bg-white px-2 py-1 touch-pan-y sm:px-4 max-sm:bg-[#F8F5F6] max-sm:px-4 max-sm:pb-[calc(10rem+env(safe-area-inset-bottom))] max-sm:pt-3">
         {isSearching ? (
           Array.from({ length: 6 }, (_, index) => (
             <ProductResultSkeleton key={index} />
@@ -1199,7 +1199,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 sm:px-5 xl:min-h-48 xl:flex-[1_1_40%]">
+      <div className="max-h-[45svh] min-h-0 flex-1 basis-0 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-5 xl:max-h-none xl:min-h-48 xl:flex-[1_1_45%] 3xl:flex-[1_1_auto]">
         {form.items.length ? (
           form.items.map((item, index) => (
             <OrderCartItem
@@ -1224,7 +1224,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="min-h-0 flex-[1_1_60%] overflow-y-auto border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5">
+      <div className="min-h-0 flex-1 basis-0 overflow-y-auto overscroll-contain touch-pan-y border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5 xl:flex-[1_1_55%] 3xl:flex-[1_1_auto]">
         <div className="border-b border-[#EAE1E4] py-3">
           <label className="text-xs font-bold text-[#2D2226]">
             Khách hàng / số điện thoại
@@ -1646,7 +1646,7 @@ export function OfflineOrderEditor({
         </header>
 
         <div className="grid h-full min-h-0 flex-1 xl:grid-cols-[minmax(0,3fr)_minmax(430px,2fr)]">
-          <div className="flex h-full min-h-0 flex-col xl:pb-0">
+          <div className="flex h-full min-h-0 flex-1 flex-col xl:pb-0">
             <ProductSearchPanel
               products={products}
               selectedItems={form.items}
@@ -1695,7 +1695,7 @@ export function OfflineOrderEditor({
         <Sheet open={cartOpen} onOpenChange={setCartOpen}>
           <SheetContent
             side="right"
-            className="shop-order-modal z-(--z-dialog) h-[100svh]! min-h-[100svh]! w-full! max-w-full! overflow-hidden p-0 sm:h-dvh! sm:min-h-0 sm:w-[min(92vw,560px)]!"
+            className="shop-order-modal z-(--z-dialog) h-svh! min-h-svh! w-full! max-w-full! overflow-hidden p-0 sm:h-dvh! sm:min-h-0 sm:w-[min(92vw,560px)]!"
           >
             <SheetTitle className="sr-only">Đơn hàng hiện tại</SheetTitle>
             <SheetDescription className="sr-only">
