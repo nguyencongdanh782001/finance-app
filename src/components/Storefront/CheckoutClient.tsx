@@ -29,10 +29,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 const money = (value: number) =>
   `${Math.round(value).toLocaleString("vi-VN")}đ`;
 
-const hasUsableCoordinates = (latitude: number, longitude: number) =>
-  Number.isFinite(latitude) &&
-  Number.isFinite(longitude) &&
-  !(latitude === 0 && longitude === 0);
 type Item = {
   variantId: number;
   quantity: number;
@@ -290,13 +286,6 @@ export default function CheckoutClient() {
   const [items, setItems] = useState<Item[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [manual, setManual] = useState({
-    fullName: "",
-    phone: "",
-    address: "",
-    latitude: "",
-    longitude: "",
-  });
   const [addressForm, setAddressForm] = useState(emptyAddress);
   const [editing, setEditing] = useState<number | null>(null);
   const [addressOpen, setAddressOpen] = useState(false);
@@ -304,7 +293,6 @@ export default function CheckoutClient() {
   const [addressError, setAddressError] = useState("");
   const [addressesOpen, setAddressesOpen] = useState(false);
   const [addressRevision, setAddressRevision] = useState(0);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
   const skipCouponPreviewRef = useRef(false);
@@ -317,7 +305,6 @@ export default function CheckoutClient() {
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [shippingDetailsOpen, setShippingDetailsOpen] = useState(false);
   const addressFormik = useFormik({
     initialValues: addressForm,
     enableReinitialize: true,
@@ -430,79 +417,6 @@ export default function CheckoutClient() {
   const selectedProvince = provinces.find(
     (item) => item.name === addressFormik.values.city,
   );
-  const coordinates = selected
-    ? hasUsableCoordinates(
-        Number(selected.latitude),
-        Number(selected.longitude),
-      )
-      ? {
-          latitude: Number(selected.latitude),
-          longitude: Number(selected.longitude),
-        }
-      : { latitude: 0, longitude: 0 }
-    : {
-        latitude: Number(manual.latitude),
-        longitude: Number(manual.longitude),
-      };
-
-  useEffect(() => {
-    if (
-      !selected ||
-      hasUsableCoordinates(
-        Number(selected.latitude),
-        Number(selected.longitude),
-      )
-    )
-      return;
-    const addressQueries = [
-      [selected.line1, selected.ward, selected.district, selected.city],
-      [selected.line1, selected.ward, selected.city],
-      [selected.line1, selected.district, selected.city],
-      [selected.line1, selected.city],
-      [selected.ward, selected.district, selected.city],
-      [selected.district, selected.city],
-    ]
-      .map((parts) => parts.filter(Boolean).join(", "))
-      .filter(
-        (query, index, queries) =>
-          query.length >= 3 && queries.indexOf(query) === index,
-      );
-    if (!addressQueries.length) return;
-    let active = true;
-    const resolveAddress = async () => {
-      for (const query of addressQueries) {
-        const response = await fetch(
-          `/api/locations/autocomplete?text=${encodeURIComponent(query)}`,
-        );
-        if (!response.ok) continue;
-        const data = (await response.json()) as { suggestions?: Suggestion[] };
-        const suggestion = data.suggestions?.[0];
-        if (!active || !suggestion) continue;
-        setAddresses((current) =>
-          current.map((address) =>
-            address.id === selected.id
-              ? {
-                  ...address,
-                  latitude: suggestion.latitude,
-                  longitude: suggestion.longitude,
-                }
-              : address,
-          ),
-        );
-        return;
-      }
-      if (active) {
-        setPreviewLoading(false);
-        setError(
-          "Không xác định được tọa độ địa chỉ. Vui lòng chọn lại địa chỉ gợi ý.",
-        );
-      }
-    };
-    void resolveAddress().catch(() => undefined);
-    return () => {
-      active = false;
-    };
-  }, [selected]);
   const receiver = selected
     ? {
         receiverName: selected.fullName,
@@ -516,11 +430,7 @@ export default function CheckoutClient() {
           .filter(Boolean)
           .join(", "),
       }
-    : {
-        receiverName: manual.fullName,
-        receiverPhone: manual.phone,
-        receiverAddress: manual.address,
-      };
+    : { receiverName: "", receiverPhone: "", receiverAddress: "" };
 
   useEffect(() => {
     previewAbortRef.current?.abort();
@@ -532,7 +442,7 @@ export default function CheckoutClient() {
     setError("");
     if (
       !items.length ||
-      !hasUsableCoordinates(coordinates.latitude, coordinates.longitude)
+      !selectedId
     ) {
       setPreview(null);
       setPreviewLoading(Boolean(items.length && selectedId));
@@ -550,7 +460,6 @@ export default function CheckoutClient() {
         signal: requestController.signal,
         body: JSON.stringify({
           intent: token,
-          ...coordinates,
           couponCode: appliedCoupon,
         }),
       })
@@ -581,8 +490,6 @@ export default function CheckoutClient() {
     };
   }, [
     appliedCoupon,
-    coordinates.latitude,
-    coordinates.longitude,
     items.length,
     selectedId,
     token,
@@ -598,7 +505,6 @@ export default function CheckoutClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           intent: token,
-          ...coordinates,
           couponCode: code,
         }),
       });
@@ -619,26 +525,12 @@ export default function CheckoutClient() {
     }
   };
 
-  const lookup = (value: string) => {
-    setManual((current) => ({
-      ...current,
-      address: value,
-      latitude: "",
-      longitude: "",
-    }));
-    if (value.trim().length < 3) return setSuggestions([]);
-    fetch(`/api/locations/autocomplete?text=${encodeURIComponent(value)}`)
-      .then((response) => (response.ok ? response.json() : { suggestions: [] }))
-      .then((data) => setSuggestions(data.suggestions || []))
-      .catch(() => setSuggestions([]));
-  };
   const submit = async () => {
     if (
       !receiver.receiverName ||
       !receiver.receiverPhone ||
       !receiver.receiverAddress ||
-      !Number.isFinite(coordinates.latitude) ||
-      !Number.isFinite(coordinates.longitude)
+      !selectedId
     )
       return setError("Vui lòng chọn hoặc nhập địa chỉ giao hàng hợp lệ.");
     if (!preview?.shipping.available || previewLoading)
@@ -651,7 +543,6 @@ export default function CheckoutClient() {
         intent: token,
         addressId: selectedId || undefined,
         ...receiver,
-        ...coordinates,
         paymentMethod,
         couponCode: appliedCoupon,
       }),
@@ -674,7 +565,7 @@ export default function CheckoutClient() {
     couponDiscount: 0,
     shippingFee: 0,
     payableTotal: subtotal,
-    shipping: { available: false },
+    shipping: { available: true },
   };
   if (loading)
     return (
@@ -823,56 +714,9 @@ export default function CheckoutClient() {
                     </div>
                   ) : (
                     <p className="mt-4 text-sm text-[#6F6066]">
-                      Chưa có địa chỉ đã lưu. Nhập địa chỉ giao hàng bên dưới.
+                      Chưa có địa chỉ đã lưu. Hãy bấm “Thêm địa chỉ” để nhập địa
+                      chỉ giao hàng.
                     </p>
-                  )}
-                  {!selected && (
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                      <Input
-                        value={manual.fullName}
-                        onChange={(event) =>
-                          setManual({ ...manual, fullName: event.target.value })
-                        }
-                        placeholder="Tên người nhận"
-                      />
-                      <Input
-                        value={manual.phone}
-                        onChange={(event) =>
-                          setManual({ ...manual, phone: event.target.value })
-                        }
-                        placeholder="Số điện thoại"
-                      />
-                      <div className="relative sm:col-span-2">
-                        <textarea
-                          value={manual.address}
-                          onChange={(event) => lookup(event.target.value)}
-                          placeholder="Địa chỉ cụ thể"
-                          className="min-h-24 w-full rounded-xl border border-[#EAE1E4] p-3 text-base outline-none focus:border-[#D96C8A]"
-                        />
-                        {suggestions.length ? (
-                          <div className="absolute z-20 mt-1 w-full rounded-xl border border-[#EAE1E4] bg-white p-1 shadow-lg">
-                            {suggestions.map((suggestion) => (
-                              <button
-                                type="button"
-                                key={suggestion.id}
-                                onClick={() => {
-                                  setManual({
-                                    ...manual,
-                                    address: suggestion.formattedAddress,
-                                    latitude: String(suggestion.latitude),
-                                    longitude: String(suggestion.longitude),
-                                  });
-                                  setSuggestions([]);
-                                }}
-                                className="block w-full p-3 text-left text-sm hover:bg-[#FCEEF3]"
-                              >
-                                {suggestion.formattedAddress}
-                              </button>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
                   )}
                   {addresses.length > 1 ? (
                     <button
@@ -997,58 +841,6 @@ export default function CheckoutClient() {
                       {money(summary.subtotal)}
                     </dd>
                   </div>
-                  {preview?.shipping.available ? (
-                    <div className="border-t border-[#EAE1E4] pt-3">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShippingDetailsOpen((value) => !value)
-                        }
-                        className="flex w-full items-center justify-between text-left text-sm"
-                      >
-                        <span>Khoảng cách giao hàng</span>
-                        <span className="font-bold text-[#2D2226]">
-                          {preview.shipping.estimatedDistanceKm?.toFixed(1)}km{" "}
-                          <ChevronDown
-                            className={`ml-1 inline size-4 transition-transform ${shippingDetailsOpen ? "rotate-180" : ""}`}
-                          />
-                        </span>
-                      </button>
-                      {shippingDetailsOpen ? (
-                        <div className="mt-3 space-y-2 rounded-xl bg-[#FFF8FA] p-3 text-xs text-[#6F6066]">
-                          <div className="flex justify-between">
-                            <span>Khoảng cách tính phí</span>
-                            <strong>
-                              {preview.shipping.chargeableDistanceKm?.toFixed(
-                                1,
-                              )}
-                              km
-                            </strong>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Phí cơ bản</span>
-                            <strong>
-                              {money(preview.shipping.baseFee || 0)}
-                            </strong>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Phí theo khoảng cách</span>
-                            <strong>
-                              {money(preview.shipping.distanceFee || 0)}
-                            </strong>
-                          </div>
-                          {preview.shipping.freeDistanceKm ? (
-                            <div className="flex justify-between text-[#3F8F6B]">
-                              <span>Miễn phí</span>
-                              <strong>
-                                {preview.shipping.freeDistanceKm}km
-                              </strong>
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : null}
                   {summary.membershipDiscount ? (
                     <div className="flex justify-between">
                       <dt>Ưu đãi thành viên</dt>
@@ -1065,22 +857,6 @@ export default function CheckoutClient() {
                       </dd>
                     </div>
                   ) : null}
-                  <div className="flex justify-between">
-                    <dt>Phí giao hàng</dt>
-                    <dd className="font-bold">
-                      {previewLoading
-                        ? "Đang tính..."
-                        : summary.shipping.available
-                          ? money(summary.shippingFee)
-                          : "Chưa tính"}
-                    </dd>
-                  </div>
-                  {!summary.shipping.available &&
-                  preview?.shipping.unavailableReason ? (
-                    <p className="text-right text-xs font-medium text-[#C84F64]">
-                      {preview.shipping.unavailableReason}
-                    </p>
-                  ) : null}
                 </dl>
                 <div className="mt-5 flex justify-between border-t border-[#EAE1E4] pt-4">
                   <span className="font-bold">Tổng thanh toán</span>
@@ -1088,17 +864,11 @@ export default function CheckoutClient() {
                     {money(summary.payableTotal)}
                   </strong>
                 </div>
-                {summary.shipping.available ? (
-                  <p className="mt-2 text-xs text-[#6F6066]">
-                    Khoảng {summary.shipping.estimatedDistanceKm?.toFixed(1)}km
-                    · {summary.shipping.estimatedDeliveryText}
-                  </p>
-                ) : null}
                 <button
                   type="button"
                   onClick={() => void submit()}
                   disabled={
-                    busy || previewLoading || !preview?.shipping.available
+                    busy || previewLoading
                   }
                   className="mt-5 hidden h-12 w-full rounded-xl bg-[#D96C8A] text-sm font-bold text-white disabled:opacity-50 lg:block"
                 >
@@ -1131,7 +901,7 @@ export default function CheckoutClient() {
                 type="button"
                 onClick={() => void submit()}
                 disabled={
-                  busy || previewLoading || !preview?.shipping.available
+                  busy || previewLoading
                 }
                 className="h-11 rounded-xl bg-[#D96C8A] px-5 text-sm font-bold text-white disabled:opacity-50"
               >

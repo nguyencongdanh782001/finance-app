@@ -1,12 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/db";
 import { validateDiscount } from "@/lib/discounts";
 import { verifyJwt } from "@/lib/auth/crypto";
-import { calculateShippingQuote, validateCoordinates } from "@/lib/geoapify";
-import {
-  createShippingCalculation,
-  getShippingConfiguration,
-} from "@/lib/shipping";
 import { NextResponse } from "next/server";
 
 const money = (value: number) => Math.max(0, Math.round(value));
@@ -164,62 +158,8 @@ export async function POST(request: Request) {
     };
   }
 
-  const latitude = Number(body.latitude);
-  const longitude = Number(body.longitude);
-  let shipping: Record<string, unknown> = {
-    available: false,
-    unavailableReason: "Chưa chọn địa chỉ giao hàng.",
-  };
-  let shippingFee = 0;
-  let shippingCalculation: any = null;
-  if (validateCoordinates(latitude, longitude)) {
-    try {
-      const shippingConfig = await getShippingConfiguration();
-      if (
-        shippingConfig.latitude != null &&
-        shippingConfig.longitude != null &&
-        validateCoordinates(shippingConfig.latitude, shippingConfig.longitude)
-      ) {
-        shippingCalculation = await createShippingCalculation({
-          destinationLatitude: latitude,
-          destinationLongitude: longitude,
-          eligibleOrderValue: subtotal,
-        });
-        shippingFee = shippingCalculation.calculation.finalShippingFee;
-      } else {
-        const quote = await calculateShippingQuote(latitude, longitude);
-        shippingFee = quote.shippingFee;
-        shippingCalculation = {
-          route: quote,
-          calculation: {
-            finalShippingFee: quote.shippingFee,
-            roundedDistanceKm: quote.roundedDistanceKm,
-            freeDistanceKm: 0,
-            chargeableDistanceKm: quote.roundedDistanceKm,
-            shippingFeeBeforePromotion: quote.shippingFee,
-            shippingDiscount: 0,
-            baseFee: 0,
-            pricePerKm: 0,
-          },
-        };
-      }
-      shipping = {
-        available: true,
-        estimatedDistanceKm: shippingCalculation.route.distanceMeters / 1000,
-        estimatedDeliveryText: `${shippingCalculation.route.estimatedDurationMinutes} phút`,
-        distanceMeters: shippingCalculation.route.distanceMeters,
-        ...shippingCalculation.calculation,
-      };
-    } catch (error) {
-      shipping = {
-        available: false,
-        unavailableReason:
-          error instanceof Error
-            ? error.message
-            : "Không thể giao đến địa chỉ này.",
-      };
-    }
-  }
+  const shippingFee = 0;
+  const shipping = { available: true };
   const totalDiscount = membershipDiscount + couponDiscount;
   return NextResponse.json({
     items: normalized,
@@ -238,7 +178,7 @@ export async function POST(request: Request) {
         }
       : null,
     shipping,
-    shippingBreakdown: shippingCalculation?.calculation || null,
+    shippingBreakdown: null,
     warnings: [],
   });
 }

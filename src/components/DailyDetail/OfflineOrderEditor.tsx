@@ -1224,7 +1224,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="h-[500px] shrink-0 overflow-hidden border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5 xl:h-auto xl:min-h-0 xl:flex-[1_1_55%] xl:overflow-y-auto xl:overscroll-contain 3xl:flex-[1_1_auto]">
+      <div className="h-125 shrink-0 overflow-hidden border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5 xl:h-auto xl:min-h-0 xl:flex-[1_1_55%] xl:overflow-y-auto xl:overscroll-contain 3xl:flex-[1_1_auto]">
         <div className="border-b border-[#EAE1E4] py-3">
           <label className="text-xs font-bold text-[#2D2226]">
             Khách hàng / số điện thoại
