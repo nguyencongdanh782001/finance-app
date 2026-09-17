@@ -1199,7 +1199,7 @@ function OrderCart({
         )}
       </div>
 
-      <div className="max-h-[45svh] min-h-0 flex-1 basis-0 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-5 xl:max-h-none xl:min-h-48 xl:flex-[1_1_45%] 3xl:flex-[1_1_auto]">
+      <div className="max-h-[45svh] min-h-0 flex-auto basis-0 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-5 xl:max-h-none xl:min-h-48 xl:flex-[1_1_45%] 3xl:flex-[1_1_auto]">
         {form.items.length ? (
           form.items.map((item, index) => (
             <OrderCartItem
