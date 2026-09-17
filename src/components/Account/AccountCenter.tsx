@@ -1429,7 +1429,17 @@ function AddressForm({
     </FormikProvider>
   );
 }
-function OrderCard({ order, onClick }: { order: Order; onClick?: () => void }) {
+function OrderCard({
+  order,
+  onClick,
+  onCancel,
+  cancelling,
+}: {
+  order: Order;
+  onClick?: () => void;
+  onCancel?: () => void;
+  cancelling?: boolean;
+}) {
   return (
     <article className="rounded-2xl border border-[#EAE1E4] bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1472,14 +1482,27 @@ function OrderCard({ order, onClick }: { order: Order; onClick?: () => void }) {
             {money(order.totalAmount)}
           </strong>
         </span>
-        {onClick && (
-          <button
-            onClick={onClick}
-            className="text-sm font-extrabold text-[#A43E5F]"
-          >
-            Xem chi tiết →
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {onCancel && order.status === "PENDING" ? (
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={cancelling}
+              className="text-sm font-extrabold text-red-600 disabled:opacity-50"
+            >
+              {cancelling ? "Đang hủy..." : "Hủy đơn"}
+            </button>
+          ) : null}
+          {onClick && (
+            <button
+              type="button"
+              onClick={onClick}
+              className="text-sm font-extrabold text-[#A43E5F]"
+            >
+              Xem chi tiết →
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );
@@ -1568,6 +1591,7 @@ function OrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [purchased, setPurchased] = useState<Purchased[]>([]);
+  const [cancellingId, setCancellingId] = useState<number | null>(null);
   const view = params.get("view") === "purchased" ? "purchased" : "orders";
   useEffect(() => {
     if (view === "orders")
@@ -1579,6 +1603,22 @@ function OrdersPage() {
         .then((d) => setPurchased(d.items || []))
         .catch(() => undefined);
   }, [view]);
+  const cancelOrder = async (orderId: number) => {
+    if (!window.confirm("Bạn có chắc muốn hủy đơn hàng này không?")) return;
+    setCancellingId(orderId);
+    try {
+      await request(`/api/me/orders/${orderId}`, { method: "POST" });
+      setOrders((current) =>
+        current.map((order) =>
+          order.id === orderId ? { ...order, status: "CANCELLED" } : order,
+        ),
+      );
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "Không thể hủy đơn hàng.");
+    } finally {
+      setCancellingId(null);
+    }
+  };
   return (
     <div>
       <h1 className="text-2xl font-extrabold">Mua hàng</h1>
@@ -1605,6 +1645,8 @@ function OrdersPage() {
                   key={o.id}
                   order={o}
                   onClick={() => router.push(`/account/orders?order=${o.id}`)}
+                  onCancel={() => void cancelOrder(o.id)}
+                  cancelling={cancellingId === o.id}
                 />
               ))}
             </div>

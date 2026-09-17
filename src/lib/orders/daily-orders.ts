@@ -906,7 +906,11 @@ export async function updateOfflineOrder(
   }, ORDER_TRANSACTION_OPTIONS);
 }
 
-export async function cancelOfflineOrder(orderId: number, adminId: number) {
+export async function cancelOfflineOrder(
+  orderId: number,
+  changedById: number,
+  ownerUserId?: number,
+) {
   return prisma.$transaction(async (tx) => {
     const existingOrder = await tx.order.findUnique({
       where: { id: orderId },
@@ -917,8 +921,23 @@ export async function cancelOfflineOrder(orderId: number, adminId: number) {
       throw new Error("Không tìm thấy đơn hàng.");
     }
 
-    if (existingOrder.source !== OrderSource.OFFLINE) {
+    if (
+      existingOrder.source !== OrderSource.OFFLINE &&
+      !(existingOrder.source === OrderSource.ONLINE &&
+        existingOrder.status === OrderStatus.PENDING)
+    ) {
       throw new Error("Không thể hủy đơn online từ màn hình này.");
+    }
+
+    if (ownerUserId !== undefined && existingOrder.userId !== ownerUserId) {
+      throw new Error("Không tìm thấy đơn hàng.");
+    }
+
+    if (
+      existingOrder.source === OrderSource.ONLINE &&
+      existingOrder.status !== OrderStatus.PENDING
+    ) {
+      throw new Error("Chỉ có thể hủy đơn trước khi admin xác nhận.");
     }
 
     if (existingOrder.status === OrderStatus.CANCELLED) {
@@ -945,13 +964,16 @@ export async function cancelOfflineOrder(orderId: number, adminId: number) {
             ? PaymentStatus.REFUNDED
             : existingOrder.paymentStatus,
         cancelledAt: new Date(),
-        updatedById: adminId,
+        updatedById: changedById,
         statusHistories: {
           create: {
             previousStatus: existingOrder.status,
             currentStatus: OrderStatus.CANCELLED,
-            changedById: adminId,
-            note: "Hủy đơn tại shop và hoàn tồn kho",
+            changedById,
+            note:
+              existingOrder.source === OrderSource.ONLINE
+                ? "Khách hủy đơn trước khi admin xác nhận và hoàn tồn kho"
+                : "Hủy đơn tại shop và hoàn tồn kho",
           },
         },
       },

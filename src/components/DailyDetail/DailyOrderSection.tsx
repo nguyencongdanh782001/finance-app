@@ -661,6 +661,9 @@ function OrderActions({
   onAdvanceStatus: (order: DailyOrder) => void;
 }) {
   const canEdit = order.source === "OFFLINE" && order.status !== "CANCELLED";
+  const canCancel =
+    order.source === "OFFLINE" ||
+    (order.source === "ONLINE" && order.status === "PENDING");
   const nextOnlineStatus =
     order.source === "ONLINE" ? NEXT_ONLINE_STATUS[order.status] : undefined;
   const hasSecondaryActions = true;
@@ -735,6 +738,18 @@ function OrderActions({
                   <Pencil className="size-4 text-slate-500" />
                   Sửa đơn
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="gap-2 rounded-lg px-3 py-2.5 text-rose-600 focus:bg-rose-50 focus:text-rose-600"
+                  onClick={() => onCancel(order)}
+                >
+                  <Trash2 className="size-4" />
+                  Hủy đơn
+                </DropdownMenuItem>
+              </>
+            ) : null}
+            {!canEdit && canCancel ? (
+              <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="gap-2 rounded-lg px-3 py-2.5 text-rose-600 focus:bg-rose-50 focus:text-rose-600"
