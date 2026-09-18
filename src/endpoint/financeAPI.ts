@@ -145,8 +145,11 @@ export const financeAPI = {
   getOrderDetail: (id: number): Promise<IAPIResponse<DailyOrder>> => {
     return appAxios.get(API_ROUTES.getOrderDetail(id));
   },
-  cancelOrder: (id: number): Promise<IAPIResponse<DailyOrder>> => {
-    return appAxios.post(API_ROUTES.cancelOrder(id));
+  cancelOrder: (
+    id: number,
+    reason: string,
+  ): Promise<IAPIResponse<DailyOrder>> => {
+    return appAxios.post(API_ROUTES.cancelOrder(id), { reason });
   },
   getCategoryList: (): Promise<IAPIResponse<CategoryApiItem[]>> => {
     return appAxios.get(API_ROUTES.getCategoryList);

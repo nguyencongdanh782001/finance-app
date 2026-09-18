@@ -909,8 +909,11 @@ export async function updateOfflineOrder(
 export async function cancelOfflineOrder(
   orderId: number,
   changedById: number,
+  cancellationReason: string,
   ownerUserId?: number,
 ) {
+  const reason = cancellationReason.trim();
+  if (!reason) throw new Error("Vui lòng nhập lý do hủy đơn.");
   return prisma.$transaction(async (tx) => {
     const existingOrder = await tx.order.findUnique({
       where: { id: orderId },
@@ -970,10 +973,7 @@ export async function cancelOfflineOrder(
             previousStatus: existingOrder.status,
             currentStatus: OrderStatus.CANCELLED,
             changedById,
-            note:
-              existingOrder.source === OrderSource.ONLINE
-                ? "Khách hủy đơn trước khi admin xác nhận và hoàn tồn kho"
-                : "Hủy đơn tại shop và hoàn tồn kho",
+            note: `${existingOrder.source === OrderSource.ONLINE ? "Hủy đơn online" : "Hủy đơn tại shop"}: ${reason}`,
           },
         },
       },

@@ -591,12 +591,16 @@ function CancelDialog({
   open,
   isSubmitting,
   onOpenChange,
+  reason,
+  onReasonChange,
   onConfirm,
 }: {
   order: DailyOrder | null;
   open: boolean;
   isSubmitting: boolean;
   onOpenChange: (value: boolean) => void;
+  reason: string;
+  onReasonChange: (value: string) => void;
   onConfirm: () => void;
 }) {
   return (
@@ -615,13 +619,23 @@ function CancelDialog({
             <p>Số sản phẩm: {order.totalQuantity}</p>
           </div>
         ) : null}
+        <label className="mt-4 grid gap-2 text-sm font-bold text-slate-700">
+          Lý do hủy <span className="text-red-600">*</span>
+          <textarea
+            value={reason}
+            onChange={(event) => onReasonChange(event.target.value)}
+            placeholder="Nhập lý do hủy đơn"
+            maxLength={500}
+            className="min-h-24 w-full rounded-xl border border-slate-200 p-3 font-normal outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+          />
+        </label>
         <div className="mt-5 flex gap-2">
           <Button
             type="button"
             variant="adminDanger"
             className="h-11 flex-1 rounded-2xl"
             onClick={onConfirm}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !reason.trim()}
           >
             {isSubmitting ? (
               <RotateCcw className="size-4 animate-spin" />
@@ -902,6 +916,7 @@ export default function DailyOrderSection({
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
   const tableScrollerRef = useRef<HTMLDivElement | null>(null);
   const activeFilterCount =
     (activeTab === "ONLINE" && status !== "ALL" ? 1 : 0) +
@@ -1086,6 +1101,7 @@ export default function DailyOrderSection({
 
   const openCancel = (order: DailyOrder) => {
     setSelectedOrder(order);
+    setCancelReason("");
     setIsCancelOpen(true);
   };
 
@@ -1095,7 +1111,7 @@ export default function DailyOrderSection({
     }
 
     setIsCancelling(true);
-    const res = await financeAPI.cancelOrder(selectedOrder.id);
+    const res = await financeAPI.cancelOrder(selectedOrder.id, cancelReason);
     setIsCancelling(false);
 
     if (res.code !== RESPONSE_CODES.success) {
@@ -1466,6 +1482,8 @@ export default function DailyOrderSection({
         open={isCancelOpen}
         isSubmitting={isCancelling}
         onOpenChange={setIsCancelOpen}
+        reason={cancelReason}
+        onReasonChange={setCancelReason}
         onConfirm={() => void cancelOrder()}
       />
     </div>
