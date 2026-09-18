@@ -9,7 +9,13 @@ export async function POST(request: Request, context: { params: Promise<{ orderI
   const orderId = Number((await context.params).orderId);
   if (!userId || !orderId) return NextResponse.json({ message: "Không hợp lệ." }, { status: 400 });
   try {
-    const order = await cancelOfflineOrder(orderId, userId, userId);
+    const body = await request.json().catch(() => ({}));
+    const order = await cancelOfflineOrder(
+      orderId,
+      userId,
+      String(body.reason || ""),
+      userId,
+    );
     return NextResponse.json(order);
   } catch (error) {
     return NextResponse.json(

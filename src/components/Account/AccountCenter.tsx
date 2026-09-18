@@ -6,6 +6,7 @@ import { FormikProvider, useFormik } from "formik";
 import * as Yup from "yup";
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import { toast } from "@/hook/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AutoCompleteField from "@/components/common/CustomFields/AutoCompleteField";
@@ -1586,35 +1587,114 @@ function Purchases({ purchased }: { purchased: Purchased[] }) {
     </div>
   );
 }
+function CancelOrderDialog({
+  order,
+  reason,
+  isSubmitting,
+  onReasonChange,
+  onOpenChange,
+  onConfirm,
+}: {
+  order: Order | null;
+  reason: string;
+  isSubmitting: boolean;
+  onReasonChange: (value: string) => void;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
+}) {
+  if (!order) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2D2226]/35 p-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+        <h2 className="text-lg font-extrabold">Hủy đơn hàng?</h2>
+        <p className="mt-2 text-sm text-[#6F6066]">
+          Đơn #{order.orderNumber} chỉ có thể hủy trước khi admin xác nhận.
+        </p>
+        <label className="mt-4 grid gap-2 text-sm font-bold">
+          Lý do hủy <span className="text-red-600">*</span>
+          <textarea
+            value={reason}
+            onChange={(event) => onReasonChange(event.target.value)}
+            placeholder="Nhập lý do hủy đơn"
+            maxLength={500}
+            className="min-h-24 w-full rounded-xl border border-[#EAE1E4] p-3 font-normal outline-none focus:border-[#D96C8A]"
+          />
+        </label>
+        <div className="mt-5 flex justify-end gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            className="h-11"
+            onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
+          >
+            Đóng
+          </Button>
+          <Button
+            type="button"
+            variant="brand"
+            className="h-11"
+            onClick={onConfirm}
+            disabled={isSubmitting || !reason.trim()}
+          >
+            {isSubmitting ? "Đang hủy..." : "Xác nhận hủy"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 function OrdersPage() {
   const params = useSearchParams();
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [purchased, setPurchased] = useState<Purchased[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<number | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Order | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
   const view = params.get("view") === "purchased" ? "purchased" : "orders";
   useEffect(() => {
+    setOrdersLoading(true);
     if (view === "orders")
       request("/api/me/orders")
         .then((d) => setOrders(d.items || []))
-        .catch(() => undefined);
+        .catch(() => undefined)
+        .finally(() => setOrdersLoading(false));
     else
       request("/api/me/purchased-products")
         .then((d) => setPurchased(d.items || []))
-        .catch(() => undefined);
+        .catch(() => undefined)
+        .finally(() => setOrdersLoading(false));
   }, [view]);
-  const cancelOrder = async (orderId: number) => {
-    if (!window.confirm("Bạn có chắc muốn hủy đơn hàng này không?")) return;
+  const cancelOrder = async () => {
+    if (!cancelTarget || !cancelReason.trim()) return;
+    const orderId = cancelTarget.id;
     setCancellingId(orderId);
     try {
-      await request(`/api/me/orders/${orderId}`, { method: "POST" });
+      await request(`/api/me/orders/${orderId}`, {
+        method: "POST",
+        body: JSON.stringify({ reason: cancelReason.trim() }),
+      });
       setOrders((current) =>
         current.map((order) =>
           order.id === orderId ? { ...order, status: "CANCELLED" } : order,
         ),
       );
+      setCancelTarget(null);
+      setCancelReason("");
+      toast({
+        title: "Đã hủy đơn hàng",
+        description: "Tồn kho đã được hoàn lại.",
+        className: "bg-green-16 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Không thể hủy đơn hàng.");
+      toast({
+        title: error instanceof Error ? error.message : "Không thể hủy đơn hàng.",
+        className: "bg-red-1 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
     } finally {
       setCancellingId(null);
     }
@@ -1637,7 +1717,13 @@ function OrdersPage() {
         </button>
       </div>
       <div className="mt-6">
-        {view === "orders" ? (
+        {ordersLoading ? (
+          <div className="grid gap-4" aria-label="Đang tải đơn hàng">
+            {[1, 2, 3].map((item) => (
+              <Skeleton key={item} className="h-48 rounded-2xl" />
+            ))}
+          </div>
+        ) : view === "orders" ? (
           orders.length ? (
             <div className="grid gap-4">
               {orders.map((o) => (
@@ -1645,7 +1731,10 @@ function OrdersPage() {
                   key={o.id}
                   order={o}
                   onClick={() => router.push(`/account/orders?order=${o.id}`)}
-                  onCancel={() => void cancelOrder(o.id)}
+                  onCancel={() => {
+                    setCancelTarget(o);
+                    setCancelReason("");
+                  }}
                   cancelling={cancellingId === o.id}
                 />
               ))}
@@ -1661,6 +1750,19 @@ function OrdersPage() {
           <Purchases purchased={purchased} />
         )}
       </div>
+      <CancelOrderDialog
+        order={cancelTarget}
+        reason={cancelReason}
+        isSubmitting={cancellingId === cancelTarget?.id}
+        onReasonChange={setCancelReason}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCancelTarget(null);
+            setCancelReason("");
+          }
+        }}
+        onConfirm={() => void cancelOrder()}
+      />
     </div>
   );
 }

@@ -294,6 +294,7 @@ export default function CheckoutClient() {
   const [addressesOpen, setAddressesOpen] = useState(false);
   const [addressRevision, setAddressRevision] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [orderNote, setOrderNote] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
   const skipCouponPreviewRef = useRef(false);
   const previewAbortRef = useRef<AbortController | null>(null);
@@ -545,6 +546,7 @@ export default function CheckoutClient() {
         ...receiver,
         paymentMethod,
         couponCode: appliedCoupon,
+        note: orderNote.trim() || undefined,
       }),
     });
     const data = await response.json().catch(() => ({}));
@@ -733,8 +735,18 @@ export default function CheckoutClient() {
                       />
                     </button>
                   ) : null}
-                </section>
-                <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+              </section>
+              <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+                <h2 className="text-lg font-extrabold">Ghi chú đơn hàng</h2>
+                <textarea
+                  value={orderNote}
+                  onChange={(event) => setOrderNote(event.target.value)}
+                  placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."
+                  maxLength={500}
+                  className="mt-4 min-h-24 w-full rounded-xl border border-[#EAE1E4] p-3 text-sm outline-none focus:border-[#D96C8A]"
+                />
+              </section>
+              <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
                   <h2 className="text-lg font-extrabold">Sản phẩm đặt mua</h2>
                   <div className="mt-4 divide-y divide-[#EAE1E4]">
                     {items.map((item) => (

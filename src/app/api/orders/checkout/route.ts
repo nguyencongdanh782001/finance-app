@@ -65,6 +65,7 @@ export async function POST(request: Request) {
   }
   const paymentMethod = body.paymentMethod === "MOMO" ? "MOMO" : "COD";
   const couponCode = String(body.couponCode || "").trim();
+  const note = String(body.note || "").trim().slice(0, 500) || null;
   if (!receiverName || !receiverPhone || !receiverAddress)
     return fail("Vui lòng nhập đủ thông tin nhận hàng.");
   try {
@@ -244,6 +245,7 @@ export async function POST(request: Request) {
               shippingCalculation?.calculation.appliedPromotion?.name || null,
             shippingQuoteProvider: "GEOAPIFY",
             shippingCalculatedAt: new Date(),
+            note,
             paymentMethod,
             paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
             discountRedemption: discount
@@ -427,6 +429,7 @@ export async function POST(request: Request) {
             shippingCalculation?.calculation.appliedPromotion?.name || null,
           shippingQuoteProvider: "GEOAPIFY",
           shippingCalculatedAt: new Date(),
+          note,
           paymentMethod,
           paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
           discountRedemption: discount

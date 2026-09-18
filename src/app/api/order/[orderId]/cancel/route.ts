@@ -36,7 +36,12 @@ export async function POST(
       );
     }
 
-    const response = await cancelOfflineOrder(orderId, admin.userId);
+    const body = await req.json().catch(() => ({}));
+    const response = await cancelOfflineOrder(
+      orderId,
+      admin.userId,
+      String(body.reason || ""),
+    );
 
     return NextResponse.json(response);
   } catch (error) {
