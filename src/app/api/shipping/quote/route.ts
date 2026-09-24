@@ -1,9 +1,5 @@
 import prisma from "@/lib/db";
-import { calculateShippingQuote, validateCoordinates } from "@/lib/geoapify";
-import {
-  createShippingCalculation,
-  getShippingConfiguration,
-} from "@/lib/shipping";
+import { createShippingCalculationWithFallback } from "@/lib/shipping";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -35,29 +31,22 @@ export async function POST(request: Request) {
     latitude = Number(address.latitude);
     longitude = Number(address.longitude);
   }
-  if (!validateCoordinates(latitude, longitude))
-    return NextResponse.json(
-      { message: "Tọa độ giao hàng không hợp lệ." },
-      { status: 422 },
-    );
   try {
-    const config = await getShippingConfiguration();
-    if (config.latitude != null && config.longitude != null) {
-      const result = await createShippingCalculation({
-        destinationLatitude: latitude,
-        destinationLongitude: longitude,
-        eligibleOrderValue: Number(body.eligibleOrderValue || 0),
-      });
-      return NextResponse.json({
-        ...result.route,
-        distanceKm: result.route.distanceMeters / 1000,
-        roundedDistanceKm: result.calculation.roundedDistanceKm,
-        shippingFee: result.calculation.finalShippingFee,
-        currency: "VND",
-        breakdown: result.calculation,
-      });
-    }
-    return NextResponse.json(await calculateShippingQuote(latitude, longitude));
+    const result = await createShippingCalculationWithFallback({
+      destinationLatitude: Number.isFinite(latitude) ? latitude : null,
+      destinationLongitude: Number.isFinite(longitude) ? longitude : null,
+      eligibleOrderValue: Number(body.eligibleOrderValue || 0),
+    });
+    return NextResponse.json({
+      ...(result.route || {}),
+      distanceKm: result.route ? result.route.distanceMeters / 1000 : null,
+      roundedDistanceKm: result.calculation.roundedDistanceKm,
+      shippingFee: result.calculation.finalShippingFee,
+      currency: "VND",
+      isFallback: result.isFallback,
+      fallbackReason: result.fallbackReason,
+      breakdown: result.calculation,
+    });
   } catch (error) {
     console.error(
       "Shipping quote unavailable",

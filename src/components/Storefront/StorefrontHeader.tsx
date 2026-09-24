@@ -3,6 +3,7 @@
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useCart } from "@/components/Storefront/CartProvider";
 import ProductSearch from "@/components/Storefront/ProductSearch";
+import CustomerNotificationCenter from "@/components/Storefront/CustomerNotificationCenter";
 import { FavoriteChangedDetail } from "@/components/Storefront/ProductFavoriteButton";
 import { storefrontGenderLinks } from "@/components/Storefront/storefront-navigation";
 import { getStorefrontContent } from "@/components/Storefront/storefront-content-cache";
@@ -231,6 +232,7 @@ export default function StorefrontHeader() {
                   </div>
                 )}
               </div>
+              <CustomerNotificationCenter />
               <Link
                 href="/account/favorites"
                 aria-label={`Sản phẩm yêu thích, ${favoriteCount} sản phẩm`}

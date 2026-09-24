@@ -33,16 +33,31 @@ self.addEventListener("push", (event) => {
         type: "window",
         includeUncontrolled: true,
       });
+      const isCustomerPayload = payload.type === "CUSTOMER_ORDER_STATUS";
       const adminClients = windowClients.filter((client) =>
         new URL(client.url).pathname.startsWith("/admin"),
+      );
+      const customerClients = windowClients.filter(
+        (client) => !new URL(client.url).pathname.startsWith("/admin"),
       );
       const visibleClient = adminClients.find(
         (client) => client.visibilityState === "visible",
       );
-      for (const client of adminClients) {
+      const visibleCustomerClient = customerClients.find(
+        (client) => client.visibilityState === "visible",
+      );
+      for (const client of isCustomerPayload ? [] : adminClients) {
         client.postMessage({ type: "ADMIN_PUSH_RECEIVED", payload });
       }
-      if (visibleClient) return;
+      for (const client of isCustomerPayload ? customerClients : []) {
+        client.postMessage({ type: "CUSTOMER_PUSH_RECEIVED", payload });
+      }
+      if (
+        (isCustomerPayload && visibleCustomerClient) ||
+        (!isCustomerPayload && visibleClient)
+      ) {
+        return;
+      }
       await self.registration.showNotification(payload.title, {
         body: payload.body,
         icon: "/icons/icon-192.png",
@@ -70,7 +85,9 @@ self.addEventListener("notificationclick", (event) => {
         includeUncontrolled: true,
       });
       for (const client of windowClients) {
-        if (!new URL(client.url).pathname.startsWith("/admin")) continue;
+        const isAdminTarget = target.startsWith("/admin");
+        const isAdminClient = new URL(client.url).pathname.startsWith("/admin");
+        if (isAdminClient !== isAdminTarget) continue;
         if ("focus" in client && "navigate" in client) {
           await client.focus();
           await client.navigate(new URL(target, self.location.origin).href);

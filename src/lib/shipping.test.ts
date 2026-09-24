@@ -2,10 +2,22 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   calculateShippingFee,
+  createFallbackShippingCalculation,
   defaultShippingConfig,
   roundDistance,
   selectShippingPromotion,
 } from "./shipping.ts";
+
+test("uses the configured fallback fee when distance is unavailable", () => {
+  const result = createFallbackShippingCalculation({
+    config: { ...defaultShippingConfig, fallbackShippingFee: 42000 },
+    reason: "Geoapify timeout",
+  });
+  assert.equal(result.calculation.finalShippingFee, 42000);
+  assert.equal(result.isFallback, true);
+  assert.equal(result.fallbackReason, "Geoapify timeout");
+  assert.equal(result.route, null);
+});
 
 test("rounds shipping distance upward by the configured step", () => {
   assert.equal(roundDistance(7.1, "UP_TO_0_5_KM"), 7.5);

@@ -14,6 +14,7 @@ export type ShippingConfig = {
   feeRoundingStep: number;
   minimumShippingFee?: number | null;
   maximumShippingFee?: number | null;
+  fallbackShippingFee: number;
 };
 
 export type ShippingPromotion = {
@@ -39,6 +40,7 @@ export const defaultShippingConfig: ShippingConfig = {
   feeRoundingStep: 1_000,
   minimumShippingFee: null,
   maximumShippingFee: null,
+  fallbackShippingFee: 30_000,
 };
 
 export const roundDistance = (
@@ -161,7 +163,87 @@ export async function getShippingConfiguration() {
     feeRoundingStep: row.feeRoundingStep,
     minimumShippingFee: row.minimumShippingFee,
     maximumShippingFee: row.maximumShippingFee,
+    fallbackShippingFee: row.fallbackShippingFee,
   } satisfies ShippingConfig;
+}
+
+export const createFallbackShippingCalculation = ({
+  config,
+  reason,
+}: {
+  config: ShippingConfig;
+  reason?: string;
+}) => {
+  const fallbackFee = Math.max(0, Math.round(config.fallbackShippingFee));
+  return {
+    config,
+    route: null,
+    isFallback: true,
+    fallbackReason: reason || "Không thể xác định khoảng cách giao hàng.",
+    calculation: {
+      rawDistanceMeters: null,
+      rawDistanceKm: null,
+      roundedDistanceKm: null,
+      freeDistanceKm: 0,
+      chargeableDistanceKm: null,
+      baseFee: config.baseFee,
+      pricePerKm: config.pricePerKm,
+      distanceFee: 0,
+      shippingFeeBeforePromotion: fallbackFee,
+      shippingDiscount: 0,
+      finalShippingFee: fallbackFee,
+      appliedPromotionId: null,
+      appliedPromotion: null,
+    },
+  };
+};
+
+export async function createShippingCalculationWithFallback({
+  destinationLatitude,
+  destinationLongitude,
+  eligibleOrderValue,
+}: {
+  destinationLatitude: number | null;
+  destinationLongitude: number | null;
+  eligibleOrderValue: number;
+}) {
+  const config = await getShippingConfiguration();
+  if (!config.enabled) throw new Error("Cấu hình vận chuyển đang tạm dừng.");
+  try {
+    if (
+      !validateCoordinates(
+        config.latitude == null ? Number.NaN : config.latitude,
+        config.longitude == null ? Number.NaN : config.longitude,
+      )
+    ) {
+      throw new Error("Cấu hình tọa độ cửa hàng chưa hoàn tất.");
+    }
+    if (
+      !validateCoordinates(
+        destinationLatitude == null ? Number.NaN : destinationLatitude,
+        destinationLongitude == null ? Number.NaN : destinationLongitude,
+      )
+    ) {
+      throw new Error("Tọa độ giao hàng không hợp lệ.");
+    }
+    const result = await createShippingCalculation({
+      destinationLatitude: destinationLatitude as number,
+      destinationLongitude: destinationLongitude as number,
+      eligibleOrderValue,
+    });
+    return { ...result, isFallback: false as const, fallbackReason: null };
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === "Địa chỉ nằm ngoài khu vực giao hàng."
+    ) {
+      throw error;
+    }
+    return createFallbackShippingCalculation({
+      config,
+      reason: error instanceof Error ? error.message : undefined,
+    });
+  }
 }
 
 export async function createShippingCalculation({

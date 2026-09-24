@@ -5,6 +5,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { FormikProvider, useFormik } from "formik";
 import * as Yup from "yup";
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
+import CustomerOrderDetail from "@/components/Account/CustomerOrderDetail";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { toast } from "@/hook/use-toast";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import {
@@ -51,6 +51,11 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+import {
+  CUSTOMER_ORDER_FILTERS,
+  ORDER_STATUS_CONFIG,
+  type CustomerOrderFilter,
+} from "@/lib/orders/order-status";
 
 const pink = "#D96C8A";
 const money = (v: number) =>
@@ -61,16 +66,12 @@ const money = (v: number) =>
   }).format(v);
 const date = (v: string) =>
   new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium" }).format(new Date(v));
-const label: Record<string, string> = {
-  PENDING: "Đặt hàng",
-  CONFIRMED: "Đã xác nhận",
-  PREPARING: "Đang chuẩn bị",
-  SHIPPING: "Đang giao",
-  DELIVERED: "Đã giao",
-  COMPLETED: "Hoàn tất",
-  CANCELLED: "Đã hủy",
-  REFUNDED: "Đã hoàn tiền",
-};
+const label: Record<string, string> = Object.fromEntries(
+  Object.entries(ORDER_STATUS_CONFIG).map(([status, config]) => [
+    status,
+    config.shortLabel,
+  ]),
+);
 type Profile = {
   id: number;
   authProvider: "WEB" | "GOOGLE";
@@ -100,9 +101,14 @@ type Order = {
   id: number;
   orderNumber: string;
   status: string;
+  source: "ONLINE" | "OFFLINE";
   createdAt: string;
+  placedAt: string;
   totalAmount: number;
+  paymentMethod: string | null;
+  paymentStatus: string;
   itemCount: number;
+  lineCount: number;
   items: {
     title: string;
     imageUrl: string | null;
@@ -158,7 +164,7 @@ function Sidebar({
     { href: "/account", label: "Tổng quan", icon: Home },
     { href: "/account/profile", label: "Thông tin cá nhân", icon: UserRound },
     { href: "/account/addresses", label: "Sổ địa chỉ", icon: MapPin },
-    { href: "/account/orders", label: "Mua hàng", icon: Package },
+    { href: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
   ];
   const name = profile?.displayName || "Khách hàng";
   return (
@@ -242,7 +248,7 @@ function MobileNav({
     { href: "/account", label: "Tổng quan", icon: Home },
     { href: "/account/profile", label: "Thông tin cá nhân", icon: UserRound },
     { href: "/account/addresses", label: "Sổ địa chỉ", icon: MapPin },
-    { href: "/account/orders", label: "Mua hàng", icon: Package },
+    { href: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
   ];
   return (
     <div className="mb-6 lg:hidden">
@@ -547,7 +553,13 @@ function Overview({ profile }: { profile: Profile | null }) {
               <Skeleton className="h-32 w-full rounded-2xl bg-[#F7EFF1]" />
             </div>
           ) : orders.length ? (
-            orders.map((order) => <OrderCard key={order.id} order={order} />)
+            orders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                onClick={() => router.push(`/account/orders/${order.id}`)}
+              />
+            ))
           ) : (
             <Empty
               text="Bạn chưa có đơn hàng nào"
@@ -939,18 +951,6 @@ function AddressesPage() {
     </div>
   );
 }
-type AddressSuggestion = {
-  id: string;
-  formattedAddress: string;
-  addressLine1?: string;
-  ward?: string;
-  district?: string;
-  city?: string;
-  state?: string;
-  postcode?: string;
-  latitude: number;
-  longitude: number;
-};
 type AdministrativeProvince = {
   code: number;
   name: string;
@@ -1034,149 +1034,6 @@ const addressInputClass =
   "h-11! rounded-lg! border-[#E5E1E4]! bg-white! px-3! py-0! text-sm! font-medium! text-[#3B2D32]! shadow-none! focus:border-[#D96C8A]! focus:ring-2! focus:ring-[#D96C8A]/15!";
 const addressErrorClass = "text-red-1";
 const addressErrorBorderClass = "border-red-1!";
-
-function GeoapifyAddressPicker({
-  value,
-  onSelect,
-  onChange,
-  onBlur,
-  hasError = false,
-}: {
-  value: string;
-  onSelect: (suggestion: AddressSuggestion) => void;
-  onChange: (value: string) => void;
-  onBlur?: () => void;
-  hasError?: boolean;
-}) {
-  const [text, setText] = useState(value);
-  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
-  const [selectedPoint, setSelectedPoint] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
-  const [focusVersion, setFocusVersion] = useState(0);
-  const requestId = useRef(0);
-  useEffect(() => setText(value), [value]);
-  useEffect(() => {
-    const query = text.trim();
-    if ([...query].length < 3) {
-      setSuggestions([]);
-      setStatus("idle");
-      return;
-    }
-    const controller = new AbortController();
-    const current = ++requestId.current;
-    const timer = window.setTimeout(async () => {
-      setStatus("loading");
-      try {
-        const response = await fetch(
-          `/api/locations/autocomplete?text=${encodeURIComponent(query)}`,
-          { signal: controller.signal },
-        );
-        if (!response.ok) throw new Error("autocomplete unavailable");
-        const data = await response.json();
-        if (current === requestId.current) {
-          setSuggestions(data.suggestions || []);
-          setStatus("idle");
-        }
-      } catch (error) {
-        if (!controller.signal.aborted && current === requestId.current) {
-          setSuggestions([]);
-          setStatus("error");
-        }
-      }
-    }, 600);
-    return () => {
-      controller.abort();
-      window.clearTimeout(timer);
-    };
-  }, [focusVersion, text]);
-  return (
-    <div className="relative">
-      <div className="relative">
-        <Input
-          value={text}
-          onChange={(event) => {
-            setText(event.target.value);
-            setSelectedPoint(null);
-            onChange(event.target.value);
-          }}
-          onFocus={() => setFocusVersion((version) => version + 1)}
-          onBlur={() => {
-            window.setTimeout(() => setSuggestions([]), 120);
-            onBlur?.();
-          }}
-          placeholder="Số nhà, tên đường"
-          aria-label="Địa chỉ cụ thể"
-          aria-autocomplete="list"
-          className={`${addressInputClass} ${hasError ? addressErrorBorderClass : ""}`}
-        />
-        {status === "loading" ? (
-          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-normal text-[#8B7A80]">
-            Đang tìm...
-          </span>
-        ) : null}
-        {suggestions.length ? (
-          <div
-            className="absolute inset-x-0 top-full z-20 mt-1 grid max-h-60 gap-1 overflow-y-auto rounded-xl border border-[#EAE1E4] bg-white p-1.5 shadow-[0_12px_30px_rgba(89,44,59,0.10)]"
-            role="listbox"
-          >
-            {suggestions.map((suggestion) => (
-              <button
-                type="button"
-                key={suggestion.id}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => {
-                  onSelect(suggestion);
-                  setText(suggestion.formattedAddress);
-                  onChange(
-                    suggestion.addressLine1 || suggestion.formattedAddress,
-                  );
-                  setSuggestions([]);
-                  setSelectedPoint({
-                    latitude: suggestion.latitude,
-                    longitude: suggestion.longitude,
-                  });
-                }}
-                className="rounded-lg px-3 py-2.5 text-left text-xs leading-5 text-[#4D4045] transition hover:bg-[#FCEEF3]"
-              >
-                {suggestion.formattedAddress}
-              </button>
-            ))}
-          </div>
-        ) : null}
-      </div>
-      {status === "error" ? (
-        <p className="mt-2 text-xs font-medium text-red-600">
-          Không thể tìm địa chỉ. Bạn có thể nhập thủ công.
-        </p>
-      ) : null}
-      {selectedPoint ? (
-        <div className="mt-2 overflow-hidden rounded-xl border border-[#EAE1E4] bg-[#F8F5F6]">
-          <iframe
-            title="Vị trí địa chỉ trên bản đồ"
-            src={`https://www.google.com/maps?q=${selectedPoint.latitude},${selectedPoint.longitude}&z=16&output=embed`}
-            className="h-44 w-full border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-          <p className="px-3 py-2 text-xs text-[#6F6066]">
-            Vị trí đã chọn trên bản đồ
-          </p>
-        </div>
-      ) : null}
-      {status !== "loading" &&
-      status !== "error" &&
-      !suggestions.length &&
-      [...text].length >= 3 ? (
-        <p className="mt-2 text-xs font-normal text-[#8B7A80]">
-          Không tìm thấy gợi ý phù hợp.
-        </p>
-      ) : null}
-    </div>
-  );
-}
 
 function AddressForm({
   value,
@@ -1349,24 +1206,24 @@ function AddressForm({
             </Field>
             <label className="grid gap-2 text-sm font-bold sm:col-span-2">
               Địa chỉ cụ thể
-              <GeoapifyAddressPicker
+              <Input
+                variant="border"
+                name="line1"
+                placeholder="Số nhà, tên đường"
                 value={formik.values.line1}
-                onChange={(line1) => formik.setFieldValue("line1", line1)}
-                onBlur={() => formik.setFieldTouched("line1", true)}
-                hasError={Boolean(formik.touched.line1 && formik.errors.line1)}
-                onSelect={(suggestion) =>
+                onChange={(event) =>
                   formik.setValues({
                     ...formik.values,
-                    line1:
-                      suggestion.addressLine1 || suggestion.formattedAddress,
-                    city:
-                      suggestion.state || suggestion.city || formik.values.city,
-                    ward: suggestion.ward || formik.values.ward,
-                    district: suggestion.district || formik.values.district,
-                    latitude: suggestion.latitude,
-                    longitude: suggestion.longitude,
+                    line1: event.target.value,
+                    latitude: null,
+                    longitude: null,
                   })
                 }
+                onBlur={formik.handleBlur}
+                aria-invalid={Boolean(
+                  formik.touched.line1 && formik.errors.line1,
+                )}
+                className={`${addressInputClass} ${formik.touched.line1 && formik.errors.line1 ? addressErrorBorderClass : ""}`}
               />
               {formik.touched.line1 && formik.errors.line1 ? (
                 <span className={`text-xs font-medium ${addressErrorClass}`}>
@@ -1448,7 +1305,7 @@ function OrderCard({
           <p className="font-extrabold">Đơn #{order.orderNumber}</p>
           <p className="mt-1 text-xs text-[#6F6066]">{date(order.createdAt)}</p>
         </div>
-        <span className="bg-[#FCEEF3] px-2.5 py-1 text-xs font-bold text-[#A43E5F]">
+        <span className="rounded-full bg-[#FCEEF3] px-2.5 py-1 text-xs font-bold text-[#A43E5F]">
           {label[order.status] || order.status}
         </span>
       </div>
@@ -1470,9 +1327,9 @@ function OrderCard({
             </div>
           </div>
         ))}
-        {order.itemCount > order.items.reduce((a, i) => a + i.quantity, 0) && (
+        {order.lineCount > order.items.length && (
           <p className="text-xs font-semibold text-[#6F6066]">
-            + sản phẩm khác
+            +{order.lineCount - order.items.length} sản phẩm khác
           </p>
         )}
       </div>
@@ -1484,6 +1341,13 @@ function OrderCard({
           </strong>
         </span>
         <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold text-[#8B7A80]">
+            {order.paymentStatus === "PAID"
+              ? "Đã thanh toán"
+              : order.paymentStatus === "REFUNDED"
+                ? "Đã hoàn tiền"
+                : "Chưa thanh toán"}
+          </span>
           {onCancel && order.status === "PENDING" ? (
             <button
               type="button"
@@ -1654,10 +1518,14 @@ function OrdersPage() {
   const [cancelTarget, setCancelTarget] = useState<Order | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const view = params.get("view") === "purchased" ? "purchased" : "orders";
+  const requestedStatus = params.get("status") as CustomerOrderFilter | null;
+  const activeStatus: CustomerOrderFilter =
+    CUSTOMER_ORDER_FILTERS.find((filter) => filter.value === requestedStatus)
+      ?.value || "ALL";
   useEffect(() => {
     setOrdersLoading(true);
     if (view === "orders")
-      request("/api/me/orders")
+      request(`/api/me/orders?status=${activeStatus}`)
         .then((d) => setOrders(d.items || []))
         .catch(() => undefined)
         .finally(() => setOrdersLoading(false));
@@ -1666,7 +1534,7 @@ function OrdersPage() {
         .then((d) => setPurchased(d.items || []))
         .catch(() => undefined)
         .finally(() => setOrdersLoading(false));
-  }, [view]);
+  }, [activeStatus, view]);
   const cancelOrder = async () => {
     if (!cancelTarget || !cancelReason.trim()) return;
     const orderId = cancelTarget.id;
@@ -1701,7 +1569,9 @@ function OrdersPage() {
   };
   return (
     <div>
-      <h1 className="text-2xl font-extrabold">Mua hàng</h1>
+      <h1 className="text-2xl font-extrabold">
+        {view === "orders" ? "Đơn hàng của tôi" : "Sản phẩm đã mua"}
+      </h1>
       <div className="mt-6 flex gap-1 border-b border-[#EAE1E4]">
         <button
           onClick={() => router.push("/account/orders?view=orders")}
@@ -1716,6 +1586,30 @@ function OrdersPage() {
           Sản phẩm đã mua
         </button>
       </div>
+      {view === "orders" ? (
+        <div
+          className="mt-5 flex gap-2 overflow-x-auto pb-1"
+          role="tablist"
+          aria-label="Lọc đơn hàng"
+        >
+          {CUSTOMER_ORDER_FILTERS.map((filter) => (
+            <button
+              key={filter.value}
+              type="button"
+              role="tab"
+              aria-selected={activeStatus === filter.value}
+              onClick={() =>
+                router.push(
+                  `/account/orders?view=orders&status=${filter.value}`,
+                )
+              }
+              className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-extrabold transition ${activeStatus === filter.value ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]" : "border-[#EAE1E4] bg-white text-[#6F6066] hover:border-[#F4B5C5] hover:text-[#A43E5F]"}`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <div className="mt-6">
         {ordersLoading ? (
           <div className="grid gap-4" aria-label="Đang tải đơn hàng">
@@ -1730,7 +1624,11 @@ function OrdersPage() {
                 <OrderCard
                   key={o.id}
                   order={o}
-                  onClick={() => router.push(`/account/orders?order=${o.id}`)}
+                  onClick={() =>
+                    router.push(
+                      `/account/orders/${o.id}?status=${activeStatus}`,
+                    )
+                  }
                   onCancel={() => {
                     setCancelTarget(o);
                     setCancelReason("");
@@ -1795,8 +1693,15 @@ function Empty({
 
 export default function AccountCenter({
   section = "overview",
+  orderId,
 }: {
-  section?: "overview" | "profile" | "addresses" | "orders";
+  section?:
+    | "overview"
+    | "profile"
+    | "addresses"
+    | "orders"
+    | "order-detail";
+  orderId?: number;
 }) {
   const { user, logout, isInitializing, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -1819,6 +1724,8 @@ export default function AccountCenter({
       <AddressesPage />
     ) : section === "orders" ? (
       <OrdersPage />
+    ) : section === "order-detail" && orderId ? (
+      <CustomerOrderDetail orderId={orderId} />
     ) : (
       <Overview profile={profile} />
     );

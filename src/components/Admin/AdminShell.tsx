@@ -19,6 +19,7 @@ import {
   LayoutDashboard,
   Menu,
   Package,
+  PackageCheck,
   Percent,
   Star,
   Users,
@@ -29,7 +30,13 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ComponentType, ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ComponentType,
+  type ReactNode,
+} from "react";
 
 type AdminNavItem = {
   href: string;
@@ -95,6 +102,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     matches: (pathname) => pathname.startsWith("/admin/categories"),
   },
   {
+    href: "/admin/orders",
+    label: "Đơn hàng online",
+    group: "Vận chuyển",
+    icon: PackageCheck,
+    matches: (pathname) => pathname.startsWith("/admin/orders"),
+  },
+  {
     href: "/admin/shipping",
     label: "Vận chuyển",
     group: "Vận chuyển",
@@ -124,7 +138,9 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/users")) return "Người dùng";
   if (pathname.startsWith("/admin/profile")) return "Thông tin cá nhân";
   if (pathname.startsWith("/admin/notifications")) return "Thông báo";
-  if (pathname.startsWith("/admin/settings/notifications")) return "Cài đặt thông báo";
+  if (pathname.startsWith("/admin/settings/notifications"))
+    return "Cài đặt thông báo";
+  if (pathname === "/admin/orders") return "Đơn hàng online";
   if (pathname.startsWith("/admin/orders/")) return "Chi tiết đơn hàng";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";
   if (pathname.startsWith("/admin/categories")) return "Danh mục";
@@ -136,7 +152,13 @@ const getPageTitle = (pathname: string) => {
   return "Tổng quan";
 };
 
-function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
+function AdminNavigation({
+  mobile = false,
+  orderAttentionCount = 0,
+}: {
+  mobile?: boolean;
+  orderAttentionCount?: number;
+}) {
   const pathname = usePathname();
 
   return (
@@ -158,6 +180,15 @@ function AdminNavigation({ mobile = false }: { mobile?: boolean }) {
           >
             <Icon className="size-4 shrink-0" />
             <span className="truncate">{item.label}</span>
+            {item.href === "/admin/orders" && orderAttentionCount > 0 ? (
+              <span
+                className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-10px font-bold text-white"
+                title={`${orderAttentionCount} đơn chưa xác nhận thanh toán`}
+                aria-label={`${orderAttentionCount} đơn chưa xác nhận thanh toán`}
+              >
+                {orderAttentionCount > 99 ? "99+" : orderAttentionCount}
+              </span>
+            ) : null}
           </Link>
         );
 
@@ -205,6 +236,33 @@ function AdminBrand() {
 
 export default function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const [orderAttentionCount, setOrderAttentionCount] = useState(0);
+
+  const loadOrderAttentionCount = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/orders?limit=1", {
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      setOrderAttentionCount(Number(data.counts?.paymentPending || 0));
+    } catch {
+      // Keep navigation usable while the attention count is unavailable.
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadOrderAttentionCount();
+    window.addEventListener(
+      "admin-order-notification",
+      loadOrderAttentionCount,
+    );
+    return () =>
+      window.removeEventListener(
+        "admin-order-notification",
+        loadOrderAttentionCount,
+      );
+  }, [loadOrderAttentionCount]);
 
   return (
     <div className="admin-shell min-h-svh bg-(--admin-background) text-(--admin-text)">
@@ -213,7 +271,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           <AdminBrand />
         </div>
         <div className="flex-1 py-5">
-          <AdminNavigation />
+          <AdminNavigation orderAttentionCount={orderAttentionCount} />
         </div>
       </aside>
 
@@ -241,7 +299,10 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                   <AdminBrand />
                 </div>
                 <div className="flex-1 py-5">
-                  <AdminNavigation mobile />
+                  <AdminNavigation
+                    mobile
+                    orderAttentionCount={orderAttentionCount}
+                  />
                 </div>
               </SheetContent>
             </Sheet>

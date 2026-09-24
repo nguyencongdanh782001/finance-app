@@ -30,6 +30,7 @@ const CUSTOMER_CHECKOUT_API_PATHS = [
   "/api/shipping/quote",
 ];
 const CRON_API_PATHS = ["/api/cron/admin-notifications"];
+const PUBLIC_POST_PATHS = ["/api/chat-assistant"];
 const isCustomerFavoriteApi = (pathname: string) =>
   pathname === "/api/me/favorites" ||
   /^\/api\/product\/\d+\/favorite$/.test(pathname);
@@ -104,7 +105,10 @@ export async function proxy(req: NextRequest) {
       (path) => pathname === path || pathname.startsWith(`${path}/`),
     );
 
-  if (isPublicGet) {
+  const isPublicPost =
+    req.method === "POST" && PUBLIC_POST_PATHS.includes(pathname);
+
+  if (isPublicGet || isPublicPost) {
     if (token) {
       const payload = await verifyJwt(token).catch(() => null);
       if (payload) {

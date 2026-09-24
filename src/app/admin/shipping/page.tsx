@@ -60,6 +60,7 @@ type Config = {
   feeRoundingStep: number;
   minimumShippingFee: number | null;
   maximumShippingFee: number | null;
+  fallbackShippingFee: number;
 };
 type Promotion = {
   id: number;
@@ -102,6 +103,7 @@ const emptyConfig: Config = {
   feeRoundingStep: 1000,
   minimumShippingFee: null,
   maximumShippingFee: null,
+  fallbackShippingFee: 30000,
 };
 const emptyPromotion: PromotionForm = {
   name: "",
@@ -134,6 +136,10 @@ const configSchema = Yup.object({
     .required("Vui lòng chọn địa chỉ để lấy tọa độ."),
   baseFee: Yup.number().min(0, "Phí cơ bản không hợp lệ."),
   pricePerKm: Yup.number().min(0, "Đơn giá không hợp lệ."),
+  fallbackShippingFee: Yup.number().min(
+    0,
+    "Phí dự phòng không hợp lệ.",
+  ),
   maximumDeliveryDistanceKm: Yup.number().moreThan(
     0,
     "Khoảng cách tối đa phải lớn hơn 0.",
@@ -514,6 +520,7 @@ export default function ShippingPage() {
                 [
                   ["baseFee", "Phí cơ bản"],
                   ["pricePerKm", "Đơn giá mỗi km"],
+                  ["fallbackShippingFee", "Phí khi không tính được khoảng cách"],
                   ["maximumDeliveryDistanceKm", "Khoảng cách tối đa"],
                   ["feeRoundingStep", "Bước làm tròn phí"],
                 ] as const
