@@ -181,7 +181,11 @@ function AdminNavigation({
             <Icon className="size-4 shrink-0" />
             <span className="truncate">{item.label}</span>
             {item.href === "/admin/orders" && orderAttentionCount > 0 ? (
-              <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-10px font-bold text-white">
+              <span
+                className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-10px font-bold text-white"
+                title={`${orderAttentionCount} đơn chưa xác nhận thanh toán`}
+                aria-label={`${orderAttentionCount} đơn chưa xác nhận thanh toán`}
+              >
                 {orderAttentionCount > 99 ? "99+" : orderAttentionCount}
               </span>
             ) : null}
@@ -241,11 +245,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       });
       if (!response.ok) return;
       const data = await response.json();
-      setOrderAttentionCount(
-        Number(data.counts?.pending || 0) +
-          Number(data.counts?.confirmed || 0) +
-          Number(data.counts?.preparing || 0),
-      );
+      setOrderAttentionCount(Number(data.counts?.paymentPending || 0));
     } catch {
       // Keep navigation usable while the attention count is unavailable.
     }

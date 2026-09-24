@@ -151,8 +151,8 @@ function LoadingRows() {
   return (
     <>
       <div className="hidden lg:block">
-        <div className="grid grid-cols-[1.25fr_0.95fr_1fr_0.72fr_0.78fr_0.62fr_64px] gap-4 border-b border-(--admin-border) bg-(--admin-background-subtle) px-4 py-3">
-          {Array.from({ length: 7 }, (_, index) => (
+        <div className="grid grid-cols-[1.25fr_0.95fr_1fr_0.72fr_0.78fr_0.55fr_0.62fr_64px] gap-4 border-b border-(--admin-border) bg-(--admin-background-subtle) px-4 py-3">
+          {Array.from({ length: 8 }, (_, index) => (
             <Skeleton key={index} className="h-3 w-16 rounded" />
           ))}
         </div>
@@ -160,7 +160,7 @@ function LoadingRows() {
           {Array.from({ length: 6 }, (_, row) => (
             <div
               key={row}
-              className="grid grid-cols-[1.25fr_0.95fr_1fr_0.72fr_0.78fr_0.62fr_64px] items-center gap-4 px-4 py-4"
+              className="grid grid-cols-[1.25fr_0.95fr_1fr_0.72fr_0.78fr_0.55fr_0.62fr_64px] items-center gap-4 px-4 py-4"
             >
               <div className="space-y-2">
                 <Skeleton className="h-4 w-40" />
@@ -176,6 +176,7 @@ function LoadingRows() {
               </div>
               <Skeleton className="h-9 w-full rounded-lg" />
               <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-4 w-16" />
               <Skeleton className="ml-auto h-4 w-20" />
               <Skeleton className="h-8 w-14 rounded-lg" />
             </div>
@@ -510,7 +511,7 @@ export default function AdminOnlineOrdersPage() {
         ) : (
           <>
             <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full min-w-[1120px] text-left">
+              <table className="w-full min-w-[1240px] text-left">
                 <thead className="bg-(--admin-background-subtle) text-xs font-semibold text-(--admin-text-muted)">
                   <tr>
                     <th className="px-4 py-3">Đơn hàng</th>
@@ -518,6 +519,7 @@ export default function AdminOnlineOrdersPage() {
                     <th className="px-4 py-3">Sản phẩm</th>
                     <th className="px-4 py-3">Trạng thái</th>
                     <th className="px-4 py-3">Thanh toán</th>
+                    <th className="px-4 py-3">Hình thức</th>
                     <th className="px-4 py-3 text-right">Tổng tiền</th>
                     <th className="px-4 py-3" />
                   </tr>
@@ -589,11 +591,11 @@ export default function AdminOnlineOrdersPage() {
                             void updateOrder(order, "paymentStatus", value)
                           }
                         />
-                        <p className="mt-1 text-xs text-(--admin-text-muted)">
-                          {order.paymentMethod
-                            ? PAYMENT_METHOD_LABELS[order.paymentMethod]
-                            : "Chưa chọn"}
-                        </p>
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium text-(--admin-text-secondary)">
+                        {order.paymentMethod
+                          ? PAYMENT_METHOD_LABELS[order.paymentMethod]
+                          : "Chưa chọn"}
                       </td>
                       <td className="px-4 py-3 text-right text-sm font-bold text-(--admin-text)">
                         {formatMoney(order.totalAmount)}
@@ -672,9 +674,12 @@ export default function AdminOnlineOrdersPage() {
                   </div>
                   <div className="mt-3 flex items-center justify-between border-t border-(--admin-border) pt-3">
                     <span className="text-xs text-(--admin-text-muted)">
-                      {order.paymentMethod
-                        ? PAYMENT_METHOD_LABELS[order.paymentMethod]
-                        : "Chưa chọn phương thức"}
+                      Hình thức:{" "}
+                      <span className="font-semibold text-(--admin-text-secondary)">
+                        {order.paymentMethod
+                          ? PAYMENT_METHOD_LABELS[order.paymentMethod]
+                          : "Chưa chọn"}
+                      </span>
                     </span>
                     <Button asChild variant="ghost" size="sm">
                       <Link href={`/admin/orders/${order.id}`}>Chi tiết</Link>

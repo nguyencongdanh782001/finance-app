@@ -5,6 +5,7 @@ import {
   AdminPageHeader,
   AdminSection,
 } from "@/components/Admin/AdminPage";
+import AdminOrderDetailSkeleton from "@/components/Admin/Orders/AdminOrderDetailSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -271,12 +272,7 @@ export default function AdminOrderDetailPage() {
         </p>
       </AdminPageContainer>
     );
-  if (!order)
-    return (
-      <main className="flex min-h-96 items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-primary" />
-      </main>
-    );
+  if (!order) return <AdminOrderDetailSkeleton />;
 
   const nextStatus = ONLINE_STATUS_FLOW[order.status] as
     OrderStatusValue | undefined;

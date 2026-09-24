@@ -132,7 +132,7 @@ export async function listAdminOnlineOrders(query: AdminOnlineOrderQuery) {
   const baseWhere = {
     source: OrderSource.ONLINE,
   } satisfies Prisma.OrderWhereInput;
-  const [orders, total, grouped] = await Promise.all([
+  const [orders, total, grouped, paymentPendingCount] = await Promise.all([
     prisma.order.findMany({
       where,
       skip: (query.page - 1) * query.limit,
@@ -164,6 +164,21 @@ export async function listAdminOnlineOrders(query: AdminOnlineOrderQuery) {
       where: baseWhere,
       _count: { _all: true },
     }),
+    prisma.order.count({
+      where: {
+        source: OrderSource.ONLINE,
+        status: { notIn: [OrderStatus.CANCELLED, OrderStatus.REFUNDED] },
+        paymentStatus: {
+          in: [
+            PaymentStatus.UNPAID,
+            PaymentStatus.PENDING,
+            PaymentStatus.PROCESSING,
+            PaymentStatus.AUTHORIZED,
+            PaymentStatus.FAILED,
+          ],
+        },
+      },
+    }),
   ]);
 
   const countFor = (statuses: OrderStatus[]) =>
@@ -192,6 +207,7 @@ export async function listAdminOnlineOrders(query: AdminOnlineOrderQuery) {
       shipping: countFor(CUSTOMER_ORDER_FILTER_STATUSES.SHIPPING),
       delivered: countFor(CUSTOMER_ORDER_FILTER_STATUSES.DELIVERED),
       cancelled: countFor(CUSTOMER_ORDER_FILTER_STATUSES.CANCELLED),
+      paymentPending: paymentPendingCount,
     },
     pagination: {
       page: query.page,
