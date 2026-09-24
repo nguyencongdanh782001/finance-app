@@ -2,13 +2,7 @@
 
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
-import {
-  Bell,
-  CheckCheck,
-  ExternalLink,
-  Loader2,
-  X,
-} from "lucide-react";
+import { Bell, CheckCheck, ExternalLink, Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -47,7 +41,9 @@ const badge = (value: number) => (value > 99 ? "99+" : value);
 
 const base64ToBytes = (value: string) => {
   const padding = "=".repeat((4 - (value.length % 4)) % 4);
-  const raw = window.atob((value + padding).replace(/-/g, "+").replace(/_/g, "/"));
+  const raw = window.atob(
+    (value + padding).replace(/-/g, "+").replace(/_/g, "/"),
+  );
   return Uint8Array.from([...raw].map((character) => character.charCodeAt(0)));
 };
 const bytesToBase64Url = (value: ArrayBuffer | null) => {
@@ -69,6 +65,7 @@ export default function CustomerNotificationCenter() {
   const [enablingPush, setEnablingPush] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
   const receivedIds = useRef(new Set<number>());
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     if (!customer) return;
@@ -117,10 +114,9 @@ export default function CustomerNotificationCenter() {
         createdAt: payload.createdAt,
         isRead: false,
       };
-      setItems((current) => [
-        item,
-        ...current.filter((entry) => entry.id !== item.id),
-      ].slice(0, 12));
+      setItems((current) =>
+        [item, ...current.filter((entry) => entry.id !== item.id)].slice(0, 12),
+      );
       setUnreadCount((count) => count + 1);
     };
     navigator.serviceWorker.addEventListener("message", handleMessage);
@@ -129,6 +125,25 @@ export default function CustomerNotificationCenter() {
       navigator.serviceWorker.removeEventListener("message", handleMessage);
     };
   }, [customer, load]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      const target = event.target;
+      if (
+        target instanceof Node &&
+        containerRef.current &&
+        !containerRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () =>
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, [open]);
 
   const markRead = async (item: CustomerNotification) => {
     if (!item.isRead) {
@@ -151,7 +166,8 @@ export default function CustomerNotificationCenter() {
   };
 
   const enablePush = async () => {
-    if (!vapidKey || !("PushManager" in window) || !("Notification" in window)) return;
+    if (!vapidKey || !("PushManager" in window) || !("Notification" in window))
+      return;
     setEnablingPush(true);
     try {
       const permission = await Notification.requestPermission();
@@ -188,7 +204,7 @@ export default function CustomerNotificationCenter() {
     Boolean(vapidKey);
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <button
         type="button"
         aria-label={`Thông báo, ${unreadCount} chưa đọc`}
@@ -207,8 +223,12 @@ export default function CustomerNotificationCenter() {
         <div className="absolute right-0 top-12 z-50 flex h-[min(620px,calc(100dvh-6rem))] w-[min(92vw,390px)] flex-col overflow-hidden rounded-2xl border border-[#EAE1E4] bg-white shadow-[0_20px_55px_rgba(77,47,58,0.16)]">
           <div className="flex shrink-0 items-center justify-between border-b border-[#EAE1E4] px-5 py-4">
             <div>
-              <p className="text-base font-extrabold text-[#2D2226]">Thông báo</p>
-              <p className="mt-0.5 text-xs text-[#8B7A80]">Cập nhật đơn hàng của bạn</p>
+              <p className="text-base font-extrabold text-[#2D2226]">
+                Thông báo
+              </p>
+              <p className="mt-0.5 text-xs text-[#8B7A80]">
+                Cập nhật đơn hàng của bạn
+              </p>
             </div>
             <div className="flex items-center gap-1">
               <Button
@@ -241,14 +261,22 @@ export default function CustomerNotificationCenter() {
               >
                 <Bell className="size-4 shrink-0" />
                 <span className="min-w-0 flex-1">
-                  <strong className="block text-sm">Bật thông báo realtime</strong>
-                  <span className="mt-0.5 block text-[#8B7A80]">Nhận ngay khi đơn hàng thay đổi trạng thái.</span>
+                  <strong className="block text-sm">
+                    Bật thông báo realtime
+                  </strong>
+                  <span className="mt-0.5 block text-[#8B7A80]">
+                    Nhận ngay khi đơn hàng thay đổi trạng thái.
+                  </span>
                 </span>
-                {enablingPush ? <Loader2 className="size-4 animate-spin" /> : null}
+                {enablingPush ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : null}
               </button>
             ) : null}
             {loading ? (
-              <div className="flex min-h-40 items-center justify-center text-[#8B7A80]"><Loader2 className="size-5 animate-spin" /></div>
+              <div className="flex min-h-40 items-center justify-center text-[#8B7A80]">
+                <Loader2 className="size-5 animate-spin" />
+              </div>
             ) : items.length ? (
               <div className="grid gap-2">
                 {items.map((item) => (
@@ -258,14 +286,24 @@ export default function CustomerNotificationCenter() {
                     onClick={() => void markRead(item)}
                     className={`flex w-full gap-3 rounded-xl border p-3 text-left transition hover:border-[#F4B5C5] hover:bg-white ${item.isRead ? "border-[#EAE1E4] bg-white" : "border-[#F4D6DF] bg-[#FFF7F9]"}`}
                   >
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#FCEEF3] text-[#D96C8A]"><Bell className="size-4" /></span>
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#FCEEF3] text-[#D96C8A]">
+                      <Bell className="size-4" />
+                    </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex items-start gap-2">
-                        <span className="line-clamp-1 text-sm font-bold text-[#2D2226]">{item.title}</span>
-                        {!item.isRead ? <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[#D96C8A]" /> : null}
+                        <span className="line-clamp-1 text-sm font-bold text-[#2D2226]">
+                          {item.title}
+                        </span>
+                        {!item.isRead ? (
+                          <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[#D96C8A]" />
+                        ) : null}
                       </span>
-                      <span className="mt-1 line-clamp-2 text-xs leading-5 text-[#6F6066]">{item.message}</span>
-                      <span className="mt-2 block text-[10px] font-medium text-[#A99BA0]">{relativeTime(item.createdAt)}</span>
+                      <span className="mt-1 line-clamp-2 text-xs leading-5 text-[#6F6066]">
+                        {item.message}
+                      </span>
+                      <span className="mt-2 block text-[10px] font-medium text-[#A99BA0]">
+                        {relativeTime(item.createdAt)}
+                      </span>
                     </span>
                   </button>
                 ))}
@@ -273,8 +311,12 @@ export default function CustomerNotificationCenter() {
             ) : (
               <div className="flex min-h-48 flex-col items-center justify-center rounded-xl border border-dashed border-[#EAE1E4] bg-white px-5 text-center">
                 <Bell className="size-6 text-[#D96C8A]" />
-                <p className="mt-3 text-sm font-bold text-[#2D2226]">Chưa có thông báo mới</p>
-                <p className="mt-1 text-xs text-[#8B7A80]">Cập nhật đơn hàng sẽ xuất hiện tại đây.</p>
+                <p className="mt-3 text-sm font-bold text-[#2D2226]">
+                  Chưa có thông báo mới
+                </p>
+                <p className="mt-1 text-xs text-[#8B7A80]">
+                  Cập nhật đơn hàng sẽ xuất hiện tại đây.
+                </p>
               </div>
             )}
           </div>
