@@ -81,6 +81,31 @@ export async function GET(
             originalUnitPrice: true,
             unitPrice: true,
             totalPrice: true,
+            product: {
+              select: {
+                imageUrl: true,
+                images: {
+                  where: { variantId: null },
+                  orderBy: [{ isPrimary: "desc" }, { position: "asc" }],
+                  take: 1,
+                  select: { url: true },
+                },
+              },
+            },
+            variant: {
+              select: {
+                images: {
+                  orderBy: [{ isPrimary: "desc" }, { position: "asc" }],
+                  take: 1,
+                  select: { url: true },
+                },
+                productImages: {
+                  orderBy: [{ isPrimary: "desc" }, { position: "asc" }],
+                  take: 1,
+                  select: { url: true },
+                },
+              },
+            },
           },
         },
         statusHistories: {
@@ -140,7 +165,19 @@ export async function GET(
         ? money(order.shippingDistanceKm)
         : null,
       items: order.items.map((item) => ({
-        ...item,
+        id: item.id,
+        productTitle: item.productTitle,
+        productImageUrl:
+          item.productImageUrl?.trim() ||
+          item.variant?.images[0]?.url ||
+          item.variant?.productImages[0]?.url ||
+          item.product?.images[0]?.url ||
+          item.product?.imageUrl ||
+          null,
+        sku: item.sku,
+        color: item.color,
+        size: item.size,
+        quantity: item.quantity,
         originalUnitPrice: money(item.originalUnitPrice),
         unitPrice: money(item.unitPrice),
         totalPrice: money(item.totalPrice),

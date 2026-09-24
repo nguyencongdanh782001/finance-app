@@ -5,13 +5,18 @@ import {
   AdminPageHeader,
   AdminSection,
 } from "@/components/Admin/AdminPage";
+import { AdminSelect } from "@/components/Admin/AdminFields";
+import { AuthDatePicker } from "@/components/Auth/AuthPageClient";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
+  canManuallyMarkOrderPaid,
   CUSTOMER_ORDER_FILTERS,
+  ONLINE_STATUS_FLOW,
   ORDER_STATUS_CONFIG,
 } from "@/lib/orders/order-status";
+import { toast } from "@/hook/use-toast";
 import type {
   OrderStatusValue,
   PaymentMethodValue,
@@ -23,6 +28,7 @@ import {
   PackageSearch,
   RotateCcw,
   Search,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -86,10 +92,26 @@ const PAYMENT_METHOD_LABELS: Record<PaymentMethodValue, string> = {
   STRIPE: "Stripe",
 };
 
-const selectClass =
-  "h-10 min-w-0 rounded-lg border border-(--admin-border) bg-white px-3 text-sm font-medium text-(--admin-text-secondary) outline-none focus:border-primary focus:ring-2 focus:ring-primary/10";
-const inputClass =
-  "h-10 min-w-0 rounded-lg border border-(--admin-border) bg-white px-3 text-sm text-(--admin-text) outline-none focus:border-primary focus:ring-2 focus:ring-primary/10";
+const DATE_PICKER_CLASS =
+  "h-10! w-full! rounded-lg! border-(--admin-border)! bg-white! px-3! text-sm! font-medium! shadow-none! hover:border-(--admin-primary)!";
+
+const PAYMENT_STATUS_OPTIONS = Object.entries(PAYMENT_STATUS_LABELS).map(
+  ([value, label]) => ({ value, label }),
+);
+const PAYMENT_METHOD_OPTIONS = Object.entries(PAYMENT_METHOD_LABELS).map(
+  ([value, label]) => ({ value, label }),
+);
+const SORT_OPTIONS = [
+  { value: "newest", label: "Mới nhất" },
+  { value: "oldest", label: "Cũ nhất" },
+  { value: "total-desc", label: "Giá trị cao nhất" },
+  { value: "total-asc", label: "Giá trị thấp nhất" },
+];
+const DELIVERY_OPTIONS = [
+  { value: "ALL", label: "Mọi vận đơn" },
+  { value: "WITH_SHIPMENT", label: "Đã có vận đơn" },
+  { value: "WITHOUT_SHIPMENT", label: "Chưa có vận đơn" },
+];
 
 const formatMoney = (value: number) => `${value.toLocaleString("vi-VN")}đ`;
 const formatDate = (value: string) =>
@@ -102,51 +124,89 @@ const formatDate = (value: string) =>
     year: "numeric",
   });
 
-function OrderStatusBadge({ status }: { status: OrderStatusValue }) {
-  const config = ORDER_STATUS_CONFIG[status];
-  return (
-    <span
-      className={cn(
-        "inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-semibold",
-        config.tone === "success" && "bg-emerald-50 text-emerald-700",
-        config.tone === "danger" && "bg-rose-50 text-rose-700",
-        config.tone === "pending" && "bg-amber-50 text-amber-700",
-        config.tone === "info" && "bg-sky-50 text-sky-700",
-        config.tone === "active" && "bg-violet-50 text-violet-700",
-        config.tone === "muted" && "bg-slate-100 text-slate-600",
-      )}
-    >
-      {config.shortLabel}
-    </span>
-  );
-}
+const getOrderStatusOptions = (order: OrderListItem) => {
+  const nextStatus = ONLINE_STATUS_FLOW[order.status] as
+    OrderStatusValue | undefined;
+  return [order.status, ...(nextStatus ? [nextStatus] : [])].map((value) => ({
+    value,
+    label: ORDER_STATUS_CONFIG[value].shortLabel,
+  }));
+};
 
-function PaymentBadge({ status }: { status: PaymentStatusValue }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-semibold",
-        status === "PAID"
-          ? "bg-emerald-50 text-emerald-700"
-          : status === "FAILED" ||
-              status === "REFUNDED" ||
-              status === "CANCELLED"
-            ? "bg-rose-50 text-rose-700"
-            : "bg-slate-100 text-slate-600",
-      )}
-    >
-      {PAYMENT_STATUS_LABELS[status]}
-    </span>
-  );
-}
+const getPaymentStatusOptions = (order: OrderListItem) => {
+  const values: PaymentStatusValue[] = [order.paymentStatus];
+  if (
+    canManuallyMarkOrderPaid(order.status, order.paymentStatus) &&
+    order.paymentStatus !== "PAID"
+  ) {
+    values.push("PAID");
+  }
+  return values.map((value) => ({
+    value,
+    label: PAYMENT_STATUS_LABELS[value],
+  }));
+};
 
 function LoadingRows() {
   return (
-    <div className="space-y-3 p-4">
-      {Array.from({ length: 5 }, (_, index) => (
-        <Skeleton key={index} className="h-16 w-full rounded-xl" />
-      ))}
-    </div>
+    <>
+      <div className="hidden lg:block">
+        <div className="grid grid-cols-[1.25fr_0.95fr_1fr_0.72fr_0.78fr_0.62fr_64px] gap-4 border-b border-(--admin-border) bg-(--admin-background-subtle) px-4 py-3">
+          {Array.from({ length: 7 }, (_, index) => (
+            <Skeleton key={index} className="h-3 w-16 rounded" />
+          ))}
+        </div>
+        <div className="divide-y divide-(--admin-border)">
+          {Array.from({ length: 6 }, (_, row) => (
+            <div
+              key={row}
+              className="grid grid-cols-[1.25fr_0.95fr_1fr_0.72fr_0.78fr_0.62fr_64px] items-center gap-4 px-4 py-4"
+            >
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+              <Skeleton className="ml-auto h-4 w-20" />
+              <Skeleton className="h-8 w-14 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-3 p-3 lg:hidden">
+        {Array.from({ length: 4 }, (_, index) => (
+          <div
+            key={index}
+            className="rounded-xl border border-(--admin-border) bg-white p-4"
+          >
+            <div className="flex justify-between gap-4">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-40 max-w-full" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+              <Skeleton className="h-4 w-20" />
+            </div>
+            <div className="mt-4 space-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Skeleton className="h-10 rounded-lg" />
+              <Skeleton className="h-10 rounded-lg" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -164,6 +224,7 @@ export default function AdminOnlineOrdersPage() {
   const [to, setTo] = useState("");
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
+  const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -262,6 +323,52 @@ export default function AdminOnlineOrdersPage() {
     setSort("newest");
   };
 
+  const updateOrder = async (
+    order: OrderListItem,
+    field: "status" | "paymentStatus",
+    value: string,
+  ) => {
+    if (
+      (field === "status" && value === order.status) ||
+      (field === "paymentStatus" && value === order.paymentStatus)
+    ) {
+      return;
+    }
+
+    setUpdatingOrderId(order.id);
+    try {
+      const response = await fetch(`/api/admin/orders/${order.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          field === "status" ? { status: value } : { action: "mark_paid" },
+        ),
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.message || "Không thể cập nhật đơn hàng.");
+      }
+      toast({
+        title:
+          field === "status"
+            ? "Đã cập nhật trạng thái đơn"
+            : "Đã xác nhận thanh toán",
+        className: "bg-green-16 text-white",
+      });
+      await load(false);
+    } catch (cause) {
+      toast({
+        title:
+          cause instanceof Error
+            ? cause.message
+            : "Không thể cập nhật đơn hàng.",
+        className: "bg-red-1 text-white",
+      });
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
   const countByStatus: Record<string, number> = {
     ALL: data?.counts.all || 0,
     PENDING: data?.counts.pending || 0,
@@ -296,7 +403,11 @@ export default function AdminOnlineOrdersPage() {
               {item.label}
             </span>
             <span className="mt-1 block text-xl font-bold text-(--admin-text)">
-              {countByStatus[item.value]}
+              {loading && !data ? (
+                <Skeleton className="h-6 w-10 rounded" />
+              ) : (
+                countByStatus[item.value]
+              )}
             </span>
           </button>
         ))}
@@ -314,69 +425,60 @@ export default function AdminOnlineOrdersPage() {
                 className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-(--admin-text-muted)"
               />
             </label>
-            <select
+            <AdminSelect
+              name="paymentStatusFilter"
               value={paymentStatus}
-              onChange={(event) => setPaymentStatus(event.target.value)}
-              className={selectClass}
-              aria-label="Trạng thái thanh toán"
-            >
-              <option value="ALL">Mọi thanh toán</option>
-              {Object.entries(PAYMENT_STATUS_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <select
+              onChange={setPaymentStatus}
+              options={[
+                { value: "ALL", label: "Mọi thanh toán" },
+                ...PAYMENT_STATUS_OPTIONS,
+              ]}
+              placeholder="Trạng thái thanh toán"
+            />
+            <AdminSelect
+              name="paymentMethodFilter"
               value={paymentMethod}
-              onChange={(event) => setPaymentMethod(event.target.value)}
-              className={selectClass}
-              aria-label="Phương thức thanh toán"
-            >
-              <option value="ALL">Mọi phương thức</option>
-              {Object.entries(PAYMENT_METHOD_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <select
+              onChange={setPaymentMethod}
+              options={[
+                { value: "ALL", label: "Mọi phương thức" },
+                ...PAYMENT_METHOD_OPTIONS,
+              ]}
+              placeholder="Phương thức thanh toán"
+            />
+            <AdminSelect
+              name="sort"
               value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              className={selectClass}
-              aria-label="Sắp xếp"
-            >
-              <option value="newest">Mới nhất</option>
-              <option value="oldest">Cũ nhất</option>
-              <option value="total-desc">Giá trị cao nhất</option>
-              <option value="total-asc">Giá trị thấp nhất</option>
-            </select>
-            <select
+              onChange={setSort}
+              options={SORT_OPTIONS}
+              placeholder="Sắp xếp"
+            />
+            <AdminSelect
+              name="deliveryFilter"
               value={delivery}
-              onChange={(event) => setDelivery(event.target.value)}
-              className={selectClass}
-              aria-label="Tình trạng vận đơn"
-            >
-              <option value="ALL">Mọi vận đơn</option>
-              <option value="WITH_SHIPMENT">Đã có vận đơn</option>
-              <option value="WITHOUT_SHIPMENT">Chưa có vận đơn</option>
-            </select>
+              onChange={setDelivery}
+              options={DELIVERY_OPTIONS}
+              placeholder="Tình trạng vận đơn"
+            />
           </div>
           <div className="mt-2 grid gap-2 sm:grid-cols-[180px_180px_auto]">
-            <input
-              type="date"
+            <AuthDatePicker
               value={from}
-              onChange={(event) => setFrom(event.target.value)}
-              className={inputClass}
-              aria-label="Từ ngày"
+              allowFuture
+              clearable
+              onClear={() => setFrom("")}
+              onChange={setFrom}
+              className={DATE_PICKER_CLASS}
+              placeholder="Từ ngày"
             />
-            <input
-              type="date"
+            <AuthDatePicker
               value={to}
-              min={from || undefined}
-              onChange={(event) => setTo(event.target.value)}
-              className={inputClass}
-              aria-label="Đến ngày"
+              allowFuture
+              clearable
+              minDate={from || undefined}
+              onClear={() => setTo("")}
+              onChange={setTo}
+              className={DATE_PICKER_CLASS}
+              placeholder="Đến ngày"
             />
             <Button
               type="button"
@@ -408,7 +510,7 @@ export default function AdminOnlineOrdersPage() {
         ) : (
           <>
             <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full min-w-[1000px] text-left">
+              <table className="w-full min-w-[1120px] text-left">
                 <thead className="bg-(--admin-background-subtle) text-xs font-semibold text-(--admin-text-muted)">
                   <tr>
                     <th className="px-4 py-3">Đơn hàng</th>
@@ -453,11 +555,40 @@ export default function AdminOnlineOrdersPage() {
                           {order.itemCount} sản phẩm
                         </p>
                       </td>
-                      <td className="px-4 py-3">
-                        <OrderStatusBadge status={order.status} />
+                      <td className="w-44 px-4 py-3">
+                        <div className="relative">
+                          <AdminSelect
+                            name={`orderStatus-${order.id}`}
+                            value={order.status}
+                            options={getOrderStatusOptions(order)}
+                            placeholder="Trạng thái đơn"
+                            disabled={
+                              updatingOrderId === order.id ||
+                              getOrderStatusOptions(order).length === 1
+                            }
+                            onChange={(value) =>
+                              void updateOrder(order, "status", value)
+                            }
+                          />
+                          {updatingOrderId === order.id ? (
+                            <Loader2 className="absolute right-9 top-3 size-4 animate-spin text-primary" />
+                          ) : null}
+                        </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <PaymentBadge status={order.paymentStatus} />
+                      <td className="w-48 px-4 py-3">
+                        <AdminSelect
+                          name={`paymentStatus-${order.id}`}
+                          value={order.paymentStatus}
+                          options={getPaymentStatusOptions(order)}
+                          placeholder="Thanh toán"
+                          disabled={
+                            updatingOrderId === order.id ||
+                            getPaymentStatusOptions(order).length === 1
+                          }
+                          onChange={(value) =>
+                            void updateOrder(order, "paymentStatus", value)
+                          }
+                        />
                         <p className="mt-1 text-xs text-(--admin-text-muted)">
                           {order.paymentMethod
                             ? PAYMENT_METHOD_LABELS[order.paymentMethod]
@@ -481,16 +612,18 @@ export default function AdminOnlineOrdersPage() {
             </div>
             <div className="grid gap-3 p-3 lg:hidden">
               {data.items.map((order) => (
-                <Link
+                <article
                   key={order.id}
-                  href={`/admin/orders/${order.id}`}
                   className="rounded-xl border border-(--admin-border) bg-white p-4 transition-colors hover:border-primary/40"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate font-semibold text-(--admin-text)">
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="block truncate font-semibold text-(--admin-text) hover:text-primary"
+                      >
                         {order.orderNumber}
-                      </p>
+                      </Link>
                       <p className="mt-1 text-xs text-(--admin-text-muted)">
                         {formatDate(order.placedAt)}
                       </p>
@@ -509,11 +642,45 @@ export default function AdminOnlineOrdersPage() {
                         "Không có liên hệ"}
                     </p>
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <OrderStatusBadge status={order.status} />
-                    <PaymentBadge status={order.paymentStatus} />
+                  <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <AdminSelect
+                      name={`mobileOrderStatus-${order.id}`}
+                      value={order.status}
+                      options={getOrderStatusOptions(order)}
+                      placeholder="Trạng thái đơn"
+                      disabled={
+                        updatingOrderId === order.id ||
+                        getOrderStatusOptions(order).length === 1
+                      }
+                      onChange={(value) =>
+                        void updateOrder(order, "status", value)
+                      }
+                    />
+                    <AdminSelect
+                      name={`mobilePaymentStatus-${order.id}`}
+                      value={order.paymentStatus}
+                      options={getPaymentStatusOptions(order)}
+                      placeholder="Thanh toán"
+                      disabled={
+                        updatingOrderId === order.id ||
+                        getPaymentStatusOptions(order).length === 1
+                      }
+                      onChange={(value) =>
+                        void updateOrder(order, "paymentStatus", value)
+                      }
+                    />
                   </div>
-                </Link>
+                  <div className="mt-3 flex items-center justify-between border-t border-(--admin-border) pt-3">
+                    <span className="text-xs text-(--admin-text-muted)">
+                      {order.paymentMethod
+                        ? PAYMENT_METHOD_LABELS[order.paymentMethod]
+                        : "Chưa chọn phương thức"}
+                    </span>
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href={`/admin/orders/${order.id}`}>Chi tiết</Link>
+                    </Button>
+                  </div>
+                </article>
               ))}
             </div>
           </>

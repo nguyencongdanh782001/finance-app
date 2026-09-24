@@ -22,7 +22,10 @@ export async function GET(
     !orderId ||
     request.headers.get("x-user-role") !== "CUSTOMER"
   ) {
-    return NextResponse.json({ message: "Vui lòng đăng nhập." }, { status: 401 });
+    return NextResponse.json(
+      { message: "Vui lòng đăng nhập." },
+      { status: 401 },
+    );
   }
 
   const order = await prisma.order.findFirst({
@@ -73,6 +76,31 @@ export async function GET(
           unitPrice: true,
           totalPrice: true,
           variantOptionsSnapshot: true,
+          product: {
+            select: {
+              imageUrl: true,
+              images: {
+                where: { variantId: null },
+                orderBy: [{ isPrimary: "desc" }, { position: "asc" }],
+                take: 1,
+                select: { url: true },
+              },
+            },
+          },
+          variant: {
+            select: {
+              images: {
+                orderBy: [{ isPrimary: "desc" }, { position: "asc" }],
+                take: 1,
+                select: { url: true },
+              },
+              productImages: {
+                orderBy: [{ isPrimary: "desc" }, { position: "asc" }],
+                take: 1,
+                select: { url: true },
+              },
+            },
+          },
         },
       },
       discountRedemption: {
@@ -182,7 +210,13 @@ export async function GET(
       productId: item.productId,
       variantId: item.variantId,
       title: item.productTitle,
-      imageUrl: item.productImageUrl,
+      imageUrl:
+        item.productImageUrl?.trim() ||
+        item.variant?.images[0]?.url ||
+        item.variant?.productImages[0]?.url ||
+        item.product?.images[0]?.url ||
+        item.product?.imageUrl ||
+        null,
       color: item.color,
       size: item.size,
       sku: item.sku,
@@ -238,9 +272,7 @@ export async function POST(
     return NextResponse.json(
       {
         message:
-          error instanceof Error
-            ? error.message
-            : "Không thể hủy đơn hàng.",
+          error instanceof Error ? error.message : "Không thể hủy đơn hàng.",
       },
       { status: 400 },
     );

@@ -33,13 +33,13 @@ import {
   Loader2,
   MapPin,
   Package,
+  ImageOff,
   Phone,
   ReceiptText,
   Truck,
   UserRound,
   XCircle,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -161,6 +161,40 @@ function InfoCard({
       </div>
       <div className="mt-4">{children}</div>
     </AdminSection>
+  );
+}
+
+function ProductImage({
+  imageUrl,
+  title,
+}: {
+  imageUrl: string | null;
+  title: string;
+}) {
+  const [visible, setVisible] = useState(Boolean(imageUrl));
+
+  useEffect(() => {
+    setVisible(Boolean(imageUrl));
+  }, [imageUrl]);
+
+  if (!imageUrl || !visible) {
+    return (
+      <span className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-(--admin-background-subtle) text-(--admin-text-muted)">
+        <ImageOff className="size-5" />
+      </span>
+    );
+  }
+
+  return (
+    <span className="size-14 shrink-0 overflow-hidden rounded-lg border border-(--admin-border) bg-(--admin-background-subtle)">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={imageUrl}
+        alt={title}
+        className="size-full object-cover"
+        onError={() => setVisible(false)}
+      />
+    </span>
   );
 }
 
@@ -339,19 +373,10 @@ export default function AdminOrderDetailPage() {
                   key={item.id}
                   className="flex gap-3 py-4 first:pt-0 last:pb-0"
                 >
-                  {item.productImageUrl ? (
-                    <Image
-                      src={item.productImageUrl}
-                      alt=""
-                      width={56}
-                      height={56}
-                      className="size-14 shrink-0 rounded-lg border border-(--admin-border) object-cover"
-                    />
-                  ) : (
-                    <span className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-(--admin-background-subtle)">
-                      <Package className="size-5 text-(--admin-text-muted)" />
-                    </span>
-                  )}
+                  <ProductImage
+                    imageUrl={item.productImageUrl}
+                    title={item.productTitle}
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-(--admin-text)">
                       {item.productTitle}
