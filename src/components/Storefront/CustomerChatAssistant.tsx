@@ -73,6 +73,17 @@ function productContext(pathname: string): ProductContext | undefined {
   return Number.isInteger(id) && id > 0 ? { id } : { slug: identifier };
 }
 
+function conversationProductContext(
+  messages: ChatMessage[],
+): ProductContext | undefined {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const products = messages[index].reply?.products;
+    if (!products?.length) continue;
+    return products.length === 1 ? { id: products[0].id } : undefined;
+  }
+  return undefined;
+}
+
 export default function CustomerChatAssistant() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -128,7 +139,8 @@ export default function CustomerChatAssistant() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: question,
-          context: productContext(pathname),
+          context:
+            productContext(pathname) || conversationProductContext(messages),
         }),
       });
       const data = (await response.json().catch(() => null)) as
