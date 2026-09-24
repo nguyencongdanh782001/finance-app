@@ -10,6 +10,11 @@ import {
   ProductStatus,
   Prisma,
 } from "@/app/generated/prisma/client";
+import {
+  createCustomerOrderNotification,
+  getCustomerOrderPushPayload,
+  sendCustomerPushBestEffort,
+} from "@/lib/customer-notifications";
 
 export type DailyOrderSourceFilter = "ALL" | OrderSource;
 export type DailyOrderStatusFilter = "ALL" | OrderStatus;
@@ -914,7 +919,7 @@ export async function cancelOfflineOrder(
 ) {
   const reason = cancellationReason.trim();
   if (!reason) throw new Error("Vui lòng nhập lý do hủy đơn.");
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const existingOrder = await tx.order.findUnique({
       where: { id: orderId },
       include: { items: true },
@@ -980,8 +985,32 @@ export async function cancelOfflineOrder(
       include: includeOrderDetail,
     });
 
-    return serializeOrder(order);
+    const notification = await createCustomerOrderNotification(tx, {
+      userId: order.userId,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      status: OrderStatus.CANCELLED,
+      eventId: `ORDER_STATUS:${order.id}:${OrderStatus.CANCELLED}`,
+    });
+
+    return { order, notification };
   }, ORDER_TRANSACTION_OPTIONS);
+
+  if (result.notification && result.order.userId) {
+    void sendCustomerPushBestEffort(
+      result.order.userId,
+      getCustomerOrderPushPayload({
+        notificationId: result.notification.id,
+        orderId: result.order.id,
+        orderNumber: result.order.orderNumber,
+        status: OrderStatus.CANCELLED,
+        eventId: `ORDER_STATUS:${result.order.id}:${OrderStatus.CANCELLED}`,
+        createdAt: result.notification.createdAt,
+      }),
+    );
+  }
+
+  return serializeOrder(result.order);
 }
 
 export async function updateOnlineOrderStatus(
@@ -989,7 +1018,7 @@ export async function updateOnlineOrderStatus(
   nextStatus: OrderStatus,
   adminId: number,
 ) {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const existingOrder = await tx.order.findUnique({
       where: { id: orderId },
       include: includeOrderDetail,
@@ -1037,8 +1066,32 @@ export async function updateOnlineOrderStatus(
       include: includeOrderDetail,
     });
 
-    return serializeOrder(order);
+    const notification = await createCustomerOrderNotification(tx, {
+      userId: order.userId,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      status: nextStatus,
+      eventId: `ORDER_STATUS:${order.id}:${nextStatus}`,
+    });
+
+    return { order, notification };
   }, ORDER_TRANSACTION_OPTIONS);
+
+  if (result.notification && result.order.userId) {
+    void sendCustomerPushBestEffort(
+      result.order.userId,
+      getCustomerOrderPushPayload({
+        notificationId: result.notification.id,
+        orderId: result.order.id,
+        orderNumber: result.order.orderNumber,
+        status: nextStatus,
+        eventId: `ORDER_STATUS:${result.order.id}:${nextStatus}`,
+        createdAt: result.notification.createdAt,
+      }),
+    );
+  }
+
+  return serializeOrder(result.order);
 }
 
 export async function getOrderDetail(orderId: number) {

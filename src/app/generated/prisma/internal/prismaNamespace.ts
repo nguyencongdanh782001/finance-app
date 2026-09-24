@@ -6404,6 +6404,7 @@ export const ShippingConfigurationScalarFieldEnum = {
   feeRoundingStep: 'feeRoundingStep',
   minimumShippingFee: 'minimumShippingFee',
   maximumShippingFee: 'maximumShippingFee',
+  fallbackShippingFee: 'fallbackShippingFee',
   updatedById: 'updatedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

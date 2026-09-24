@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { validateDiscount } from "@/lib/discounts";
 import { verifyJwt } from "@/lib/auth/crypto";
+import { createShippingCalculationWithFallback } from "@/lib/shipping";
 import { NextResponse } from "next/server";
 
 const money = (value: number) => Math.max(0, Math.round(value));
@@ -158,8 +159,51 @@ export async function POST(request: Request) {
     };
   }
 
-  const shippingFee = 0;
-  const shipping = { available: true };
+  const addressId = Number(body.addressId);
+  let destinationLatitude: number | null = null;
+  let destinationLongitude: number | null = null;
+  if (Number.isInteger(addressId) && addressId > 0) {
+    const address = await prisma.userAddress.findFirst({
+      where: { id: addressId, userId },
+      select: { latitude: true, longitude: true },
+    });
+    if (!address) {
+      return NextResponse.json(
+        { message: "Địa chỉ giao hàng không tồn tại." },
+        { status: 404 },
+      );
+    }
+    destinationLatitude =
+      address.latitude == null ? null : Number(address.latitude);
+    destinationLongitude =
+      address.longitude == null ? null : Number(address.longitude);
+  }
+  let shippingCalculation;
+  try {
+    shippingCalculation = await createShippingCalculationWithFallback({
+      destinationLatitude,
+      destinationLongitude,
+      eligibleOrderValue: subtotal,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Không thể tính phí giao hàng.",
+      },
+      { status: 503 },
+    );
+  }
+  const shippingFee = shippingCalculation.calculation.finalShippingFee;
+  const shipping = {
+    available: true,
+    isFallback: shippingCalculation.isFallback,
+    unavailableReason: shippingCalculation.isFallback
+      ? shippingCalculation.fallbackReason
+      : undefined,
+  };
   const totalDiscount = membershipDiscount + couponDiscount;
   return NextResponse.json({
     items: normalized,
@@ -178,7 +222,9 @@ export async function POST(request: Request) {
         }
       : null,
     shipping,
-    shippingBreakdown: null,
-    warnings: [],
+    shippingBreakdown: shippingCalculation.calculation,
+    warnings: shippingCalculation.isFallback
+      ? ["Không thể xác định khoảng cách, đã áp dụng phí giao hàng dự phòng."]
+      : [],
   });
 }

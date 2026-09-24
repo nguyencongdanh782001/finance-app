@@ -22,6 +22,10 @@ export async function POST(request: Request) {
     feeRoundingStep: Number(
       body.config?.feeRoundingStep ?? defaultShippingConfig.feeRoundingStep,
     ),
+    fallbackShippingFee: Number(
+      body.config?.fallbackShippingFee ??
+        defaultShippingConfig.fallbackShippingFee,
+    ),
   };
   const distanceMeters = Number(body.distanceMeters);
   const eligibleOrderValue = Number(body.eligibleOrderValue || 0);

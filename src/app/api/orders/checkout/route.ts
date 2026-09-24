@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/db";
 import { verifyJwt } from "@/lib/auth/crypto";
 import { NextResponse } from "next/server";
 import { validateDiscount } from "@/lib/discounts";
+import { OrderStatus } from "@/app/generated/prisma/client";
 import {
   createNewOnlineOrderNotification,
   dispatchNotificationOutboxBestEffort,
 } from "@/lib/admin-notifications";
+import { createShippingCalculationWithFallback } from "@/lib/shipping";
+import {
+  createCustomerOrderNotification,
+  getCustomerOrderPushPayload,
+  sendCustomerPushBestEffort,
+} from "@/lib/customer-notifications";
 
 const fail = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -69,16 +75,42 @@ export async function POST(request: Request) {
   if (!receiverName || !receiverPhone || !receiverAddress)
     return fail("Vui lòng nhập đủ thông tin nhận hàng.");
   try {
-    const shippingCalculation: any = null;
-    const resolveShipping = async (eligibleOrderValue: number) => {
-      void eligibleOrderValue;
-    };
-    const quote = {
+    let shippingCalculation: Awaited<
+      ReturnType<typeof createShippingCalculationWithFallback>
+    > | null = null;
+    let quote: {
+      shippingFee: number;
+      distanceMeters: number | null;
+      distanceKm: number | null;
+      roundedDistanceKm: number | null;
+      estimatedDurationMinutes: number | null;
+    } = {
       shippingFee: 0,
       distanceMeters: 0,
       distanceKm: 0,
       roundedDistanceKm: 0,
       estimatedDurationMinutes: 0,
+    };
+    const resolveShipping = async (eligibleOrderValue: number) => {
+      shippingCalculation = await createShippingCalculationWithFallback({
+        destinationLatitude: Number.isFinite(destinationLatitude)
+          ? destinationLatitude
+          : null,
+        destinationLongitude: Number.isFinite(destinationLongitude)
+          ? destinationLongitude
+          : null,
+        eligibleOrderValue,
+      });
+      quote = {
+        shippingFee: shippingCalculation.calculation.finalShippingFee,
+        distanceMeters: shippingCalculation.route?.distanceMeters ?? null,
+        distanceKm: shippingCalculation.route
+          ? shippingCalculation.route.distanceMeters / 1000
+          : null,
+        roundedDistanceKm: shippingCalculation.calculation.roundedDistanceKm,
+        estimatedDurationMinutes:
+          shippingCalculation.route?.estimatedDurationMinutes ?? null,
+      };
     };
     const result = await prisma.$transaction(
       async (tx) => {
@@ -231,11 +263,11 @@ export async function POST(request: Request) {
             shippingChargeableDistanceKm:
               shippingCalculation?.calculation.chargeableDistanceKm ||
               quote.roundedDistanceKm,
-            shippingBaseFee: shippingCalculation?.calculation.baseFee || null,
+            shippingBaseFee: shippingCalculation?.calculation.baseFee ?? null,
             shippingPricePerKm:
-              shippingCalculation?.calculation.pricePerKm || null,
+              shippingCalculation?.calculation.pricePerKm ?? null,
             shippingFeeBeforePromotion:
-              shippingCalculation?.calculation.shippingFeeBeforePromotion ||
+              shippingCalculation?.calculation.shippingFeeBeforePromotion ??
               quote.shippingFee,
             shippingDiscount:
               shippingCalculation?.calculation.shippingDiscount || 0,
@@ -243,7 +275,9 @@ export async function POST(request: Request) {
               shippingCalculation?.calculation.appliedPromotionId || null,
             shippingPromotionName:
               shippingCalculation?.calculation.appliedPromotion?.name || null,
-            shippingQuoteProvider: "GEOAPIFY",
+            shippingQuoteProvider: shippingCalculation?.isFallback
+              ? "GEOAPIFY_FALLBACK"
+              : "GEOAPIFY",
             shippingCalculatedAt: new Date(),
             note,
             paymentMethod,
@@ -305,9 +339,17 @@ export async function POST(request: Request) {
           where: { cartId: cart!.id, id: { in: payload.cartItemIds || [] } },
         });
         await createNewOnlineOrderNotification(tx, created);
+        const customerNotification = await createCustomerOrderNotification(tx, {
+          userId,
+          orderId: created.id,
+          orderNumber: created.orderNumber,
+          status: OrderStatus.PENDING,
+          eventId: `ORDER_CREATED:${created.id}`,
+        });
         return {
           order: created,
           eventKey: `NEW_ONLINE_ORDER:${created.id}`,
+          customerNotification,
         };
       }
       if (!payload.variantId || !payload.quantity)
@@ -415,11 +457,11 @@ export async function POST(request: Request) {
           shippingChargeableDistanceKm:
             shippingCalculation?.calculation.chargeableDistanceKm ||
             quote.roundedDistanceKm,
-          shippingBaseFee: shippingCalculation?.calculation.baseFee || null,
+          shippingBaseFee: shippingCalculation?.calculation.baseFee ?? null,
           shippingPricePerKm:
-            shippingCalculation?.calculation.pricePerKm || null,
+            shippingCalculation?.calculation.pricePerKm ?? null,
           shippingFeeBeforePromotion:
-            shippingCalculation?.calculation.shippingFeeBeforePromotion ||
+            shippingCalculation?.calculation.shippingFeeBeforePromotion ??
             quote.shippingFee,
           shippingDiscount:
             shippingCalculation?.calculation.shippingDiscount || 0,
@@ -427,7 +469,9 @@ export async function POST(request: Request) {
             shippingCalculation?.calculation.appliedPromotionId || null,
           shippingPromotionName:
             shippingCalculation?.calculation.appliedPromotion?.name || null,
-          shippingQuoteProvider: "GEOAPIFY",
+          shippingQuoteProvider: shippingCalculation?.isFallback
+            ? "GEOAPIFY_FALLBACK"
+            : "GEOAPIFY",
           shippingCalculatedAt: new Date(),
           note,
           paymentMethod,
@@ -481,9 +525,17 @@ export async function POST(request: Request) {
         },
       });
       await createNewOnlineOrderNotification(tx, created);
+      const customerNotification = await createCustomerOrderNotification(tx, {
+        userId,
+        orderId: created.id,
+        orderNumber: created.orderNumber,
+        status: OrderStatus.PENDING,
+        eventId: `ORDER_CREATED:${created.id}`,
+      });
       return {
         order: created,
         eventKey: `NEW_ONLINE_ORDER:${created.id}`,
+        customerNotification,
       };
       },
       {
@@ -497,6 +549,19 @@ export async function POST(request: Request) {
         select: { id: true },
       });
       if (outbox) void dispatchNotificationOutboxBestEffort(outbox.id);
+    }
+    if (result.customerNotification) {
+      void sendCustomerPushBestEffort(
+        userId,
+        getCustomerOrderPushPayload({
+          notificationId: result.customerNotification.id,
+          orderId: result.order.id,
+          orderNumber: result.order.orderNumber,
+          status: OrderStatus.PENDING,
+          eventId: `ORDER_CREATED:${result.order.id}`,
+          createdAt: result.customerNotification.createdAt,
+        }),
+      );
     }
     return NextResponse.json(result.order, { status: 201 });
   } catch (cause) {

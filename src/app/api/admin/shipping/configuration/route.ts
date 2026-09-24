@@ -17,6 +17,8 @@ const serialize = (value: any) => ({
     value.maximumDeliveryDistanceKm == null
       ? null
       : Number(value.maximumDeliveryDistanceKm),
+  fallbackShippingFee:
+    value.fallbackShippingFee == null ? 0 : Number(value.fallbackShippingFee),
 });
 
 export async function GET(request: Request) {
@@ -55,6 +57,7 @@ export async function PUT(request: Request) {
   if (
     number(body.baseFee) < 0 ||
     number(body.pricePerKm) < 0 ||
+    number(body.fallbackShippingFee) < 0 ||
     number(body.feeRoundingStep, 1000) <= 0 ||
     number(body.maximumDeliveryDistanceKm) <= 0
   ) {
@@ -90,6 +93,7 @@ export async function PUT(request: Request) {
         body.maximumShippingFee == null || body.maximumShippingFee === ""
           ? null
           : Math.round(number(body.maximumShippingFee)),
+      fallbackShippingFee: Math.round(number(body.fallbackShippingFee)),
       updatedById: Number(request.headers.get("x-user-id")) || null,
     },
     update: {
@@ -116,6 +120,7 @@ export async function PUT(request: Request) {
         body.maximumShippingFee == null || body.maximumShippingFee === ""
           ? null
           : Math.round(number(body.maximumShippingFee)),
+      fallbackShippingFee: Math.round(number(body.fallbackShippingFee)),
       updatedById: Number(request.headers.get("x-user-id")) || null,
     },
   });

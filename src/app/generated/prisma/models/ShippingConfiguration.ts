@@ -36,6 +36,7 @@ export type ShippingConfigurationAvgAggregateOutputType = {
   feeRoundingStep: number | null
   minimumShippingFee: number | null
   maximumShippingFee: number | null
+  fallbackShippingFee: number | null
   updatedById: number | null
 }
 
@@ -49,6 +50,7 @@ export type ShippingConfigurationSumAggregateOutputType = {
   feeRoundingStep: number | null
   minimumShippingFee: number | null
   maximumShippingFee: number | null
+  fallbackShippingFee: number | null
   updatedById: number | null
 }
 
@@ -71,6 +73,7 @@ export type ShippingConfigurationMinAggregateOutputType = {
   feeRoundingStep: number | null
   minimumShippingFee: number | null
   maximumShippingFee: number | null
+  fallbackShippingFee: number | null
   updatedById: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -95,6 +98,7 @@ export type ShippingConfigurationMaxAggregateOutputType = {
   feeRoundingStep: number | null
   minimumShippingFee: number | null
   maximumShippingFee: number | null
+  fallbackShippingFee: number | null
   updatedById: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -119,6 +123,7 @@ export type ShippingConfigurationCountAggregateOutputType = {
   feeRoundingStep: number
   minimumShippingFee: number
   maximumShippingFee: number
+  fallbackShippingFee: number
   updatedById: number
   createdAt: number
   updatedAt: number
@@ -136,6 +141,7 @@ export type ShippingConfigurationAvgAggregateInputType = {
   feeRoundingStep?: true
   minimumShippingFee?: true
   maximumShippingFee?: true
+  fallbackShippingFee?: true
   updatedById?: true
 }
 
@@ -149,6 +155,7 @@ export type ShippingConfigurationSumAggregateInputType = {
   feeRoundingStep?: true
   minimumShippingFee?: true
   maximumShippingFee?: true
+  fallbackShippingFee?: true
   updatedById?: true
 }
 
@@ -171,6 +178,7 @@ export type ShippingConfigurationMinAggregateInputType = {
   feeRoundingStep?: true
   minimumShippingFee?: true
   maximumShippingFee?: true
+  fallbackShippingFee?: true
   updatedById?: true
   createdAt?: true
   updatedAt?: true
@@ -195,6 +203,7 @@ export type ShippingConfigurationMaxAggregateInputType = {
   feeRoundingStep?: true
   minimumShippingFee?: true
   maximumShippingFee?: true
+  fallbackShippingFee?: true
   updatedById?: true
   createdAt?: true
   updatedAt?: true
@@ -219,6 +228,7 @@ export type ShippingConfigurationCountAggregateInputType = {
   feeRoundingStep?: true
   minimumShippingFee?: true
   maximumShippingFee?: true
+  fallbackShippingFee?: true
   updatedById?: true
   createdAt?: true
   updatedAt?: true
@@ -330,6 +340,7 @@ export type ShippingConfigurationGroupByOutputType = {
   feeRoundingStep: number
   minimumShippingFee: number | null
   maximumShippingFee: number | null
+  fallbackShippingFee: number
   updatedById: number | null
   createdAt: Date
   updatedAt: Date
@@ -377,6 +388,7 @@ export type ShippingConfigurationWhereInput = {
   feeRoundingStep?: Prisma.IntFilter<"ShippingConfiguration"> | number
   minimumShippingFee?: Prisma.IntNullableFilter<"ShippingConfiguration"> | number | null
   maximumShippingFee?: Prisma.IntNullableFilter<"ShippingConfiguration"> | number | null
+  fallbackShippingFee?: Prisma.IntFilter<"ShippingConfiguration"> | number
   updatedById?: Prisma.IntNullableFilter<"ShippingConfiguration"> | number | null
   createdAt?: Prisma.DateTimeFilter<"ShippingConfiguration"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShippingConfiguration"> | Date | string
@@ -401,6 +413,7 @@ export type ShippingConfigurationOrderByWithRelationInput = {
   feeRoundingStep?: Prisma.SortOrder
   minimumShippingFee?: Prisma.SortOrderInput | Prisma.SortOrder
   maximumShippingFee?: Prisma.SortOrderInput | Prisma.SortOrder
+  fallbackShippingFee?: Prisma.SortOrder
   updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -428,6 +441,7 @@ export type ShippingConfigurationWhereUniqueInput = Prisma.AtLeast<{
   feeRoundingStep?: Prisma.IntFilter<"ShippingConfiguration"> | number
   minimumShippingFee?: Prisma.IntNullableFilter<"ShippingConfiguration"> | number | null
   maximumShippingFee?: Prisma.IntNullableFilter<"ShippingConfiguration"> | number | null
+  fallbackShippingFee?: Prisma.IntFilter<"ShippingConfiguration"> | number
   updatedById?: Prisma.IntNullableFilter<"ShippingConfiguration"> | number | null
   createdAt?: Prisma.DateTimeFilter<"ShippingConfiguration"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShippingConfiguration"> | Date | string
@@ -452,6 +466,7 @@ export type ShippingConfigurationOrderByWithAggregationInput = {
   feeRoundingStep?: Prisma.SortOrder
   minimumShippingFee?: Prisma.SortOrderInput | Prisma.SortOrder
   maximumShippingFee?: Prisma.SortOrderInput | Prisma.SortOrder
+  fallbackShippingFee?: Prisma.SortOrder
   updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -484,6 +499,7 @@ export type ShippingConfigurationScalarWhereWithAggregatesInput = {
   feeRoundingStep?: Prisma.IntWithAggregatesFilter<"ShippingConfiguration"> | number
   minimumShippingFee?: Prisma.IntNullableWithAggregatesFilter<"ShippingConfiguration"> | number | null
   maximumShippingFee?: Prisma.IntNullableWithAggregatesFilter<"ShippingConfiguration"> | number | null
+  fallbackShippingFee?: Prisma.IntWithAggregatesFilter<"ShippingConfiguration"> | number
   updatedById?: Prisma.IntNullableWithAggregatesFilter<"ShippingConfiguration"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ShippingConfiguration"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ShippingConfiguration"> | Date | string
@@ -508,6 +524,7 @@ export type ShippingConfigurationCreateInput = {
   feeRoundingStep?: number
   minimumShippingFee?: number | null
   maximumShippingFee?: number | null
+  fallbackShippingFee?: number
   updatedById?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -532,6 +549,7 @@ export type ShippingConfigurationUncheckedCreateInput = {
   feeRoundingStep?: number
   minimumShippingFee?: number | null
   maximumShippingFee?: number | null
+  fallbackShippingFee?: number
   updatedById?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -556,6 +574,7 @@ export type ShippingConfigurationUpdateInput = {
   feeRoundingStep?: Prisma.IntFieldUpdateOperationsInput | number
   minimumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   maximumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fallbackShippingFee?: Prisma.IntFieldUpdateOperationsInput | number
   updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -580,6 +599,7 @@ export type ShippingConfigurationUncheckedUpdateInput = {
   feeRoundingStep?: Prisma.IntFieldUpdateOperationsInput | number
   minimumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   maximumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fallbackShippingFee?: Prisma.IntFieldUpdateOperationsInput | number
   updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -604,6 +624,7 @@ export type ShippingConfigurationCreateManyInput = {
   feeRoundingStep?: number
   minimumShippingFee?: number | null
   maximumShippingFee?: number | null
+  fallbackShippingFee?: number
   updatedById?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -628,6 +649,7 @@ export type ShippingConfigurationUpdateManyMutationInput = {
   feeRoundingStep?: Prisma.IntFieldUpdateOperationsInput | number
   minimumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   maximumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fallbackShippingFee?: Prisma.IntFieldUpdateOperationsInput | number
   updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -652,6 +674,7 @@ export type ShippingConfigurationUncheckedUpdateManyInput = {
   feeRoundingStep?: Prisma.IntFieldUpdateOperationsInput | number
   minimumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   maximumShippingFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fallbackShippingFee?: Prisma.IntFieldUpdateOperationsInput | number
   updatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -676,6 +699,7 @@ export type ShippingConfigurationCountOrderByAggregateInput = {
   feeRoundingStep?: Prisma.SortOrder
   minimumShippingFee?: Prisma.SortOrder
   maximumShippingFee?: Prisma.SortOrder
+  fallbackShippingFee?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -691,6 +715,7 @@ export type ShippingConfigurationAvgOrderByAggregateInput = {
   feeRoundingStep?: Prisma.SortOrder
   minimumShippingFee?: Prisma.SortOrder
   maximumShippingFee?: Prisma.SortOrder
+  fallbackShippingFee?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
 }
 
@@ -713,6 +738,7 @@ export type ShippingConfigurationMaxOrderByAggregateInput = {
   feeRoundingStep?: Prisma.SortOrder
   minimumShippingFee?: Prisma.SortOrder
   maximumShippingFee?: Prisma.SortOrder
+  fallbackShippingFee?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -737,6 +763,7 @@ export type ShippingConfigurationMinOrderByAggregateInput = {
   feeRoundingStep?: Prisma.SortOrder
   minimumShippingFee?: Prisma.SortOrder
   maximumShippingFee?: Prisma.SortOrder
+  fallbackShippingFee?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -752,6 +779,7 @@ export type ShippingConfigurationSumOrderByAggregateInput = {
   feeRoundingStep?: Prisma.SortOrder
   minimumShippingFee?: Prisma.SortOrder
   maximumShippingFee?: Prisma.SortOrder
+  fallbackShippingFee?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
 }
 
@@ -780,6 +808,7 @@ export type ShippingConfigurationSelect<ExtArgs extends runtime.Types.Extensions
   feeRoundingStep?: boolean
   minimumShippingFee?: boolean
   maximumShippingFee?: boolean
+  fallbackShippingFee?: boolean
   updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -804,6 +833,7 @@ export type ShippingConfigurationSelectCreateManyAndReturn<ExtArgs extends runti
   feeRoundingStep?: boolean
   minimumShippingFee?: boolean
   maximumShippingFee?: boolean
+  fallbackShippingFee?: boolean
   updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -828,6 +858,7 @@ export type ShippingConfigurationSelectUpdateManyAndReturn<ExtArgs extends runti
   feeRoundingStep?: boolean
   minimumShippingFee?: boolean
   maximumShippingFee?: boolean
+  fallbackShippingFee?: boolean
   updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -852,12 +883,13 @@ export type ShippingConfigurationSelectScalar = {
   feeRoundingStep?: boolean
   minimumShippingFee?: boolean
   maximumShippingFee?: boolean
+  fallbackShippingFee?: boolean
   updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ShippingConfigurationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "enabled" | "shopName" | "formattedAddress" | "streetAddress" | "ward" | "district" | "province" | "latitude" | "longitude" | "placeId" | "baseFee" | "pricePerKm" | "maximumDeliveryDistanceKm" | "distanceRoundingMode" | "feeRoundingStep" | "minimumShippingFee" | "maximumShippingFee" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["shippingConfiguration"]>
+export type ShippingConfigurationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "enabled" | "shopName" | "formattedAddress" | "streetAddress" | "ward" | "district" | "province" | "latitude" | "longitude" | "placeId" | "baseFee" | "pricePerKm" | "maximumDeliveryDistanceKm" | "distanceRoundingMode" | "feeRoundingStep" | "minimumShippingFee" | "maximumShippingFee" | "fallbackShippingFee" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["shippingConfiguration"]>
 
 export type $ShippingConfigurationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ShippingConfiguration"
@@ -881,6 +913,7 @@ export type $ShippingConfigurationPayload<ExtArgs extends runtime.Types.Extensio
     feeRoundingStep: number
     minimumShippingFee: number | null
     maximumShippingFee: number | null
+    fallbackShippingFee: number
     updatedById: number | null
     createdAt: Date
     updatedAt: Date
@@ -1325,6 +1358,7 @@ export interface ShippingConfigurationFieldRefs {
   readonly feeRoundingStep: Prisma.FieldRef<"ShippingConfiguration", 'Int'>
   readonly minimumShippingFee: Prisma.FieldRef<"ShippingConfiguration", 'Int'>
   readonly maximumShippingFee: Prisma.FieldRef<"ShippingConfiguration", 'Int'>
+  readonly fallbackShippingFee: Prisma.FieldRef<"ShippingConfiguration", 'Int'>
   readonly updatedById: Prisma.FieldRef<"ShippingConfiguration", 'Int'>
   readonly createdAt: Prisma.FieldRef<"ShippingConfiguration", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ShippingConfiguration", 'DateTime'>

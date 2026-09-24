@@ -1482,6 +1482,7 @@ model ShippingConfiguration {
   feeRoundingStep           Int                          @default(1000)
   minimumShippingFee        Int?
   maximumShippingFee        Int?
+  fallbackShippingFee       Int                          @default(30000)
   updatedById               Int?
   createdAt                 DateTime                     @default(now())
   updatedAt                 DateTime                     @updatedAt
