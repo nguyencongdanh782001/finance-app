@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  ADMIN_CANCELLABLE_ONLINE_STATUSES,
   CUSTOMER_ORDER_FILTER_STATUSES,
   CUSTOMER_ORDER_TIMELINE,
   ONLINE_STATUS_FLOW,
   ORDER_STATUS_CONFIG,
+  canAdminCancelOnlineOrder,
+  canManuallyMarkOrderPaid,
   getCustomerTimelineStep,
+  isValidOnlineStatusTransition,
 } from "./order-status.ts";
 
 test("online order flow follows the customer tracking stages", () => {
@@ -18,6 +22,35 @@ test("online order flow follows the customer tracking stages", () => {
     SHIPPING: "DELIVERED",
     SHIPPED: "DELIVERED",
   });
+});
+
+test("admin cancellation is limited to stages before shipping", () => {
+  assert.deepEqual(ADMIN_CANCELLABLE_ONLINE_STATUSES, [
+    "PENDING",
+    "CONFIRMED",
+    "PREPARING",
+    "PROCESSING",
+  ]);
+  assert.equal(canAdminCancelOnlineOrder("PENDING"), true);
+  assert.equal(canAdminCancelOnlineOrder("PREPARING"), true);
+  assert.equal(canAdminCancelOnlineOrder("SHIPPING"), false);
+  assert.equal(canAdminCancelOnlineOrder("DELIVERED"), false);
+  assert.equal(canAdminCancelOnlineOrder("CANCELLED"), false);
+});
+
+test("online transitions accept only the configured next stage", () => {
+  assert.equal(isValidOnlineStatusTransition("PENDING", "CONFIRMED"), true);
+  assert.equal(isValidOnlineStatusTransition("PENDING", "PREPARING"), false);
+  assert.equal(isValidOnlineStatusTransition("DELIVERED", "SHIPPING"), false);
+  assert.equal(isValidOnlineStatusTransition("CANCELLED", "SHIPPING"), false);
+});
+
+test("manual paid action is available only for active unpaid orders", () => {
+  assert.equal(canManuallyMarkOrderPaid("PENDING", "UNPAID"), true);
+  assert.equal(canManuallyMarkOrderPaid("DELIVERED", "PENDING"), true);
+  assert.equal(canManuallyMarkOrderPaid("PENDING", "PAID"), false);
+  assert.equal(canManuallyMarkOrderPaid("CANCELLED", "UNPAID"), false);
+  assert.equal(canManuallyMarkOrderPaid("DELIVERED", "REFUNDED"), false);
 });
 
 test("customer status configuration uses the expected Vietnamese labels", () => {

@@ -1,4 +1,4 @@
-import type { OrderStatus } from "@/app/generated/prisma/client";
+import type { OrderStatus, PaymentStatus } from "@/app/generated/prisma/client";
 
 export type OrderStatusConfig = {
   label: string;
@@ -129,7 +129,8 @@ export const CUSTOMER_ORDER_FILTERS = [
   { value: "CANCELLED", label: "Đã hủy" },
 ] as const;
 
-export type CustomerOrderFilter = (typeof CUSTOMER_ORDER_FILTERS)[number]["value"];
+export type CustomerOrderFilter =
+  (typeof CUSTOMER_ORDER_FILTERS)[number]["value"];
 
 export const CUSTOMER_ORDER_FILTER_STATUSES: Record<
   CustomerOrderFilter,
@@ -207,3 +208,28 @@ export const ONLINE_STATUS_FLOW: Partial<Record<OrderStatus, OrderStatus>> = {
   SHIPPING: "DELIVERED",
   SHIPPED: "DELIVERED",
 };
+
+export const isValidOnlineStatusTransition = (
+  currentStatus: OrderStatus,
+  nextStatus: OrderStatus,
+) => ONLINE_STATUS_FLOW[currentStatus] === nextStatus;
+
+export const ADMIN_CANCELLABLE_ONLINE_STATUSES: OrderStatus[] = [
+  "PENDING",
+  "CONFIRMED",
+  "PREPARING",
+  "PROCESSING",
+];
+
+export const canAdminCancelOnlineOrder = (status: OrderStatus) =>
+  ADMIN_CANCELLABLE_ONLINE_STATUSES.includes(status);
+
+export const canManuallyMarkOrderPaid = (
+  orderStatus: OrderStatus,
+  paymentStatus: PaymentStatus,
+) =>
+  orderStatus !== "CANCELLED" &&
+  orderStatus !== "REFUNDED" &&
+  !["PAID", "CANCELLED", "REFUNDED", "PARTIALLY_REFUNDED"].includes(
+    paymentStatus,
+  );

@@ -42,7 +42,10 @@ import {
   mapShopOrderProducts,
   type ShopOrderProductOption,
 } from "@/lib/orders/shop-order-products";
-import { ONLINE_STATUS_FLOW, ORDER_STATUS_CONFIG } from "@/lib/orders/order-status";
+import {
+  ONLINE_STATUS_FLOW,
+  ORDER_STATUS_CONFIG,
+} from "@/lib/orders/order-status";
 import type { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
 import {
   AlertTriangle,
@@ -692,17 +695,34 @@ function OrderActions({
 
   return (
     <div className="flex items-center justify-end gap-1">
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className="rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100"
-        aria-label="Xem chi tiết"
-        title="Xem chi tiết"
-        onClick={() => onView(order)}
-      >
-        <Eye className="size-4" />
-      </Button>
+      {order.source === "ONLINE" ? (
+        <Button
+          asChild
+          variant="ghost"
+          size="icon-sm"
+          className="rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100"
+        >
+          <Link
+            href={`/admin/orders/${order.id}`}
+            aria-label="Xem chi tiết đơn online"
+            title="Xem chi tiết đơn online"
+          >
+            <Eye className="size-4" />
+          </Link>
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className="rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100"
+          aria-label="Xem chi tiết"
+          title="Xem chi tiết"
+          onClick={() => onView(order)}
+        >
+          <Eye className="size-4" />
+        </Button>
+      )}
       {hasSecondaryActions ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

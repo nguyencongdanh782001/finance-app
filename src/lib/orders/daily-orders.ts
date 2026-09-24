@@ -6,6 +6,7 @@ import {
   OrderSource,
   OrderStatus,
   PaymentMethod,
+  PaymentLogType,
   PaymentStatus,
   ProductStatus,
   Prisma,
@@ -15,7 +16,11 @@ import {
   getCustomerOrderPushPayload,
   sendCustomerPushBestEffort,
 } from "@/lib/customer-notifications";
-import { ONLINE_STATUS_FLOW } from "@/lib/orders/order-status";
+import {
+  canAdminCancelOnlineOrder,
+  canManuallyMarkOrderPaid,
+  isValidOnlineStatusTransition,
+} from "@/lib/orders/order-status";
 
 export type DailyOrderSourceFilter = "ALL" | OrderSource;
 export type DailyOrderStatusFilter = "ALL" | OrderStatus;
@@ -918,34 +923,33 @@ export async function cancelOfflineOrder(
   const result = await prisma.$transaction(async (tx) => {
     const existingOrder = await tx.order.findUnique({
       where: { id: orderId },
-      include: { items: true },
+      include: includeOrderDetail,
     });
 
     if (!existingOrder) {
       throw new Error("Không tìm thấy đơn hàng.");
     }
 
-    if (
-      existingOrder.source !== OrderSource.OFFLINE &&
-      !(existingOrder.source === OrderSource.ONLINE &&
-        existingOrder.status === OrderStatus.PENDING)
-    ) {
-      throw new Error("Không thể hủy đơn online từ màn hình này.");
-    }
-
     if (ownerUserId !== undefined && existingOrder.userId !== ownerUserId) {
       throw new Error("Không tìm thấy đơn hàng.");
     }
 
-    if (
-      existingOrder.source === OrderSource.ONLINE &&
-      existingOrder.status !== OrderStatus.PENDING
-    ) {
-      throw new Error("Chỉ có thể hủy đơn trước khi admin xác nhận.");
+    if (existingOrder.status === OrderStatus.CANCELLED) {
+      return { order: existingOrder, notification: null };
     }
 
-    if (existingOrder.status === OrderStatus.CANCELLED) {
-      throw new Error("Đơn hàng này đã được hủy trước đó.");
+    if (existingOrder.source === OrderSource.ONLINE) {
+      const canCancel =
+        ownerUserId !== undefined
+          ? existingOrder.status === OrderStatus.PENDING
+          : canAdminCancelOnlineOrder(existingOrder.status);
+      if (!canCancel) {
+        throw new Error(
+          ownerUserId !== undefined
+            ? "Chỉ có thể hủy đơn trước khi cửa hàng xác nhận."
+            : "Không thể hủy đơn đã giao cho đơn vị vận chuyển.",
+        );
+      }
     }
 
     const oldQuantityMap = getExistingOrderQuantityMap(existingOrder);
@@ -964,6 +968,7 @@ export async function cancelOfflineOrder(
       data: {
         status: OrderStatus.CANCELLED,
         paymentStatus:
+          existingOrder.source === OrderSource.OFFLINE &&
           existingOrder.paymentStatus === PaymentStatus.PAID
             ? PaymentStatus.REFUNDED
             : existingOrder.paymentStatus,
@@ -1028,12 +1033,11 @@ export async function updateOnlineOrderStatus(
       throw new Error("Luồng trạng thái online chỉ áp dụng cho đơn online.");
     }
 
-    const allowedNextStatus =
-      ONLINE_STATUS_FLOW[
-        existingOrder.status as keyof typeof ONLINE_STATUS_FLOW
-      ];
+    if (existingOrder.status === nextStatus) {
+      return { order: existingOrder, notification: null };
+    }
 
-    if (!allowedNextStatus || nextStatus !== allowedNextStatus) {
+    if (!isValidOnlineStatusTransition(existingOrder.status, nextStatus)) {
       throw new Error("Không thể chuyển trạng thái đơn online theo bước này.");
     }
 
@@ -1088,6 +1092,98 @@ export async function updateOnlineOrderStatus(
   }
 
   return serializeOrder(result.order);
+}
+
+export async function markOnlineOrderPaid(orderId: number, adminId: number) {
+  return prisma.$transaction(async (tx) => {
+    const existingOrder = await tx.order.findUnique({
+      where: { id: orderId },
+      include: includeOrderDetail,
+    });
+
+    if (!existingOrder || existingOrder.source !== OrderSource.ONLINE) {
+      throw new Error("Không tìm thấy đơn online.");
+    }
+
+    if (existingOrder.paymentStatus === PaymentStatus.PAID) {
+      return serializeOrder(existingOrder);
+    }
+
+    if (
+      !canManuallyMarkOrderPaid(
+        existingOrder.status,
+        existingOrder.paymentStatus,
+      )
+    ) {
+      throw new Error("Không thể xác nhận thanh toán cho đơn hàng này.");
+    }
+
+    const paidAt = new Date();
+    const latestPayment = await tx.payment.findFirst({
+      where: { orderId },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, status: true },
+    });
+
+    if (latestPayment) {
+      await tx.payment.update({
+        where: { id: latestPayment.id },
+        data: {
+          status: PaymentStatus.PAID,
+          paidAt,
+          logs: {
+            create: {
+              type: PaymentLogType.MANUAL_UPDATE,
+              message: "Admin xác nhận đơn hàng đã thanh toán",
+              payload: {
+                actorId: adminId,
+                previousStatus: latestPayment.status,
+                currentStatus: PaymentStatus.PAID,
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const order = await tx.order.update({
+      where: { id: orderId },
+      data: {
+        paymentStatus: PaymentStatus.PAID,
+        isPaid: true,
+        paidAt,
+        paidAmount: existingOrder.totalAmount,
+        remainingAmount: 0,
+        updatedById: adminId,
+      },
+      include: includeOrderDetail,
+    });
+
+    await tx.auditLog.create({
+      data: {
+        actorId: adminId,
+        action: "ORDER_PAYMENT_MARKED_PAID_MANUALLY",
+        entityType: "ORDER",
+        entityId: orderId,
+        previousValue: {
+          paymentStatus: existingOrder.paymentStatus,
+          paidAmount: Number(existingOrder.paidAmount),
+          remainingAmount: Number(existingOrder.remainingAmount),
+        },
+        newValue: {
+          paymentStatus: PaymentStatus.PAID,
+          paidAmount: Number(existingOrder.totalAmount),
+          remainingAmount: 0,
+        },
+      },
+    });
+
+    if (order.userId) {
+      await ensureCurrentMembership(order.userId, order.placedAt, tx);
+    }
+
+    return serializeOrder(order);
+  }, ORDER_TRANSACTION_OPTIONS);
 }
 
 export async function getOrderDetail(orderId: number) {
