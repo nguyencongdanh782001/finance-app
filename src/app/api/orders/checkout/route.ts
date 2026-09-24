@@ -234,7 +234,7 @@ export async function POST(request: Request) {
             source: "ONLINE",
             status: "PENDING",
             subtotal,
-            discountAmount: couponDiscount,
+            discountAmount,
             couponId: discount?.coupon.id,
             discountCodeSnapshot: discount?.code,
             shippingFee: quote.shippingFee,
@@ -280,6 +280,12 @@ export async function POST(request: Request) {
               : "GEOAPIFY",
             shippingCalculatedAt: new Date(),
             note,
+            statusHistories: {
+              create: {
+                currentStatus: OrderStatus.PENDING,
+                note: "Đặt hàng online",
+              },
+            },
             paymentMethod,
             paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
             discountRedemption: discount
@@ -429,7 +435,7 @@ export async function POST(request: Request) {
           source: "ONLINE",
           status: "PENDING",
           subtotal: total,
-          discountAmount: couponDiscount,
+          discountAmount,
           couponId: discount?.coupon.id,
           discountCodeSnapshot: discount?.code,
           shippingFee: quote.shippingFee,
@@ -474,6 +480,12 @@ export async function POST(request: Request) {
             : "GEOAPIFY",
           shippingCalculatedAt: new Date(),
           note,
+          statusHistories: {
+            create: {
+              currentStatus: OrderStatus.PENDING,
+              note: "Đặt hàng online",
+            },
+          },
           paymentMethod,
           paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
           discountRedemption: discount

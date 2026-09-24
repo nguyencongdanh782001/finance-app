@@ -15,6 +15,7 @@ import {
   getCustomerOrderPushPayload,
   sendCustomerPushBestEffort,
 } from "@/lib/customer-notifications";
+import { ONLINE_STATUS_FLOW } from "@/lib/orders/order-status";
 
 export type DailyOrderSourceFilter = "ALL" | OrderSource;
 export type DailyOrderStatusFilter = "ALL" | OrderStatus;
@@ -43,11 +44,6 @@ const OFFLINE_PAYMENT_METHODS: PaymentMethod[] = [
   PaymentMethod.BANK_TRANSFER,
   PaymentMethod.MOMO,
 ];
-const ONLINE_STATUS_FLOW = {
-  [OrderStatus.PENDING]: OrderStatus.CONFIRMED,
-  [OrderStatus.CONFIRMED]: OrderStatus.DELIVERED,
-} as const;
-
 const ORDER_TRANSACTION_OPTIONS = {
   maxWait: 10_000,
   timeout: 20_000,

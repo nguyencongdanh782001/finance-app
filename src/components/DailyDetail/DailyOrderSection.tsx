@@ -42,6 +42,7 @@ import {
   mapShopOrderProducts,
   type ShopOrderProductOption,
 } from "@/lib/orders/shop-order-products";
+import { ONLINE_STATUS_FLOW, ORDER_STATUS_CONFIG } from "@/lib/orders/order-status";
 import type { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
 import {
   AlertTriangle,
@@ -94,24 +95,31 @@ const ORDER_SOURCE_LABELS: Record<OrderSourceValue, string> = {
 };
 
 const ORDER_STATUS_LABELS: Record<OrderStatusValue, string> = {
-  PENDING: "Đặt hàng",
-  CONFIRMED: "Xác nhận",
-  PREPARING: "Đang chuẩn bị",
-  READY_TO_SHIP: "Sẵn sàng giao",
-  SHIPPING: "Đang giao",
-  PROCESSING: "Đang xử lý",
-  SHIPPED: "Đã gửi",
-  DELIVERED: "Đã giao",
-  COMPLETED: "Hoàn tất",
-  CANCELLED: "Đã hủy",
-  REFUNDED: "Đã hoàn tiền",
+  PENDING: ORDER_STATUS_CONFIG.PENDING.shortLabel,
+  CONFIRMED: ORDER_STATUS_CONFIG.CONFIRMED.shortLabel,
+  PREPARING: ORDER_STATUS_CONFIG.PREPARING.shortLabel,
+  READY_TO_SHIP: ORDER_STATUS_CONFIG.READY_TO_SHIP.shortLabel,
+  SHIPPING: ORDER_STATUS_CONFIG.SHIPPING.shortLabel,
+  PROCESSING: ORDER_STATUS_CONFIG.PROCESSING.shortLabel,
+  SHIPPED: ORDER_STATUS_CONFIG.SHIPPED.shortLabel,
+  DELIVERED: ORDER_STATUS_CONFIG.DELIVERED.shortLabel,
+  COMPLETED: ORDER_STATUS_CONFIG.COMPLETED.shortLabel,
+  CANCELLED: ORDER_STATUS_CONFIG.CANCELLED.shortLabel,
+  REFUNDED: ORDER_STATUS_CONFIG.REFUNDED.shortLabel,
 };
 
 const NEXT_ONLINE_STATUS: Partial<
   Record<OrderStatusValue, { value: OrderStatusValue; label: string }>
 > = {
-  PENDING: { value: "CONFIRMED", label: "Xác nhận" },
-  CONFIRMED: { value: "DELIVERED", label: "Đã giao" },
+  ...Object.fromEntries(
+    Object.entries(ONLINE_STATUS_FLOW).map(([status, nextStatus]) => [
+      status,
+      {
+        value: nextStatus,
+        label: ORDER_STATUS_LABELS[nextStatus],
+      },
+    ]),
+  ),
 };
 
 const PAYMENT_STATUS_LABELS: Record<PaymentStatusValue, string> = {

@@ -144,7 +144,7 @@ export default function AdminNotificationCenter() {
   const content = useMemo(
     () => (
       <div className="flex h-full min-h-0 flex-col">
-        <div className="flex shrink-0 flex-col border-b border-(--admin-border) bg-white px-5 pb-4 pt-16">
+        <div className="flex shrink-0 flex-col border-b border-(--admin-border) bg-white px-5 pb-3 pt-5">
           <div className="min-w-0 pr-12">
             <p className="text-base font-bold text-(--admin-text)">
               Thông báo
@@ -153,7 +153,7 @@ export default function AdminNotificationCenter() {
               Đơn hàng và hoạt động mới
             </p>
           </div>
-          <div className="mt-3 flex">
+          <div className="mt-2 flex">
             <Button
               type="button"
               variant="ghost"

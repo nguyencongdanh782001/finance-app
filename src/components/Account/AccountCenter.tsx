@@ -5,6 +5,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { FormikProvider, useFormik } from "formik";
 import * as Yup from "yup";
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
+import CustomerOrderDetail from "@/components/Account/CustomerOrderDetail";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { toast } from "@/hook/use-toast";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,11 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+import {
+  CUSTOMER_ORDER_FILTERS,
+  ORDER_STATUS_CONFIG,
+  type CustomerOrderFilter,
+} from "@/lib/orders/order-status";
 
 const pink = "#D96C8A";
 const money = (v: number) =>
@@ -60,16 +66,12 @@ const money = (v: number) =>
   }).format(v);
 const date = (v: string) =>
   new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium" }).format(new Date(v));
-const label: Record<string, string> = {
-  PENDING: "Đặt hàng",
-  CONFIRMED: "Đã xác nhận",
-  PREPARING: "Đang chuẩn bị",
-  SHIPPING: "Đang giao",
-  DELIVERED: "Đã giao",
-  COMPLETED: "Hoàn tất",
-  CANCELLED: "Đã hủy",
-  REFUNDED: "Đã hoàn tiền",
-};
+const label: Record<string, string> = Object.fromEntries(
+  Object.entries(ORDER_STATUS_CONFIG).map(([status, config]) => [
+    status,
+    config.shortLabel,
+  ]),
+);
 type Profile = {
   id: number;
   authProvider: "WEB" | "GOOGLE";
@@ -99,9 +101,14 @@ type Order = {
   id: number;
   orderNumber: string;
   status: string;
+  source: "ONLINE" | "OFFLINE";
   createdAt: string;
+  placedAt: string;
   totalAmount: number;
+  paymentMethod: string | null;
+  paymentStatus: string;
   itemCount: number;
+  lineCount: number;
   items: {
     title: string;
     imageUrl: string | null;
@@ -157,7 +164,7 @@ function Sidebar({
     { href: "/account", label: "Tổng quan", icon: Home },
     { href: "/account/profile", label: "Thông tin cá nhân", icon: UserRound },
     { href: "/account/addresses", label: "Sổ địa chỉ", icon: MapPin },
-    { href: "/account/orders", label: "Mua hàng", icon: Package },
+    { href: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
   ];
   const name = profile?.displayName || "Khách hàng";
   return (
@@ -241,7 +248,7 @@ function MobileNav({
     { href: "/account", label: "Tổng quan", icon: Home },
     { href: "/account/profile", label: "Thông tin cá nhân", icon: UserRound },
     { href: "/account/addresses", label: "Sổ địa chỉ", icon: MapPin },
-    { href: "/account/orders", label: "Mua hàng", icon: Package },
+    { href: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
   ];
   return (
     <div className="mb-6 lg:hidden">
@@ -546,7 +553,13 @@ function Overview({ profile }: { profile: Profile | null }) {
               <Skeleton className="h-32 w-full rounded-2xl bg-[#F7EFF1]" />
             </div>
           ) : orders.length ? (
-            orders.map((order) => <OrderCard key={order.id} order={order} />)
+            orders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                onClick={() => router.push(`/account/orders/${order.id}`)}
+              />
+            ))
           ) : (
             <Empty
               text="Bạn chưa có đơn hàng nào"
@@ -1314,9 +1327,9 @@ function OrderCard({
             </div>
           </div>
         ))}
-        {order.itemCount > order.items.reduce((a, i) => a + i.quantity, 0) && (
+        {order.lineCount > order.items.length && (
           <p className="text-xs font-semibold text-[#6F6066]">
-            + sản phẩm khác
+            +{order.lineCount - order.items.length} sản phẩm khác
           </p>
         )}
       </div>
@@ -1328,6 +1341,13 @@ function OrderCard({
           </strong>
         </span>
         <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold text-[#8B7A80]">
+            {order.paymentStatus === "PAID"
+              ? "Đã thanh toán"
+              : order.paymentStatus === "REFUNDED"
+                ? "Đã hoàn tiền"
+                : "Chưa thanh toán"}
+          </span>
           {onCancel && order.status === "PENDING" ? (
             <button
               type="button"
@@ -1498,10 +1518,14 @@ function OrdersPage() {
   const [cancelTarget, setCancelTarget] = useState<Order | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const view = params.get("view") === "purchased" ? "purchased" : "orders";
+  const requestedStatus = params.get("status") as CustomerOrderFilter | null;
+  const activeStatus: CustomerOrderFilter =
+    CUSTOMER_ORDER_FILTERS.find((filter) => filter.value === requestedStatus)
+      ?.value || "ALL";
   useEffect(() => {
     setOrdersLoading(true);
     if (view === "orders")
-      request("/api/me/orders")
+      request(`/api/me/orders?status=${activeStatus}`)
         .then((d) => setOrders(d.items || []))
         .catch(() => undefined)
         .finally(() => setOrdersLoading(false));
@@ -1510,7 +1534,7 @@ function OrdersPage() {
         .then((d) => setPurchased(d.items || []))
         .catch(() => undefined)
         .finally(() => setOrdersLoading(false));
-  }, [view]);
+  }, [activeStatus, view]);
   const cancelOrder = async () => {
     if (!cancelTarget || !cancelReason.trim()) return;
     const orderId = cancelTarget.id;
@@ -1545,7 +1569,9 @@ function OrdersPage() {
   };
   return (
     <div>
-      <h1 className="text-2xl font-extrabold">Mua hàng</h1>
+      <h1 className="text-2xl font-extrabold">
+        {view === "orders" ? "Đơn hàng của tôi" : "Sản phẩm đã mua"}
+      </h1>
       <div className="mt-6 flex gap-1 border-b border-[#EAE1E4]">
         <button
           onClick={() => router.push("/account/orders?view=orders")}
@@ -1560,6 +1586,30 @@ function OrdersPage() {
           Sản phẩm đã mua
         </button>
       </div>
+      {view === "orders" ? (
+        <div
+          className="mt-5 flex gap-2 overflow-x-auto pb-1"
+          role="tablist"
+          aria-label="Lọc đơn hàng"
+        >
+          {CUSTOMER_ORDER_FILTERS.map((filter) => (
+            <button
+              key={filter.value}
+              type="button"
+              role="tab"
+              aria-selected={activeStatus === filter.value}
+              onClick={() =>
+                router.push(
+                  `/account/orders?view=orders&status=${filter.value}`,
+                )
+              }
+              className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-extrabold transition ${activeStatus === filter.value ? "border-[#D96C8A] bg-[#FCEEF3] text-[#A43E5F]" : "border-[#EAE1E4] bg-white text-[#6F6066] hover:border-[#F4B5C5] hover:text-[#A43E5F]"}`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <div className="mt-6">
         {ordersLoading ? (
           <div className="grid gap-4" aria-label="Đang tải đơn hàng">
@@ -1574,7 +1624,11 @@ function OrdersPage() {
                 <OrderCard
                   key={o.id}
                   order={o}
-                  onClick={() => router.push(`/account/orders?order=${o.id}`)}
+                  onClick={() =>
+                    router.push(
+                      `/account/orders/${o.id}?status=${activeStatus}`,
+                    )
+                  }
                   onCancel={() => {
                     setCancelTarget(o);
                     setCancelReason("");
@@ -1639,8 +1693,15 @@ function Empty({
 
 export default function AccountCenter({
   section = "overview",
+  orderId,
 }: {
-  section?: "overview" | "profile" | "addresses" | "orders";
+  section?:
+    | "overview"
+    | "profile"
+    | "addresses"
+    | "orders"
+    | "order-detail";
+  orderId?: number;
 }) {
   const { user, logout, isInitializing, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -1663,6 +1724,8 @@ export default function AccountCenter({
       <AddressesPage />
     ) : section === "orders" ? (
       <OrdersPage />
+    ) : section === "order-detail" && orderId ? (
+      <CustomerOrderDetail orderId={orderId} />
     ) : (
       <Overview profile={profile} />
     );
