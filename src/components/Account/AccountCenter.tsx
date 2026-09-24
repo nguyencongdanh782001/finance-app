@@ -1305,7 +1305,7 @@ function OrderCard({
           <p className="font-extrabold">Đơn #{order.orderNumber}</p>
           <p className="mt-1 text-xs text-[#6F6066]">{date(order.createdAt)}</p>
         </div>
-        <span className="bg-[#FCEEF3] px-2.5 py-1 text-xs font-bold text-[#A43E5F]">
+        <span className="rounded-full bg-[#FCEEF3] px-2.5 py-1 text-xs font-bold text-[#A43E5F]">
           {label[order.status] || order.status}
         </span>
       </div>
