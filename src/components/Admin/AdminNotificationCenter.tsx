@@ -144,8 +144,8 @@ export default function AdminNotificationCenter() {
   const content = useMemo(
     () => (
       <div className="flex h-full min-h-0 flex-col">
-        <div className="flex shrink-0 flex-col items-start gap-2 border-b border-(--admin-border) bg-white px-5 pb-4 pt-16 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:py-4 sm:pr-5">
-          <div>
+        <div className="flex shrink-0 flex-col border-b border-(--admin-border) bg-white px-5 pb-4 pt-16">
+          <div className="min-w-0 pr-12">
             <p className="text-base font-bold text-(--admin-text)">
               Thông báo
             </p>
@@ -153,17 +153,19 @@ export default function AdminNotificationCenter() {
               Đơn hàng và hoạt động mới
             </p>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-9 shrink-0 gap-1.5 rounded-lg px-2.5 text-xs text-(--admin-text-secondary) hover:bg-(--admin-primary-soft) hover:text-primary"
-            disabled={!unreadCount}
-            onClick={() => void markAllRead()}
-          >
-            <CheckCheck className="size-4" />
-            <span>Đọc hết</span>
-          </Button>
+          <div className="mt-3 flex">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-9 gap-1.5 rounded-lg px-2.5 text-xs text-(--admin-text-secondary) hover:bg-(--admin-primary-soft) hover:text-primary"
+              disabled={!unreadCount}
+              onClick={() => void markAllRead()}
+            >
+              <CheckCheck className="size-4" />
+              <span>Đọc hết</span>
+            </Button>
+          </div>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto bg-(--admin-background) p-3">
           {loading ? (
