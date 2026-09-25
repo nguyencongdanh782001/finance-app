@@ -5,7 +5,7 @@ import * as React from "react";
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 
 const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_REMOVE_DELAY = 5000;
 
 type ToasterToast = ToastProps & {
   id: string;
@@ -138,8 +138,24 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">;
 
+const resolveToastVariant = (
+  variant: ToastProps["variant"],
+  className: ToastProps["className"],
+): ToastProps["variant"] => {
+  if (variant) return variant;
+  if (typeof className === "string") {
+    if (className.includes("bg-green")) return "success";
+    if (className.includes("bg-red")) return "destructive";
+    if (className.includes("bg-yellow") || className.includes("bg-amber")) {
+      return "warning";
+    }
+  }
+  return "default";
+};
+
 function toast({ ...props }: Toast) {
   const id = genId();
+  const { className, variant, ...toastProps } = props;
 
   const update = (props: ToasterToast) =>
     dispatch({
@@ -151,8 +167,9 @@ function toast({ ...props }: Toast) {
   dispatch({
     type: "ADD_TOAST",
     toast: {
-      ...props,
+      ...toastProps,
       id,
+      variant: resolveToastVariant(variant, className),
       open: true,
       onOpenChange: (open) => {
         if (!open) dismiss();

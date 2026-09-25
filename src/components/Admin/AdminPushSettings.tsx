@@ -68,9 +68,6 @@ const ensureServiceWorker = async () => {
   return waitForServiceWorker();
 };
 
-const pushToastClass =
-  "w-[calc(100vw-2rem)] max-w-105 rounded-xl border-(--admin-border) bg-white text-(--admin-text) shadow-[0_12px_30px_rgb(45_34_38/0.14)]";
-
 export default function AdminPushSettings() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [busy, setBusy] = useState(false);
@@ -79,6 +76,7 @@ export default function AdminPushSettings() {
   const [permission, setPermission] = useState<NotificationPermission>(
     "default",
   );
+  const isNotificationEnabled = devices.some((device) => device.isActive);
 
   const load = async () => {
     const response = await fetch("/api/admin/push-subscriptions");
@@ -105,7 +103,7 @@ export default function AdminPushSettings() {
       toast({
         title: "Chưa thể bật thông báo",
         description: "Thiếu cấu hình Push hoặc trình duyệt không hỗ trợ.",
-        className: pushToastClass,
+        variant: "destructive",
       });
       return;
     }
@@ -115,7 +113,7 @@ export default function AdminPushSettings() {
         title: "Thông báo đang bị chặn",
         description:
           "Hãy bật quyền thông báo cho Quỳnh Nhi Store trong cài đặt trình duyệt.",
-        className: pushToastClass,
+        variant: "destructive",
       });
       return;
     }
@@ -155,14 +153,14 @@ export default function AdminPushSettings() {
       toast({
         title: "Đã bật thông báo",
         description: "Thiết bị này đã sẵn sàng nhận đơn hàng mới.",
-        className: pushToastClass,
+        variant: "success",
       });
     } catch (error) {
       toast({
         title: "Không thể bật thông báo",
         description:
           error instanceof Error ? error.message : "Vui lòng thử lại.",
-        className: pushToastClass,
+        variant: "destructive",
       });
     } finally {
       setBusy(false);
@@ -227,7 +225,7 @@ export default function AdminPushSettings() {
                   ? "Không được hỗ trợ"
                   : permission === "denied"
                     ? "Quyền thông báo đang bị chặn"
-                  : devices.some((device) => device.isActive)
+                  : isNotificationEnabled
                     ? "Đã bật trên thiết bị này"
                     : "Chưa bật"}
               </p>
@@ -241,14 +239,22 @@ export default function AdminPushSettings() {
           <Button
             type="button"
             onClick={() => void enable()}
-            disabled={busy || unsupported}
+            disabled={busy || unsupported || isNotificationEnabled}
+            aria-pressed={isNotificationEnabled}
+            className={
+              isNotificationEnabled
+                ? "bg-(--admin-success) text-white hover:bg-(--admin-success)"
+                : undefined
+            }
           >
-            {busy ? (
+            {isNotificationEnabled ? (
+              <CheckCircle2 className="size-4" />
+            ) : busy ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Bell className="size-4" />
             )}{" "}
-            Bật thông báo
+            {isNotificationEnabled ? "Đã bật thông báo" : "Bật thông báo"}
           </Button>
         </div>
       </div>
