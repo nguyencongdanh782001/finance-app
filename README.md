@@ -67,4 +67,30 @@ SHOP_LONGITUDE="106.5892647696457"
 
 Autocomplete bắt đầu từ ba ký tự và debounce 600ms. Chỉ địa chỉ đã chọn từ gợi ý mới có tọa độ để tính phí. Phí mặc định là 15.000đ cho tối đa 3km, cộng 5.000đ cho mỗi km phát sinh (làm tròn lên), tối đa 50km. Checkout luôn tính lại quote ở server và lưu khoảng cách/phí vào order snapshot.
 
+## Thông báo Push cho quản trị viên
+
+Quynh Nhi Store sử dụng Web Push + VAPID, không dùng Firebase hoặc dịch vụ
+push bên thứ ba. Các biến môi trường cần thiết đã có trong `.env.example`:
+
+```env
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=""
+VAPID_PRIVATE_KEY=""
+VAPID_SUBJECT="mailto:admin@quynhnhistore.com"
+```
+
+Tạo một cặp khóa mới bằng:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Đặt public key ở client và cả hai khóa VAPID trong môi trường Development,
+Production tương ứng trên Vercel. Không commit private key và không dùng chung
+private key giữa các môi trường nếu không cần thiết.
+
+Để kiểm tra trên iPhone: mở website bằng Safari, chọn “Thêm vào Màn hình
+chính”, mở ứng dụng từ biểu tượng vừa cài, đăng nhập Admin rồi vào
+`/admin/settings/notifications` và chọn “Bật thông báo”. Android Chrome có thể
+cài PWA, bật thông báo tại cùng màn hình, sau đó dùng “Gửi thông báo thử”.
+
 Google OAuth (`NEXT_PUBLIC_GOOGLE_CLIENT_ID`) vẫn được giữ nguyên. Không cần bản đồ cho luồng giao hàng; nếu thêm bản đồ sau này phải dùng OSM/Leaflet và giữ attribution.

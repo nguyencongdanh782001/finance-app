@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { getAdminIdentity } from "@/lib/admin-notification-api";
 import {
+  getAdminUnreadNotificationCount,
   sendAdminPush,
   type AdminPushPayload,
 } from "@/lib/admin-notifications";
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
     notificationId: "test",
     title: "Thông báo đã được bật",
     body: "Thiết bị này đã sẵn sàng nhận thông báo đơn hàng mới.",
+    unreadCount: await getAdminUnreadNotificationCount(identity.userId),
     url: "/admin/settings/notifications",
     createdAt: new Date().toISOString(),
   };

@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
+import { updateAppBadge } from "@/lib/app-badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +22,27 @@ export default function AdminAccountMenu() {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
+    try {
+      if ("serviceWorker" in navigator) {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          const response = await fetch(
+            "/api/admin/push-subscriptions/current",
+            {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ endpoint: subscription.endpoint }),
+            },
+          );
+          if (response.ok) await subscription.unsubscribe();
+        }
+      }
+    } catch {
+      // Logout must continue even when Push cleanup is unavailable.
+    }
     await logout();
+    await updateAppBadge(0);
     router.replace("/login");
   };
 

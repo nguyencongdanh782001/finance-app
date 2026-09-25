@@ -15,9 +15,62 @@ export type AdminPushPayload = {
   orderCode?: string;
   title: string;
   body: string;
+  unreadCount: number;
   url: string;
   createdAt: string;
 };
+
+type AdminPushPayloadBase = Omit<AdminPushPayload, "unreadCount">;
+
+const isRecord = (value: Prisma.JsonValue): value is Prisma.JsonObject =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isAdminNotificationType = (
+  value: unknown,
+): value is AdminNotificationType =>
+  typeof value === "string" &&
+  Object.values(AdminNotificationType).includes(value as AdminNotificationType);
+
+const parseStoredPayload = (
+  value: Prisma.JsonValue,
+): AdminPushPayloadBase | null => {
+  if (!isRecord(value)) return null;
+  const payload = value as Record<string, unknown>;
+  if (
+    typeof payload.eventId !== "string" ||
+    !isAdminNotificationType(payload.type) ||
+    typeof payload.notificationId !== "string" ||
+    typeof payload.title !== "string" ||
+    typeof payload.body !== "string" ||
+    typeof payload.url !== "string" ||
+    !payload.url.startsWith("/") ||
+    payload.url.startsWith("//") ||
+    typeof payload.createdAt !== "string"
+  ) {
+    return null;
+  }
+  return {
+    eventId: payload.eventId,
+    type: payload.type,
+    notificationId: payload.notificationId,
+    ...(typeof payload.orderId === "number"
+      ? { orderId: payload.orderId }
+      : {}),
+    ...(typeof payload.orderCode === "string"
+      ? { orderCode: payload.orderCode }
+      : {}),
+    title: payload.title,
+    body: payload.body,
+    url: payload.url,
+    createdAt: payload.createdAt,
+  };
+};
+
+export function getAdminUnreadNotificationCount(userId: number) {
+  return prisma.adminNotificationRecipient.count({
+    where: { userId, isRead: false },
+  });
+}
 
 export const getVapidConfig = () => {
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -62,7 +115,7 @@ export async function createNewOnlineOrderNotification(
     },
     select: { id: true, createdAt: true },
   });
-  const payload: AdminPushPayload = {
+  const payload: AdminPushPayloadBase = {
     eventId: eventKey,
     type: AdminNotificationType.NEW_ONLINE_ORDER,
     notificationId: notification.id,
@@ -116,24 +169,56 @@ export async function dispatchNotificationOutbox(outboxId: string) {
 
   const outbox = await prisma.notificationOutbox.findUnique({
     where: { id: outboxId },
-    select: { id: true, payload: true, status: true, attempts: true },
+    select: {
+      id: true,
+      payload: true,
+      status: true,
+      attempts: true,
+      notificationId: true,
+    },
   });
   if (!outbox || outbox.status === NotificationOutboxStatus.SENT) {
     return { sent: 0, failed: 0 };
   }
 
+  const basePayload = parseStoredPayload(outbox.payload);
+  if (!basePayload) {
+    await prisma.notificationOutbox.update({
+      where: { id: outboxId },
+      data: {
+        status: NotificationOutboxStatus.FAILED,
+        attempts: { increment: 1 },
+        lastError: "Payload thông báo Push không hợp lệ.",
+      },
+    });
+    return { sent: 0, failed: 0 };
+  }
+
   webpush.setVapidDetails(config.subject, config.publicKey, config.privateKey);
+  const recipients = await prisma.adminNotificationRecipient.findMany({
+    where: { notificationId: outbox.notificationId },
+    select: { userId: true },
+  });
+  const recipientUserIds = [
+    ...new Set(recipients.map((recipient) => recipient.userId)),
+  ];
   const subscriptions = await prisma.pushSubscription.findMany({
     where: {
       isActive: true,
+      userId: { in: recipientUserIds },
       user: {
         role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
         status: "ACTIVE",
       },
     },
-    select: { id: true, endpoint: true, p256dh: true, auth: true },
+    select: {
+      id: true,
+      userId: true,
+      endpoint: true,
+      p256dh: true,
+      auth: true,
+    },
   });
-  const payload = JSON.stringify(outbox.payload);
   if (!subscriptions.length) {
     await prisma.notificationOutbox.update({
       where: { id: outbox.id },
@@ -147,8 +232,21 @@ export async function dispatchNotificationOutbox(outboxId: string) {
     return { sent: 0, failed: 0 };
   }
 
+  const unreadRows = await prisma.adminNotificationRecipient.groupBy({
+    by: ["userId"],
+    where: { userId: { in: recipientUserIds }, isRead: false },
+    _count: { _all: true },
+  });
+  const unreadCounts = new Map(
+    unreadRows.map((row) => [row.userId, row._count._all]),
+  );
+
   const results = await Promise.allSettled(
     subscriptions.map(async (subscription) => {
+      const payload = JSON.stringify({
+        ...basePayload,
+        unreadCount: unreadCounts.get(subscription.userId) || 0,
+      } satisfies AdminPushPayload);
       try {
         await webpush.sendNotification(
           {

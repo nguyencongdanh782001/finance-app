@@ -5,6 +5,23 @@ const isSafeInternalUrl = (value) => {
   return !value.startsWith("//") && !value.includes("\\");
 };
 
+const isValidUnreadCount = (value) =>
+  Number.isInteger(value) && value >= 0;
+
+const updateAppBadge = async (count) => {
+  try {
+    if (count > 0 && typeof self.registration.setAppBadge === "function") {
+      await self.registration.setAppBadge(count);
+      return;
+    }
+    if (count === 0 && typeof self.registration.clearAppBadge === "function") {
+      await self.registration.clearAppBadge();
+    }
+  } catch {
+    // Badging is optional and must never block push delivery.
+  }
+};
+
 const parsePayload = (event) => {
   if (!event.data) return null;
   try {
@@ -15,6 +32,12 @@ const parsePayload = (event) => {
       typeof payload.title !== "string" ||
       typeof payload.body !== "string" ||
       !isSafeInternalUrl(payload.url)
+    ) {
+      return null;
+    }
+    if (
+      payload.type !== "CUSTOMER_ORDER_STATUS" &&
+      !isValidUnreadCount(payload.unreadCount)
     ) {
       return null;
     }
@@ -29,11 +52,14 @@ self.addEventListener("push", (event) => {
     (async () => {
       const payload = parsePayload(event);
       if (!payload) return;
+      const isCustomerPayload = payload.type === "CUSTOMER_ORDER_STATUS";
+      if (!isCustomerPayload) {
+        await updateAppBadge(payload.unreadCount);
+      }
       const windowClients = await clients.matchAll({
         type: "window",
         includeUncontrolled: true,
       });
-      const isCustomerPayload = payload.type === "CUSTOMER_ORDER_STATUS";
       const adminClients = windowClients.filter((client) =>
         new URL(client.url).pathname.startsWith("/admin"),
       );

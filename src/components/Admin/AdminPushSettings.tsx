@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 type Device = {
   id: string;
+  endpoint: string;
   deviceName: string | null;
   platform: string | null;
   isActive: boolean;
@@ -42,6 +43,9 @@ export default function AdminPushSettings() {
   const [busy, setBusy] = useState(false);
   const [unsupported, setUnsupported] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
+  const [permission, setPermission] = useState<NotificationPermission>(
+    "default",
+  );
 
   const load = async () => {
     const response = await fetch("/api/admin/push-subscriptions");
@@ -49,11 +53,13 @@ export default function AdminPushSettings() {
   };
 
   useEffect(() => {
+    const hasNotification = "Notification" in window;
     setUnsupported(
       !("serviceWorker" in navigator) ||
         !("PushManager" in window) ||
-        !("Notification" in window),
+        !hasNotification,
     );
+    if (hasNotification) setPermission(Notification.permission);
     void load();
   }, []);
 
@@ -69,9 +75,19 @@ export default function AdminPushSettings() {
       });
       return;
     }
+    if (Notification.permission === "denied") {
+      setPermission("denied");
+      toast({
+        title: "Thông báo đang bị chặn",
+        description:
+          "Hãy bật quyền thông báo cho Quỳnh Nhi Store trong cài đặt trình duyệt.",
+      });
+      return;
+    }
     setBusy(true);
     try {
       const permission = await Notification.requestPermission();
+      setPermission(permission);
       if (permission !== "granted") {
         toast({
           title: "Thông báo chưa được bật",
@@ -80,10 +96,13 @@ export default function AdminPushSettings() {
         return;
       }
       const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: base64ToBytes(vapidKey),
-      });
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: base64ToBytes(vapidKey),
+        });
+      }
       const response = await fetch("/api/admin/push-subscriptions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -114,7 +133,22 @@ export default function AdminPushSettings() {
   };
 
   const remove = async (id: string) => {
-    await fetch(`/api/admin/push-subscriptions/${id}`, { method: "DELETE" });
+    const device = devices.find((item) => item.id === id);
+    const response = await fetch(`/api/admin/push-subscriptions/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) return;
+    if (device && "serviceWorker" in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription?.endpoint === device.endpoint) {
+          await subscription.unsubscribe();
+        }
+      } catch {
+        // The server-side device association has already been removed.
+      }
+    }
     setDevices((current) => current.filter((device) => device.id !== id));
   };
 
@@ -144,7 +178,7 @@ export default function AdminPushSettings() {
           Thông báo đơn hàng
         </h1>
         <p className="mt-2 text-sm text-(--admin-text-secondary)">
-          Nhận thông báo ngay khi khách hàng đặt đơn hàng mới.
+          Nhận thông báo trên điện thoại ngay khi có thông báo mới.
         </p>
       </div>
       {showIosHelp ? (
@@ -170,12 +204,16 @@ export default function AdminPushSettings() {
               <p className="font-bold text-(--admin-text)">
                 {unsupported
                   ? "Không được hỗ trợ"
+                  : permission === "denied"
+                    ? "Quyền thông báo đang bị chặn"
                   : devices.some((device) => device.isActive)
                     ? "Đã bật trên thiết bị này"
                     : "Chưa bật"}
               </p>
               <p className="text-xs text-(--admin-text-muted)">
-                Chỉ Admin và Super Admin nhận thông báo.
+                {unsupported
+                  ? "Trình duyệt này chưa hỗ trợ Web Push."
+                  : "Chỉ Admin và Super Admin nhận thông báo."}
               </p>
             </div>
           </div>
