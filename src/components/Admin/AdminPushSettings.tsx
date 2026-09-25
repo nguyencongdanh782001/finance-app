@@ -38,6 +38,27 @@ const isStandalone = () =>
   ("standalone" in navigator &&
     Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
 
+const waitForServiceWorker = () =>
+  new Promise<ServiceWorkerRegistration>((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      reject(
+        new Error(
+          "Service Worker chưa sẵn sàng. Hãy mở bản HTTPS đã deploy hoặc chạy npm run build rồi npm start.",
+        ),
+      );
+    }, 10_000);
+
+    navigator.serviceWorker.ready
+      .then((registration) => {
+        window.clearTimeout(timeoutId);
+        resolve(registration);
+      })
+      .catch((error: unknown) => {
+        window.clearTimeout(timeoutId);
+        reject(error);
+      });
+  });
+
 export default function AdminPushSettings() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [busy, setBusy] = useState(false);
@@ -95,7 +116,7 @@ export default function AdminPushSettings() {
         });
         return;
       }
-      const registration = await navigator.serviceWorker.ready;
+      const registration = await waitForServiceWorker();
       let subscription = await registration.pushManager.getSubscription();
       if (!subscription) {
         subscription = await registration.pushManager.subscribe({
@@ -140,8 +161,8 @@ export default function AdminPushSettings() {
     if (!response.ok) return;
     if (device && "serviceWorker" in navigator) {
       try {
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
+        const registration = await navigator.serviceWorker.getRegistration();
+        const subscription = await registration?.pushManager.getSubscription();
         if (subscription?.endpoint === device.endpoint) {
           await subscription.unsubscribe();
         }
@@ -150,22 +171,6 @@ export default function AdminPushSettings() {
       }
     }
     setDevices((current) => current.filter((device) => device.id !== id));
-  };
-
-  const sendTest = async () => {
-    setBusy(true);
-    try {
-      const response = await fetch("/api/admin/push-subscriptions/test", {
-        method: "POST",
-      });
-      const data = await response.json();
-      toast({
-        title: response.ok ? "Đã gửi thông báo thử" : "Không gửi được",
-        description: data.message || "Kiểm tra thiết bị của bạn.",
-      });
-    } finally {
-      setBusy(false);
-    }
   };
 
   return (
@@ -228,16 +233,6 @@ export default function AdminPushSettings() {
               <Bell className="size-4" />
             )}{" "}
             Bật thông báo
-          </Button>
-        </div>
-        <div className="mt-3 flex gap-2">
-          <Button
-            type="button"
-            variant="default"
-            onClick={() => void sendTest()}
-            disabled={busy || !devices.length}
-          >
-            Gửi thông báo thử
           </Button>
         </div>
       </div>
