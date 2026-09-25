@@ -22,18 +22,18 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-start justify-between gap-3 overflow-hidden rounded-2xl border px-4 py-3.5 shadow-[0_12px_30px_rgb(45_34_38/0.14)] transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x) data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x) data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full items-start justify-between gap-3 overflow-hidden rounded-2xl border px-4 py-3.5 shadow-[0_12px_30px_rgb(217_108_138/0.18)] transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x) data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x) data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
         default:
-          "border-(--admin-border) bg-(--admin-surface) text-(--admin-text)",
+          "border-[#F0C6D3] border-l-4 border-l-(--admin-primary) bg-[#FFF7FA] text-[#5A3946]",
         success:
-          "border-[#BFE5CF] bg-(--admin-success-soft) text-(--admin-text)",
+          "border-[#9DDBB8] border-l-4 border-l-[#4CA66D] bg-[#EFFCF5] text-[#276442]",
         destructive:
-          "border-[#F2C2C8] bg-(--admin-danger-soft) text-(--admin-text)",
+          "border-[#ED9FB4] border-l-4 border-l-(--admin-primary) bg-[#FFF0F5] text-[#A43E5F]",
         warning:
-          "border-[#F0D5A8] bg-(--admin-warning-soft) text-(--admin-text)",
+          "border-[#F0C481] border-l-4 border-l-[#E49A2D] bg-[#FFF7E8] text-[#825018]",
       },
     },
     defaultVariants: {
