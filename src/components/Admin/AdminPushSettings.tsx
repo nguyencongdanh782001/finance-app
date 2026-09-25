@@ -59,6 +59,18 @@ const waitForServiceWorker = () =>
       });
   });
 
+const ensureServiceWorker = async () => {
+  const existing = await navigator.serviceWorker.getRegistration("/");
+  const registration =
+    existing || (await navigator.serviceWorker.register("/sw.js", { scope: "/" }));
+
+  if (registration.active) return registration;
+  return waitForServiceWorker();
+};
+
+const pushToastClass =
+  "w-[calc(100vw-2rem)] max-w-105 rounded-xl border-(--admin-border) bg-white text-(--admin-text) shadow-[0_12px_30px_rgb(45_34_38/0.14)]";
+
 export default function AdminPushSettings() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [busy, setBusy] = useState(false);
@@ -93,6 +105,7 @@ export default function AdminPushSettings() {
       toast({
         title: "Chưa thể bật thông báo",
         description: "Thiếu cấu hình Push hoặc trình duyệt không hỗ trợ.",
+        className: pushToastClass,
       });
       return;
     }
@@ -102,6 +115,7 @@ export default function AdminPushSettings() {
         title: "Thông báo đang bị chặn",
         description:
           "Hãy bật quyền thông báo cho Quỳnh Nhi Store trong cài đặt trình duyệt.",
+        className: pushToastClass,
       });
       return;
     }
@@ -116,7 +130,7 @@ export default function AdminPushSettings() {
         });
         return;
       }
-      const registration = await waitForServiceWorker();
+      const registration = await ensureServiceWorker();
       let subscription = await registration.pushManager.getSubscription();
       if (!subscription) {
         subscription = await registration.pushManager.subscribe({
@@ -141,12 +155,14 @@ export default function AdminPushSettings() {
       toast({
         title: "Đã bật thông báo",
         description: "Thiết bị này đã sẵn sàng nhận đơn hàng mới.",
+        className: pushToastClass,
       });
     } catch (error) {
       toast({
         title: "Không thể bật thông báo",
         description:
           error instanceof Error ? error.message : "Vui lòng thử lại.",
+        className: pushToastClass,
       });
     } finally {
       setBusy(false);
