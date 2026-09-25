@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { toast } from "@/hook/use-toast";
+import { updateAppBadge } from "@/lib/app-badge";
 import { Bell, CheckCheck, ExternalLink, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -64,6 +65,7 @@ export default function AdminNotificationCenter() {
       };
       setItems(data.data);
       setUnreadCount(data.unreadCount);
+      void updateAppBadge(data.unreadCount);
     } finally {
       setLoading(false);
     }
@@ -72,15 +74,10 @@ export default function AdminNotificationCenter() {
   const openNotification = useCallback(
     async (item: AdminNotification) => {
       if (!item.isRead) {
-        await fetch(`/api/admin/notifications/${item.id}/read`, {
+        const response = await fetch(`/api/admin/notifications/${item.id}/read`, {
           method: "PATCH",
         });
-        setItems((current) =>
-          current.map((entry) =>
-            entry.id === item.id ? { ...entry, isRead: true } : entry,
-          ),
-        );
-        setUnreadCount((count) => Math.max(0, count - 1));
+        if (response.ok) await load();
       }
       if (item.orderId) router.push(`/admin/orders/${item.orderId}`);
     },
@@ -89,6 +86,15 @@ export default function AdminNotificationCenter() {
 
   useEffect(() => {
     void load();
+    const refreshFromNotificationChange = () => void load();
+    const refreshOnForeground = () => {
+      if (document.visibilityState === "visible") void load();
+    };
+    window.addEventListener(
+      "admin-notifications-changed",
+      refreshFromNotificationChange,
+    );
+    document.addEventListener("visibilitychange", refreshOnForeground);
     const handleMessage = (
       event: MessageEvent<{ type?: string; payload?: PushPayload }>,
     ) => {
@@ -97,7 +103,6 @@ export default function AdminNotificationCenter() {
       const payload = event.data.payload;
       if (seenEvents.current.has(payload.eventId)) return;
       seenEvents.current.add(payload.eventId);
-      setUnreadCount((count) => count + 1);
       setItems((current) =>
         [
           {
@@ -112,6 +117,7 @@ export default function AdminNotificationCenter() {
           ...current,
         ].slice(0, 8),
       );
+      void load();
       window.dispatchEvent(
         new CustomEvent("admin-order-notification", { detail: payload }),
       );
@@ -131,14 +137,24 @@ export default function AdminNotificationCenter() {
       });
     };
     navigator.serviceWorker?.addEventListener("message", handleMessage);
-    return () =>
+    return () => {
+      window.removeEventListener(
+        "admin-notifications-changed",
+        refreshFromNotificationChange,
+      );
+      document.removeEventListener("visibilitychange", refreshOnForeground);
       navigator.serviceWorker?.removeEventListener("message", handleMessage);
+    };
   }, [load, router]);
 
   const markAllRead = async () => {
-    await fetch("/api/admin/notifications/read-all", { method: "PATCH" });
+    const response = await fetch("/api/admin/notifications/read-all", {
+      method: "PATCH",
+    });
+    if (!response.ok) return;
     setItems((current) => current.map((item) => ({ ...item, isRead: true })));
     setUnreadCount(0);
+    void updateAppBadge(0);
   };
 
   const content = useMemo(

@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hook/use-toast";
 import { Bell, CheckCircle2, Loader2, Smartphone, Trash2 } from "lucide-react";
@@ -7,6 +8,7 @@ import { useEffect, useState } from "react";
 
 type Device = {
   id: string;
+  endpoint: string;
   deviceName: string | null;
   platform: string | null;
   isActive: boolean;
@@ -37,11 +39,46 @@ const isStandalone = () =>
   ("standalone" in navigator &&
     Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
 
+const waitForServiceWorker = () =>
+  new Promise<ServiceWorkerRegistration>((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      reject(
+        new Error(
+          "Service Worker chưa sẵn sàng. Hãy mở bản HTTPS đã deploy hoặc chạy npm run build rồi npm start.",
+        ),
+      );
+    }, 10_000);
+
+    navigator.serviceWorker.ready
+      .then((registration) => {
+        window.clearTimeout(timeoutId);
+        resolve(registration);
+      })
+      .catch((error: unknown) => {
+        window.clearTimeout(timeoutId);
+        reject(error);
+      });
+  });
+
+const ensureServiceWorker = async () => {
+  const existing = await navigator.serviceWorker.getRegistration("/");
+  const registration =
+    existing || (await navigator.serviceWorker.register("/sw.js", { scope: "/" }));
+
+  if (registration.active) return registration;
+  return waitForServiceWorker();
+};
+
 export default function AdminPushSettings() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [busy, setBusy] = useState(false);
   const [unsupported, setUnsupported] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
+  const [deviceToRemove, setDeviceToRemove] = useState<Device | null>(null);
+  const [permission, setPermission] = useState<NotificationPermission>(
+    "default",
+  );
+  const isNotificationEnabled = devices.some((device) => device.isActive);
 
   const load = async () => {
     const response = await fetch("/api/admin/push-subscriptions");
@@ -49,11 +86,13 @@ export default function AdminPushSettings() {
   };
 
   useEffect(() => {
+    const hasNotification = "Notification" in window;
     setUnsupported(
       !("serviceWorker" in navigator) ||
         !("PushManager" in window) ||
-        !("Notification" in window),
+        !hasNotification,
     );
+    if (hasNotification) setPermission(Notification.permission);
     void load();
   }, []);
 
@@ -66,12 +105,24 @@ export default function AdminPushSettings() {
       toast({
         title: "Chưa thể bật thông báo",
         description: "Thiếu cấu hình Push hoặc trình duyệt không hỗ trợ.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (Notification.permission === "denied") {
+      setPermission("denied");
+      toast({
+        title: "Thông báo đang bị chặn",
+        description:
+          "Hãy bật quyền thông báo cho Quỳnh Nhi Store trong cài đặt trình duyệt.",
+        variant: "destructive",
       });
       return;
     }
     setBusy(true);
     try {
       const permission = await Notification.requestPermission();
+      setPermission(permission);
       if (permission !== "granted") {
         toast({
           title: "Thông báo chưa được bật",
@@ -79,11 +130,14 @@ export default function AdminPushSettings() {
         });
         return;
       }
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: base64ToBytes(vapidKey),
-      });
+      const registration = await ensureServiceWorker();
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: base64ToBytes(vapidKey),
+        });
+      }
       const response = await fetch("/api/admin/push-subscriptions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -101,12 +155,14 @@ export default function AdminPushSettings() {
       toast({
         title: "Đã bật thông báo",
         description: "Thiết bị này đã sẵn sàng nhận đơn hàng mới.",
+        variant: "success",
       });
     } catch (error) {
       toast({
         title: "Không thể bật thông báo",
         description:
           error instanceof Error ? error.message : "Vui lòng thử lại.",
+        variant: "destructive",
       });
     } finally {
       setBusy(false);
@@ -114,23 +170,42 @@ export default function AdminPushSettings() {
   };
 
   const remove = async (id: string) => {
-    await fetch(`/api/admin/push-subscriptions/${id}`, { method: "DELETE" });
-    setDevices((current) => current.filter((device) => device.id !== id));
-  };
-
-  const sendTest = async () => {
-    setBusy(true);
+    const device = devices.find((item) => item.id === id);
     try {
-      const response = await fetch("/api/admin/push-subscriptions/test", {
-        method: "POST",
+      const response = await fetch(`/api/admin/push-subscriptions/${id}`, {
+        method: "DELETE",
       });
-      const data = await response.json();
+      const data = (await response.json().catch(() => null)) as {
+        message?: string;
+      } | null;
+      if (!response.ok) {
+        throw new Error(data?.message || "Không thể xoá thiết bị.");
+      }
+      if (device && "serviceWorker" in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          const subscription =
+            await registration?.pushManager.getSubscription();
+          if (subscription?.endpoint === device.endpoint) {
+            await subscription.unsubscribe();
+          }
+        } catch {
+          // The server-side device association has already been removed.
+        }
+      }
+      setDevices((current) => current.filter((item) => item.id !== id));
       toast({
-        title: response.ok ? "Đã gửi thông báo thử" : "Không gửi được",
-        description: data.message || "Kiểm tra thiết bị của bạn.",
+        title: "Đã xoá thiết bị",
+        description: "Thiết bị sẽ không còn nhận thông báo đơn hàng.",
+        variant: "success",
       });
-    } finally {
-      setBusy(false);
+    } catch (error) {
+      toast({
+        title: "Không thể xoá thiết bị",
+        description:
+          error instanceof Error ? error.message : "Vui lòng thử lại.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -144,7 +219,7 @@ export default function AdminPushSettings() {
           Thông báo đơn hàng
         </h1>
         <p className="mt-2 text-sm text-(--admin-text-secondary)">
-          Nhận thông báo ngay khi khách hàng đặt đơn hàng mới.
+          Nhận thông báo trên điện thoại ngay khi có thông báo mới.
         </p>
       </div>
       {showIosHelp ? (
@@ -170,36 +245,38 @@ export default function AdminPushSettings() {
               <p className="font-bold text-(--admin-text)">
                 {unsupported
                   ? "Không được hỗ trợ"
-                  : devices.some((device) => device.isActive)
+                  : permission === "denied"
+                    ? "Quyền thông báo đang bị chặn"
+                  : isNotificationEnabled
                     ? "Đã bật trên thiết bị này"
                     : "Chưa bật"}
               </p>
               <p className="text-xs text-(--admin-text-muted)">
-                Chỉ Admin và Super Admin nhận thông báo.
+                {unsupported
+                  ? "Trình duyệt này chưa hỗ trợ Web Push."
+                  : "Chỉ Admin và Super Admin nhận thông báo."}
               </p>
             </div>
           </div>
           <Button
             type="button"
             onClick={() => void enable()}
-            disabled={busy || unsupported}
+            disabled={busy || unsupported || isNotificationEnabled}
+            aria-pressed={isNotificationEnabled}
+            className={
+              isNotificationEnabled
+                ? "bg-(--admin-success) text-white hover:bg-(--admin-success)"
+                : undefined
+            }
           >
-            {busy ? (
+            {isNotificationEnabled ? (
+              <CheckCircle2 className="size-4" />
+            ) : busy ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Bell className="size-4" />
             )}{" "}
-            Bật thông báo
-          </Button>
-        </div>
-        <div className="mt-3 flex gap-2">
-          <Button
-            type="button"
-            variant="default"
-            onClick={() => void sendTest()}
-            disabled={busy || !devices.length}
-          >
-            Gửi thông báo thử
+            {isNotificationEnabled ? "Đã bật thông báo" : "Bật thông báo"}
           </Button>
         </div>
       </div>
@@ -229,7 +306,7 @@ export default function AdminPushSettings() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  onClick={() => void remove(device.id)}
+                  onClick={() => setDeviceToRemove(device)}
                   aria-label="Xóa thiết bị"
                 >
                   <Trash2 className="size-4 text-rose-500" />
@@ -243,6 +320,18 @@ export default function AdminPushSettings() {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(deviceToRemove)}
+        onOpenChange={(open) => {
+          if (!open) setDeviceToRemove(null);
+        }}
+        title="Xóa thiết bị này?"
+        description={`Bạn có chắc muốn xóa ${deviceToRemove?.deviceName || "thiết bị này"}? Thiết bị sẽ không còn nhận thông báo đơn hàng.`}
+        confirmLabel="Xóa thiết bị"
+        onConfirm={() => {
+          if (deviceToRemove) return remove(deviceToRemove.id);
+        }}
+      />
     </section>
   );
 }

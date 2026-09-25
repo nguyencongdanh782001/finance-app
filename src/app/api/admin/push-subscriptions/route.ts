@@ -14,6 +14,7 @@ const subscriptionSchema = z.object({
 
 const deviceDto = (device: {
   id: string;
+  endpoint: string;
   deviceName: string | null;
   userAgent: string | null;
   platform: string | null;
@@ -22,6 +23,7 @@ const deviceDto = (device: {
   createdAt: Date;
 }) => ({
   id: device.id,
+  endpoint: device.endpoint,
   deviceName: device.deviceName,
   userAgent: device.userAgent,
   platform: device.platform,
@@ -38,6 +40,7 @@ export async function GET(request: Request) {
     orderBy: { updatedAt: "desc" },
     select: {
       id: true,
+      endpoint: true,
       deviceName: true,
       userAgent: true,
       platform: true,
@@ -94,6 +97,7 @@ export async function POST(request: Request) {
     },
     select: {
       id: true,
+      endpoint: true,
       deviceName: true,
       userAgent: true,
       platform: true,

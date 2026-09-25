@@ -1614,7 +1614,7 @@ function OrdersPage() {
         {ordersLoading ? (
           <div className="grid gap-4" aria-label="Đang tải đơn hàng">
             {[1, 2, 3].map((item) => (
-              <Skeleton key={item} className="h-48 rounded-2xl" />
+              <Skeleton key={item} className="h-48 w-full rounded-2xl" />
             ))}
           </div>
         ) : view === "orders" ? (

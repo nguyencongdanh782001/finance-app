@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, ShieldCheck, Truck, RotateCcw } from "lucide-react";
+import { Heart, MapPin, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 import { storefrontFooterLinks } from "@/components/Storefront/storefront-navigation";
 import { getStorefrontContent } from "@/components/Storefront/storefront-content-cache";
 import { useEffect, useState } from "react";
@@ -94,7 +94,7 @@ export default function StorefrontFooter() {
         </div>
       </div>
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 items-start lg:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid items-start gap-10 lg:grid-cols-[1.2fr_0.8fr_0.9fr_1.3fr]">
           <div>
             <div className="inline-flex bg-[#FAF8F8] px-3 py-1.5">
               <Image
@@ -110,31 +110,40 @@ export default function StorefrontFooter() {
               tự tin trong từng khoảnh khắc.
             </p>
           </div>
-          <div className="grid items-start justify-start gap-3 lg:grid-cols-2 lg:gap-8">
-            <FooterGroup title="Khám phá" links={storefrontFooterLinks} />
-            <FooterGroup
-              title="Hỗ trợ"
-              links={[
-                { label: "Chính sách cửa hàng", href: "/policies" },
-                ...policies.map((policy) => ({
-                  label: policy.title,
-                  href: `/policies?policy=${encodeURIComponent(policy.slug)}`,
-                })),
-              ]}
-            />
-          </div>
+          <FooterGroup title="Khám phá" links={storefrontFooterLinks} />
+          <FooterGroup
+            title="Hỗ trợ"
+            links={[
+              { label: "Chính sách cửa hàng", href: "/policies" },
+              ...policies.map((policy) => ({
+                label: policy.title,
+                href: `/policies?policy=${encodeURIComponent(policy.slug)}`,
+              })),
+            ]}
+          />
           <div>
-            <p className="font-bold">Quỳnh Nhi Store</p>
-            <p className="mt-4 text-sm leading-7 text-[#BFB2B6]">
-              Theo dõi những sản phẩm mới và cảm hứng phối đồ trên các kênh
-              chính thức của cửa hàng.
-            </p>
-            <Link
-              href="/products"
-              className="mt-5 inline-flex min-h-11 items-center border border-white/25 px-5 text-sm font-bold transition hover:border-[#F4B5C5] hover:text-[#F4B5C5]"
+            <div className="flex items-center gap-2">
+              <MapPin className="size-5 shrink-0 text-[#D96C8A]" />
+              <p className="font-bold">Vị trí cửa hàng</p>
+            </div>
+            <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+              <iframe
+                title="Bản đồ vị trí Quỳnh Nhi Store"
+                src="https://www.google.com/maps?q=11.275790867301161,106.5892647696457&z=16&output=embed"
+                className="h-44 w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=11.275790867301161%2C106.5892647696457"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex min-h-10 items-center text-sm font-bold text-[#F4B5C5] transition hover:text-white"
             >
-              Khám phá bộ sưu tập
-            </Link>
+              Mở trên Google Maps
+            </a>
           </div>
         </div>
       </div>

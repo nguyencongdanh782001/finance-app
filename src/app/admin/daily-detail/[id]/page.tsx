@@ -190,12 +190,12 @@ const DailyDetail = () => {
       <div className="flex min-w-0 flex-col gap-5">
         {isLoading ? (
           <div className="grid grid-cols-[40px_1fr_40px] items-center gap-2.5">
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-lg" />
             <div className="flex flex-col items-center gap-2">
               <Skeleton className="h-3 w-24 rounded-2" />
               <Skeleton className="h-8 w-56 rounded-2" />
             </div>
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-lg" />
           </div>
         ) : (
           <div className="grid grid-cols-[40px_1fr_40px] items-center gap-2.5">

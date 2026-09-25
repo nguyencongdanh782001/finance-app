@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { updateAppBadge } from "@/lib/app-badge";
 import { CheckCheck, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -18,15 +19,27 @@ export default function AdminNotificationsPage() {
   const [loading, setLoading] = useState(true);
   const load = async () => {
     const response = await fetch("/api/admin/notifications?limit=50");
-    if (response.ok) setItems((await response.json()).data);
+    if (response.ok) {
+      const data = (await response.json()) as {
+        data: Item[];
+        unreadCount: number;
+      };
+      setItems(data.data);
+      void updateAppBadge(data.unreadCount);
+    }
     setLoading(false);
   };
   useEffect(() => {
     void load();
   }, []);
   const markAll = async () => {
-    await fetch("/api/admin/notifications/read-all", { method: "PATCH" });
+    const response = await fetch("/api/admin/notifications/read-all", {
+      method: "PATCH",
+    });
+    if (!response.ok) return;
     setItems((current) => current.map((item) => ({ ...item, isRead: true })));
+    void updateAppBadge(0);
+    window.dispatchEvent(new Event("admin-notifications-changed"));
   };
   return (
     <main className="mx-auto max-w-3xl p-4 sm:p-6">

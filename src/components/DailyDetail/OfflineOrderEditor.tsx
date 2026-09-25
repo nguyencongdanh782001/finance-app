@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrencyVND } from "@/helper/convertCurrency";
+import { toast } from "@/hook/use-toast";
 import type { DailyOrder, OfflineOrderPayload } from "@/interface/financeAPI";
 import {
   findShopOrderLineOption,
@@ -1570,11 +1571,16 @@ export function OfflineOrderEditor({
       );
       if (success) onOpenChange(false);
     } catch (submitError) {
-      setError(
+      const message =
         submitError instanceof Error
           ? submitError.message
-          : "Không thể lưu đơn hàng. Vui lòng thử lại.",
-      );
+          : "Không thể lưu đơn hàng. Vui lòng thử lại.";
+      setError(message);
+      toast({
+        title: "Không thể lưu đơn hàng",
+        description: message,
+        variant: "destructive",
+      });
       setCartOpen(true);
     } finally {
       setSubmitting(false);

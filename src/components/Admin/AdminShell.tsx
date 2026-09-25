@@ -25,6 +25,7 @@ import {
   Users,
   Megaphone,
   ScrollText,
+  Settings,
   Truck,
 } from "lucide-react";
 import Image from "next/image";
@@ -128,6 +129,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     group: "Nội dung website",
     icon: ScrollText,
     matches: (pathname) => pathname.startsWith("/admin/content/policies"),
+  },
+  {
+    href: "/admin/settings/notifications",
+    label: "Cài đặt thông báo",
+    group: "Hệ thống",
+    icon: Settings,
+    matches: (pathname) => pathname.startsWith("/admin/settings/notifications"),
   },
 ];
 
