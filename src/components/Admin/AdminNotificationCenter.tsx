@@ -157,8 +157,6 @@ export default function AdminNotificationCenter() {
     void updateAppBadge(0);
   };
 
-  useEffect(() => () => void updateAppBadge(0), []);
-
   const content = useMemo(
     () => (
       <div className="flex h-full min-h-0 flex-col">

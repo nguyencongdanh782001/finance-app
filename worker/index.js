@@ -10,12 +10,12 @@ const isValidUnreadCount = (value) =>
 
 const updateAppBadge = async (count) => {
   try {
-    if (count > 0 && typeof self.registration.setAppBadge === "function") {
-      await self.registration.setAppBadge(count);
+    if (count > 0 && typeof self.navigator?.setAppBadge === "function") {
+      await self.navigator.setAppBadge(count);
       return;
     }
-    if (count === 0 && typeof self.registration.clearAppBadge === "function") {
-      await self.registration.clearAppBadge();
+    if (count === 0 && typeof self.navigator?.clearAppBadge === "function") {
+      await self.navigator.clearAppBadge();
     }
   } catch {
     // Badging is optional and must never block push delivery.
