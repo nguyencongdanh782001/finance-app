@@ -405,7 +405,7 @@ export default function AdminOnlineOrdersPage() {
             </span>
             <span className="mt-1 block text-xl font-bold text-(--admin-text)">
               {loading && !data ? (
-                <Skeleton className="h-6 w-10 rounded" />
+                <Skeleton className="h-6 w-full rounded" />
               ) : (
                 countByStatus[item.value]
               )}
