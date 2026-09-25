@@ -291,8 +291,8 @@ export async function POST(request: Request) {
               shippingDestinationLongitude: destinationLongitude,
               shippingRawDistanceMeters: quote.distanceMeters,
               shippingRoundedDistanceKm: quote.roundedDistanceKm,
-              shippingFreeDistanceKm:
-                shippingCalculation?.calculation.freeDistanceKm || 0,
+              shippingDiscountPercent:
+                shippingCalculation?.calculation.discountPercent || 0,
               shippingChargeableDistanceKm:
                 shippingCalculation?.calculation.chargeableDistanceKm ||
                 quote.roundedDistanceKm,
@@ -521,8 +521,8 @@ export async function POST(request: Request) {
             shippingDestinationLongitude: destinationLongitude,
             shippingRawDistanceMeters: quote.distanceMeters,
             shippingRoundedDistanceKm: quote.roundedDistanceKm,
-            shippingFreeDistanceKm:
-              shippingCalculation?.calculation.freeDistanceKm || 0,
+            shippingDiscountPercent:
+              shippingCalculation?.calculation.discountPercent || 0,
             shippingChargeableDistanceKm:
               shippingCalculation?.calculation.chargeableDistanceKm ||
               quote.roundedDistanceKm,

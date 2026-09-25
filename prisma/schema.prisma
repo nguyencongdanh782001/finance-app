@@ -1270,6 +1270,7 @@ model Order {
   shippingRawDistanceMeters    Int?
   shippingRoundedDistanceKm    Decimal?
   shippingFreeDistanceKm       Decimal?
+  shippingDiscountPercent      Decimal?
   shippingChargeableDistanceKm Decimal?
   shippingBaseFee              Int?
   shippingPricePerKm           Int?
@@ -1495,7 +1496,7 @@ model ShippingPromotion {
   name                    String
   description             String?
   minimumOrderValue       Int
-  freeDistanceKm          Decimal
+  discountPercent         Decimal
   maximumShippingDiscount Int?
   priority                Int       @default(0)
   isActive                Boolean   @default(true)

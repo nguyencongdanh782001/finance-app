@@ -30,16 +30,16 @@ test("selects the promotion with the highest customer benefit", () => {
     [
       {
         id: 1,
-        name: "3km",
+        name: "10%",
         minimumOrderValue: 300000,
-        freeDistanceKm: 3,
+        discountPercent: 10,
         priority: 10,
       },
       {
         id: 2,
-        name: "5km",
+        name: "20%",
         minimumOrderValue: 500000,
-        freeDistanceKm: 5,
+        discountPercent: 20,
         priority: 0,
       },
     ],
@@ -48,7 +48,33 @@ test("selects the promotion with the highest customer benefit", () => {
   assert.equal(selected?.id, 2);
 });
 
-test("a fully covered route has a zero shipping fee", () => {
+test("selects the promotion with the highest actual discount after its cap", () => {
+  const selected = selectShippingPromotion(
+    [
+      {
+        id: 1,
+        name: "50% capped",
+        minimumOrderValue: 300000,
+        discountPercent: 50,
+        maximumShippingDiscount: 10000,
+        priority: 10,
+      },
+      {
+        id: 2,
+        name: "20% uncapped",
+        minimumOrderValue: 300000,
+        discountPercent: 20,
+        priority: 0,
+      },
+    ],
+    700000,
+    new Date(),
+    100000,
+  );
+  assert.equal(selected?.id, 2);
+});
+
+test("a 100% promotion makes the shipping fee zero", () => {
   const result = calculateShippingFee({
     config: { ...defaultShippingConfig, baseFee: 10000, pricePerKm: 5000 },
     distanceMeters: 4800,
@@ -56,18 +82,18 @@ test("a fully covered route has a zero shipping fee", () => {
     promotions: [
       {
         id: 1,
-        name: "Free 5km",
+        name: "Free shipping",
         minimumOrderValue: 500000,
-        freeDistanceKm: 5,
+        discountPercent: 100,
         priority: 0,
       },
     ],
   });
   assert.equal(result.finalShippingFee, 0);
-  assert.equal(result.chargeableDistanceKm, 0);
+  assert.equal(result.chargeableDistanceKm, 5);
 });
 
-test("shipping fee is never negative and respects a discount cap", () => {
+test("shipping fee applies the percentage and respects a discount cap", () => {
   const result = calculateShippingFee({
     config: { ...defaultShippingConfig, baseFee: 10000, pricePerKm: 5000 },
     distanceMeters: 8000,
@@ -77,12 +103,14 @@ test("shipping fee is never negative and respects a discount cap", () => {
         id: 1,
         name: "Cap",
         minimumOrderValue: 500000,
-        freeDistanceKm: 5,
+        discountPercent: 50,
         maximumShippingDiscount: 10000,
         priority: 0,
       },
     ],
   });
-  assert.equal(result.finalShippingFee, 15000);
+  assert.equal(result.shippingFeeBeforePromotion, 50000);
+  assert.equal(result.shippingDiscount, 10000);
+  assert.equal(result.finalShippingFee, 40000);
   assert.ok(result.finalShippingFee >= 0);
 });
