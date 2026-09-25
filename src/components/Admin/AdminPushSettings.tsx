@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hook/use-toast";
 import { Bell, CheckCircle2, Loader2, Smartphone, Trash2 } from "lucide-react";
@@ -73,6 +74,7 @@ export default function AdminPushSettings() {
   const [busy, setBusy] = useState(false);
   const [unsupported, setUnsupported] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
+  const [deviceToRemove, setDeviceToRemove] = useState<Device | null>(null);
   const [permission, setPermission] = useState<NotificationPermission>(
     "default",
   );
@@ -169,22 +171,42 @@ export default function AdminPushSettings() {
 
   const remove = async (id: string) => {
     const device = devices.find((item) => item.id === id);
-    const response = await fetch(`/api/admin/push-subscriptions/${id}`, {
-      method: "DELETE",
-    });
-    if (!response.ok) return;
-    if (device && "serviceWorker" in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.getRegistration();
-        const subscription = await registration?.pushManager.getSubscription();
-        if (subscription?.endpoint === device.endpoint) {
-          await subscription.unsubscribe();
-        }
-      } catch {
-        // The server-side device association has already been removed.
+    try {
+      const response = await fetch(`/api/admin/push-subscriptions/${id}`, {
+        method: "DELETE",
+      });
+      const data = (await response.json().catch(() => null)) as {
+        message?: string;
+      } | null;
+      if (!response.ok) {
+        throw new Error(data?.message || "Không thể xoá thiết bị.");
       }
+      if (device && "serviceWorker" in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          const subscription =
+            await registration?.pushManager.getSubscription();
+          if (subscription?.endpoint === device.endpoint) {
+            await subscription.unsubscribe();
+          }
+        } catch {
+          // The server-side device association has already been removed.
+        }
+      }
+      setDevices((current) => current.filter((item) => item.id !== id));
+      toast({
+        title: "Đã xoá thiết bị",
+        description: "Thiết bị sẽ không còn nhận thông báo đơn hàng.",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Không thể xoá thiết bị",
+        description:
+          error instanceof Error ? error.message : "Vui lòng thử lại.",
+        variant: "destructive",
+      });
     }
-    setDevices((current) => current.filter((device) => device.id !== id));
   };
 
   return (
@@ -284,7 +306,7 @@ export default function AdminPushSettings() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  onClick={() => void remove(device.id)}
+                  onClick={() => setDeviceToRemove(device)}
                   aria-label="Xóa thiết bị"
                 >
                   <Trash2 className="size-4 text-rose-500" />
@@ -298,6 +320,18 @@ export default function AdminPushSettings() {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(deviceToRemove)}
+        onOpenChange={(open) => {
+          if (!open) setDeviceToRemove(null);
+        }}
+        title="Xóa thiết bị này?"
+        description={`Bạn có chắc muốn xóa ${deviceToRemove?.deviceName || "thiết bị này"}? Thiết bị sẽ không còn nhận thông báo đơn hàng.`}
+        confirmLabel="Xóa thiết bị"
+        onConfirm={() => {
+          if (deviceToRemove) return remove(deviceToRemove.id);
+        }}
+      />
     </section>
   );
 }
