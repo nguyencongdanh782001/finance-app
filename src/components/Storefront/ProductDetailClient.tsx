@@ -103,6 +103,62 @@ function LoadingState() {
           <Skeleton className="h-12 w-full" />
         </div>
       </div>
+      <section className="mt-14 border-t border-[#EAE1E4] pt-8">
+        <Skeleton className="h-7 w-56" />
+        <Skeleton className="mt-3 h-4 w-4/5 max-w-2xl" />
+        <div className="mt-6 max-w-3xl space-y-3">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-4/5" />
+          <Skeleton className="h-10 w-28" />
+        </div>
+      </section>
+      <section className="mt-14 border-t border-[#EAE1E4] pt-8">
+        <Skeleton className="h-7 w-52" />
+        <div className="mt-6 grid gap-6 rounded-2xl border border-[#EAE1E4] bg-white p-5 sm:grid-cols-[180px_1fr] sm:p-6">
+          <div className="flex flex-col items-center gap-3 border-b border-[#EAE1E4] pb-5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-6">
+            <Skeleton className="h-12 w-20" />
+            <Skeleton className="h-4 w-28" />
+          </div>
+          <div className="space-y-3">
+            {Array.from({ length: 5 }, (_, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Skeleton className="h-3 w-10" />
+                <Skeleton className="h-2 flex-1 rounded-full" />
+                <Skeleton className="h-3 w-5" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
+          <div className="space-y-5">
+            {Array.from({ length: 3 }, (_, index) => (
+              <div key={index} className="space-y-3 border-b border-[#EAE1E4] pb-5">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5" />
+              </div>
+            ))}
+          </div>
+          <Skeleton className="h-80 w-full rounded-2xl" />
+        </div>
+      </section>
+      <section className="mt-14 border-t border-[#EAE1E4] pt-8">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-7 w-52" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className="space-y-3">
+              <Skeleton className="aspect-[3/4] w-full rounded-2xl" />
+              <Skeleton className="h-4 w-4/5" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
