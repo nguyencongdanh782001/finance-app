@@ -102,7 +102,7 @@ export async function POST(
     return NextResponse.json({ review }, { status: 201, headers: noStore });
   } catch (error) {
     if (isUniqueConstraintError(error)) {
-      return errorResponse("Bạn đã đánh giá sản phẩm này. Hãy chỉnh sửa đánh giá hiện có.", 409);
+      return errorResponse("Bạn đã đánh giá sản phẩm này. Mỗi khách hàng chỉ được gửi một đánh giá.", 409);
     }
     return errorResponse("Không thể gửi đánh giá lúc này.", 500);
   }
