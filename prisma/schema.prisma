@@ -394,6 +394,7 @@ model Category {
 
   /// Relation
   products        Product[]
+  productViewEvents ProductViewEvent[]
   couponProducts  CouponCategory[]
   excludedCoupons ExcludedCouponCategory[]
 
@@ -496,6 +497,7 @@ model Product {
   homepageFeaturedProducts HomepageFeaturedProduct[]
   homepageSectionProducts  HomepageSectionProduct[]
   recentlyViewedBy         RecentlyViewedProduct[]
+  productViewEvents        ProductViewEvent[]
   drafts                   ProductDraft[]
   favoriteAdjustmentLogs   ProductFavoriteAdjustmentLog[]
 
@@ -624,6 +626,7 @@ model User {
   favoriteAdjustmentLogs      ProductFavoriteAdjustmentLog[] @relation("ProductFavoriteAdjustmentAdmin")
   adminNotificationRecipients AdminNotificationRecipient[]
   pushSubscriptions           PushSubscription[]
+  productViewEvents           ProductViewEvent[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1875,6 +1878,8 @@ model Review {
 
   @@unique([userId, productId])
   @@index([productId])
+  @@index([productId, isApproved, createdAt])
+  @@index([isApproved, updatedAt])
   @@index([variantId])
   @@index([userId])
   @@map("review")
@@ -2033,6 +2038,29 @@ model RecentlyViewedProduct {
   @@index([productId])
   @@index([viewedAt])
   @@map("recently_viewed_product")
+}
+
+model ProductViewEvent {
+  id Int @id @default(autoincrement())
+
+  visitorId String?
+  userId    Int?
+  user      User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  // One event per identity/product in each fixed 30-minute UTC window.
+  dedupeKey String @unique
+  viewedAt  DateTime @default(now())
+
+  @@index([visitorId, productId, viewedAt])
+  @@index([userId, viewedAt])
+  @@index([categoryId, viewedAt])
+  @@index([viewedAt])
+  @@map("product_view_event")
 }
 
 model HomepageBanner {

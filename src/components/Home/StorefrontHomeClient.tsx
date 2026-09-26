@@ -178,11 +178,14 @@ export default function StorefrontHomeClient() {
   const { user, isAuthenticated, isInitializing } = useAuth();
   const router = useRouter();
   const [data, setData] = useState<HomepageData | null>(null);
+  const [recommendations, setRecommendations] = useState<ProductApiItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const load = () => {
     const cached =
-      homepageCache && Date.now() - homepageCache.cachedAt < HOMEPAGE_CACHE_TTL
+      !isAuthenticated &&
+      homepageCache &&
+      Date.now() - homepageCache.cachedAt < HOMEPAGE_CACHE_TTL
         ? homepageCache
         : null;
     if (!cached) homepageCache = null;
@@ -193,7 +196,7 @@ export default function StorefrontHomeClient() {
       setLoading(true);
     }
     setError(false);
-    fetch("/api/homepage")
+    fetch("/api/homepage", { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((value: HomepageData) => {
         homepageCache = { data: value, cachedAt: Date.now() };
@@ -209,8 +212,24 @@ export default function StorefrontHomeClient() {
       router.replace(getDefaultRouteByRole(user?.role));
   }, [isAuthenticated, isInitializing, router, user?.role]);
   useEffect(() => {
+    if (isInitializing) return;
+    setRecommendations([]);
     load();
-  }, []);
+    if (isAdminRole(user?.role)) return;
+
+    let cancelled = false;
+    fetch("/api/recommendations", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then((value: { products?: ProductApiItem[] }) => {
+        if (!cancelled) setRecommendations(value.products || []);
+      })
+      .catch(() => {
+        if (!cancelled) setRecommendations([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, isInitializing, user?.id, user?.role]);
   if (isInitializing || (isAuthenticated && isAdminRole(user?.role)))
     return (
       <StorefrontShell>
@@ -366,6 +385,21 @@ export default function StorefrontHomeClient() {
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+            </div>
+          </section>
+        )}
+        {recommendations.length > 0 && (
+          <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-20">
+            <SectionHeading
+              eyebrow="Dành cho bạn"
+              title="Dành riêng cho bạn"
+              subtitle="Những lựa chọn phù hợp với những gì bạn đang quan tâm."
+              href="/products"
+            />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+              {recommendations.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
           </section>
         )}

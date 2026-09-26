@@ -25,6 +25,7 @@ import {
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import ProductCard from "@/components/Storefront/ProductCard";
 import ProductFavoriteButton from "@/components/Storefront/ProductFavoriteButton";
+import ProductReviews from "@/components/Storefront/ProductReviews";
 import RichTextRenderer from "@/components/RichText/RichTextRenderer";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useCart } from "@/components/Storefront/CartProvider";
@@ -34,6 +35,10 @@ import type {
 } from "@/interface/product";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buildLoginUrl } from "@/lib/auth/routing";
+import {
+  isMeaningfulVisibleView,
+  PRODUCT_VIEW_THRESHOLD_MS,
+} from "@/lib/recommendations-policy";
 
 const money = (value: number | string) =>
   `${Number(value).toLocaleString("vi-VN")}đ`;
@@ -223,6 +228,59 @@ export default function ProductDetailClient() {
       });
     return () => controller.abort();
   }, [product]);
+
+  useEffect(() => {
+    if (!product) return;
+    const identifier = String(params.id);
+    if (identifier !== String(product.id) && identifier !== product.slug) return;
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let visibleSince = 0;
+    let counted = false;
+
+    const clearTimer = () => {
+      if (timer) clearTimeout(timer);
+      timer = undefined;
+    };
+    const schedule = () => {
+      clearTimer();
+      if (counted || document.visibilityState !== "visible") return;
+      visibleSince = Date.now();
+      timer = setTimeout(() => {
+        if (
+          !counted &&
+          isMeaningfulVisibleView({
+            startedAt: visibleSince,
+            now: Date.now(),
+            wasHidden: document.visibilityState !== "visible",
+          })
+        ) {
+          counted = true;
+          void fetch("/api/recommendations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId: product.id }),
+            keepalive: true,
+          }).catch(() => undefined);
+        }
+      }, PRODUCT_VIEW_THRESHOLD_MS);
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        clearTimer();
+        visibleSince = 0;
+      } else {
+        schedule();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    schedule();
+    return () => {
+      clearTimer();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [params.id, product]);
 
   const variants = useMemo(
     () => (product?.variants || []).filter((variant) => variant.isActive),
@@ -884,6 +942,7 @@ export default function ProductDetailClient() {
               </button>
             </section>
           ) : null}
+          <ProductReviews productIdentifier={String(params.id)} />
           {related.length ? (
             <section className="mt-14 border-t border-[#EAE1E4] pt-8">
               <div className="flex items-end justify-between gap-4">

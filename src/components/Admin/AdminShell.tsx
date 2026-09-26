@@ -18,6 +18,7 @@ import {
   Gift,
   LayoutDashboard,
   Menu,
+  MessageCircle,
   Package,
   PackageCheck,
   Percent,
@@ -131,6 +132,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     matches: (pathname) => pathname.startsWith("/admin/content/policies"),
   },
   {
+    href: "/admin/reviews",
+    label: "Đánh giá",
+    group: "Nội dung website",
+    icon: MessageCircle,
+    matches: (pathname) => pathname.startsWith("/admin/reviews"),
+  },
+  {
     href: "/admin/settings/notifications",
     label: "Cài đặt thông báo",
     group: "Hệ thống",
@@ -155,6 +163,7 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/shipping")) return "Vận chuyển";
   if (pathname.startsWith("/admin/content/banners")) return "Banner";
   if (pathname.startsWith("/admin/content/policies")) return "Chính sách";
+  if (pathname.startsWith("/admin/reviews")) return "Đánh giá sản phẩm";
   if (pathname.startsWith("/admin/daily-detail/")) return "Chi tiết ngày";
   if (pathname.startsWith("/admin/monthly-detail/")) return "Chi tiết tháng";
   return "Tổng quan";
