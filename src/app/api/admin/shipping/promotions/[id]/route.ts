@@ -6,13 +6,13 @@ const adminOnly = (request: Request) =>
   ["ADMIN", "SUPER_ADMIN"].includes(request.headers.get("x-user-role") || "");
 const serialize = (promotion: any) => ({
   ...promotion,
-  freeDistanceKm: Number(promotion.freeDistanceKm),
+  discountPercent: Number(promotion.discountPercent),
 });
 const parse = (body: any) => ({
   name: String(body.name || "").trim(),
   description: String(body.description || "").trim() || null,
   minimumOrderValue: Math.round(Number(body.minimumOrderValue)),
-  freeDistanceKm: Number(body.freeDistanceKm),
+  discountPercent: Number(body.discountPercent),
   maximumShippingDiscount:
     body.maximumShippingDiscount === "" || body.maximumShippingDiscount == null
       ? null
@@ -26,8 +26,14 @@ const validation = (data: ReturnType<typeof parse>) =>
   !data.name ||
   !Number.isFinite(data.minimumOrderValue) ||
   data.minimumOrderValue < 0 ||
-  !Number.isFinite(data.freeDistanceKm) ||
-  data.freeDistanceKm <= 0 ||
+  !Number.isFinite(data.discountPercent) ||
+  data.discountPercent <= 0 ||
+  data.discountPercent > 100 ||
+  (data.maximumShippingDiscount != null &&
+    (!Number.isFinite(data.maximumShippingDiscount) ||
+      data.maximumShippingDiscount <= 0)) ||
+  (data.startsAt && Number.isNaN(data.startsAt.getTime())) ||
+  (data.endsAt && Number.isNaN(data.endsAt.getTime())) ||
   (data.startsAt && data.endsAt && data.endsAt <= data.startsAt);
 
 export async function PATCH(

@@ -448,6 +448,7 @@ export const ModelName = {
   NotificationOutbox: 'NotificationOutbox',
   SearchHistory: 'SearchHistory',
   RecentlyViewedProduct: 'RecentlyViewedProduct',
+  ProductViewEvent: 'ProductViewEvent',
   HomepageBanner: 'HomepageBanner',
   StorePolicy: 'StorePolicy',
   HomepageFeaturedProduct: 'HomepageFeaturedProduct',
@@ -468,7 +469,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "membershipHistory" | "membershipBenefit" | "membershipBenefitTier" | "membershipBenefitRedemption" | "membershipResetRun" | "auditLog" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "productFavoriteAdjustmentLog" | "order" | "orderItem" | "orderInvoice" | "orderInvoiceItem" | "invoiceSequence" | "storeSetting" | "shippingConfiguration" | "shippingPromotion" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "discountRedemption" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "adminNotification" | "adminNotificationRecipient" | "pushSubscription" | "notificationOutbox" | "searchHistory" | "recentlyViewedProduct" | "homepageBanner" | "storePolicy" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
+    modelProps: "dailyFinance" | "monthlyExpense" | "monthlyFinance" | "category" | "brand" | "product" | "dailySoldProduct" | "dailySoldProductContribution" | "user" | "productDraft" | "productImportJob" | "passwordResetToken" | "userSession" | "membership" | "membershipHistory" | "membershipBenefit" | "membershipBenefitTier" | "membershipBenefitRedemption" | "membershipResetRun" | "auditLog" | "otp" | "userAddress" | "productImage" | "variantGroup" | "variantOption" | "productVariant" | "productVariantOption" | "productVariantImage" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "productFavoriteAdjustmentLog" | "order" | "orderItem" | "orderInvoice" | "orderInvoiceItem" | "invoiceSequence" | "storeSetting" | "shippingConfiguration" | "shippingPromotion" | "inventoryTransaction" | "orderStatusHistory" | "warehouse" | "warehouseInventory" | "payment" | "paymentLog" | "shipping" | "coupon" | "discountRedemption" | "couponProduct" | "couponCategory" | "couponMembership" | "excludedCouponProduct" | "excludedCouponCategory" | "review" | "reviewImage" | "notification" | "adminNotification" | "adminNotificationRecipient" | "pushSubscription" | "notificationOutbox" | "searchHistory" | "recentlyViewedProduct" | "productViewEvent" | "homepageBanner" | "storePolicy" | "homepageFeaturedProduct" | "homepageSection" | "homepageSectionProduct"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -5208,6 +5209,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProductViewEvent: {
+      payload: Prisma.$ProductViewEventPayload<ExtArgs>
+      fields: Prisma.ProductViewEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductViewEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductViewEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductViewEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductViewEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>
+        }
+        findMany: {
+          args: Prisma.ProductViewEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>[]
+        }
+        create: {
+          args: Prisma.ProductViewEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>
+        }
+        createMany: {
+          args: Prisma.ProductViewEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductViewEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductViewEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>
+        }
+        update: {
+          args: Prisma.ProductViewEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductViewEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductViewEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductViewEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductViewEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductViewEventPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductViewEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductViewEvent>
+        }
+        groupBy: {
+          args: Prisma.ProductViewEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductViewEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductViewEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductViewEventCountAggregateOutputType> | number
+        }
+      }
+    }
     HomepageBanner: {
       payload: Prisma.$HomepageBannerPayload<ExtArgs>
       fields: Prisma.HomepageBannerFieldRefs
@@ -6247,6 +6322,7 @@ export const OrderScalarFieldEnum = {
   shippingRawDistanceMeters: 'shippingRawDistanceMeters',
   shippingRoundedDistanceKm: 'shippingRoundedDistanceKm',
   shippingFreeDistanceKm: 'shippingFreeDistanceKm',
+  shippingDiscountPercent: 'shippingDiscountPercent',
   shippingChargeableDistanceKm: 'shippingChargeableDistanceKm',
   shippingBaseFee: 'shippingBaseFee',
   shippingPricePerKm: 'shippingPricePerKm',
@@ -6418,7 +6494,7 @@ export const ShippingPromotionScalarFieldEnum = {
   name: 'name',
   description: 'description',
   minimumOrderValue: 'minimumOrderValue',
-  freeDistanceKm: 'freeDistanceKm',
+  discountPercent: 'discountPercent',
   maximumShippingDiscount: 'maximumShippingDiscount',
   priority: 'priority',
   isActive: 'isActive',
@@ -6778,6 +6854,19 @@ export const RecentlyViewedProductScalarFieldEnum = {
 } as const
 
 export type RecentlyViewedProductScalarFieldEnum = (typeof RecentlyViewedProductScalarFieldEnum)[keyof typeof RecentlyViewedProductScalarFieldEnum]
+
+
+export const ProductViewEventScalarFieldEnum = {
+  id: 'id',
+  visitorId: 'visitorId',
+  userId: 'userId',
+  productId: 'productId',
+  categoryId: 'categoryId',
+  dedupeKey: 'dedupeKey',
+  viewedAt: 'viewedAt'
+} as const
+
+export type ProductViewEventScalarFieldEnum = (typeof ProductViewEventScalarFieldEnum)[keyof typeof ProductViewEventScalarFieldEnum]
 
 
 export const HomepageBannerScalarFieldEnum = {
@@ -7717,6 +7806,7 @@ export type GlobalOmitConfig = {
   notificationOutbox?: Prisma.NotificationOutboxOmit
   searchHistory?: Prisma.SearchHistoryOmit
   recentlyViewedProduct?: Prisma.RecentlyViewedProductOmit
+  productViewEvent?: Prisma.ProductViewEventOmit
   homepageBanner?: Prisma.HomepageBannerOmit
   storePolicy?: Prisma.StorePolicyOmit
   homepageFeaturedProduct?: Prisma.HomepageFeaturedProductOmit

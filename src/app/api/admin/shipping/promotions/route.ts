@@ -6,13 +6,13 @@ const adminOnly = (request: Request) =>
   ["ADMIN", "SUPER_ADMIN"].includes(request.headers.get("x-user-role") || "");
 const serialize = (promotion: any) => ({
   ...promotion,
-  freeDistanceKm: Number(promotion.freeDistanceKm),
+  discountPercent: Number(promotion.discountPercent),
 });
 const parse = (body: any) => ({
   name: String(body.name || "").trim(),
   description: String(body.description || "").trim() || null,
   minimumOrderValue: Math.round(Number(body.minimumOrderValue)),
-  freeDistanceKm: Number(body.freeDistanceKm),
+  discountPercent: Number(body.discountPercent),
   maximumShippingDiscount:
     body.maximumShippingDiscount === "" || body.maximumShippingDiscount == null
       ? null
@@ -26,8 +26,12 @@ const validate = (data: ReturnType<typeof parse>) => {
   if (!data.name) return "Vui lòng nhập tên chương trình.";
   if (!Number.isFinite(data.minimumOrderValue) || data.minimumOrderValue < 0)
     return "Giá trị đơn hàng tối thiểu phải lớn hơn hoặc bằng 0.";
-  if (!Number.isFinite(data.freeDistanceKm) || data.freeDistanceKm <= 0)
-    return "Số km miễn phí phải lớn hơn 0.";
+  if (
+    !Number.isFinite(data.discountPercent) ||
+    data.discountPercent <= 0 ||
+    data.discountPercent > 100
+  )
+    return "Phần trăm miễn phí vận chuyển phải lớn hơn 0 và không vượt quá 100%.";
   if (
     data.maximumShippingDiscount != null &&
     (!Number.isFinite(data.maximumShippingDiscount) ||

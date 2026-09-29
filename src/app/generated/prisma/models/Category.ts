@@ -291,6 +291,7 @@ export type CategoryWhereInput = {
   parent?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   children?: Prisma.CategoryListRelationFilter
   products?: Prisma.ProductListRelationFilter
+  productViewEvents?: Prisma.ProductViewEventListRelationFilter
   couponProducts?: Prisma.CouponCategoryListRelationFilter
   excludedCoupons?: Prisma.ExcludedCouponCategoryListRelationFilter
 }
@@ -312,6 +313,7 @@ export type CategoryOrderByWithRelationInput = {
   parent?: Prisma.CategoryOrderByWithRelationInput
   children?: Prisma.CategoryOrderByRelationAggregateInput
   products?: Prisma.ProductOrderByRelationAggregateInput
+  productViewEvents?: Prisma.ProductViewEventOrderByRelationAggregateInput
   couponProducts?: Prisma.CouponCategoryOrderByRelationAggregateInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryOrderByRelationAggregateInput
 }
@@ -336,6 +338,7 @@ export type CategoryWhereUniqueInput = Prisma.AtLeast<{
   parent?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   children?: Prisma.CategoryListRelationFilter
   products?: Prisma.ProductListRelationFilter
+  productViewEvents?: Prisma.ProductViewEventListRelationFilter
   couponProducts?: Prisma.CouponCategoryListRelationFilter
   excludedCoupons?: Prisma.ExcludedCouponCategoryListRelationFilter
 }, "id" | "slug">
@@ -395,6 +398,7 @@ export type CategoryCreateInput = {
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
   products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryCreateNestedManyWithoutCategoryInput
 }
@@ -415,6 +419,7 @@ export type CategoryUncheckedCreateInput = {
   updatedAt?: Date | string
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
 }
@@ -434,6 +439,7 @@ export type CategoryUpdateInput = {
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUpdateManyWithoutCategoryNestedInput
 }
@@ -454,6 +460,7 @@ export type CategoryUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
 }
@@ -696,6 +703,22 @@ export type CategoryUpdateOneRequiredWithoutExcludedCouponsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutExcludedCouponsInput, Prisma.CategoryUpdateWithoutExcludedCouponsInput>, Prisma.CategoryUncheckedUpdateWithoutExcludedCouponsInput>
 }
 
+export type CategoryCreateNestedOneWithoutProductViewEventsInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutProductViewEventsInput, Prisma.CategoryUncheckedCreateWithoutProductViewEventsInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutProductViewEventsInput
+  connect?: Prisma.CategoryWhereUniqueInput
+}
+
+export type CategoryUpdateOneWithoutProductViewEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutProductViewEventsInput, Prisma.CategoryUncheckedCreateWithoutProductViewEventsInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutProductViewEventsInput
+  upsert?: Prisma.CategoryUpsertWithoutProductViewEventsInput
+  disconnect?: Prisma.CategoryWhereInput | boolean
+  delete?: Prisma.CategoryWhereInput | boolean
+  connect?: Prisma.CategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutProductViewEventsInput, Prisma.CategoryUpdateWithoutProductViewEventsInput>, Prisma.CategoryUncheckedUpdateWithoutProductViewEventsInput>
+}
+
 export type CategoryCreateWithoutChildrenInput = {
   name: string
   color: string
@@ -710,6 +733,7 @@ export type CategoryCreateWithoutChildrenInput = {
   updatedAt?: Date | string
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryCreateNestedManyWithoutCategoryInput
 }
@@ -729,6 +753,7 @@ export type CategoryUncheckedCreateWithoutChildrenInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
 }
@@ -752,6 +777,7 @@ export type CategoryCreateWithoutParentInput = {
   updatedAt?: Date | string
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
   products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryCreateNestedManyWithoutCategoryInput
 }
@@ -771,6 +797,7 @@ export type CategoryUncheckedCreateWithoutParentInput = {
   updatedAt?: Date | string
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
 }
@@ -810,6 +837,7 @@ export type CategoryUpdateWithoutChildrenInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUpdateManyWithoutCategoryNestedInput
 }
@@ -829,6 +857,7 @@ export type CategoryUncheckedUpdateWithoutChildrenInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
 }
@@ -882,6 +911,7 @@ export type CategoryCreateWithoutProductsInput = {
   updatedAt?: Date | string
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryCreateNestedManyWithoutCategoryInput
 }
@@ -901,6 +931,7 @@ export type CategoryUncheckedCreateWithoutProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
 }
@@ -935,6 +966,7 @@ export type CategoryUpdateWithoutProductsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUpdateManyWithoutCategoryNestedInput
 }
@@ -954,6 +986,7 @@ export type CategoryUncheckedUpdateWithoutProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
 }
@@ -973,6 +1006,7 @@ export type CategoryCreateWithoutCouponProductsInput = {
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
   products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryCreateNestedManyWithoutCategoryInput
 }
 
@@ -992,6 +1026,7 @@ export type CategoryUncheckedCreateWithoutCouponProductsInput = {
   updatedAt?: Date | string
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutCategoryInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
 }
 
@@ -1026,6 +1061,7 @@ export type CategoryUpdateWithoutCouponProductsInput = {
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUpdateManyWithoutCategoryNestedInput
 }
 
@@ -1045,6 +1081,7 @@ export type CategoryUncheckedUpdateWithoutCouponProductsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
@@ -1063,6 +1100,7 @@ export type CategoryCreateWithoutExcludedCouponsInput = {
   parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
   children?: Prisma.CategoryCreateNestedManyWithoutParentInput
   products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryCreateNestedManyWithoutCategoryInput
 }
 
@@ -1082,6 +1120,7 @@ export type CategoryUncheckedCreateWithoutExcludedCouponsInput = {
   updatedAt?: Date | string
   children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutCategoryInput
   couponProducts?: Prisma.CouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
 }
 
@@ -1116,6 +1155,7 @@ export type CategoryUpdateWithoutExcludedCouponsInput = {
   parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUpdateManyWithoutCategoryNestedInput
 }
 
@@ -1135,7 +1175,102 @@ export type CategoryUncheckedUpdateWithoutExcludedCouponsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
+}
+
+export type CategoryCreateWithoutProductViewEventsInput = {
+  name: string
+  color: string
+  icon: string
+  position?: number
+  isActive?: boolean
+  seoImage?: string | null
+  metaRobots?: string | null
+  slug?: string | null
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parent?: Prisma.CategoryCreateNestedOneWithoutChildrenInput
+  children?: Prisma.CategoryCreateNestedManyWithoutParentInput
+  products?: Prisma.ProductCreateNestedManyWithoutCategoryInput
+  couponProducts?: Prisma.CouponCategoryCreateNestedManyWithoutCategoryInput
+  excludedCoupons?: Prisma.ExcludedCouponCategoryCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryUncheckedCreateWithoutProductViewEventsInput = {
+  id?: number
+  name: string
+  color: string
+  icon: string
+  position?: number
+  isActive?: boolean
+  seoImage?: string | null
+  metaRobots?: string | null
+  slug?: string | null
+  description?: string | null
+  parentId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.CategoryUncheckedCreateNestedManyWithoutParentInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutCategoryInput
+  couponProducts?: Prisma.CouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
+  excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryCreateOrConnectWithoutProductViewEventsInput = {
+  where: Prisma.CategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutProductViewEventsInput, Prisma.CategoryUncheckedCreateWithoutProductViewEventsInput>
+}
+
+export type CategoryUpsertWithoutProductViewEventsInput = {
+  update: Prisma.XOR<Prisma.CategoryUpdateWithoutProductViewEventsInput, Prisma.CategoryUncheckedUpdateWithoutProductViewEventsInput>
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutProductViewEventsInput, Prisma.CategoryUncheckedCreateWithoutProductViewEventsInput>
+  where?: Prisma.CategoryWhereInput
+}
+
+export type CategoryUpdateToOneWithWhereWithoutProductViewEventsInput = {
+  where?: Prisma.CategoryWhereInput
+  data: Prisma.XOR<Prisma.CategoryUpdateWithoutProductViewEventsInput, Prisma.CategoryUncheckedUpdateWithoutProductViewEventsInput>
+}
+
+export type CategoryUpdateWithoutProductViewEventsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.CategoryUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
+  products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+  couponProducts?: Prisma.CouponCategoryUpdateManyWithoutCategoryNestedInput
+  excludedCoupons?: Prisma.ExcludedCouponCategoryUpdateManyWithoutCategoryNestedInput
+}
+
+export type CategoryUncheckedUpdateWithoutProductViewEventsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
+  couponProducts?: Prisma.CouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
+  excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryCreateManyParentInput = {
@@ -1167,6 +1302,7 @@ export type CategoryUpdateWithoutParentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.CategoryUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUpdateManyWithoutCategoryNestedInput
 }
@@ -1186,6 +1322,7 @@ export type CategoryUncheckedUpdateWithoutParentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.CategoryUncheckedUpdateManyWithoutParentNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutCategoryNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutCategoryNestedInput
   couponProducts?: Prisma.CouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
   excludedCoupons?: Prisma.ExcludedCouponCategoryUncheckedUpdateManyWithoutCategoryNestedInput
 }
@@ -1213,6 +1350,7 @@ export type CategoryUncheckedUpdateManyWithoutParentInput = {
 export type CategoryCountOutputType = {
   children: number
   products: number
+  productViewEvents: number
   couponProducts: number
   excludedCoupons: number
 }
@@ -1220,6 +1358,7 @@ export type CategoryCountOutputType = {
 export type CategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   children?: boolean | CategoryCountOutputTypeCountChildrenArgs
   products?: boolean | CategoryCountOutputTypeCountProductsArgs
+  productViewEvents?: boolean | CategoryCountOutputTypeCountProductViewEventsArgs
   couponProducts?: boolean | CategoryCountOutputTypeCountCouponProductsArgs
   excludedCoupons?: boolean | CategoryCountOutputTypeCountExcludedCouponsArgs
 }
@@ -1246,6 +1385,13 @@ export type CategoryCountOutputTypeCountChildrenArgs<ExtArgs extends runtime.Typ
  */
 export type CategoryCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ProductWhereInput
+}
+
+/**
+ * CategoryCountOutputType without action
+ */
+export type CategoryCountOutputTypeCountProductViewEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductViewEventWhereInput
 }
 
 /**
@@ -1280,6 +1426,7 @@ export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   parent?: boolean | Prisma.Category$parentArgs<ExtArgs>
   children?: boolean | Prisma.Category$childrenArgs<ExtArgs>
   products?: boolean | Prisma.Category$productsArgs<ExtArgs>
+  productViewEvents?: boolean | Prisma.Category$productViewEventsArgs<ExtArgs>
   couponProducts?: boolean | Prisma.Category$couponProductsArgs<ExtArgs>
   excludedCoupons?: boolean | Prisma.Category$excludedCouponsArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
@@ -1340,6 +1487,7 @@ export type CategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   parent?: boolean | Prisma.Category$parentArgs<ExtArgs>
   children?: boolean | Prisma.Category$childrenArgs<ExtArgs>
   products?: boolean | Prisma.Category$productsArgs<ExtArgs>
+  productViewEvents?: boolean | Prisma.Category$productViewEventsArgs<ExtArgs>
   couponProducts?: boolean | Prisma.Category$couponProductsArgs<ExtArgs>
   excludedCoupons?: boolean | Prisma.Category$excludedCouponsArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
@@ -1360,6 +1508,7 @@ export type $CategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
      * Relation
      */
     products: Prisma.$ProductPayload<ExtArgs>[]
+    productViewEvents: Prisma.$ProductViewEventPayload<ExtArgs>[]
     couponProducts: Prisma.$CouponCategoryPayload<ExtArgs>[]
     excludedCoupons: Prisma.$ExcludedCouponCategoryPayload<ExtArgs>[]
   }
@@ -1777,6 +1926,7 @@ export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends runtime
   parent<T extends Prisma.Category$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$parentArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.Category$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   products<T extends Prisma.Category$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  productViewEvents<T extends Prisma.Category$productViewEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$productViewEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductViewEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   couponProducts<T extends Prisma.Category$couponProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$couponProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CouponCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   excludedCoupons<T extends Prisma.Category$excludedCouponsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$excludedCouponsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExcludedCouponCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2281,6 +2431,30 @@ export type Category$productsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[]
+}
+
+/**
+ * Category.productViewEvents
+ */
+export type Category$productViewEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductViewEvent
+   */
+  select?: Prisma.ProductViewEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductViewEvent
+   */
+  omit?: Prisma.ProductViewEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductViewEventInclude<ExtArgs> | null
+  where?: Prisma.ProductViewEventWhereInput
+  orderBy?: Prisma.ProductViewEventOrderByWithRelationInput | Prisma.ProductViewEventOrderByWithRelationInput[]
+  cursor?: Prisma.ProductViewEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductViewEventScalarFieldEnum | Prisma.ProductViewEventScalarFieldEnum[]
 }
 
 /**

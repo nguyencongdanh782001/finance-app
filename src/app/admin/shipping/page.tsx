@@ -67,7 +67,7 @@ type Promotion = {
   name: string;
   description?: string | null;
   minimumOrderValue: number;
-  freeDistanceKm: number;
+  discountPercent: number;
   maximumShippingDiscount?: number | null;
   priority: number;
   isActive: boolean;
@@ -78,7 +78,7 @@ type PromotionForm = {
   name: string;
   description: string;
   minimumOrderValue: string;
-  freeDistanceKm: string;
+  discountPercent: string;
   maximumShippingDiscount: string;
   priority: string;
   isActive: boolean;
@@ -109,7 +109,7 @@ const emptyPromotion: PromotionForm = {
   name: "",
   description: "",
   minimumOrderValue: "",
-  freeDistanceKm: "",
+  discountPercent: "",
   maximumShippingDiscount: "",
   priority: "0",
   isActive: true,
@@ -136,10 +136,7 @@ const configSchema = Yup.object({
     .required("Vui lòng chọn địa chỉ để lấy tọa độ."),
   baseFee: Yup.number().min(0, "Phí cơ bản không hợp lệ."),
   pricePerKm: Yup.number().min(0, "Đơn giá không hợp lệ."),
-  fallbackShippingFee: Yup.number().min(
-    0,
-    "Phí dự phòng không hợp lệ.",
-  ),
+  fallbackShippingFee: Yup.number().min(0, "Phí dự phòng không hợp lệ."),
   maximumDeliveryDistanceKm: Yup.number().moreThan(
     0,
     "Khoảng cách tối đa phải lớn hơn 0.",
@@ -152,14 +149,15 @@ const promotionSchema = Yup.object({
     .typeError("Vui lòng nhập giá trị đơn tối thiểu.")
     .min(0, "Giá trị đơn tối thiểu không hợp lệ.")
     .required("Vui lòng nhập giá trị đơn tối thiểu."),
-  freeDistanceKm: Yup.number()
-    .typeError("Vui lòng nhập số km miễn phí.")
-    .moreThan(0, "Số km miễn phí phải lớn hơn 0.")
-    .required("Vui lòng nhập số km miễn phí."),
+  discountPercent: Yup.number()
+    .typeError("Vui lòng nhập phần trăm miễn phí vận chuyển.")
+    .moreThan(0, "Phần trăm miễn phí vận chuyển phải lớn hơn 0.")
+    .max(100, "Phần trăm miễn phí vận chuyển không được vượt quá 100%.")
+    .required("Vui lòng nhập phần trăm miễn phí vận chuyển."),
   maximumShippingDiscount: Yup.number()
     .transform((value, originalValue) => (originalValue === "" ? null : value))
     .nullable()
-    .min(0, "Mức giảm tối đa không hợp lệ."),
+    .moreThan(0, "Mức giảm tối đa phải lớn hơn 0."),
   priority: Yup.number()
     .typeError("Độ ưu tiên không hợp lệ.")
     .min(0, "Độ ưu tiên không được âm."),
@@ -255,7 +253,7 @@ export default function ShippingPage() {
       const body = {
         ...values,
         minimumOrderValue: Number(values.minimumOrderValue),
-        freeDistanceKm: Number(values.freeDistanceKm),
+        discountPercent: Number(values.discountPercent),
         maximumShippingDiscount:
           values.maximumShippingDiscount === ""
             ? null
@@ -296,22 +294,36 @@ export default function ShippingPage() {
   });
   const preview = useMemo(() => {
     const minimum = Number(promotionFormik.values.minimumOrderValue);
-    const free = Number(promotionFormik.values.freeDistanceKm);
-    if (!Number.isFinite(minimum) || !Number.isFinite(free) || free <= 0)
+    const discountPercent = Number(promotionFormik.values.discountPercent);
+    const maximumDiscount = Number(
+      promotionFormik.values.maximumShippingDiscount,
+    );
+    if (
+      !Number.isFinite(minimum) ||
+      !Number.isFinite(discountPercent) ||
+      discountPercent <= 0
+    )
       return null;
     const distance = 8;
-    const chargeable = Math.max(0, distance - free);
+    const beforePromotion = config.baseFee + distance * config.pricePerKm;
+    const discount = Math.min(
+      beforePromotion,
+      (beforePromotion * Math.min(100, discountPercent)) / 100,
+      Number.isFinite(maximumDiscount) && maximumDiscount > 0
+        ? maximumDiscount
+        : Number.POSITIVE_INFINITY,
+    );
     return {
       distance,
-      free,
-      chargeable,
-      fee:
-        chargeable === 0 ? 0 : config.baseFee + chargeable * config.pricePerKm,
+      discountPercent,
+      discount,
+      fee: Math.max(0, beforePromotion - discount),
     };
   }, [
     config.baseFee,
     config.pricePerKm,
-    promotionFormik.values.freeDistanceKm,
+    promotionFormik.values.discountPercent,
+    promotionFormik.values.maximumShippingDiscount,
     promotionFormik.values.minimumOrderValue,
   ]);
   return (
@@ -520,7 +532,10 @@ export default function ShippingPage() {
                 [
                   ["baseFee", "Phí cơ bản"],
                   ["pricePerKm", "Đơn giá mỗi km"],
-                  ["fallbackShippingFee", "Phí khi không tính được khoảng cách"],
+                  [
+                    "fallbackShippingFee",
+                    "Phí khi không tính được khoảng cách",
+                  ],
                   ["maximumDeliveryDistanceKm", "Khoảng cách tối đa"],
                   ["feeRoundingStep", "Bước làm tròn phí"],
                 ] as const
@@ -604,8 +619,8 @@ export default function ShippingPage() {
                   [
                     ["name", "Tên chương trình"],
                     ["minimumOrderValue", "Giá trị đơn tối thiểu"],
-                    ["freeDistanceKm", "Số km được miễn phí"],
-                    ["maximumShippingDiscount", "Giảm tối đa"],
+                    ["discountPercent", "Miễn phí vận chuyển (%)"],
+                    ["maximumShippingDiscount", "Giảm tối đa (đ)"],
                     ["priority", "Độ ưu tiên"],
                     ["startsAt", "Thời gian bắt đầu"],
                     ["endsAt", "Thời gian kết thúc"],
@@ -652,7 +667,7 @@ export default function ShippingPage() {
                         />
                       </div>
                     ) : field === "minimumOrderValue" ||
-                      field === "freeDistanceKm" ||
+                      field === "discountPercent" ||
                       field === "maximumShippingDiscount" ? (
                       <Field
                         component={NumericInput}
@@ -664,7 +679,7 @@ export default function ShippingPage() {
                         placeholder={
                           {
                             minimumOrderValue: "Nhập giá trị đơn tối thiểu",
-                            freeDistanceKm: "Nhập số km miễn phí",
+                            discountPercent: "Nhập % miễn phí vận chuyển",
                             maximumShippingDiscount: "Nhập mức giảm tối đa",
                           }[field]
                         }
@@ -679,7 +694,7 @@ export default function ShippingPage() {
                             name: "Nhập tên chương trình",
                             priority: "Nhập độ ưu tiên",
                             minimumOrderValue: "",
-                            freeDistanceKm: "",
+                            discountPercent: "",
                             maximumShippingDiscount: "",
                             startsAt: "",
                             endsAt: "",
@@ -712,8 +727,9 @@ export default function ShippingPage() {
               </div>
               {preview ? (
                 <p className="mt-4 rounded-lg bg-white p-3 text-sm text-(--admin-text-secondary)">
-                  Ví dụ đơn 600.000đ, khoảng cách 8km: tính phí{" "}
-                  {preview.chargeable}km · dự kiến {money(preview.fee)}.
+                  Ví dụ đơn 600.000đ, khoảng cách 8km: miễn phí{" "}
+                  {preview.discountPercent}% ({money(preview.discount)}) · dự
+                  kiến {money(preview.fee)}.
                 </p>
               ) : null}
               <div className="mt-4 flex justify-end gap-2">
@@ -749,7 +765,11 @@ export default function ShippingPage() {
                 <p className="font-semibold">{item.name}</p>
                 <p className="mt-1 text-sm text-(--admin-text-secondary)">
                   Đơn từ {money(item.minimumOrderValue)} · Miễn phí{" "}
-                  {item.freeDistanceKm}km · Ưu tiên {item.priority}
+                  {item.discountPercent}% · Tối đa{" "}
+                  {item.maximumShippingDiscount == null
+                    ? "không giới hạn"
+                    : money(item.maximumShippingDiscount)}{" "}
+                  · Ưu tiên {item.priority}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -767,7 +787,7 @@ export default function ShippingPage() {
                     promotionFormik.setValues({
                       ...item,
                       minimumOrderValue: String(item.minimumOrderValue),
-                      freeDistanceKm: String(item.freeDistanceKm),
+                      discountPercent: String(item.discountPercent),
                       maximumShippingDiscount:
                         item.maximumShippingDiscount == null
                           ? ""

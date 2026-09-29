@@ -29,7 +29,7 @@ export type AggregateShippingPromotion = {
 export type ShippingPromotionAvgAggregateOutputType = {
   id: number | null
   minimumOrderValue: number | null
-  freeDistanceKm: runtime.Decimal | null
+  discountPercent: runtime.Decimal | null
   maximumShippingDiscount: number | null
   priority: number | null
   createdById: number | null
@@ -39,7 +39,7 @@ export type ShippingPromotionAvgAggregateOutputType = {
 export type ShippingPromotionSumAggregateOutputType = {
   id: number | null
   minimumOrderValue: number | null
-  freeDistanceKm: runtime.Decimal | null
+  discountPercent: runtime.Decimal | null
   maximumShippingDiscount: number | null
   priority: number | null
   createdById: number | null
@@ -51,7 +51,7 @@ export type ShippingPromotionMinAggregateOutputType = {
   name: string | null
   description: string | null
   minimumOrderValue: number | null
-  freeDistanceKm: runtime.Decimal | null
+  discountPercent: runtime.Decimal | null
   maximumShippingDiscount: number | null
   priority: number | null
   isActive: boolean | null
@@ -68,7 +68,7 @@ export type ShippingPromotionMaxAggregateOutputType = {
   name: string | null
   description: string | null
   minimumOrderValue: number | null
-  freeDistanceKm: runtime.Decimal | null
+  discountPercent: runtime.Decimal | null
   maximumShippingDiscount: number | null
   priority: number | null
   isActive: boolean | null
@@ -85,7 +85,7 @@ export type ShippingPromotionCountAggregateOutputType = {
   name: number
   description: number
   minimumOrderValue: number
-  freeDistanceKm: number
+  discountPercent: number
   maximumShippingDiscount: number
   priority: number
   isActive: number
@@ -102,7 +102,7 @@ export type ShippingPromotionCountAggregateOutputType = {
 export type ShippingPromotionAvgAggregateInputType = {
   id?: true
   minimumOrderValue?: true
-  freeDistanceKm?: true
+  discountPercent?: true
   maximumShippingDiscount?: true
   priority?: true
   createdById?: true
@@ -112,7 +112,7 @@ export type ShippingPromotionAvgAggregateInputType = {
 export type ShippingPromotionSumAggregateInputType = {
   id?: true
   minimumOrderValue?: true
-  freeDistanceKm?: true
+  discountPercent?: true
   maximumShippingDiscount?: true
   priority?: true
   createdById?: true
@@ -124,7 +124,7 @@ export type ShippingPromotionMinAggregateInputType = {
   name?: true
   description?: true
   minimumOrderValue?: true
-  freeDistanceKm?: true
+  discountPercent?: true
   maximumShippingDiscount?: true
   priority?: true
   isActive?: true
@@ -141,7 +141,7 @@ export type ShippingPromotionMaxAggregateInputType = {
   name?: true
   description?: true
   minimumOrderValue?: true
-  freeDistanceKm?: true
+  discountPercent?: true
   maximumShippingDiscount?: true
   priority?: true
   isActive?: true
@@ -158,7 +158,7 @@ export type ShippingPromotionCountAggregateInputType = {
   name?: true
   description?: true
   minimumOrderValue?: true
-  freeDistanceKm?: true
+  discountPercent?: true
   maximumShippingDiscount?: true
   priority?: true
   isActive?: true
@@ -262,7 +262,7 @@ export type ShippingPromotionGroupByOutputType = {
   name: string
   description: string | null
   minimumOrderValue: number
-  freeDistanceKm: runtime.Decimal
+  discountPercent: runtime.Decimal
   maximumShippingDiscount: number | null
   priority: number
   isActive: boolean
@@ -302,7 +302,7 @@ export type ShippingPromotionWhereInput = {
   name?: Prisma.StringFilter<"ShippingPromotion"> | string
   description?: Prisma.StringNullableFilter<"ShippingPromotion"> | string | null
   minimumOrderValue?: Prisma.IntFilter<"ShippingPromotion"> | number
-  freeDistanceKm?: Prisma.DecimalFilter<"ShippingPromotion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFilter<"ShippingPromotion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.IntNullableFilter<"ShippingPromotion"> | number | null
   priority?: Prisma.IntFilter<"ShippingPromotion"> | number
   isActive?: Prisma.BoolFilter<"ShippingPromotion"> | boolean
@@ -320,7 +320,7 @@ export type ShippingPromotionOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   minimumOrderValue?: Prisma.SortOrder
-  freeDistanceKm?: Prisma.SortOrder
+  discountPercent?: Prisma.SortOrder
   maximumShippingDiscount?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -341,7 +341,7 @@ export type ShippingPromotionWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"ShippingPromotion"> | string
   description?: Prisma.StringNullableFilter<"ShippingPromotion"> | string | null
   minimumOrderValue?: Prisma.IntFilter<"ShippingPromotion"> | number
-  freeDistanceKm?: Prisma.DecimalFilter<"ShippingPromotion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFilter<"ShippingPromotion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.IntNullableFilter<"ShippingPromotion"> | number | null
   priority?: Prisma.IntFilter<"ShippingPromotion"> | number
   isActive?: Prisma.BoolFilter<"ShippingPromotion"> | boolean
@@ -359,7 +359,7 @@ export type ShippingPromotionOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   minimumOrderValue?: Prisma.SortOrder
-  freeDistanceKm?: Prisma.SortOrder
+  discountPercent?: Prisma.SortOrder
   maximumShippingDiscount?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -384,7 +384,7 @@ export type ShippingPromotionScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"ShippingPromotion"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"ShippingPromotion"> | string | null
   minimumOrderValue?: Prisma.IntWithAggregatesFilter<"ShippingPromotion"> | number
-  freeDistanceKm?: Prisma.DecimalWithAggregatesFilter<"ShippingPromotion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalWithAggregatesFilter<"ShippingPromotion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.IntNullableWithAggregatesFilter<"ShippingPromotion"> | number | null
   priority?: Prisma.IntWithAggregatesFilter<"ShippingPromotion"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"ShippingPromotion"> | boolean
@@ -400,7 +400,7 @@ export type ShippingPromotionCreateInput = {
   name: string
   description?: string | null
   minimumOrderValue: number
-  freeDistanceKm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent: runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: number | null
   priority?: number
   isActive?: boolean
@@ -418,7 +418,7 @@ export type ShippingPromotionUncheckedCreateInput = {
   name: string
   description?: string | null
   minimumOrderValue: number
-  freeDistanceKm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent: runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: number | null
   priority?: number
   isActive?: boolean
@@ -435,7 +435,7 @@ export type ShippingPromotionUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumOrderValue?: Prisma.IntFieldUpdateOperationsInput | number
-  freeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -453,7 +453,7 @@ export type ShippingPromotionUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumOrderValue?: Prisma.IntFieldUpdateOperationsInput | number
-  freeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -471,7 +471,7 @@ export type ShippingPromotionCreateManyInput = {
   name: string
   description?: string | null
   minimumOrderValue: number
-  freeDistanceKm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent: runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: number | null
   priority?: number
   isActive?: boolean
@@ -487,7 +487,7 @@ export type ShippingPromotionUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumOrderValue?: Prisma.IntFieldUpdateOperationsInput | number
-  freeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -504,7 +504,7 @@ export type ShippingPromotionUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumOrderValue?: Prisma.IntFieldUpdateOperationsInput | number
-  freeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -526,7 +526,7 @@ export type ShippingPromotionCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   minimumOrderValue?: Prisma.SortOrder
-  freeDistanceKm?: Prisma.SortOrder
+  discountPercent?: Prisma.SortOrder
   maximumShippingDiscount?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -541,7 +541,7 @@ export type ShippingPromotionCountOrderByAggregateInput = {
 export type ShippingPromotionAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   minimumOrderValue?: Prisma.SortOrder
-  freeDistanceKm?: Prisma.SortOrder
+  discountPercent?: Prisma.SortOrder
   maximumShippingDiscount?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -553,7 +553,7 @@ export type ShippingPromotionMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   minimumOrderValue?: Prisma.SortOrder
-  freeDistanceKm?: Prisma.SortOrder
+  discountPercent?: Prisma.SortOrder
   maximumShippingDiscount?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -570,7 +570,7 @@ export type ShippingPromotionMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   minimumOrderValue?: Prisma.SortOrder
-  freeDistanceKm?: Prisma.SortOrder
+  discountPercent?: Prisma.SortOrder
   maximumShippingDiscount?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -585,7 +585,7 @@ export type ShippingPromotionMinOrderByAggregateInput = {
 export type ShippingPromotionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   minimumOrderValue?: Prisma.SortOrder
-  freeDistanceKm?: Prisma.SortOrder
+  discountPercent?: Prisma.SortOrder
   maximumShippingDiscount?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -612,7 +612,7 @@ export type ShippingPromotionCreateWithoutOrdersInput = {
   name: string
   description?: string | null
   minimumOrderValue: number
-  freeDistanceKm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent: runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: number | null
   priority?: number
   isActive?: boolean
@@ -629,7 +629,7 @@ export type ShippingPromotionUncheckedCreateWithoutOrdersInput = {
   name: string
   description?: string | null
   minimumOrderValue: number
-  freeDistanceKm: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent: runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: number | null
   priority?: number
   isActive?: boolean
@@ -661,7 +661,7 @@ export type ShippingPromotionUpdateWithoutOrdersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumOrderValue?: Prisma.IntFieldUpdateOperationsInput | number
-  freeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -678,7 +678,7 @@ export type ShippingPromotionUncheckedUpdateWithoutOrdersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumOrderValue?: Prisma.IntFieldUpdateOperationsInput | number
-  freeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maximumShippingDiscount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -726,7 +726,7 @@ export type ShippingPromotionSelect<ExtArgs extends runtime.Types.Extensions.Int
   name?: boolean
   description?: boolean
   minimumOrderValue?: boolean
-  freeDistanceKm?: boolean
+  discountPercent?: boolean
   maximumShippingDiscount?: boolean
   priority?: boolean
   isActive?: boolean
@@ -745,7 +745,7 @@ export type ShippingPromotionSelectCreateManyAndReturn<ExtArgs extends runtime.T
   name?: boolean
   description?: boolean
   minimumOrderValue?: boolean
-  freeDistanceKm?: boolean
+  discountPercent?: boolean
   maximumShippingDiscount?: boolean
   priority?: boolean
   isActive?: boolean
@@ -762,7 +762,7 @@ export type ShippingPromotionSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   name?: boolean
   description?: boolean
   minimumOrderValue?: boolean
-  freeDistanceKm?: boolean
+  discountPercent?: boolean
   maximumShippingDiscount?: boolean
   priority?: boolean
   isActive?: boolean
@@ -779,7 +779,7 @@ export type ShippingPromotionSelectScalar = {
   name?: boolean
   description?: boolean
   minimumOrderValue?: boolean
-  freeDistanceKm?: boolean
+  discountPercent?: boolean
   maximumShippingDiscount?: boolean
   priority?: boolean
   isActive?: boolean
@@ -791,7 +791,7 @@ export type ShippingPromotionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ShippingPromotionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "minimumOrderValue" | "freeDistanceKm" | "maximumShippingDiscount" | "priority" | "isActive" | "startsAt" | "endsAt" | "createdById" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["shippingPromotion"]>
+export type ShippingPromotionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "minimumOrderValue" | "discountPercent" | "maximumShippingDiscount" | "priority" | "isActive" | "startsAt" | "endsAt" | "createdById" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["shippingPromotion"]>
 export type ShippingPromotionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orders?: boolean | Prisma.ShippingPromotion$ordersArgs<ExtArgs>
   _count?: boolean | Prisma.ShippingPromotionCountOutputTypeDefaultArgs<ExtArgs>
@@ -809,7 +809,7 @@ export type $ShippingPromotionPayload<ExtArgs extends runtime.Types.Extensions.I
     name: string
     description: string | null
     minimumOrderValue: number
-    freeDistanceKm: runtime.Decimal
+    discountPercent: runtime.Decimal
     maximumShippingDiscount: number | null
     priority: number
     isActive: boolean
@@ -1247,7 +1247,7 @@ export interface ShippingPromotionFieldRefs {
   readonly name: Prisma.FieldRef<"ShippingPromotion", 'String'>
   readonly description: Prisma.FieldRef<"ShippingPromotion", 'String'>
   readonly minimumOrderValue: Prisma.FieldRef<"ShippingPromotion", 'Int'>
-  readonly freeDistanceKm: Prisma.FieldRef<"ShippingPromotion", 'Decimal'>
+  readonly discountPercent: Prisma.FieldRef<"ShippingPromotion", 'Decimal'>
   readonly maximumShippingDiscount: Prisma.FieldRef<"ShippingPromotion", 'Int'>
   readonly priority: Prisma.FieldRef<"ShippingPromotion", 'Int'>
   readonly isActive: Prisma.FieldRef<"ShippingPromotion", 'Boolean'>

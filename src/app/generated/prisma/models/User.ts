@@ -402,6 +402,7 @@ export type UserWhereInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogListRelationFilter
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientListRelationFilter
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
+  productViewEvents?: Prisma.ProductViewEventListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -454,6 +455,7 @@ export type UserOrderByWithRelationInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogOrderByRelationAggregateInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientOrderByRelationAggregateInput
   pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput
+  productViewEvents?: Prisma.ProductViewEventOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -509,6 +511,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogListRelationFilter
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientListRelationFilter
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
+  productViewEvents?: Prisma.ProductViewEventListRelationFilter
 }, "id" | "phone" | "email" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
@@ -619,6 +622,7 @@ export type UserCreateInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -670,6 +674,7 @@ export type UserUncheckedCreateInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -720,6 +725,7 @@ export type UserUpdateInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -771,6 +777,7 @@ export type UserUncheckedUpdateInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1399,6 +1406,22 @@ export type UserUpdateOneRequiredWithoutRecentlyViewedProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRecentlyViewedProductsInput, Prisma.UserUpdateWithoutRecentlyViewedProductsInput>, Prisma.UserUncheckedUpdateWithoutRecentlyViewedProductsInput>
 }
 
+export type UserCreateNestedOneWithoutProductViewEventsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductViewEventsInput, Prisma.UserUncheckedCreateWithoutProductViewEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductViewEventsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutProductViewEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductViewEventsInput, Prisma.UserUncheckedCreateWithoutProductViewEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductViewEventsInput
+  upsert?: Prisma.UserUpsertWithoutProductViewEventsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProductViewEventsInput, Prisma.UserUpdateWithoutProductViewEventsInput>, Prisma.UserUncheckedUpdateWithoutProductViewEventsInput>
+}
+
 export type UserCreateWithoutProductDraftsInput = {
   phone?: string | null
   email?: string | null
@@ -1446,6 +1469,7 @@ export type UserCreateWithoutProductDraftsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductDraftsInput = {
@@ -1496,6 +1520,7 @@ export type UserUncheckedCreateWithoutProductDraftsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductDraftsInput = {
@@ -1561,6 +1586,7 @@ export type UserUpdateWithoutProductDraftsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductDraftsInput = {
@@ -1611,6 +1637,7 @@ export type UserUncheckedUpdateWithoutProductDraftsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProductImportJobsInput = {
@@ -1660,6 +1687,7 @@ export type UserCreateWithoutProductImportJobsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductImportJobsInput = {
@@ -1710,6 +1738,7 @@ export type UserUncheckedCreateWithoutProductImportJobsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductImportJobsInput = {
@@ -1775,6 +1804,7 @@ export type UserUpdateWithoutProductImportJobsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductImportJobsInput = {
@@ -1825,6 +1855,7 @@ export type UserUncheckedUpdateWithoutProductImportJobsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPasswordResetTokensInput = {
@@ -1874,6 +1905,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -1924,6 +1956,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -1989,6 +2022,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -2039,6 +2073,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -2088,6 +2123,7 @@ export type UserCreateWithoutSessionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -2138,6 +2174,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2203,6 +2240,7 @@ export type UserUpdateWithoutSessionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2253,6 +2291,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMembershipInput = {
@@ -2302,6 +2341,7 @@ export type UserCreateWithoutMembershipInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipInput = {
@@ -2352,6 +2392,7 @@ export type UserUncheckedCreateWithoutMembershipInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipInput = {
@@ -2456,6 +2497,7 @@ export type UserCreateWithoutMembershipHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipHistoriesInput = {
@@ -2506,6 +2548,7 @@ export type UserUncheckedCreateWithoutMembershipHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipHistoriesInput = {
@@ -2571,6 +2614,7 @@ export type UserUpdateWithoutMembershipHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipHistoriesInput = {
@@ -2621,6 +2665,7 @@ export type UserUncheckedUpdateWithoutMembershipHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBenefitRedemptionsInput = {
@@ -2670,6 +2715,7 @@ export type UserCreateWithoutBenefitRedemptionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBenefitRedemptionsInput = {
@@ -2720,6 +2766,7 @@ export type UserUncheckedCreateWithoutBenefitRedemptionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBenefitRedemptionsInput = {
@@ -2785,6 +2832,7 @@ export type UserUpdateWithoutBenefitRedemptionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBenefitRedemptionsInput = {
@@ -2835,6 +2883,7 @@ export type UserUncheckedUpdateWithoutBenefitRedemptionsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOtpsInput = {
@@ -2884,6 +2933,7 @@ export type UserCreateWithoutOtpsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOtpsInput = {
@@ -2934,6 +2984,7 @@ export type UserUncheckedCreateWithoutOtpsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOtpsInput = {
@@ -2999,6 +3050,7 @@ export type UserUpdateWithoutOtpsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpsInput = {
@@ -3049,6 +3101,7 @@ export type UserUncheckedUpdateWithoutOtpsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -3098,6 +3151,7 @@ export type UserCreateWithoutAddressesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -3148,6 +3202,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -3213,6 +3268,7 @@ export type UserUpdateWithoutAddressesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -3263,6 +3319,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCartsInput = {
@@ -3312,6 +3369,7 @@ export type UserCreateWithoutCartsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCartsInput = {
@@ -3362,6 +3420,7 @@ export type UserUncheckedCreateWithoutCartsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCartsInput = {
@@ -3427,6 +3486,7 @@ export type UserUpdateWithoutCartsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCartsInput = {
@@ -3477,6 +3537,7 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWishlistsInput = {
@@ -3526,6 +3587,7 @@ export type UserCreateWithoutWishlistsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWishlistsInput = {
@@ -3576,6 +3638,7 @@ export type UserUncheckedCreateWithoutWishlistsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWishlistsInput = {
@@ -3641,6 +3704,7 @@ export type UserUpdateWithoutWishlistsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistsInput = {
@@ -3691,6 +3755,7 @@ export type UserUncheckedUpdateWithoutWishlistsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWishlistItemsInput = {
@@ -3740,6 +3805,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
@@ -3790,6 +3856,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWishlistItemsInput = {
@@ -3855,6 +3922,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
@@ -3905,6 +3973,7 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFavoriteAdjustmentLogsInput = {
@@ -3954,6 +4023,7 @@ export type UserCreateWithoutFavoriteAdjustmentLogsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionCreateNestedManyWithoutUserInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFavoriteAdjustmentLogsInput = {
@@ -4004,6 +4074,7 @@ export type UserUncheckedCreateWithoutFavoriteAdjustmentLogsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedCreateNestedManyWithoutUserInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFavoriteAdjustmentLogsInput = {
@@ -4069,6 +4140,7 @@ export type UserUpdateWithoutFavoriteAdjustmentLogsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUpdateManyWithoutUserNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFavoriteAdjustmentLogsInput = {
@@ -4119,6 +4191,7 @@ export type UserUncheckedUpdateWithoutFavoriteAdjustmentLogsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedUpdateManyWithoutUserNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -4168,6 +4241,7 @@ export type UserCreateWithoutOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -4218,6 +4292,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -4272,6 +4347,7 @@ export type UserCreateWithoutCreatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCreatedOrdersInput = {
@@ -4322,6 +4398,7 @@ export type UserUncheckedCreateWithoutCreatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCreatedOrdersInput = {
@@ -4376,6 +4453,7 @@ export type UserCreateWithoutUpdatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUpdatedOrdersInput = {
@@ -4426,6 +4504,7 @@ export type UserUncheckedCreateWithoutUpdatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUpdatedOrdersInput = {
@@ -4491,6 +4570,7 @@ export type UserUpdateWithoutOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -4541,6 +4621,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutCreatedOrdersInput = {
@@ -4601,6 +4682,7 @@ export type UserUpdateWithoutCreatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
@@ -4651,6 +4733,7 @@ export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutUpdatedOrdersInput = {
@@ -4711,6 +4794,7 @@ export type UserUpdateWithoutUpdatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUpdatedOrdersInput = {
@@ -4761,6 +4845,7 @@ export type UserUncheckedUpdateWithoutUpdatedOrdersInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutIssuedInvoicesInput = {
@@ -4810,6 +4895,7 @@ export type UserCreateWithoutIssuedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutIssuedInvoicesInput = {
@@ -4860,6 +4946,7 @@ export type UserUncheckedCreateWithoutIssuedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutIssuedInvoicesInput = {
@@ -4914,6 +5001,7 @@ export type UserCreateWithoutVoidedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutVoidedInvoicesInput = {
@@ -4964,6 +5052,7 @@ export type UserUncheckedCreateWithoutVoidedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutVoidedInvoicesInput = {
@@ -5029,6 +5118,7 @@ export type UserUpdateWithoutIssuedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutIssuedInvoicesInput = {
@@ -5079,6 +5169,7 @@ export type UserUncheckedUpdateWithoutIssuedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutVoidedInvoicesInput = {
@@ -5139,6 +5230,7 @@ export type UserUpdateWithoutVoidedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVoidedInvoicesInput = {
@@ -5189,6 +5281,7 @@ export type UserUncheckedUpdateWithoutVoidedInvoicesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrderStatusChangesInput = {
@@ -5238,6 +5331,7 @@ export type UserCreateWithoutOrderStatusChangesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrderStatusChangesInput = {
@@ -5288,6 +5382,7 @@ export type UserUncheckedCreateWithoutOrderStatusChangesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrderStatusChangesInput = {
@@ -5353,6 +5448,7 @@ export type UserUpdateWithoutOrderStatusChangesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
@@ -5403,6 +5499,7 @@ export type UserUncheckedUpdateWithoutOrderStatusChangesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBirthdayCouponsInput = {
@@ -5452,6 +5549,7 @@ export type UserCreateWithoutBirthdayCouponsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBirthdayCouponsInput = {
@@ -5502,6 +5600,7 @@ export type UserUncheckedCreateWithoutBirthdayCouponsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBirthdayCouponsInput = {
@@ -5567,6 +5666,7 @@ export type UserUpdateWithoutBirthdayCouponsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBirthdayCouponsInput = {
@@ -5617,6 +5717,7 @@ export type UserUncheckedUpdateWithoutBirthdayCouponsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -5666,6 +5767,7 @@ export type UserCreateWithoutReviewsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -5716,6 +5818,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -5781,6 +5884,7 @@ export type UserUpdateWithoutReviewsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -5831,6 +5935,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -5880,6 +5985,7 @@ export type UserCreateWithoutNotificationsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -5930,6 +6036,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -5995,6 +6102,7 @@ export type UserUpdateWithoutNotificationsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -6045,6 +6153,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAdminNotificationRecipientsInput = {
@@ -6094,6 +6203,7 @@ export type UserCreateWithoutAdminNotificationRecipientsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionCreateNestedManyWithoutUserInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdminNotificationRecipientsInput = {
@@ -6144,6 +6254,7 @@ export type UserUncheckedCreateWithoutAdminNotificationRecipientsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedCreateNestedManyWithoutUserInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAdminNotificationRecipientsInput = {
@@ -6209,6 +6320,7 @@ export type UserUpdateWithoutAdminNotificationRecipientsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUpdateManyWithoutUserNestedInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdminNotificationRecipientsInput = {
@@ -6259,6 +6371,7 @@ export type UserUncheckedUpdateWithoutAdminNotificationRecipientsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedUpdateManyWithoutUserNestedInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -6308,6 +6421,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionCreateNestedManyWithoutUserInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -6358,6 +6472,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedCreateNestedManyWithoutUserInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -6423,6 +6538,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUpdateManyWithoutUserNestedInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -6473,6 +6589,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedUpdateManyWithoutUserNestedInput
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSearchHistoriesInput = {
@@ -6522,6 +6639,7 @@ export type UserCreateWithoutSearchHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSearchHistoriesInput = {
@@ -6572,6 +6690,7 @@ export type UserUncheckedCreateWithoutSearchHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSearchHistoriesInput = {
@@ -6637,6 +6756,7 @@ export type UserUpdateWithoutSearchHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
@@ -6687,6 +6807,7 @@ export type UserUncheckedUpdateWithoutSearchHistoriesInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRecentlyViewedProductsInput = {
@@ -6736,6 +6857,7 @@ export type UserCreateWithoutRecentlyViewedProductsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRecentlyViewedProductsInput = {
@@ -6786,6 +6908,7 @@ export type UserUncheckedCreateWithoutRecentlyViewedProductsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRecentlyViewedProductsInput = {
@@ -6851,6 +6974,7 @@ export type UserUpdateWithoutRecentlyViewedProductsInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
@@ -6893,6 +7017,225 @@ export type UserUncheckedUpdateWithoutRecentlyViewedProductsInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
+  productImportJobs?: Prisma.ProductImportJobUncheckedUpdateManyWithoutCreatedByNestedInput
+  birthdayCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRecipientUserNestedInput
+  membershipHistories?: Prisma.MembershipHistoryUncheckedUpdateManyWithoutUserNestedInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
+  adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutProductViewEventsInput = {
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  membership?: Prisma.MembershipCreateNestedOneWithoutUsersInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceCreateNestedManyWithoutVoidedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftCreateNestedManyWithoutCreatedByInput
+  productImportJobs?: Prisma.ProductImportJobCreateNestedManyWithoutCreatedByInput
+  birthdayCoupons?: Prisma.CouponCreateNestedManyWithoutRecipientUserInput
+  membershipHistories?: Prisma.MembershipHistoryCreateNestedManyWithoutUserInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionCreateNestedManyWithoutUserInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogCreateNestedManyWithoutAdminInput
+  adminNotificationRecipients?: Prisma.AdminNotificationRecipientCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProductViewEventsInput = {
+  id?: number
+  phone?: string | null
+  email?: string | null
+  googleId?: string | null
+  passwordHash?: string | null
+  authProvider?: $Enums.AuthProvider
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  firstName?: string | null
+  lastName?: string | null
+  displayName?: string | null
+  avatarUrl?: string | null
+  birthday?: Date | string | null
+  gender?: $Enums.UserGender | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: number
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  membershipId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.UserAddressUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  wishlists?: Prisma.WishlistUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByInput
+  updatedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutUpdatedByInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutIssuedByInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedCreateNestedManyWithoutVoidedByInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  searchHistories?: Prisma.SearchHistoryUncheckedCreateNestedManyWithoutUserInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedCreateNestedManyWithoutUserInput
+  productDrafts?: Prisma.ProductDraftUncheckedCreateNestedManyWithoutCreatedByInput
+  productImportJobs?: Prisma.ProductImportJobUncheckedCreateNestedManyWithoutCreatedByInput
+  birthdayCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRecipientUserInput
+  membershipHistories?: Prisma.MembershipHistoryUncheckedCreateNestedManyWithoutUserInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUncheckedCreateNestedManyWithoutUserInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedCreateNestedManyWithoutAdminInput
+  adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProductViewEventsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductViewEventsInput, Prisma.UserUncheckedCreateWithoutProductViewEventsInput>
+}
+
+export type UserUpsertWithoutProductViewEventsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProductViewEventsInput, Prisma.UserUncheckedUpdateWithoutProductViewEventsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductViewEventsInput, Prisma.UserUncheckedCreateWithoutProductViewEventsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProductViewEventsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProductViewEventsInput, Prisma.UserUncheckedUpdateWithoutProductViewEventsInput>
+}
+
+export type UserUpdateWithoutProductViewEventsInput = {
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  membership?: Prisma.MembershipUpdateOneWithoutUsersNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUpdateManyWithoutVoidedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUpdateManyWithoutUserNestedInput
+  productDrafts?: Prisma.ProductDraftUpdateManyWithoutCreatedByNestedInput
+  productImportJobs?: Prisma.ProductImportJobUpdateManyWithoutCreatedByNestedInput
+  birthdayCoupons?: Prisma.CouponUpdateManyWithoutRecipientUserNestedInput
+  membershipHistories?: Prisma.MembershipHistoryUpdateManyWithoutUserNestedInput
+  benefitRedemptions?: Prisma.MembershipBenefitRedemptionUpdateManyWithoutUserNestedInput
+  favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
+  adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProductViewEventsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gender?: Prisma.NullableEnumUserGenderFieldUpdateOperationsInput | $Enums.UserGender | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rewardPoints?: Prisma.IntFieldUpdateOperationsInput | number
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  membershipId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.UserAddressUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  wishlists?: Prisma.WishlistUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  updatedOrders?: Prisma.OrderUncheckedUpdateManyWithoutUpdatedByNestedInput
+  issuedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutIssuedByNestedInput
+  voidedInvoices?: Prisma.OrderInvoiceUncheckedUpdateManyWithoutVoidedByNestedInput
+  orderStatusChanges?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  searchHistories?: Prisma.SearchHistoryUncheckedUpdateManyWithoutUserNestedInput
+  recentlyViewedProducts?: Prisma.RecentlyViewedProductUncheckedUpdateManyWithoutUserNestedInput
   productDrafts?: Prisma.ProductDraftUncheckedUpdateManyWithoutCreatedByNestedInput
   productImportJobs?: Prisma.ProductImportJobUncheckedUpdateManyWithoutCreatedByNestedInput
   birthdayCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRecipientUserNestedInput
@@ -6975,6 +7318,7 @@ export type UserUpdateWithoutMembershipInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipInput = {
@@ -7025,6 +7369,7 @@ export type UserUncheckedUpdateWithoutMembershipInput = {
   favoriteAdjustmentLogs?: Prisma.ProductFavoriteAdjustmentLogUncheckedUpdateManyWithoutAdminNestedInput
   adminNotificationRecipients?: Prisma.AdminNotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  productViewEvents?: Prisma.ProductViewEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutMembershipInput = {
@@ -7083,6 +7428,7 @@ export type UserCountOutputType = {
   favoriteAdjustmentLogs: number
   adminNotificationRecipients: number
   pushSubscriptions: number
+  productViewEvents: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7111,6 +7457,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   favoriteAdjustmentLogs?: boolean | UserCountOutputTypeCountFavoriteAdjustmentLogsArgs
   adminNotificationRecipients?: boolean | UserCountOutputTypeCountAdminNotificationRecipientsArgs
   pushSubscriptions?: boolean | UserCountOutputTypeCountPushSubscriptionsArgs
+  productViewEvents?: boolean | UserCountOutputTypeCountProductViewEventsArgs
 }
 
 /**
@@ -7298,6 +7645,13 @@ export type UserCountOutputTypeCountPushSubscriptionsArgs<ExtArgs extends runtim
   where?: Prisma.PushSubscriptionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProductViewEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductViewEventWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -7349,6 +7703,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   favoriteAdjustmentLogs?: boolean | Prisma.User$favoriteAdjustmentLogsArgs<ExtArgs>
   adminNotificationRecipients?: boolean | Prisma.User$adminNotificationRecipientsArgs<ExtArgs>
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
+  productViewEvents?: boolean | Prisma.User$productViewEventsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -7460,6 +7815,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   favoriteAdjustmentLogs?: boolean | Prisma.User$favoriteAdjustmentLogsArgs<ExtArgs>
   adminNotificationRecipients?: boolean | Prisma.User$adminNotificationRecipientsArgs<ExtArgs>
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
+  productViewEvents?: boolean | Prisma.User$productViewEventsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7498,6 +7854,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     favoriteAdjustmentLogs: Prisma.$ProductFavoriteAdjustmentLogPayload<ExtArgs>[]
     adminNotificationRecipients: Prisma.$AdminNotificationRecipientPayload<ExtArgs>[]
     pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
+    productViewEvents: Prisma.$ProductViewEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -7943,6 +8300,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   favoriteAdjustmentLogs<T extends Prisma.User$favoriteAdjustmentLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$favoriteAdjustmentLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductFavoriteAdjustmentLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   adminNotificationRecipients<T extends Prisma.User$adminNotificationRecipientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminNotificationRecipientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminNotificationRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pushSubscriptions<T extends Prisma.User$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  productViewEvents<T extends Prisma.User$productViewEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$productViewEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductViewEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9007,6 +9365,30 @@ export type User$pushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.PushSubscriptionScalarFieldEnum | Prisma.PushSubscriptionScalarFieldEnum[]
+}
+
+/**
+ * User.productViewEvents
+ */
+export type User$productViewEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductViewEvent
+   */
+  select?: Prisma.ProductViewEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductViewEvent
+   */
+  omit?: Prisma.ProductViewEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductViewEventInclude<ExtArgs> | null
+  where?: Prisma.ProductViewEventWhereInput
+  orderBy?: Prisma.ProductViewEventOrderByWithRelationInput | Prisma.ProductViewEventOrderByWithRelationInput[]
+  cursor?: Prisma.ProductViewEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductViewEventScalarFieldEnum | Prisma.ProductViewEventScalarFieldEnum[]
 }
 
 /**

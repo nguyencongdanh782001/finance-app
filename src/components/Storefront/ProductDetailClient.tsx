@@ -25,6 +25,7 @@ import {
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import ProductCard from "@/components/Storefront/ProductCard";
 import ProductFavoriteButton from "@/components/Storefront/ProductFavoriteButton";
+import ProductReviews from "@/components/Storefront/ProductReviews";
 import RichTextRenderer from "@/components/RichText/RichTextRenderer";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useCart } from "@/components/Storefront/CartProvider";
@@ -34,6 +35,10 @@ import type {
 } from "@/interface/product";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buildLoginUrl } from "@/lib/auth/routing";
+import {
+  isMeaningfulVisibleView,
+  PRODUCT_VIEW_THRESHOLD_MS,
+} from "@/lib/recommendations-policy";
 
 const money = (value: number | string) =>
   `${Number(value).toLocaleString("vi-VN")}đ`;
@@ -98,6 +103,66 @@ function LoadingState() {
           <Skeleton className="h-12 w-full" />
         </div>
       </div>
+      <section className="mt-14 border-t border-[#EAE1E4] pt-8">
+        <Skeleton className="h-7 w-56" />
+        <Skeleton className="mt-3 h-4 w-4/5 max-w-2xl" />
+        <div className="mt-6 max-w-3xl space-y-3">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-4/5" />
+          <Skeleton className="h-10 w-28" />
+        </div>
+      </section>
+      <section className="mt-14 border-t border-[#EAE1E4] pt-8">
+        <Skeleton className="h-7 w-52" />
+        <div className="mt-6 grid gap-0 overflow-hidden rounded-3xl border border-[#EAE1E4] bg-white lg:grid-cols-[minmax(0,0.95fr)_minmax(320px,1.05fr)]">
+          <div className="space-y-5 bg-[#FFF8FA] p-6 sm:p-8">
+            <Skeleton className="h-12 w-24" />
+            <Skeleton className="h-4 w-32" />
+            <div className="space-y-3 pt-2">
+              {Array.from({ length: 5 }, (_, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <Skeleton className="h-3 w-10" />
+                  <Skeleton className="h-2 flex-1 rounded-full" />
+                  <Skeleton className="h-3 w-5" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-5 p-6 sm:p-8">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-8 w-40" />
+            <Skeleton className="h-24 w-full rounded-2xl" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+          </div>
+        </div>
+        <div className="mt-8 space-y-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div key={index} className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="mt-2 h-3 w-24" />
+              <Skeleton className="mt-4 h-4 w-full" />
+              <Skeleton className="mt-2 h-4 w-4/5" />
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="mt-14 border-t border-[#EAE1E4] pt-8">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-7 w-52" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className="space-y-3">
+              <Skeleton className="aspect-[3/4] w-full rounded-2xl" />
+              <Skeleton className="h-4 w-4/5" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
@@ -223,6 +288,59 @@ export default function ProductDetailClient() {
       });
     return () => controller.abort();
   }, [product]);
+
+  useEffect(() => {
+    if (!product) return;
+    const identifier = String(params.id);
+    if (identifier !== String(product.id) && identifier !== product.slug) return;
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let visibleSince = 0;
+    let counted = false;
+
+    const clearTimer = () => {
+      if (timer) clearTimeout(timer);
+      timer = undefined;
+    };
+    const schedule = () => {
+      clearTimer();
+      if (counted || document.visibilityState !== "visible") return;
+      visibleSince = Date.now();
+      timer = setTimeout(() => {
+        if (
+          !counted &&
+          isMeaningfulVisibleView({
+            startedAt: visibleSince,
+            now: Date.now(),
+            wasHidden: document.visibilityState !== "visible",
+          })
+        ) {
+          counted = true;
+          void fetch("/api/recommendations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId: product.id }),
+            keepalive: true,
+          }).catch(() => undefined);
+        }
+      }, PRODUCT_VIEW_THRESHOLD_MS);
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        clearTimer();
+        visibleSince = 0;
+      } else {
+        schedule();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    schedule();
+    return () => {
+      clearTimer();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [params.id, product]);
 
   const variants = useMemo(
     () => (product?.variants || []).filter((variant) => variant.isActive),
@@ -884,6 +1002,7 @@ export default function ProductDetailClient() {
               </button>
             </section>
           ) : null}
+          <ProductReviews productIdentifier={String(params.id)} />
           {related.length ? (
             <section className="mt-14 border-t border-[#EAE1E4] pt-8">
               <div className="flex items-end justify-between gap-4">

@@ -66,7 +66,7 @@ type Preview = {
     estimatedDeliveryText?: string;
     unavailableReason?: string;
     roundedDistanceKm?: number;
-    freeDistanceKm?: number;
+    discountPercent?: number;
     chargeableDistanceKm?: number;
     shippingFeeBeforePromotion?: number;
     shippingDiscount?: number;

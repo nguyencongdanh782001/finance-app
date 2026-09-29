@@ -115,6 +115,7 @@ export const ModelName = {
   NotificationOutbox: 'NotificationOutbox',
   SearchHistory: 'SearchHistory',
   RecentlyViewedProduct: 'RecentlyViewedProduct',
+  ProductViewEvent: 'ProductViewEvent',
   HomepageBanner: 'HomepageBanner',
   StorePolicy: 'StorePolicy',
   HomepageFeaturedProduct: 'HomepageFeaturedProduct',
@@ -768,6 +769,7 @@ export const OrderScalarFieldEnum = {
   shippingRawDistanceMeters: 'shippingRawDistanceMeters',
   shippingRoundedDistanceKm: 'shippingRoundedDistanceKm',
   shippingFreeDistanceKm: 'shippingFreeDistanceKm',
+  shippingDiscountPercent: 'shippingDiscountPercent',
   shippingChargeableDistanceKm: 'shippingChargeableDistanceKm',
   shippingBaseFee: 'shippingBaseFee',
   shippingPricePerKm: 'shippingPricePerKm',
@@ -939,7 +941,7 @@ export const ShippingPromotionScalarFieldEnum = {
   name: 'name',
   description: 'description',
   minimumOrderValue: 'minimumOrderValue',
-  freeDistanceKm: 'freeDistanceKm',
+  discountPercent: 'discountPercent',
   maximumShippingDiscount: 'maximumShippingDiscount',
   priority: 'priority',
   isActive: 'isActive',
@@ -1299,6 +1301,19 @@ export const RecentlyViewedProductScalarFieldEnum = {
 } as const
 
 export type RecentlyViewedProductScalarFieldEnum = (typeof RecentlyViewedProductScalarFieldEnum)[keyof typeof RecentlyViewedProductScalarFieldEnum]
+
+
+export const ProductViewEventScalarFieldEnum = {
+  id: 'id',
+  visitorId: 'visitorId',
+  userId: 'userId',
+  productId: 'productId',
+  categoryId: 'categoryId',
+  dedupeKey: 'dedupeKey',
+  viewedAt: 'viewedAt'
+} as const
+
+export type ProductViewEventScalarFieldEnum = (typeof ProductViewEventScalarFieldEnum)[keyof typeof ProductViewEventScalarFieldEnum]
 
 
 export const HomepageBannerScalarFieldEnum = {

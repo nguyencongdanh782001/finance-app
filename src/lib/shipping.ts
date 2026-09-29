@@ -21,7 +21,7 @@ export type ShippingPromotion = {
   id: number;
   name: string;
   minimumOrderValue: number;
-  freeDistanceKm: number;
+  discountPercent: number;
   maximumShippingDiscount?: number | null;
   priority: number;
   startsAt?: Date | null;
@@ -61,6 +61,7 @@ export const selectShippingPromotion = (
   promotions: ShippingPromotion[],
   eligibleOrderValue: number,
   now = new Date(),
+  shippingFeeBeforePromotion?: number,
 ) =>
   promotions
     .filter(
@@ -69,13 +70,32 @@ export const selectShippingPromotion = (
         (!promotion.startsAt || promotion.startsAt <= now) &&
         (!promotion.endsAt || promotion.endsAt >= now),
     )
-    .sort(
-      (a, b) =>
-        b.freeDistanceKm - a.freeDistanceKm ||
+    .sort((a, b) => {
+      const discountAmount = (promotion: ShippingPromotion) => {
+        if (shippingFeeBeforePromotion == null) {
+          return promotion.discountPercent;
+        }
+        const percentageDiscount =
+          (shippingFeeBeforePromotion *
+            Math.min(100, Math.max(0, promotion.discountPercent))) /
+          100;
+        return Math.min(
+          shippingFeeBeforePromotion,
+          percentageDiscount,
+          promotion.maximumShippingDiscount == null
+            ? Number.POSITIVE_INFINITY
+            : Math.max(0, promotion.maximumShippingDiscount),
+        );
+      };
+      return (
+        discountAmount(b) - discountAmount(a) ||
+        b.discountPercent - a.discountPercent ||
+        (b.maximumShippingDiscount || 0) - (a.maximumShippingDiscount || 0) ||
         b.priority - a.priority ||
         b.minimumOrderValue - a.minimumOrderValue ||
-        Number(b.createdAt || 0) - Number(a.createdAt || 0),
-    )[0] || null;
+        Number(b.createdAt || 0) - Number(a.createdAt || 0)
+      );
+    })[0] || null;
 
 export const calculateShippingFee = ({
   config,
@@ -99,25 +119,29 @@ export const calculateShippingFee = ({
   if (roundedDistanceKm > config.maximumDeliveryDistanceKm) {
     throw new Error("Địa chỉ nằm ngoài khu vực giao hàng.");
   }
-  const promotion = selectShippingPromotion(promotions, eligibleOrderValue);
-  const freeDistanceKm = promotion?.freeDistanceKm || 0;
-  const chargeableDistanceKm = Math.max(0, roundedDistanceKm - freeDistanceKm);
+  const chargeableDistanceKm = roundedDistanceKm;
   const beforePromotion =
-    chargeableDistanceKm === 0
-      ? config.baseFee
-      : config.baseFee + chargeableDistanceKm * config.pricePerKm;
-  let shippingDiscount =
-    promotion && promotion.maximumShippingDiscount
-      ? Math.min(
-          beforePromotion,
-          Math.max(0, promotion.maximumShippingDiscount),
-        )
-      : promotion
-        ? beforePromotion
-        : 0;
+    config.baseFee + chargeableDistanceKm * config.pricePerKm;
+  const promotion = selectShippingPromotion(
+    promotions,
+    eligibleOrderValue,
+    new Date(),
+    beforePromotion,
+  );
+  const discountPercent = promotion?.discountPercent || 0;
+  const percentageDiscount = promotion
+    ? (beforePromotion * Math.min(100, Math.max(0, discountPercent))) / 100
+    : 0;
+  let shippingDiscount = promotion
+    ? Math.min(
+        beforePromotion,
+        percentageDiscount,
+        promotion.maximumShippingDiscount == null
+          ? Number.POSITIVE_INFINITY
+          : Math.max(0, promotion.maximumShippingDiscount),
+      )
+    : 0;
   let finalShippingFee = Math.max(0, beforePromotion - shippingDiscount);
-  if (!promotion && chargeableDistanceKm === 0)
-    finalShippingFee = config.baseFee;
   if (finalShippingFee > 0 && config.minimumShippingFee != null) {
     finalShippingFee = Math.max(finalShippingFee, config.minimumShippingFee);
   }
@@ -130,7 +154,7 @@ export const calculateShippingFee = ({
     rawDistanceMeters: Math.round(distanceMeters),
     rawDistanceKm,
     roundedDistanceKm,
-    freeDistanceKm,
+    discountPercent,
     chargeableDistanceKm,
     baseFee: config.baseFee,
     pricePerKm: config.pricePerKm,
@@ -184,7 +208,7 @@ export const createFallbackShippingCalculation = ({
       rawDistanceMeters: null,
       rawDistanceKm: null,
       roundedDistanceKm: null,
-      freeDistanceKm: 0,
+      discountPercent: 0,
       chargeableDistanceKm: null,
       baseFee: config.baseFee,
       pricePerKm: config.pricePerKm,
@@ -291,7 +315,7 @@ export async function createShippingCalculation({
       eligibleOrderValue,
       promotions: promotions.map((promotion) => ({
         ...promotion,
-        freeDistanceKm: Number(promotion.freeDistanceKm),
+        discountPercent: Number(promotion.discountPercent),
         maximumShippingDiscount: promotion.maximumShippingDiscount,
       })),
     }),

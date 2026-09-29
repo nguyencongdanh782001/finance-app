@@ -927,6 +927,7 @@ export default function DailyOrderSection({
   const [productSearch, setProductSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
+  const productRequestId = useRef(0);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -1037,12 +1038,15 @@ export default function DailyOrderSection({
 
   useEffect(() => {
     const fetchProducts = async () => {
+      const requestId = ++productRequestId.current;
       setIsProductLoading(true);
       const firstPage = await financeAPI.getProductList({
         page: 1,
-        limit: 40,
+        limit: 100,
         search: productSearch || undefined,
       });
+
+      if (requestId !== productRequestId.current) return;
 
       if (firstPage.code === RESPONSE_CODES.success && firstPage.data) {
         setProducts(mapShopOrderProducts(firstPage.data.data));

@@ -9,10 +9,14 @@ import {
   serializePublicProduct,
 } from "@/lib/products/product-list";
 import { ProductStatus } from "@/app/generated/prisma/client";
+import { findProductIdsBySearch } from "@/lib/products/product-search";
 
-const getCachedProducts = (query: ReturnType<typeof parseProductListQuery>) => {
+const getCachedProducts = (
+  query: ReturnType<typeof parseProductListQuery>,
+  matchedProductIds?: number[],
+) => {
   const where = {
-    ...buildSharedProductFilters(query),
+    ...buildSharedProductFilters(query, matchedProductIds),
     status: ProductStatus.PUBLIC,
   };
   const key = JSON.stringify({
@@ -28,6 +32,7 @@ const getCachedProducts = (query: ReturnType<typeof parseProductListQuery>) => {
     maxPrice: query.maxPrice,
     sort: query.sort,
     stockStatus: query.stockStatus,
+    matchedProductIds,
   });
   return unstable_cache(
     () =>
@@ -49,7 +54,10 @@ const getCachedProducts = (query: ReturnType<typeof parseProductListQuery>) => {
 export async function GET(request: Request) {
   try {
     const query = parseProductListQuery(new URL(request.url).searchParams);
-    const [products, total] = await getCachedProducts(query);
+    const matchedProductIds = query.search
+      ? await findProductIdsBySearch(query.search)
+      : undefined;
+    const [products, total] = await getCachedProducts(query, matchedProductIds);
     const userId = Number(request.headers.get("x-user-id"));
     const favorites =
       userId > 0

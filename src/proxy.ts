@@ -36,6 +36,8 @@ const isCustomerFavoriteApi = (pathname: string) =>
   /^\/api\/product\/\d+\/favorite$/.test(pathname);
 const isCustomerInvoiceApi = (pathname: string) =>
   /^\/api\/me\/orders\/\d+\/invoice$/.test(pathname);
+const isCustomerReviewApi = (pathname: string) =>
+  /^\/api\/products\/[^/]+\/reviews(?:\/\d+)?$/.test(pathname);
 
 const allowedOrigins = () => {
   if (
@@ -152,6 +154,7 @@ export async function proxy(req: NextRequest) {
   );
   const isCustomerFavoriteRequest = isCustomerFavoriteApi(pathname);
   const isCustomerInvoiceRequest = isCustomerInvoiceApi(pathname);
+  const isCustomerReviewRequest = isCustomerReviewApi(pathname);
 
   if (
     !isMembershipSelfApi &&
@@ -160,6 +163,7 @@ export async function proxy(req: NextRequest) {
     !isCustomerCheckoutApi &&
     !isCustomerFavoriteRequest &&
     !isCustomerInvoiceRequest &&
+    !isCustomerReviewRequest &&
     !ADMIN_ROLES.includes(payload.role as (typeof ADMIN_ROLES)[number])
   ) {
     return withCors(

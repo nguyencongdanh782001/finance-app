@@ -55,6 +55,7 @@ export type OrderAvgAggregateOutputType = {
   shippingRawDistanceMeters: number | null
   shippingRoundedDistanceKm: runtime.Decimal | null
   shippingFreeDistanceKm: runtime.Decimal | null
+  shippingDiscountPercent: runtime.Decimal | null
   shippingChargeableDistanceKm: runtime.Decimal | null
   shippingBaseFee: number | null
   shippingPricePerKm: number | null
@@ -92,6 +93,7 @@ export type OrderSumAggregateOutputType = {
   shippingRawDistanceMeters: number | null
   shippingRoundedDistanceKm: runtime.Decimal | null
   shippingFreeDistanceKm: runtime.Decimal | null
+  shippingDiscountPercent: runtime.Decimal | null
   shippingChargeableDistanceKm: runtime.Decimal | null
   shippingBaseFee: number | null
   shippingPricePerKm: number | null
@@ -145,6 +147,7 @@ export type OrderMinAggregateOutputType = {
   shippingRawDistanceMeters: number | null
   shippingRoundedDistanceKm: runtime.Decimal | null
   shippingFreeDistanceKm: runtime.Decimal | null
+  shippingDiscountPercent: runtime.Decimal | null
   shippingChargeableDistanceKm: runtime.Decimal | null
   shippingBaseFee: number | null
   shippingPricePerKm: number | null
@@ -208,6 +211,7 @@ export type OrderMaxAggregateOutputType = {
   shippingRawDistanceMeters: number | null
   shippingRoundedDistanceKm: runtime.Decimal | null
   shippingFreeDistanceKm: runtime.Decimal | null
+  shippingDiscountPercent: runtime.Decimal | null
   shippingChargeableDistanceKm: runtime.Decimal | null
   shippingBaseFee: number | null
   shippingPricePerKm: number | null
@@ -271,6 +275,7 @@ export type OrderCountAggregateOutputType = {
   shippingRawDistanceMeters: number
   shippingRoundedDistanceKm: number
   shippingFreeDistanceKm: number
+  shippingDiscountPercent: number
   shippingChargeableDistanceKm: number
   shippingBaseFee: number
   shippingPricePerKm: number
@@ -320,6 +325,7 @@ export type OrderAvgAggregateInputType = {
   shippingRawDistanceMeters?: true
   shippingRoundedDistanceKm?: true
   shippingFreeDistanceKm?: true
+  shippingDiscountPercent?: true
   shippingChargeableDistanceKm?: true
   shippingBaseFee?: true
   shippingPricePerKm?: true
@@ -357,6 +363,7 @@ export type OrderSumAggregateInputType = {
   shippingRawDistanceMeters?: true
   shippingRoundedDistanceKm?: true
   shippingFreeDistanceKm?: true
+  shippingDiscountPercent?: true
   shippingChargeableDistanceKm?: true
   shippingBaseFee?: true
   shippingPricePerKm?: true
@@ -410,6 +417,7 @@ export type OrderMinAggregateInputType = {
   shippingRawDistanceMeters?: true
   shippingRoundedDistanceKm?: true
   shippingFreeDistanceKm?: true
+  shippingDiscountPercent?: true
   shippingChargeableDistanceKm?: true
   shippingBaseFee?: true
   shippingPricePerKm?: true
@@ -473,6 +481,7 @@ export type OrderMaxAggregateInputType = {
   shippingRawDistanceMeters?: true
   shippingRoundedDistanceKm?: true
   shippingFreeDistanceKm?: true
+  shippingDiscountPercent?: true
   shippingChargeableDistanceKm?: true
   shippingBaseFee?: true
   shippingPricePerKm?: true
@@ -536,6 +545,7 @@ export type OrderCountAggregateInputType = {
   shippingRawDistanceMeters?: true
   shippingRoundedDistanceKm?: true
   shippingFreeDistanceKm?: true
+  shippingDiscountPercent?: true
   shippingChargeableDistanceKm?: true
   shippingBaseFee?: true
   shippingPricePerKm?: true
@@ -686,6 +696,7 @@ export type OrderGroupByOutputType = {
   shippingRawDistanceMeters: number | null
   shippingRoundedDistanceKm: runtime.Decimal | null
   shippingFreeDistanceKm: runtime.Decimal | null
+  shippingDiscountPercent: runtime.Decimal | null
   shippingChargeableDistanceKm: runtime.Decimal | null
   shippingBaseFee: number | null
   shippingPricePerKm: number | null
@@ -772,6 +783,7 @@ export type OrderWhereInput = {
   shippingRawDistanceMeters?: Prisma.IntNullableFilter<"Order"> | number | null
   shippingRoundedDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.IntNullableFilter<"Order"> | number | null
   shippingPricePerKm?: Prisma.IntNullableFilter<"Order"> | number | null
@@ -851,6 +863,7 @@ export type OrderOrderByWithRelationInput = {
   shippingRawDistanceMeters?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingRoundedDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingFreeDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingDiscountPercent?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingChargeableDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingBaseFee?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingPricePerKm?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -933,6 +946,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   shippingRawDistanceMeters?: Prisma.IntNullableFilter<"Order"> | number | null
   shippingRoundedDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.IntNullableFilter<"Order"> | number | null
   shippingPricePerKm?: Prisma.IntNullableFilter<"Order"> | number | null
@@ -1012,6 +1026,7 @@ export type OrderOrderByWithAggregationInput = {
   shippingRawDistanceMeters?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingRoundedDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingFreeDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingDiscountPercent?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingChargeableDistanceKm?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingBaseFee?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingPricePerKm?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -1083,6 +1098,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   shippingRawDistanceMeters?: Prisma.IntNullableWithAggregatesFilter<"Order"> | number | null
   shippingRoundedDistanceKm?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.IntNullableWithAggregatesFilter<"Order"> | number | null
   shippingPricePerKm?: Prisma.IntNullableWithAggregatesFilter<"Order"> | number | null
@@ -1139,6 +1155,7 @@ export type OrderCreateInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -1217,6 +1234,7 @@ export type OrderUncheckedCreateInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -1282,6 +1300,7 @@ export type OrderUpdateInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1360,6 +1379,7 @@ export type OrderUncheckedUpdateInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1432,6 +1452,7 @@ export type OrderCreateManyInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -1488,6 +1509,7 @@ export type OrderUpdateManyMutationInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1550,6 +1572,7 @@ export type OrderUncheckedUpdateManyInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1633,6 +1656,7 @@ export type OrderCountOrderByAggregateInput = {
   shippingRawDistanceMeters?: Prisma.SortOrder
   shippingRoundedDistanceKm?: Prisma.SortOrder
   shippingFreeDistanceKm?: Prisma.SortOrder
+  shippingDiscountPercent?: Prisma.SortOrder
   shippingChargeableDistanceKm?: Prisma.SortOrder
   shippingBaseFee?: Prisma.SortOrder
   shippingPricePerKm?: Prisma.SortOrder
@@ -1680,6 +1704,7 @@ export type OrderAvgOrderByAggregateInput = {
   shippingRawDistanceMeters?: Prisma.SortOrder
   shippingRoundedDistanceKm?: Prisma.SortOrder
   shippingFreeDistanceKm?: Prisma.SortOrder
+  shippingDiscountPercent?: Prisma.SortOrder
   shippingChargeableDistanceKm?: Prisma.SortOrder
   shippingBaseFee?: Prisma.SortOrder
   shippingPricePerKm?: Prisma.SortOrder
@@ -1733,6 +1758,7 @@ export type OrderMaxOrderByAggregateInput = {
   shippingRawDistanceMeters?: Prisma.SortOrder
   shippingRoundedDistanceKm?: Prisma.SortOrder
   shippingFreeDistanceKm?: Prisma.SortOrder
+  shippingDiscountPercent?: Prisma.SortOrder
   shippingChargeableDistanceKm?: Prisma.SortOrder
   shippingBaseFee?: Prisma.SortOrder
   shippingPricePerKm?: Prisma.SortOrder
@@ -1796,6 +1822,7 @@ export type OrderMinOrderByAggregateInput = {
   shippingRawDistanceMeters?: Prisma.SortOrder
   shippingRoundedDistanceKm?: Prisma.SortOrder
   shippingFreeDistanceKm?: Prisma.SortOrder
+  shippingDiscountPercent?: Prisma.SortOrder
   shippingChargeableDistanceKm?: Prisma.SortOrder
   shippingBaseFee?: Prisma.SortOrder
   shippingPricePerKm?: Prisma.SortOrder
@@ -1843,6 +1870,7 @@ export type OrderSumOrderByAggregateInput = {
   shippingRawDistanceMeters?: Prisma.SortOrder
   shippingRoundedDistanceKm?: Prisma.SortOrder
   shippingFreeDistanceKm?: Prisma.SortOrder
+  shippingDiscountPercent?: Prisma.SortOrder
   shippingChargeableDistanceKm?: Prisma.SortOrder
   shippingBaseFee?: Prisma.SortOrder
   shippingPricePerKm?: Prisma.SortOrder
@@ -2329,6 +2357,7 @@ export type OrderCreateWithoutSoldContributionsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -2406,6 +2435,7 @@ export type OrderUncheckedCreateWithoutSoldContributionsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -2486,6 +2516,7 @@ export type OrderUpdateWithoutSoldContributionsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2563,6 +2594,7 @@ export type OrderUncheckedUpdateWithoutSoldContributionsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2627,6 +2659,7 @@ export type OrderCreateWithoutUserInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -2703,6 +2736,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -2778,6 +2812,7 @@ export type OrderCreateWithoutCreatedByInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -2854,6 +2889,7 @@ export type OrderUncheckedCreateWithoutCreatedByInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -2929,6 +2965,7 @@ export type OrderCreateWithoutUpdatedByInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3005,6 +3042,7 @@ export type OrderUncheckedCreateWithoutUpdatedByInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3106,6 +3144,7 @@ export type OrderScalarWhereInput = {
   shippingRawDistanceMeters?: Prisma.IntNullableFilter<"Order"> | number | null
   shippingRoundedDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.IntNullableFilter<"Order"> | number | null
   shippingPricePerKm?: Prisma.IntNullableFilter<"Order"> | number | null
@@ -3194,6 +3233,7 @@ export type OrderCreateWithoutMembershipBenefitRedemptionsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3271,6 +3311,7 @@ export type OrderUncheckedCreateWithoutMembershipBenefitRedemptionsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3351,6 +3392,7 @@ export type OrderUpdateWithoutMembershipBenefitRedemptionsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -3428,6 +3470,7 @@ export type OrderUncheckedUpdateWithoutMembershipBenefitRedemptionsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -3492,6 +3535,7 @@ export type OrderCreateWithoutShippingAddressInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3568,6 +3612,7 @@ export type OrderUncheckedCreateWithoutShippingAddressInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3643,6 +3688,7 @@ export type OrderCreateWithoutBillingAddressInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3719,6 +3765,7 @@ export type OrderUncheckedCreateWithoutBillingAddressInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3826,6 +3873,7 @@ export type OrderCreateWithoutItemsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3903,6 +3951,7 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -3983,6 +4032,7 @@ export type OrderUpdateWithoutItemsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -4060,6 +4110,7 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -4124,6 +4175,7 @@ export type OrderCreateWithoutInvoicesInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -4201,6 +4253,7 @@ export type OrderUncheckedCreateWithoutInvoicesInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -4281,6 +4334,7 @@ export type OrderUpdateWithoutInvoicesInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -4358,6 +4412,7 @@ export type OrderUncheckedUpdateWithoutInvoicesInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -4422,6 +4477,7 @@ export type OrderCreateWithoutShippingPromotionInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -4499,6 +4555,7 @@ export type OrderUncheckedCreateWithoutShippingPromotionInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -4589,6 +4646,7 @@ export type OrderCreateWithoutStatusHistoriesInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -4666,6 +4724,7 @@ export type OrderUncheckedCreateWithoutStatusHistoriesInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -4746,6 +4805,7 @@ export type OrderUpdateWithoutStatusHistoriesInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -4823,6 +4883,7 @@ export type OrderUncheckedUpdateWithoutStatusHistoriesInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -4887,6 +4948,7 @@ export type OrderCreateWithoutPaymentsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -4964,6 +5026,7 @@ export type OrderUncheckedCreateWithoutPaymentsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -5044,6 +5107,7 @@ export type OrderUpdateWithoutPaymentsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -5121,6 +5185,7 @@ export type OrderUncheckedUpdateWithoutPaymentsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -5185,6 +5250,7 @@ export type OrderCreateWithoutShipmentsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -5262,6 +5328,7 @@ export type OrderUncheckedCreateWithoutShipmentsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -5342,6 +5409,7 @@ export type OrderUpdateWithoutShipmentsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -5419,6 +5487,7 @@ export type OrderUncheckedUpdateWithoutShipmentsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -5483,6 +5552,7 @@ export type OrderCreateWithoutCouponInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -5559,6 +5629,7 @@ export type OrderUncheckedCreateWithoutCouponInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -5650,6 +5721,7 @@ export type OrderCreateWithoutDiscountRedemptionInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -5727,6 +5799,7 @@ export type OrderUncheckedCreateWithoutDiscountRedemptionInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -5807,6 +5880,7 @@ export type OrderUpdateWithoutDiscountRedemptionInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -5884,6 +5958,7 @@ export type OrderUncheckedUpdateWithoutDiscountRedemptionInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -5948,6 +6023,7 @@ export type OrderCreateWithoutAdminNotificationsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -6025,6 +6101,7 @@ export type OrderUncheckedCreateWithoutAdminNotificationsInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -6105,6 +6182,7 @@ export type OrderUpdateWithoutAdminNotificationsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6182,6 +6260,7 @@ export type OrderUncheckedUpdateWithoutAdminNotificationsInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6252,6 +6331,7 @@ export type OrderCreateManyUserInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -6314,6 +6394,7 @@ export type OrderCreateManyCreatedByInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -6376,6 +6457,7 @@ export type OrderCreateManyUpdatedByInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -6432,6 +6514,7 @@ export type OrderUpdateWithoutUserInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6508,6 +6591,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6579,6 +6663,7 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6635,6 +6720,7 @@ export type OrderUpdateWithoutCreatedByInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6711,6 +6797,7 @@ export type OrderUncheckedUpdateWithoutCreatedByInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6782,6 +6869,7 @@ export type OrderUncheckedUpdateManyWithoutCreatedByInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6838,6 +6926,7 @@ export type OrderUpdateWithoutUpdatedByInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6914,6 +7003,7 @@ export type OrderUncheckedUpdateWithoutUpdatedByInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -6985,6 +7075,7 @@ export type OrderUncheckedUpdateManyWithoutUpdatedByInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7047,6 +7138,7 @@ export type OrderCreateManyShippingAddressInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -7109,6 +7201,7 @@ export type OrderCreateManyBillingAddressInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -7165,6 +7258,7 @@ export type OrderUpdateWithoutShippingAddressInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7241,6 +7335,7 @@ export type OrderUncheckedUpdateWithoutShippingAddressInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7312,6 +7407,7 @@ export type OrderUncheckedUpdateManyWithoutShippingAddressInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7368,6 +7464,7 @@ export type OrderUpdateWithoutBillingAddressInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7444,6 +7541,7 @@ export type OrderUncheckedUpdateWithoutBillingAddressInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7515,6 +7613,7 @@ export type OrderUncheckedUpdateManyWithoutBillingAddressInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7578,6 +7677,7 @@ export type OrderCreateManyShippingPromotionInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -7633,6 +7733,7 @@ export type OrderUpdateWithoutShippingPromotionInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7710,6 +7811,7 @@ export type OrderUncheckedUpdateWithoutShippingPromotionInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7781,6 +7883,7 @@ export type OrderUncheckedUpdateManyWithoutShippingPromotionInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7842,6 +7945,7 @@ export type OrderCreateManyCouponInput = {
   shippingRawDistanceMeters?: number | null
   shippingRoundedDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: number | null
   shippingPricePerKm?: number | null
@@ -7898,6 +8002,7 @@ export type OrderUpdateWithoutCouponInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -7974,6 +8079,7 @@ export type OrderUncheckedUpdateWithoutCouponInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -8045,6 +8151,7 @@ export type OrderUncheckedUpdateManyWithoutCouponInput = {
   shippingRawDistanceMeters?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingRoundedDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingFreeDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  shippingDiscountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingChargeableDistanceKm?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   shippingBaseFee?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   shippingPricePerKm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -8202,6 +8309,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   shippingRawDistanceMeters?: boolean
   shippingRoundedDistanceKm?: boolean
   shippingFreeDistanceKm?: boolean
+  shippingDiscountPercent?: boolean
   shippingChargeableDistanceKm?: boolean
   shippingBaseFee?: boolean
   shippingPricePerKm?: boolean
@@ -8282,6 +8390,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   shippingRawDistanceMeters?: boolean
   shippingRoundedDistanceKm?: boolean
   shippingFreeDistanceKm?: boolean
+  shippingDiscountPercent?: boolean
   shippingChargeableDistanceKm?: boolean
   shippingBaseFee?: boolean
   shippingPricePerKm?: boolean
@@ -8352,6 +8461,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   shippingRawDistanceMeters?: boolean
   shippingRoundedDistanceKm?: boolean
   shippingFreeDistanceKm?: boolean
+  shippingDiscountPercent?: boolean
   shippingChargeableDistanceKm?: boolean
   shippingBaseFee?: boolean
   shippingPricePerKm?: boolean
@@ -8422,6 +8532,7 @@ export type OrderSelectScalar = {
   shippingRawDistanceMeters?: boolean
   shippingRoundedDistanceKm?: boolean
   shippingFreeDistanceKm?: boolean
+  shippingDiscountPercent?: boolean
   shippingChargeableDistanceKm?: boolean
   shippingBaseFee?: boolean
   shippingPricePerKm?: boolean
@@ -8440,7 +8551,7 @@ export type OrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "idempotencyKey" | "userId" | "createdById" | "updatedById" | "shippingAddressId" | "billingAddressId" | "status" | "source" | "subtotal" | "discountAmount" | "shippingFee" | "taxAmount" | "totalCost" | "profit" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "isPaid" | "paidAt" | "couponId" | "discountCodeSnapshot" | "receiverName" | "receiverPhone" | "receiverAddress" | "receiverWard" | "receiverDistrict" | "receiverProvince" | "latitude" | "longitude" | "shippingDistanceMeters" | "shippingDistanceKm" | "shippingEstimatedMinutes" | "shippingOriginAddress" | "shippingOriginLatitude" | "shippingOriginLongitude" | "shippingDestinationLatitude" | "shippingDestinationLongitude" | "shippingRawDistanceMeters" | "shippingRoundedDistanceKm" | "shippingFreeDistanceKm" | "shippingChargeableDistanceKm" | "shippingBaseFee" | "shippingPricePerKm" | "shippingFeeBeforePromotion" | "shippingDiscount" | "shippingPromotionId" | "shippingPromotionName" | "shippingQuoteProvider" | "shippingCalculatedAt" | "note" | "placedAt" | "completedAt" | "deliveredAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "idempotencyKey" | "userId" | "createdById" | "updatedById" | "shippingAddressId" | "billingAddressId" | "status" | "source" | "subtotal" | "discountAmount" | "shippingFee" | "taxAmount" | "totalCost" | "profit" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "isPaid" | "paidAt" | "couponId" | "discountCodeSnapshot" | "receiverName" | "receiverPhone" | "receiverAddress" | "receiverWard" | "receiverDistrict" | "receiverProvince" | "latitude" | "longitude" | "shippingDistanceMeters" | "shippingDistanceKm" | "shippingEstimatedMinutes" | "shippingOriginAddress" | "shippingOriginLatitude" | "shippingOriginLongitude" | "shippingDestinationLatitude" | "shippingDestinationLongitude" | "shippingRawDistanceMeters" | "shippingRoundedDistanceKm" | "shippingFreeDistanceKm" | "shippingDiscountPercent" | "shippingChargeableDistanceKm" | "shippingBaseFee" | "shippingPricePerKm" | "shippingFeeBeforePromotion" | "shippingDiscount" | "shippingPromotionId" | "shippingPromotionName" | "shippingQuoteProvider" | "shippingCalculatedAt" | "note" | "placedAt" | "completedAt" | "deliveredAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   createdBy?: boolean | Prisma.Order$createdByArgs<ExtArgs>
@@ -8544,6 +8655,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     shippingRawDistanceMeters: number | null
     shippingRoundedDistanceKm: runtime.Decimal | null
     shippingFreeDistanceKm: runtime.Decimal | null
+    shippingDiscountPercent: runtime.Decimal | null
     shippingChargeableDistanceKm: runtime.Decimal | null
     shippingBaseFee: number | null
     shippingPricePerKm: number | null
@@ -9043,6 +9155,7 @@ export interface OrderFieldRefs {
   readonly shippingRawDistanceMeters: Prisma.FieldRef<"Order", 'Int'>
   readonly shippingRoundedDistanceKm: Prisma.FieldRef<"Order", 'Decimal'>
   readonly shippingFreeDistanceKm: Prisma.FieldRef<"Order", 'Decimal'>
+  readonly shippingDiscountPercent: Prisma.FieldRef<"Order", 'Decimal'>
   readonly shippingChargeableDistanceKm: Prisma.FieldRef<"Order", 'Decimal'>
   readonly shippingBaseFee: Prisma.FieldRef<"Order", 'Int'>
   readonly shippingPricePerKm: Prisma.FieldRef<"Order", 'Int'>
