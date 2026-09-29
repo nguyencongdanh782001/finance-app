@@ -94,7 +94,10 @@ const mapProductFromApi = (product: ProductApiItem): ProductItemData => ({
   productStatus: product.productStatus || "PRIVATE",
   organicFavoriteCount: product.organicFavoriteCount ?? 0,
   favoriteCountAdjustment: product.favoriteCountAdjustment ?? 0,
-  displayFavoriteCount: product.displayFavoriteCount ?? ((product.organicFavoriteCount ?? 0) + (product.favoriteCountAdjustment ?? 0)),
+  displayFavoriteCount:
+    product.displayFavoriteCount ??
+    (product.organicFavoriteCount ?? 0) +
+      (product.favoriteCountAdjustment ?? 0),
 });
 
 export default function ProductContainer() {
@@ -102,6 +105,7 @@ export default function ProductContainer() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const productRequestId = useRef(0);
   const [products, setProducts] = useState<ProductItemData[]>([]);
   const [categories, setCategories] = useState<CategoryItemData[]>([]);
   const [search, setSearch] = useState(searchParams.get("search") || "");
@@ -141,6 +145,7 @@ export default function ProductContainer() {
     nextPage = 1,
     options?: { showLoading?: boolean; append?: boolean },
   ) => {
+    const requestId = ++productRequestId.current;
     const showLoading = options?.showLoading ?? false;
     const append = options?.append ?? false;
 
@@ -159,6 +164,8 @@ export default function ProductContainer() {
       page: nextPage,
       limit,
     });
+
+    if (requestId !== productRequestId.current) return;
 
     if (res.code === RESPONSE_CODES.success && res.data) {
       const mappedProducts = res.data.data.map(mapProductFromApi);
@@ -399,21 +406,55 @@ export default function ProductContainer() {
 
   const handleAdjustFavorites = async (product: ProductItemData) => {
     const current = product.displayFavoriteCount ?? 0;
-    const value = window.prompt(`Lượt yêu thích hiển thị cho “${product.title}”:`, String(current));
+    const value = window.prompt(
+      `Lượt yêu thích hiển thị cho “${product.title}”:`,
+      String(current),
+    );
     if (value === null) return;
     const desiredDisplayCount = Number(value);
     if (!Number.isInteger(desiredDisplayCount) || desiredDisplayCount < 0) {
-      toast({ title: "Giá trị không hợp lệ", description: "Vui lòng nhập một số nguyên không âm.", className: "bg-red-1 text-white text-sm font-medium w-fit", duration: 3000 });
+      toast({
+        title: "Giá trị không hợp lệ",
+        description: "Vui lòng nhập một số nguyên không âm.",
+        className: "bg-red-1 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
       return;
     }
-    const response = await fetch(`/api/admin/products/${product.id}/favorites`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ desiredDisplayCount }) });
+    const response = await fetch(
+      `/api/admin/products/${product.id}/favorites`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ desiredDisplayCount }),
+      },
+    );
     if (!response.ok) {
-      toast({ title: "Không thể điều chỉnh lượt yêu thích", className: "bg-red-1 text-white text-sm font-medium w-fit", duration: 3000 });
+      toast({
+        title: "Không thể điều chỉnh lượt yêu thích",
+        className: "bg-red-1 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
       return;
     }
-    const updated = await response.json() as ProductItemData;
-    setProducts((currentProducts) => currentProducts.map((item) => item.id === product.id ? { ...item, organicFavoriteCount: updated.organicFavoriteCount, favoriteCountAdjustment: updated.favoriteCountAdjustment, displayFavoriteCount: updated.displayFavoriteCount } : item));
-    toast({ title: "Đã cập nhật lượt yêu thích", className: "bg-green-16 text-white text-sm font-medium w-fit", duration: 2500 });
+    const updated = (await response.json()) as ProductItemData;
+    setProducts((currentProducts) =>
+      currentProducts.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              organicFavoriteCount: updated.organicFavoriteCount,
+              favoriteCountAdjustment: updated.favoriteCountAdjustment,
+              displayFavoriteCount: updated.displayFavoriteCount,
+            }
+          : item,
+      ),
+    );
+    toast({
+      title: "Đã cập nhật lượt yêu thích",
+      className: "bg-green-16 text-white text-sm font-medium w-fit",
+      duration: 2500,
+    });
   };
 
   const handleDeleteFromForm = () => {
@@ -694,7 +735,7 @@ export default function ProductContainer() {
             <AdminSearchInput
               value={search}
               onChange={setSearch}
-              placeholder="Tìm theo tên sản phẩm"
+              placeholder="Tìm tên, SKU, mã vạch, màu hoặc size"
             />
           }
           filters={
@@ -758,12 +799,12 @@ export default function ProductContainer() {
             />
           ) : (
             <>
-            <ProductList
+              <ProductList
                 products={products}
                 onEdit={handleOpenEdit}
                 onDelete={handleDeleteClick}
-              onStatusChange={handleStatusChange}
-              onAdjustFavorites={handleAdjustFavorites}
+                onStatusChange={handleStatusChange}
+                onAdjustFavorites={handleAdjustFavorites}
                 updatingStatusIds={updatingStatusIds}
               />
               <div ref={loadMoreRef} className="h-0 w-full" />

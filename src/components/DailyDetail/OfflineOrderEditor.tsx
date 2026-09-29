@@ -26,6 +26,7 @@ import {
   type ShopOrderLineOption,
   type ShopOrderProductOption,
 } from "@/lib/orders/shop-order-products";
+import { getSearchTokens } from "@/lib/search";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
@@ -546,8 +547,7 @@ function ProductSearchPanel({
     ],
     [products],
   );
-  const normalizedSearch = debouncedSearch.trim().toLocaleLowerCase("vi");
-  const searchTokens = normalizedSearch.split(/\s+/).filter(Boolean);
+  const searchTokens = getSearchTokens(debouncedSearch);
   const isSearching = loading || search.trim() !== debouncedSearch.trim();
   const filtered = products.filter(
     (product) =>

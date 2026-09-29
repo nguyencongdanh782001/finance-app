@@ -121,6 +121,7 @@ test("resolves exact variant id and preserves price, cost and SKU", () => {
   assert.equal(selected?.unitCost, 125000);
   assert.equal(selected?.availableStock, 4);
   assert.match(mapped[0].searchableText, /8938505974198/);
+  assert.match(mapped[0].searchableText, /ao thun/);
 });
 
 test("keeps products without variants as a base order option", () => {

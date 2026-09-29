@@ -3,6 +3,7 @@ import type {
   ProductImageApiItem,
   ProductVariantApiItem,
 } from "../../interface/product.ts";
+import { foldSearchText } from "../search.ts";
 
 export type ShopOrderLineOption = {
   productId: number;
@@ -182,8 +183,7 @@ export function mapShopOrderProducts(
         ]),
       ]
         .filter(Boolean)
-        .join(" ")
-        .toLocaleLowerCase("vi");
+        .join(" ");
 
       return {
         productId: product.id,
@@ -193,7 +193,7 @@ export function mapShopOrderProducts(
         productStatus: getProductStatus(product),
         baseOption,
         colors,
-        searchableText,
+        searchableText: foldSearchText(searchableText),
         totalAvailableStock: baseOption
           ? baseOption.availableStock
           : allOptions.reduce(
