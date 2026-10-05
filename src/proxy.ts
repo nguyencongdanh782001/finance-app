@@ -30,7 +30,7 @@ const CUSTOMER_CHECKOUT_API_PATHS = [
   "/api/shipping/quote",
 ];
 const CRON_API_PATHS = ["/api/cron/admin-notifications"];
-const PUBLIC_POST_PATHS = ["/api/chat-assistant"];
+const PUBLIC_POST_PATHS = ["/api/chat-assistant", "/api/virtual-try-on"];
 const isCustomerFavoriteApi = (pathname: string) =>
   pathname === "/api/me/favorites" ||
   /^\/api\/product\/\d+\/favorite$/.test(pathname);

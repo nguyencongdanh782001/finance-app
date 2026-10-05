@@ -166,6 +166,12 @@ export default function StorefrontHeader() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/try-on"
+              className={`relative py-6 text-sm font-semibold after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[#D96C8A] ${pathname === "/try-on" ? "text-[#A43E5F] after:scale-x-100" : "text-[#6F6066] after:scale-x-0 hover:text-[#A43E5F] hover:after:scale-x-100"}`}
+            >
+              Thử đồ AI
+            </Link>
           </nav>
           <div className="ml-auto flex shrink-0 items-center gap-0.5 lg:ml-0 lg:contents">
             <ProductSearch />
@@ -294,6 +300,13 @@ export default function StorefrontHeader() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/try-on"
+                onClick={() => setMenuOpen(false)}
+                className={`flex min-h-12 items-center border-b border-[#EAE1E4] text-base font-semibold ${pathname === "/try-on" ? "text-[#A43E5F]" : "text-[#2D2226]"}`}
+              >
+                Thử đồ AI
+              </Link>
               <Link
                 href="/account/favorites"
                 onClick={() => setMenuOpen(false)}

@@ -25,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "@gradio/client": "^2.7.1",
     "@prisma/adapter-pg": "^7.4.0",
     "@prisma/client": "^7.4.0",
     "@tiptap/extension-character-count": "^3.31.3",
