@@ -24,26 +24,47 @@ export default function AdminAccountMenu() {
     setIsLoggingOut(true);
     try {
       if ("serviceWorker" in navigator) {
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
-        if (subscription) {
-          const response = await fetch(
-            "/api/admin/push-subscriptions/current",
-            {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ endpoint: subscription.endpoint }),
-            },
-          );
-          if (response.ok) await subscription.unsubscribe();
+        const registration = await Promise.race([
+          navigator.serviceWorker.ready,
+          new Promise<null>((resolve) =>
+            window.setTimeout(() => resolve(null), 1_500),
+          ),
+        ]);
+        if (registration) {
+          const subscription = await Promise.race([
+            registration.pushManager.getSubscription(),
+            new Promise<null>((resolve) =>
+              window.setTimeout(() => resolve(null), 1_500),
+            ),
+          ]);
+          if (subscription) {
+            const controller = new AbortController();
+            const timeoutId = window.setTimeout(() => controller.abort(), 1_500);
+            try {
+              const response = await fetch(
+                "/api/admin/push-subscriptions/current",
+                {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ endpoint: subscription.endpoint }),
+                  signal: controller.signal,
+                },
+              );
+              if (response.ok) await subscription.unsubscribe();
+            } finally {
+              window.clearTimeout(timeoutId);
+            }
+          }
         }
       }
     } catch {
       // Logout must continue even when Push cleanup is unavailable.
+    } finally {
+      await logout();
+      await updateAppBadge(0);
+      router.replace("/login");
+      setIsLoggingOut(false);
     }
-    await logout();
-    await updateAppBadge(0);
-    router.replace("/login");
   };
 
   return (

@@ -78,8 +78,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [clearSession, setAuthenticatedSession]);
 
   const logout = useCallback(async () => {
-    await financeAPI.logout();
-    clearSession();
+    try {
+      await Promise.race([
+        financeAPI.logout(),
+        new Promise<never>((_, reject) => {
+          window.setTimeout(
+            () => reject(new Error("Logout request timed out")),
+            5_000,
+          );
+        }),
+      ]);
+    } catch (error) {
+      // The local session must still be cleared if the server is unavailable.
+      console.warn("Logout request failed; clearing local session", error);
+    } finally {
+      clearSession();
+    }
   }, [clearSession]);
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import sanitizeHtml from "sanitize-html";
 import type { Prisma } from "@/app/generated/prisma/client";
 import prisma from "@/lib/db";
-import { answerChatAssistant } from "@/lib/chat-assistant/engine";
+import { answerChatAssistantWithAI } from "@/lib/chat-assistant/gemini";
 import {
   CHAT_MESSAGE_MAX_LENGTH,
   InMemoryRateLimiter,
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(
-      answerChatAssistant(payload.message, data, payload.context),
+      await answerChatAssistantWithAI(payload.message, data, payload.context),
     );
   } catch (error) {
     console.error("Customer chat assistant failed", error);
