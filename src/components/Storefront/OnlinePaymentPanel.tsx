@@ -5,7 +5,7 @@
 import { Check, LoaderCircle, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-type Props = { orderNumber: string };
+type Props = { orderNumber: string; paymentMethod?: string };
 type Order = {
   id: number;
   orderNumber: string;
@@ -23,7 +23,7 @@ type PaymentSettings = {
 
 const money = (value: number) => `${Math.round(value).toLocaleString("vi-VN")}đ`;
 
-export default function OnlinePaymentPanel({ orderNumber }: Props) {
+export default function OnlinePaymentPanel({ orderNumber, paymentMethod }: Props) {
   const [order, setOrder] = useState<Order | null>(null);
   const [settings, setSettings] = useState<PaymentSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ export default function OnlinePaymentPanel({ orderNumber }: Props) {
       if (!summary?.id) return;
       const [detailResponse, settingsResponse] = await Promise.all([
         fetch(`/api/me/orders/${summary.id}`),
-        fetch("/api/payment-settings"),
+        fetch(`/api/payment-settings?t=${Date.now()}`, { cache: "no-store" }),
       ]);
       if (detailResponse.ok) setOrder(await detailResponse.json());
       if (settingsResponse.ok) setSettings(await settingsResponse.json());
@@ -59,7 +59,10 @@ export default function OnlinePaymentPanel({ orderNumber }: Props) {
     return `https://img.vietqr.io/image/${encodeURIComponent(settings.vietQrBankCode)}-${encodeURIComponent(settings.vietQrAccountNumber)}-${encodeURIComponent(settings.vietQrTemplate || "compact2")}.png?${params.toString()}`;
   }, [order, settings]);
 
-  if (loading || !order || order.paymentMethod !== "BANK_TRANSFER" || !qrUrl) return null;
+  const isBankTransfer =
+    order?.paymentMethod === "BANK_TRANSFER" || paymentMethod === "BANK_TRANSFER";
+
+  if (loading || !order || !isBankTransfer || !qrUrl) return null;
 
   const reported = ["PROCESSING", "PAID"].includes(order.paymentStatus);
   const confirm = async () => {
