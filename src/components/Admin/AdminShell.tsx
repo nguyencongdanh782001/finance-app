@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import {
   FolderTree,
   Gift,
+  Landmark,
   LayoutDashboard,
   Menu,
   MessageCircle,
@@ -149,7 +150,7 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     href: "/admin/settings/payment",
     label: "Cài đặt thanh toán",
     group: "Hệ thống",
-    icon: Settings,
+    icon: Landmark,
     matches: (pathname) => pathname.startsWith("/admin/settings/payment"),
   },
 ];
@@ -163,7 +164,8 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/notifications")) return "Thông báo";
   if (pathname.startsWith("/admin/settings/notifications"))
     return "Cài đặt thông báo";
-  if (pathname.startsWith("/admin/settings/payment")) return "Cài đặt thanh toán";
+  if (pathname.startsWith("/admin/settings/payment"))
+    return "Cài đặt thanh toán";
   if (pathname === "/admin/orders") return "Đơn hàng online";
   if (pathname.startsWith("/admin/orders/")) return "Chi tiết đơn hàng";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";

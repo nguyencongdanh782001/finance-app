@@ -1,9 +1,27 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
+import {
+  AdminPageContainer,
+  AdminPageHeader,
+  AdminSection,
+} from "@/components/Admin/AdminPage";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hook/use-toast";
-import { CreditCard, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  ArrowRight,
+  Banknote,
+  CheckCircle2,
+  CircleHelp,
+  Copy,
+  Loader2,
+  QrCode,
+  ShieldCheck,
+  WalletCards,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 type Settings = {
   onlinePaymentEnabled: boolean;
@@ -18,20 +36,75 @@ const empty: Settings = {
   vietQrAccountNumber: "",
   vietQrAccountName: "",
 };
+const inputClass =
+  "mt-2 h-11 w-full rounded-lg border border-(--admin-border) bg-white px-3 text-sm text-(--admin-text) outline-none transition focus:border-(--admin-primary) focus:ring-4 focus:ring-(--admin-primary)/10";
+
+function PaymentSettingsSkeleton() {
+  return (
+    <AdminPageContainer>
+      <div className="space-y-2">
+        <Skeleton className="h-3 w-24" />
+        <Skeleton className="h-7 w-52" />
+        <Skeleton className="h-4 w-full max-w-xl" />
+      </div>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+        <AdminSection className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Skeleton className="size-11 rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-44" />
+              <Skeleton className="h-3 w-64" />
+            </div>
+          </div>
+          <Skeleton className="h-20 rounded-xl" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Skeleton className="h-[67px] rounded-lg" />
+            <Skeleton className="h-[67px] rounded-lg" />
+          </div>
+          <Skeleton className="h-[67px] rounded-lg" />
+          <div className="flex justify-end">
+            <Skeleton className="h-10 w-32 rounded-lg" />
+          </div>
+        </AdminSection>
+        <div className="space-y-6">
+          <AdminSection className="space-y-4">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-24 rounded-xl" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+          </AdminSection>
+          <AdminSection className="space-y-4">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-11/12" />
+            <Skeleton className="h-4 w-4/5" />
+          </AdminSection>
+        </div>
+      </div>
+    </AdminPageContainer>
+  );
+}
 
 export default function AdminPaymentSettings() {
   const [settings, setSettings] = useState<Settings>(empty);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/settings/payment")
       .then(async (response) => {
         if (!response.ok) throw new Error("Không thể tải cài đặt thanh toán.");
-        const data = await response.json();
-        setSettings({ ...empty, ...data });
+        setSettings({ ...empty, ...(await response.json()) });
       })
-      .catch((error) => toast({ title: "Lỗi", description: error.message, variant: "destructive" }))
+      .catch((error) =>
+        toast({
+          title: "Không thể tải cài đặt",
+          description:
+            error instanceof Error ? error.message : "Vui lòng thử lại.",
+          variant: "destructive",
+        }),
+      )
       .finally(() => setLoading(false));
   }, []);
 
@@ -45,38 +118,247 @@ export default function AdminPaymentSettings() {
     const data = await response.json().catch(() => ({}));
     setSaving(false);
     if (!response.ok) {
-      toast({ title: "Chưa lưu được", description: data.message || "Vui lòng thử lại.", variant: "destructive" });
+      toast({
+        title: "Chưa lưu được",
+        description: data.message || "Vui lòng kiểm tra lại thông tin.",
+        variant: "destructive",
+      });
       return;
     }
     setSettings({ ...empty, ...data });
-    toast({ title: "Đã lưu cài đặt thanh toán" });
+    toast({ title: "Đã lưu cài đặt thanh toán", variant: "success" });
   };
 
-  if (loading) return <div className="p-8 text-sm text-slate-500">Đang tải cài đặt...</div>;
+  const accountReady = Boolean(
+    settings.vietQrBankCode &&
+    settings.vietQrAccountNumber &&
+    settings.vietQrAccountName,
+  );
+  const enabled = settings.onlinePaymentEnabled && accountReady;
+  const transferContent = "THANH TOAN DON HANG QN-XXXX-XXX";
+  const qrPreview = useMemo(() => {
+    if (!settings.vietQrBankCode || !settings.vietQrAccountNumber) return "";
+    const params = new URLSearchParams({
+      amount: "0",
+      addInfo: transferContent,
+      accountName: settings.vietQrAccountName,
+    });
+    return `https://img.vietqr.io/image/${encodeURIComponent(settings.vietQrBankCode)}-${encodeURIComponent(settings.vietQrAccountNumber)}-compact2.png?${params.toString()}`;
+  }, [
+    settings.vietQrAccountName,
+    settings.vietQrAccountNumber,
+    settings.vietQrBankCode,
+  ]);
+  const copyContent = async () => {
+    await navigator.clipboard.writeText(transferContent);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
+  };
+
+  if (loading) return <PaymentSettingsSkeleton />;
+
   return (
-    <div className="max-w-2xl space-y-6 p-6 lg:p-8">
-      <div>
-        <div className="flex items-center gap-3">
-          <CreditCard className="size-5 text-primary" />
-          <h1 className="text-xl font-bold text-slate-900">Thanh toán VietQR</h1>
+    <AdminPageContainer>
+      <AdminPageHeader
+        breadcrumb="Hệ thống"
+        title="Cài đặt thanh toán"
+        description="Quản lý tài khoản nhận chuyển khoản và cách khách hàng thanh toán online tại checkout."
+      />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+        <AdminSection className="space-y-6">
+          <div className="flex items-start gap-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-(--admin-primary-soft) text-(--admin-primary)">
+              <WalletCards className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <h2 className="text-base font-semibold text-(--admin-text)">
+                Thanh toán VietQR
+              </h2>
+              <p className="mt-1 text-sm leading-5 text-(--admin-text-secondary)">
+                Khách quét mã để chuyển khoản thủ công. Admin kiểm tra giao dịch
+                và xác nhận đơn.
+              </p>
+            </div>
+            <span
+              className={`ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${enabled ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}
+            >
+              <span
+                className={`size-1.5 rounded-full ${enabled ? "bg-emerald-500" : "bg-slate-400"}`}
+              />
+              {enabled ? "Đang bật" : "Đang tắt"}
+            </span>
+          </div>
+          <label className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-(--admin-border) bg-(--admin-background) p-4 transition hover:border-(--admin-primary)/40">
+            <span className="flex min-w-0 items-start gap-3">
+              <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-(--admin-primary)">
+                <CheckCircle2 className="size-4" />
+              </span>
+              <span>
+                <strong className="block text-sm font-semibold text-(--admin-text)">
+                  Cho phép thanh toán online
+                </strong>
+                <span className="mt-1 block text-xs leading-5 text-(--admin-text-secondary)">
+                  Hiển thị lựa chọn VietQR cho khách hàng tại bước thanh toán.
+                </span>
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              checked={settings.onlinePaymentEnabled}
+              onChange={(event) =>
+                setSettings((current) => ({
+                  ...current,
+                  onlinePaymentEnabled: event.target.checked,
+                }))
+              }
+              className="size-5 shrink-0 accent-(--admin-primary)"
+            />
+          </label>
+          <div>
+            <div className="mb-4 flex items-center gap-2">
+              <Banknote className="size-4 text-(--admin-primary)" />
+              <h3 className="text-sm font-semibold text-(--admin-text)">
+                Thông tin tài khoản nhận tiền
+              </h3>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="text-sm font-medium text-(--admin-text-secondary)">
+                Mã ngân hàng / BIN
+                <input
+                  value={settings.vietQrBankCode}
+                  onChange={(event) =>
+                    setSettings((current) => ({
+                      ...current,
+                      vietQrBankCode: event.target.value,
+                    }))
+                  }
+                  placeholder="Ví dụ: 970436"
+                  className={inputClass}
+                />
+              </label>
+              <label className="text-sm font-medium text-(--admin-text-secondary)">
+                Số tài khoản
+                <input
+                  value={settings.vietQrAccountNumber}
+                  onChange={(event) =>
+                    setSettings((current) => ({
+                      ...current,
+                      vietQrAccountNumber: event.target.value,
+                    }))
+                  }
+                  placeholder="Nhập số tài khoản nhận tiền"
+                  className={inputClass}
+                />
+              </label>
+            </div>
+            <label className="mt-4 block text-sm font-medium text-(--admin-text-secondary)">
+              Tên tài khoản
+              <input
+                value={settings.vietQrAccountName}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    vietQrAccountName: event.target.value,
+                  }))
+                }
+                placeholder="Ví dụ: NGUYEN VAN A"
+                className={inputClass}
+              />
+            </label>
+            <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-(--admin-text-muted)">
+              <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+              Thông tin này được dùng để tạo mã QR cho từng đơn hàng, không lưu
+              thông tin thẻ.
+            </p>
+          </div>
+          <div className="flex justify-end border-t border-(--admin-border) pt-5">
+            <Button
+              type="button"
+              variant="adminPrimary"
+              size="lg"
+              onClick={() => void save()}
+              disabled={saving}
+            >
+              {saving ? <Loader2 className="size-4 animate-spin" /> : null}
+              {saving ? "Đang lưu..." : "Lưu cài đặt"}
+              {!saving ? <ArrowRight className="size-4" /> : null}
+            </Button>
+          </div>
+        </AdminSection>
+        <div className="space-y-6">
+          <AdminSection className="overflow-hidden p-0">
+            <div className="border-b border-(--admin-border) px-5 py-4">
+              <div className="flex items-center gap-2">
+                <QrCode className="size-4 text-(--admin-primary)" />
+                <h2 className="text-sm font-semibold text-(--admin-text)">
+                  Xem trước mã VietQR
+                </h2>
+              </div>
+              <p className="mt-1 text-xs text-(--admin-text-secondary)">
+                Mã thực tế sẽ được tạo theo từng đơn hàng.
+              </p>
+            </div>
+            <div className="p-5">
+              {qrPreview ? (
+                <div className="rounded-xl border border-(--admin-border) bg-(--admin-background) p-4">
+                  <img
+                    src={qrPreview}
+                    alt="Xem trước mã VietQR"
+                    className="mx-auto size-44 rounded-lg bg-white object-contain"
+                  />
+                  <p className="mt-3 text-center text-xs font-medium text-(--admin-text-secondary)">
+                    {settings.vietQrAccountName || "Chưa có tên tài khoản"}
+                  </p>
+                </div>
+              ) : (
+                <div className="flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-(--admin-border) bg-(--admin-background) px-5 text-center">
+                  <QrCode className="size-9 text-slate-300" />
+                  <p className="mt-3 text-sm font-semibold text-(--admin-text-secondary)">
+                    Chưa có dữ liệu QR
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-(--admin-text-muted)">
+                    Nhập mã ngân hàng và số tài khoản để xem trước.
+                  </p>
+                </div>
+              )}
+            </div>
+          </AdminSection>
+          <AdminSection>
+            <div className="flex items-start gap-3">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-(--admin-primary-soft) text-(--admin-primary)">
+                <CircleHelp className="size-4" />
+              </span>
+              <div>
+                <h2 className="text-sm font-semibold text-(--admin-text)">
+                  Quy trình xác nhận
+                </h2>
+                <ol className="mt-3 space-y-3 text-xs leading-5 text-(--admin-text-secondary)">
+                  <li className="flex gap-2">
+                    <span className="font-bold text-(--admin-primary)">01</span>
+                    Khách chọn VietQR và quét mã.
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-(--admin-primary)">02</span>
+                    Khách chuyển đúng số tiền, đúng nội dung.
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-bold text-(--admin-primary)">03</span>
+                    Admin kiểm tra app ngân hàng rồi xác nhận đơn.
+                  </li>
+                </ol>
+                <button
+                  type="button"
+                  onClick={() => void copyContent()}
+                  className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-(--admin-primary) hover:underline"
+                >
+                  <Copy className="size-3.5" />
+                  {copied ? "Đã sao chép" : "Sao chép mẫu nội dung"}
+                </button>
+              </div>
+            </div>
+          </AdminSection>
         </div>
-        <p className="mt-2 text-sm text-slate-500">Khi tắt, khách hàng sẽ không nhìn thấy lựa chọn thanh toán online tại checkout.</p>
       </div>
-      <section className="space-y-5 rounded-2xl border bg-white p-5 shadow-sm">
-        <label className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border p-4">
-          <span>
-            <strong className="block text-sm text-slate-900">Cho phép thanh toán online</strong>
-            <span className="mt-1 block text-xs text-slate-500">Hiển thị VietQR cho khách hàng.</span>
-          </span>
-          <input type="checkbox" checked={settings.onlinePaymentEnabled} onChange={(event) => setSettings((current) => ({ ...current, onlinePaymentEnabled: event.target.checked }))} className="size-5 accent-primary" />
-        </label>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="text-sm font-semibold text-slate-700">Mã ngân hàng<input value={settings.vietQrBankCode} onChange={(event) => setSettings((current) => ({ ...current, vietQrBankCode: event.target.value }))} placeholder="MB, VCB, ACB..." className="mt-2 w-full rounded-lg border px-3 py-2 font-normal" /></label>
-          <label className="text-sm font-semibold text-slate-700">Số tài khoản<input value={settings.vietQrAccountNumber} onChange={(event) => setSettings((current) => ({ ...current, vietQrAccountNumber: event.target.value }))} className="mt-2 w-full rounded-lg border px-3 py-2 font-normal" /></label>
-        </div>
-        <label className="block text-sm font-semibold text-slate-700">Tên tài khoản<input value={settings.vietQrAccountName} onChange={(event) => setSettings((current) => ({ ...current, vietQrAccountName: event.target.value }))} placeholder="NGUYEN VAN A" className="mt-2 w-full rounded-lg border px-3 py-2 font-normal" /></label>
-        <Button type="button" onClick={() => void save()} disabled={saving}>{saving ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}Lưu cài đặt</Button>
-      </section>
-    </div>
+    </AdminPageContainer>
   );
 }
