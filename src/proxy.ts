@@ -13,6 +13,7 @@ const PUBLIC_GET_PATHS = [
   "/api/locations/autocomplete",
   "/api/locations/administrative",
   "/api/invoices/public",
+  "/api/payment-settings",
 ];
 const CUSTOMER_API_PATHS = ["/api/cart"];
 const CUSTOMER_ME_API_PATHS = [
