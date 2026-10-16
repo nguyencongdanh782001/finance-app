@@ -29,6 +29,7 @@ import { FileSpreadsheet, Plus } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useDebouncedValue } from "@/hook/use-debounced-value";
 
 const ProductFormDialog = dynamic(
   () => import("@/components/Product/ProductFormDialog"),
@@ -109,6 +110,7 @@ export default function ProductContainer() {
   const [products, setProducts] = useState<ProductItemData[]>([]);
   const [categories, setCategories] = useState<CategoryItemData[]>([]);
   const [search, setSearch] = useState(searchParams.get("search") || "");
+  const debouncedSearch = useDebouncedValue(search.trim(), 300);
   const [categoryFilter, setCategoryFilter] = useState(
     searchParams.get("categoryId") || "",
   );
@@ -158,7 +160,7 @@ export default function ProductContainer() {
     }
 
     const res = await financeAPI.getProductList({
-      search: search || undefined,
+      search: debouncedSearch || undefined,
       categoryId: categoryFilter ? Number(categoryFilter) : undefined,
       sort: sortBy,
       page: nextPage,
@@ -215,12 +217,9 @@ export default function ProductContainer() {
       return;
     }
 
-    const timeout = window.setTimeout(() => {
-      fetchProducts(1);
-    }, 250);
-
-    return () => window.clearTimeout(timeout);
-  }, [search, categoryFilter, sortBy]);
+    setPage(1);
+    void fetchProducts(1);
+  }, [debouncedSearch, categoryFilter, sortBy]);
 
   useEffect(() => {
     if (isInitialLoading) return;
@@ -249,8 +248,8 @@ export default function ProductContainer() {
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
 
-    if (search) {
-      params.set("search", search);
+    if (debouncedSearch) {
+      params.set("search", debouncedSearch);
     } else {
       params.delete("search");
     }
@@ -271,7 +270,7 @@ export default function ProductContainer() {
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
       scroll: false,
     });
-  }, [search, categoryFilter, sortBy, pathname, router]);
+  }, [debouncedSearch, categoryFilter, sortBy, pathname, router]);
 
   useEffect(() => {
     const node = loadMoreRef.current;

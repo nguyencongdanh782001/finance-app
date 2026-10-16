@@ -31,7 +31,8 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useDebouncedValue } from "@/hook/use-debounced-value";
 
 type OrderListItem = {
   id: number;
@@ -215,7 +216,9 @@ export default function AdminOnlineOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search.trim(), 300);
+  const requestIdRef = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
   const [status, setStatus] = useState("ALL");
   const [paymentStatus, setPaymentStatus] = useState("ALL");
   const [paymentMethod, setPaymentMethod] = useState("ALL");
@@ -225,14 +228,6 @@ export default function AdminOnlineOrdersPage() {
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const timer = window.setTimeout(
-      () => setDebouncedSearch(search.trim()),
-      300,
-    );
-    return () => window.clearTimeout(timer);
-  }, [search]);
 
   useEffect(
     () => setPage(1),
@@ -276,33 +271,45 @@ export default function AdminOnlineOrdersPage() {
 
   const load = useCallback(
     async (showLoading = true) => {
+      const requestId = ++requestIdRef.current;
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
       if (showLoading) setLoading(true);
       setError("");
       try {
         const response = await fetch(`/api/admin/orders?${query}`, {
           cache: "no-store",
+          signal: controller.signal,
         });
         const payload = await response.json();
         if (!response.ok)
           throw new Error(
             payload.message || "Không thể tải danh sách đơn hàng.",
           );
-        setData(payload);
+        if (requestId === requestIdRef.current) setData(payload);
       } catch (cause) {
+        if (cause instanceof DOMException && cause.name === "AbortError") {
+          return;
+        }
+        if (requestId !== requestIdRef.current) return;
         setError(
           cause instanceof Error
             ? cause.message
             : "Không thể tải danh sách đơn hàng.",
         );
       } finally {
-        setLoading(false);
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+          abortRef.current = null;
+        }
       }
     },
     [query],
   );
 
   useEffect(() => {
-    void load();
+    void load(data === null);
   }, [load]);
   useEffect(() => {
     const refresh = () => void load(false);
@@ -313,7 +320,6 @@ export default function AdminOnlineOrdersPage() {
 
   const reset = () => {
     setSearch("");
-    setDebouncedSearch("");
     setStatus("ALL");
     setPaymentStatus("ALL");
     setPaymentMethod("ALL");
