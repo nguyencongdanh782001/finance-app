@@ -6,9 +6,9 @@ import Link from "next/link";
 export default async function CheckoutSuccess({
   searchParams,
 }: {
-  searchParams: Promise<{ order?: string }>;
+  searchParams: Promise<{ order?: string; payment?: string }>;
 }) {
-  const { order } = await searchParams;
+  const { order, payment } = await searchParams;
 
   return (
     <StorefrontShell>
@@ -95,7 +95,12 @@ export default async function CheckoutSuccess({
               </div>
             </aside>
           </div>
-          {order ? <OnlinePaymentPanel orderNumber={order} /> : null}
+          {order ? (
+            <OnlinePaymentPanel
+              orderNumber={order}
+              paymentMethod={payment}
+            />
+          ) : null}
         </div>
       </main>
     </StorefrontShell>
