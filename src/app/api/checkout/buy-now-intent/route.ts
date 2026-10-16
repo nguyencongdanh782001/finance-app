@@ -21,10 +21,41 @@ export async function POST(request: Request) {
   if (!Number.isInteger(id) || id < 1 || request.headers.get("x-user-role") !== "CUSTOMER") return error("Vui lòng đăng nhập để mua hàng.", 401);
   const body = await request.json().catch(() => ({}));
   const variantId = Number(body.variantId);
+  const productId = Number(body.productId);
   const quantity = Number(body.quantity);
-  if (!Number.isInteger(variantId) || !Number.isInteger(quantity) || quantity < 1) return error("Thông tin mua ngay không hợp lệ.");
-  if (!await getVariant(variantId, quantity)) return error("Số lượng sản phẩm không còn đủ.", 409);
-  const token = await signJwt({ sub: String(id), role: "CUSTOMER", intentType: "BUY_NOW", variantId, quantity }, 300);
+  if (!Number.isInteger(quantity) || quantity < 1) return error("Thông tin mua ngay không hợp lệ.");
+
+  if (Number.isInteger(variantId) && variantId > 0) {
+    if (!await getVariant(variantId, quantity)) return error("Số lượng sản phẩm không còn đủ.", 409);
+    const token = await signJwt({ sub: String(id), role: "CUSTOMER", intentType: "BUY_NOW", variantId, quantity }, 300);
+    return NextResponse.json({ token, expiresIn: 300 });
+  }
+
+  if (!Number.isInteger(productId) || productId < 1) return error("Thông tin mua ngay không hợp lệ.");
+  const product = await prisma.product.findFirst({
+    where: { id: productId, status: "PUBLIC" },
+    select: { id: true, quantity: true },
+  });
+  if (!product || product.quantity < quantity) return error("Số lượng sản phẩm không còn đủ.", 409);
+
+  const cart =
+    (await prisma.cart.findFirst({ where: { userId: id, status: "ACTIVE" }, select: { id: true } })) ||
+    (await prisma.cart.create({ data: { userId: id, status: "ACTIVE" }, select: { id: true } }));
+  const existingItem = await prisma.cartItem.findFirst({
+    where: { cartId: cart.id, productId: product.id, variantId: null },
+    select: { id: true },
+  });
+  const item = existingItem
+    ? await prisma.cartItem.update({
+        where: { id: existingItem.id },
+        data: { quantity },
+        select: { id: true },
+      })
+    : await prisma.cartItem.create({
+        data: { cartId: cart.id, productId: product.id, quantity },
+        select: { id: true },
+      });
+  const token = await signJwt({ sub: String(id), role: "CUSTOMER", intentType: "CART", cartItemIds: [item.id] }, 300);
   return NextResponse.json({ token, expiresIn: 300 });
 }
 

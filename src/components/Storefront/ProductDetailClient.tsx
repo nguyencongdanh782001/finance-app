@@ -410,14 +410,18 @@ export default function ProductDetailClient() {
   }, [stock, selectedVariantId]);
 
   const createBuyNowSession = async (
-    variantId: number,
+    variantId: number | null,
     nextQuantity: number,
   ) => {
     setBuyNowProcessing(true);
     const response = await fetch("/api/checkout/buy-now-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ variantId, quantity: nextQuantity }),
+      body: JSON.stringify({
+        productId: product?.id,
+        variantId: variantId || undefined,
+        quantity: nextQuantity,
+      }),
     });
     const data = await response.json().catch(() => ({}));
     setBuyNowProcessing(false);
@@ -446,7 +450,7 @@ export default function ProductDetailClient() {
       nextParams.delete("resume");
       router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
     };
-    if (!selectedVariant) {
+    if (variants.length > 0 && !selectedVariant) {
       setError("Phân loại sản phẩm không tồn tại. Vui lòng chọn lại biến thể.");
       clearResume();
       return;
@@ -463,7 +467,7 @@ export default function ProductDetailClient() {
       return;
     }
     resumeHandledRef.current = true;
-    void createBuyNowSession(selectedVariant.id, quantity);
+    void createBuyNowSession(selectedVariant?.id || null, quantity);
   }, [
     buyNowProcessing,
     isAuthenticated,
@@ -475,6 +479,7 @@ export default function ProductDetailClient() {
     searchParams,
     selectedVariant,
     stock,
+    variants,
     user?.role,
   ]);
 
@@ -600,8 +605,8 @@ export default function ProductDetailClient() {
     const productUrl = selectionUrl(true);
     if (!isAuthenticated || user?.role !== "CUSTOMER")
       return router.push(buildLoginUrl(productUrl));
-    if (!requireVariant() || !selectedVariant) return;
-    await createBuyNowSession(selectedVariant.id, quantity);
+    if (!requireVariant()) return;
+    await createBuyNowSession(selectedVariant?.id || null, quantity);
   };
   const categoryHref = product.category?.id
     ? `/products?categoryId=${product.category.id}`
