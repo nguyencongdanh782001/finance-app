@@ -74,6 +74,13 @@ type Preview = {
     distanceFee?: number;
   };
 };
+type PaymentSettings = {
+  onlinePaymentEnabled: boolean;
+  vietQrBankCode?: string;
+  vietQrAccountNumber?: string;
+  vietQrAccountName?: string;
+  vietQrTemplate?: string;
+};
 type AdministrativeProvince = {
   code: number;
   name: string;
@@ -172,7 +179,8 @@ export default function CheckoutClient() {
   const skipCouponPreviewRef = useRef(false);
   const previewAbortRef = useRef<AbortController | null>(null);
   const couponTriggerRef = useRef<HTMLButtonElement>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"COD" | "MOMO">("COD");
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "BANK_TRANSFER">("COD");
+  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>({ onlinePaymentEnabled: false });
   const [preview, setPreview] = useState<Preview | null>(null);
   const [loading, setLoading] = useState(true);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -239,9 +247,10 @@ export default function CheckoutClient() {
     }
     setError("");
     const load = async () => {
-      const [first, addressResponse] = await Promise.all([
+      const [first, addressResponse, paymentResponse] = await Promise.all([
         fetch(`/api/checkout/cart-intent?token=${encodeURIComponent(token)}`),
         fetch("/api/me/addresses"),
+        fetch("/api/payment-settings"),
       ]);
       let checkout;
       if (first.ok) checkout = await first.json();
@@ -274,6 +283,11 @@ export default function CheckoutClient() {
         setSelectedId(
           (list.find((item) => item.isDefaultShipping) || list[0])?.id || null,
         );
+      }
+      if (paymentResponse.ok) {
+        const paymentData = (await paymentResponse.json()) as PaymentSettings;
+        setPaymentSettings(paymentData);
+        if (!paymentData.onlinePaymentEnabled) setPaymentMethod("COD");
       }
     };
     void load()
@@ -411,6 +425,8 @@ export default function CheckoutClient() {
       return setError("Vui lòng chọn hoặc nhập địa chỉ giao hàng hợp lệ.");
     if (!preview?.shipping.available || previewLoading)
       return setError("Chưa thể tính phí giao hàng. Vui lòng thử lại.");
+    if (paymentMethod === "BANK_TRANSFER" && !paymentSettings.onlinePaymentEnabled)
+      return setError("Thanh toán VietQR hiện đang tạm đóng.");
     setBusy(true);
     const response = await fetch("/api/orders/checkout", {
       method: "POST",
@@ -689,34 +705,30 @@ export default function CheckoutClient() {
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     {(
                       [
-                        [
-                          "COD",
-                          "Thanh toán khi nhận hàng",
-                          "Thanh toán cho nhân viên giao hàng.",
-                        ],
-                        [
-                          "MOMO",
-                          "Ví MoMo",
-                          "Thanh toán trực tuyến sau khi đặt hàng.",
-                        ],
+                        ["COD", "Thanh toán khi nhận hàng", "Thanh toán cho nhân viên giao hàng."],
+                        ...(paymentSettings.onlinePaymentEnabled
+                          ? [["BANK_TRANSFER", "Thanh toán online bằng VietQR", "Quét mã VietQR sau khi đặt hàng."]]
+                          : []),
                       ] as const
                     ).map(([value, title, description]) => (
                       <button
                         type="button"
                         key={value}
-                        disabled={value === "MOMO"}
-                        onClick={() => setPaymentMethod(value)}
-                        className={`rounded-xl border p-4 text-left disabled:cursor-not-allowed disabled:opacity-50 ${paymentMethod === value ? "border-[#D96C8A] bg-[#FFF8FA]" : "border-[#EAE1E4]"}`}
+                        onClick={() => setPaymentMethod(value as "COD" | "BANK_TRANSFER")}
+                        className={`rounded-xl border p-4 text-left ${paymentMethod === value ? "border-[#D96C8A] bg-[#FFF8FA]" : "border-[#EAE1E4]"}`}
                       >
                         <strong className="block text-sm">{title}</strong>
                         <span className="mt-1 block text-xs text-[#6F6066]">
-                          {value === "MOMO"
-                            ? "Tạm thời chưa hỗ trợ thanh toán online."
-                            : description}
+                          {description}
                         </span>
                       </button>
                     ))}
                   </div>
+                  {paymentMethod === "BANK_TRANSFER" ? (
+                    <p className="mt-4 rounded-xl bg-[#FFF8FA] p-4 text-sm leading-6 text-[#6F6066]">
+                      Sau khi đặt hàng, bạn sẽ nhận được mã VietQR có nội dung chuyển khoản theo đúng mã đơn.
+                    </p>
+                  ) : null}
                 </section>
               </div>
               <aside className="h-fit rounded-2xl border border-[#EAE1E4] bg-white p-5 lg:sticky lg:top-24">

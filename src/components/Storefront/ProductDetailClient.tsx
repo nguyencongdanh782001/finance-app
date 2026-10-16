@@ -960,7 +960,7 @@ export default function ProductDetailClient() {
                 </p>
                 <p className="flex items-center gap-3">
                   <ShieldCheck className="size-4 text-[#D96C8A]" />
-                  Thanh toán COD hoặc MoMo
+                  Thanh toán an toàn theo cấu hình cửa hàng
                 </p>
                 <Link
                   href="/policies?policy=return-refund"

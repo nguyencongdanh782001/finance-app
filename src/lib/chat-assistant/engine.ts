@@ -165,7 +165,6 @@ function detectPolicyType(message: string): AssistantPolicy["type"] | null {
       "thanh toán",
       "chuyển khoản",
       "cod",
-      "momo",
       "ngân hàng",
     ])
   )

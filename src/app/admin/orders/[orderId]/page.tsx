@@ -123,7 +123,6 @@ const METHOD_LABELS: Record<PaymentMethodValue, string> = {
   COD: "COD",
   CARD: "Thẻ",
   BANK_TRANSFER: "Chuyển khoản",
-  MOMO: "MoMo",
   ZALOPAY: "ZaloPay",
   PAYPAL: "PayPal",
   STRIPE: "Stripe",

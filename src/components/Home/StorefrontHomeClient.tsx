@@ -487,7 +487,7 @@ export default function StorefrontHomeClient() {
             <Benefit
               icon={<ShieldCheck />}
               title="Thanh toán an toàn"
-              text="COD và MoMo theo cấu hình cửa hàng."
+              text="Thanh toán an toàn theo cấu hình cửa hàng."
             />
             <Benefit
               icon={<Check />}

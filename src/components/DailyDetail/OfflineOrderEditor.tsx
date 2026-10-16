@@ -54,7 +54,7 @@ type EditableOrderItem = ShopOrderLineOption & {
 };
 
 type OrderFormState = {
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "MOMO";
+  paymentMethod: "CASH" | "BANK_TRANSFER";
   paymentStatus: "PAID" | "UNPAID";
   items: EditableOrderItem[];
   couponCode: string;
@@ -890,7 +890,6 @@ function PaymentSection({
           options={[
             { value: "CASH", label: "Tiền mặt" },
             { value: "BANK_TRANSFER", label: "Chuyển khoản" },
-            { value: "MOMO", label: "MoMo" },
           ]}
           placeholder="Phương thức"
           onChange={(paymentMethod) =>
@@ -1384,8 +1383,7 @@ export function OfflineOrderEditor({
     if (mode === "edit" && order) {
       setForm({
         paymentMethod:
-          order.paymentMethod === "BANK_TRANSFER" ||
-          order.paymentMethod === "MOMO"
+          order.paymentMethod === "BANK_TRANSFER"
             ? order.paymentMethod
             : "CASH",
         paymentStatus: order.paymentStatus === "UNPAID" ? "UNPAID" : "PAID",

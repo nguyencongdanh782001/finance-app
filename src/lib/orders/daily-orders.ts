@@ -47,7 +47,6 @@ export type OfflineOrderPayload = {
 const OFFLINE_PAYMENT_METHODS: PaymentMethod[] = [
   PaymentMethod.CASH,
   PaymentMethod.BANK_TRANSFER,
-  PaymentMethod.MOMO,
 ];
 const ORDER_TRANSACTION_OPTIONS = {
   maxWait: 10_000,
@@ -1138,6 +1137,26 @@ export async function markOnlineOrderPaid(orderId: number, adminId: number) {
               payload: {
                 actorId: adminId,
                 previousStatus: latestPayment.status,
+                currentStatus: PaymentStatus.PAID,
+              },
+            },
+          },
+        },
+      });
+    } else {
+      await tx.payment.create({
+        data: {
+          orderId,
+          method: existingOrder.paymentMethod ?? PaymentMethod.BANK_TRANSFER,
+          status: PaymentStatus.PAID,
+          amount: existingOrder.totalAmount,
+          paidAt,
+          logs: {
+            create: {
+              type: PaymentLogType.MANUAL_UPDATE,
+              message: "Admin xác nhận đơn hàng đã thanh toán",
+              payload: {
+                actorId: adminId,
                 currentStatus: PaymentStatus.PAID,
               },
             },

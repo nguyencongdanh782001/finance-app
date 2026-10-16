@@ -6454,6 +6454,10 @@ export const StoreSettingScalarFieldEnum = {
   taxCode: 'taxCode',
   invoiceFooter: 'invoiceFooter',
   returnPolicy: 'returnPolicy',
+  onlinePaymentEnabled: 'onlinePaymentEnabled',
+  vietQrBankCode: 'vietQrBankCode',
+  vietQrAccountNumber: 'vietQrAccountNumber',
+  vietQrAccountName: 'vietQrAccountName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

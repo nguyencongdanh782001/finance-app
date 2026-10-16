@@ -110,7 +110,6 @@ const dateTime = (value: string | null) =>
 const paymentMethodLabels: Record<string, string> = {
   COD: "Thanh toán khi nhận hàng (COD)",
   CASH: "Tiền mặt",
-  MOMO: "MoMo",
   BANK_TRANSFER: "Chuyển khoản ngân hàng",
   CARD: "Thẻ ngân hàng",
   ZALOPAY: "ZaloPay",

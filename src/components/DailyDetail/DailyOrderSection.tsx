@@ -28,6 +28,7 @@ import { RESPONSE_CODES } from "@/constant/codes";
 import { financeAPI } from "@/endpoint/financeAPI";
 import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { toast } from "@/hook/use-toast";
+import { useDebouncedValue } from "@/hook/use-debounced-value";
 import type {
   DailyDetailResponse,
   DailyOrder,
@@ -140,7 +141,6 @@ const PAYMENT_STATUS_LABELS: Record<PaymentStatusValue, string> = {
 const PAYMENT_METHOD_LABELS: Partial<Record<PaymentMethodValue, string>> = {
   CASH: "Tiền mặt",
   BANK_TRANSFER: "Chuyển khoản",
-  MOMO: "MoMo",
   COD: "COD",
   CARD: "Thẻ",
   ZALOPAY: "ZaloPay",
@@ -928,9 +928,10 @@ export default function DailyOrderSection({
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
   const productRequestId = useRef(0);
+  const orderRequestId = useRef(0);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search.trim(), 300);
   const [activeTab, setActiveTab] = useState<OrderTabValue>("OFFLINE");
   const [status, setStatus] = useState<OrderStatusValue | FilterValue>("ALL");
   const [paymentStatus, setPaymentStatus] = useState<
@@ -963,6 +964,8 @@ export default function DailyOrderSection({
         return;
       }
 
+      const requestId = ++orderRequestId.current;
+
       if (showLoading) {
         setIsLoading(true);
       }
@@ -976,18 +979,24 @@ export default function DailyOrderSection({
       });
 
       if (res.code === RESPONSE_CODES.success && res.data) {
-        setOrders(res.data);
+        if (requestId === orderRequestId.current) {
+          setOrders(res.data);
+        }
       } else {
-        toast({
-          title:
-            (res.data as { message?: string } | undefined)?.message ||
-            "Không tải được danh sách đơn hàng",
-          className: "bg-red-1 text-white text-sm font-medium",
-          duration: 3000,
-        });
+        if (requestId === orderRequestId.current) {
+          toast({
+            title:
+              (res.data as { message?: string } | undefined)?.message ||
+              "Không tải được danh sách đơn hàng",
+            className: "bg-red-1 text-white text-sm font-medium",
+            duration: 3000,
+          });
+        }
       }
 
-      setIsLoading(false);
+      if (requestId === orderRequestId.current) {
+        setIsLoading(false);
+      }
     },
     [
       activeTab,
@@ -999,12 +1008,6 @@ export default function DailyOrderSection({
       status,
     ],
   );
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => setDebouncedSearch(search), 300);
-
-    return () => window.clearTimeout(timeout);
-  }, [search]);
 
   useEffect(() => {
     void fetchOrders();
@@ -1169,7 +1172,6 @@ export default function DailyOrderSection({
 
   const resetFilters = () => {
     setSearch("");
-    setDebouncedSearch("");
     setStatus("ALL");
     setPaymentStatus("ALL");
     setPaymentMethod("ALL");

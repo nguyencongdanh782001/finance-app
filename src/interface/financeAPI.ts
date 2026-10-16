@@ -233,7 +233,6 @@ export type PaymentMethodValue =
   | "COD"
   | "CARD"
   | "BANK_TRANSFER"
-  | "MOMO"
   | "ZALOPAY"
   | "PAYPAL"
   | "STRIPE";
@@ -326,7 +325,7 @@ export interface DailyOrderListResponse {
 }
 
 export interface OfflineOrderPayload {
-  paymentMethod: "CASH" | "BANK_TRANSFER" | "MOMO";
+  paymentMethod: "CASH" | "BANK_TRANSFER";
   paymentStatus?: "UNPAID" | "PAID";
   orderedAt?: string;
   idempotencyKey?: string;
