@@ -9,7 +9,7 @@ export type DiscountOrderItem = {
 };
 
 export type DiscountValidationContext = {
-  paymentMethod?: "COD" | "MOMO";
+  paymentMethod?: "COD" | "BANK_TRANSFER";
 };
 
 export const normalizeDiscountCode = (value: string) =>

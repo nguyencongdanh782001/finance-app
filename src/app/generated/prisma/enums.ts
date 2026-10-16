@@ -202,7 +202,6 @@ export const PaymentMethod = {
   COD: 'COD',
   CARD: 'CARD',
   BANK_TRANSFER: 'BANK_TRANSFER',
-  MOMO: 'MOMO',
   ZALOPAY: 'ZALOPAY',
   PAYPAL: 'PAYPAL',
   STRIPE: 'STRIPE'

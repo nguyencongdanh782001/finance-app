@@ -149,7 +149,6 @@ enum PaymentMethod {
   COD
   CARD
   BANK_TRANSFER
-  MOMO
   ZALOPAY
   PAYPAL
   STRIPE
@@ -1460,6 +1459,10 @@ model StoreSetting {
   taxCode       String?
   invoiceFooter String?
   returnPolicy  String?
+  onlinePaymentEnabled Boolean @default(false)
+  vietQrBankCode       String?
+  vietQrAccountNumber  String?
+  vietQrAccountName    String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

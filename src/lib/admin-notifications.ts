@@ -138,6 +138,63 @@ export async function createNewOnlineOrderNotification(
   return notification;
 }
 
+export async function createOnlinePaymentSuccessNotification(
+  tx: Prisma.TransactionClient,
+  order: { id: number; orderNumber: string },
+) {
+  const eventKey = `${AdminNotificationType.ONLINE_PAYMENT_SUCCESS}:${order.id}`;
+  const existing = await tx.adminNotification.findUnique({
+    where: { eventKey },
+    select: { id: true, eventKey: true },
+  });
+  if (existing) return existing;
+
+  const admins = await tx.user.findMany({
+    where: {
+      status: "ACTIVE",
+      role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    },
+    select: { id: true },
+  });
+  const createdAt = new Date();
+  const title = "Khách đã báo chuyển khoản";
+  const message = `Đơn ${order.orderNumber} đang chờ Admin kiểm tra giao dịch VietQR.`;
+  const notification = await tx.adminNotification.create({
+    data: {
+      type: AdminNotificationType.ONLINE_PAYMENT_SUCCESS,
+      title,
+      message,
+      orderId: order.id,
+      eventKey,
+      recipients: {
+        createMany: { data: admins.map((admin) => ({ userId: admin.id })) },
+      },
+    },
+    select: { id: true, createdAt: true },
+  });
+  const payload: AdminPushPayloadBase = {
+    eventId: eventKey,
+    type: AdminNotificationType.ONLINE_PAYMENT_SUCCESS,
+    notificationId: notification.id,
+    orderId: order.id,
+    orderCode: order.orderNumber,
+    title,
+    body: message,
+    url: `/admin/orders/${order.id}`,
+    createdAt: createdAt.toISOString(),
+  };
+  await tx.notificationOutbox.create({
+    data: {
+      eventKey,
+      eventType: AdminNotificationType.ONLINE_PAYMENT_SUCCESS,
+      aggregateId: order.id,
+      notificationId: notification.id,
+      payload: payload as unknown as Prisma.InputJsonValue,
+    },
+  });
+  return notification;
+}
+
 export async function dispatchNotificationOutbox(outboxId: string) {
   const claimed = await prisma.notificationOutbox.updateMany({
     where: {

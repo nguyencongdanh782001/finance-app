@@ -44,6 +44,10 @@ export type StoreSettingMinAggregateOutputType = {
   taxCode: string | null
   invoiceFooter: string | null
   returnPolicy: string | null
+  onlinePaymentEnabled: boolean | null
+  vietQrBankCode: string | null
+  vietQrAccountNumber: string | null
+  vietQrAccountName: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +62,10 @@ export type StoreSettingMaxAggregateOutputType = {
   taxCode: string | null
   invoiceFooter: string | null
   returnPolicy: string | null
+  onlinePaymentEnabled: boolean | null
+  vietQrBankCode: string | null
+  vietQrAccountNumber: string | null
+  vietQrAccountName: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -72,6 +80,10 @@ export type StoreSettingCountAggregateOutputType = {
   taxCode: number
   invoiceFooter: number
   returnPolicy: number
+  onlinePaymentEnabled: number
+  vietQrBankCode: number
+  vietQrAccountNumber: number
+  vietQrAccountName: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -96,6 +108,10 @@ export type StoreSettingMinAggregateInputType = {
   taxCode?: true
   invoiceFooter?: true
   returnPolicy?: true
+  onlinePaymentEnabled?: true
+  vietQrBankCode?: true
+  vietQrAccountNumber?: true
+  vietQrAccountName?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -110,6 +126,10 @@ export type StoreSettingMaxAggregateInputType = {
   taxCode?: true
   invoiceFooter?: true
   returnPolicy?: true
+  onlinePaymentEnabled?: true
+  vietQrBankCode?: true
+  vietQrAccountNumber?: true
+  vietQrAccountName?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +144,10 @@ export type StoreSettingCountAggregateInputType = {
   taxCode?: true
   invoiceFooter?: true
   returnPolicy?: true
+  onlinePaymentEnabled?: true
+  vietQrBankCode?: true
+  vietQrAccountNumber?: true
+  vietQrAccountName?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -225,6 +249,10 @@ export type StoreSettingGroupByOutputType = {
   taxCode: string | null
   invoiceFooter: string | null
   returnPolicy: string | null
+  onlinePaymentEnabled: boolean
+  vietQrBankCode: string | null
+  vietQrAccountNumber: string | null
+  vietQrAccountName: string | null
   createdAt: Date
   updatedAt: Date
   _count: StoreSettingCountAggregateOutputType | null
@@ -262,6 +290,10 @@ export type StoreSettingWhereInput = {
   taxCode?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
   invoiceFooter?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
   returnPolicy?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
+  onlinePaymentEnabled?: Prisma.BoolFilter<"StoreSetting"> | boolean
+  vietQrBankCode?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
+  vietQrAccountNumber?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
+  vietQrAccountName?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
   createdAt?: Prisma.DateTimeFilter<"StoreSetting"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StoreSetting"> | Date | string
 }
@@ -276,6 +308,10 @@ export type StoreSettingOrderByWithRelationInput = {
   taxCode?: Prisma.SortOrderInput | Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrderInput | Prisma.SortOrder
   returnPolicy?: Prisma.SortOrderInput | Prisma.SortOrder
+  onlinePaymentEnabled?: Prisma.SortOrder
+  vietQrBankCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  vietQrAccountNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  vietQrAccountName?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -293,6 +329,10 @@ export type StoreSettingWhereUniqueInput = Prisma.AtLeast<{
   taxCode?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
   invoiceFooter?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
   returnPolicy?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
+  onlinePaymentEnabled?: Prisma.BoolFilter<"StoreSetting"> | boolean
+  vietQrBankCode?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
+  vietQrAccountNumber?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
+  vietQrAccountName?: Prisma.StringNullableFilter<"StoreSetting"> | string | null
   createdAt?: Prisma.DateTimeFilter<"StoreSetting"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StoreSetting"> | Date | string
 }, "id">
@@ -307,6 +347,10 @@ export type StoreSettingOrderByWithAggregationInput = {
   taxCode?: Prisma.SortOrderInput | Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrderInput | Prisma.SortOrder
   returnPolicy?: Prisma.SortOrderInput | Prisma.SortOrder
+  onlinePaymentEnabled?: Prisma.SortOrder
+  vietQrBankCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  vietQrAccountNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  vietQrAccountName?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.StoreSettingCountOrderByAggregateInput
@@ -329,6 +373,10 @@ export type StoreSettingScalarWhereWithAggregatesInput = {
   taxCode?: Prisma.StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
   invoiceFooter?: Prisma.StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
   returnPolicy?: Prisma.StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
+  onlinePaymentEnabled?: Prisma.BoolWithAggregatesFilter<"StoreSetting"> | boolean
+  vietQrBankCode?: Prisma.StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
+  vietQrAccountNumber?: Prisma.StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
+  vietQrAccountName?: Prisma.StringNullableWithAggregatesFilter<"StoreSetting"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"StoreSetting"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"StoreSetting"> | Date | string
 }
@@ -343,6 +391,10 @@ export type StoreSettingCreateInput = {
   taxCode?: string | null
   invoiceFooter?: string | null
   returnPolicy?: string | null
+  onlinePaymentEnabled?: boolean
+  vietQrBankCode?: string | null
+  vietQrAccountNumber?: string | null
+  vietQrAccountName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -357,6 +409,10 @@ export type StoreSettingUncheckedCreateInput = {
   taxCode?: string | null
   invoiceFooter?: string | null
   returnPolicy?: string | null
+  onlinePaymentEnabled?: boolean
+  vietQrBankCode?: string | null
+  vietQrAccountNumber?: string | null
+  vietQrAccountName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -371,6 +427,10 @@ export type StoreSettingUpdateInput = {
   taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   returnPolicy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  onlinePaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vietQrBankCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -385,6 +445,10 @@ export type StoreSettingUncheckedUpdateInput = {
   taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   returnPolicy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  onlinePaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vietQrBankCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -399,6 +463,10 @@ export type StoreSettingCreateManyInput = {
   taxCode?: string | null
   invoiceFooter?: string | null
   returnPolicy?: string | null
+  onlinePaymentEnabled?: boolean
+  vietQrBankCode?: string | null
+  vietQrAccountNumber?: string | null
+  vietQrAccountName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -413,6 +481,10 @@ export type StoreSettingUpdateManyMutationInput = {
   taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   returnPolicy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  onlinePaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vietQrBankCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -427,6 +499,10 @@ export type StoreSettingUncheckedUpdateManyInput = {
   taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   returnPolicy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  onlinePaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vietQrBankCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vietQrAccountName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -441,6 +517,10 @@ export type StoreSettingCountOrderByAggregateInput = {
   taxCode?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
   returnPolicy?: Prisma.SortOrder
+  onlinePaymentEnabled?: Prisma.SortOrder
+  vietQrBankCode?: Prisma.SortOrder
+  vietQrAccountNumber?: Prisma.SortOrder
+  vietQrAccountName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -459,6 +539,10 @@ export type StoreSettingMaxOrderByAggregateInput = {
   taxCode?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
   returnPolicy?: Prisma.SortOrder
+  onlinePaymentEnabled?: Prisma.SortOrder
+  vietQrBankCode?: Prisma.SortOrder
+  vietQrAccountNumber?: Prisma.SortOrder
+  vietQrAccountName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -473,6 +557,10 @@ export type StoreSettingMinOrderByAggregateInput = {
   taxCode?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
   returnPolicy?: Prisma.SortOrder
+  onlinePaymentEnabled?: Prisma.SortOrder
+  vietQrBankCode?: Prisma.SortOrder
+  vietQrAccountNumber?: Prisma.SortOrder
+  vietQrAccountName?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -493,6 +581,10 @@ export type StoreSettingSelect<ExtArgs extends runtime.Types.Extensions.Internal
   taxCode?: boolean
   invoiceFooter?: boolean
   returnPolicy?: boolean
+  onlinePaymentEnabled?: boolean
+  vietQrBankCode?: boolean
+  vietQrAccountNumber?: boolean
+  vietQrAccountName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["storeSetting"]>
@@ -507,6 +599,10 @@ export type StoreSettingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   taxCode?: boolean
   invoiceFooter?: boolean
   returnPolicy?: boolean
+  onlinePaymentEnabled?: boolean
+  vietQrBankCode?: boolean
+  vietQrAccountNumber?: boolean
+  vietQrAccountName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["storeSetting"]>
@@ -521,6 +617,10 @@ export type StoreSettingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   taxCode?: boolean
   invoiceFooter?: boolean
   returnPolicy?: boolean
+  onlinePaymentEnabled?: boolean
+  vietQrBankCode?: boolean
+  vietQrAccountNumber?: boolean
+  vietQrAccountName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["storeSetting"]>
@@ -535,11 +635,15 @@ export type StoreSettingSelectScalar = {
   taxCode?: boolean
   invoiceFooter?: boolean
   returnPolicy?: boolean
+  onlinePaymentEnabled?: boolean
+  vietQrBankCode?: boolean
+  vietQrAccountNumber?: boolean
+  vietQrAccountName?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type StoreSettingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "storeName" | "phone" | "email" | "address" | "logoUrl" | "taxCode" | "invoiceFooter" | "returnPolicy" | "createdAt" | "updatedAt", ExtArgs["result"]["storeSetting"]>
+export type StoreSettingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "storeName" | "phone" | "email" | "address" | "logoUrl" | "taxCode" | "invoiceFooter" | "returnPolicy" | "onlinePaymentEnabled" | "vietQrBankCode" | "vietQrAccountNumber" | "vietQrAccountName" | "createdAt" | "updatedAt", ExtArgs["result"]["storeSetting"]>
 
 export type $StoreSettingPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "StoreSetting"
@@ -554,6 +658,10 @@ export type $StoreSettingPayload<ExtArgs extends runtime.Types.Extensions.Intern
     taxCode: string | null
     invoiceFooter: string | null
     returnPolicy: string | null
+    onlinePaymentEnabled: boolean
+    vietQrBankCode: string | null
+    vietQrAccountNumber: string | null
+    vietQrAccountName: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["storeSetting"]>
@@ -988,6 +1096,10 @@ export interface StoreSettingFieldRefs {
   readonly taxCode: Prisma.FieldRef<"StoreSetting", 'String'>
   readonly invoiceFooter: Prisma.FieldRef<"StoreSetting", 'String'>
   readonly returnPolicy: Prisma.FieldRef<"StoreSetting", 'String'>
+  readonly onlinePaymentEnabled: Prisma.FieldRef<"StoreSetting", 'Boolean'>
+  readonly vietQrBankCode: Prisma.FieldRef<"StoreSetting", 'String'>
+  readonly vietQrAccountNumber: Prisma.FieldRef<"StoreSetting", 'String'>
+  readonly vietQrAccountName: Prisma.FieldRef<"StoreSetting", 'String'>
   readonly createdAt: Prisma.FieldRef<"StoreSetting", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"StoreSetting", 'DateTime'>
 }

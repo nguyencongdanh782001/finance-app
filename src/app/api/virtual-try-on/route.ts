@@ -11,6 +11,8 @@ const MAX_PERSON_IMAGE_BYTES = 8 * 1024 * 1024;
 const MAX_PRODUCT_IMAGE_BYTES = 8 * 1024 * 1024;
 const REQUEST_TIMEOUT_MS = 110_000;
 
+type GarmentCategory = "upper_body" | "lower_body" | "dresses";
+
 type RateBucket = { count: number; resetAt: number };
 type JsonObject = Record<string, unknown>;
 
@@ -51,6 +53,44 @@ const getVtonClient = () => {
     });
   }
   return clientPromise;
+};
+
+const normalizeSearchText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("vi");
+
+const inferGarmentCategory = (
+  title: string,
+  categoryNames: string[],
+): GarmentCategory => {
+  // "Quần áo" is a broad parent category and must not classify every
+  // product below it as lower-body clothing.
+  const text = normalizeSearchText([title, ...categoryNames].join(" ")).replace(
+    /\bquan ao\b/g,
+    " ",
+  );
+
+  if (
+    /\b(dam|vay lien|vay maxi|vay du tiec|jumpsuit|romper)\b/.test(text)
+  ) {
+    return "dresses";
+  }
+  if (
+    /\b(quan|chan vay|vay ngan|vay midi|vay xep ly|jean|short|culottes)\b/.test(
+      text,
+    )
+  ) {
+    return "lower_body";
+  }
+  return "upper_body";
+};
+
+const garmentCategoryLabel: Record<GarmentCategory, string> = {
+  upper_body: "áo",
+  lower_body: "quần hoặc chân váy",
+  dresses: "đầm hoặc váy liền",
 };
 
 const isObject = (value: unknown): value is JsonObject =>
@@ -132,6 +172,12 @@ export async function POST(request: Request) {
       id: true,
       title: true,
       imageUrl: true,
+      category: {
+        select: {
+          name: true,
+          parent: { select: { name: true } },
+        },
+      },
       images: {
         where: { variantId: null },
         orderBy: [{ isPrimary: "desc" }, { position: "asc" }],
@@ -146,6 +192,24 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { message: "Sản phẩm này chưa có ảnh để thử đồ." },
       { status: 404 },
+    );
+  }
+
+  const garmentCategory = inferGarmentCategory(product.title, [
+    product.category.name,
+    product.category.parent?.name || "",
+  ]);
+  const categoryAwareVton = process.env.VTON_CATEGORY_MODE === "true";
+
+  if (garmentCategory !== "upper_body" && !categoryAwareVton) {
+    return NextResponse.json(
+      {
+        message:
+          `Sản phẩm này thuộc nhóm ${garmentCategoryLabel[garmentCategory]}. ` +
+          "Backend AI hiện tại mới hỗ trợ áo; hãy cấu hình VTON_CATEGORY_MODE=true với Space đa danh mục để thử sản phẩm này.",
+        garmentCategory,
+      },
+      { status: 422 },
     );
   }
 
@@ -196,7 +260,7 @@ export async function POST(request: Request) {
     const prediction = await Promise.race([
       (async () => {
         const client = await getVtonClient();
-        return client.predict("/tryon", [
+        const inputs: unknown[] = [
           {
             background: personImage,
             layers: [],
@@ -208,7 +272,12 @@ export async function POST(request: Request) {
           false,
           30,
           42,
-        ]);
+        ];
+        // Category-aware Spaces expose one additional input after the seed.
+        // The stock yisol/IDM-VTON Space does not expose it and hard-codes
+        // upper_body in its preprocessing mask.
+        if (categoryAwareVton) inputs.push(garmentCategory);
+        return client.predict("/tryon", inputs);
       })(),
       new Promise<never>((_, reject) => {
         predictionTimeoutId = setTimeout(
@@ -255,7 +324,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       imageUrl: persistedImageUrl,
-      product: { id: product.id, title: product.title },
+      product: { id: product.id, title: product.title, garmentCategory },
     });
   } catch (error) {
     if (isTimeoutError(error)) {

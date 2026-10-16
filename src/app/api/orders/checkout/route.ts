@@ -14,6 +14,7 @@ import {
   getCustomerOrderPushPayload,
   sendCustomerPushBestEffort,
 } from "@/lib/customer-notifications";
+import { getVietQrConfig } from "@/lib/vietqr";
 
 const fail = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -69,7 +70,15 @@ export async function POST(request: Request) {
     destinationLatitude = Number(savedAddress.latitude);
     destinationLongitude = Number(savedAddress.longitude);
   }
-  const paymentMethod = body.paymentMethod === "MOMO" ? "MOMO" : "COD";
+  const requestedOnlinePayment = body.paymentMethod === "BANK_TRANSFER";
+  const paymentSettings = await getVietQrConfig();
+  if (
+    requestedOnlinePayment &&
+    !paymentSettings.enabled
+  ) {
+    return fail("Thanh toán VietQR hiện đang tạm đóng.", 422);
+  }
+  const paymentMethod = requestedOnlinePayment ? "BANK_TRANSFER" : "COD";
   const couponCode = String(body.couponCode || "").trim();
   const note =
     String(body.note || "")
@@ -320,7 +329,23 @@ export async function POST(request: Request) {
                 },
               },
               paymentMethod,
-              paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
+              paymentStatus: paymentMethod === "BANK_TRANSFER" ? "PENDING" : "UNPAID",
+              payments:
+                paymentMethod === "BANK_TRANSFER"
+                  ? {
+                      create: {
+                        method: "BANK_TRANSFER",
+                        status: "PENDING",
+                        amount: payable,
+                        logs: {
+                          create: {
+                            type: "CREATED",
+                            message: "Tạo yêu cầu thanh toán VietQR",
+                          },
+                        },
+                      },
+                    }
+                  : undefined,
               discountRedemption: discount
                 ? {
                     create: {
@@ -550,7 +575,23 @@ export async function POST(request: Request) {
               },
             },
             paymentMethod,
-            paymentStatus: paymentMethod === "MOMO" ? "PENDING" : "UNPAID",
+            paymentStatus: paymentMethod === "BANK_TRANSFER" ? "PENDING" : "UNPAID",
+            payments:
+              paymentMethod === "BANK_TRANSFER"
+                ? {
+                    create: {
+                      method: "BANK_TRANSFER",
+                      status: "PENDING",
+                      amount: payable,
+                      logs: {
+                        create: {
+                          type: "CREATED",
+                          message: "Tạo yêu cầu thanh toán VietQR",
+                        },
+                      },
+                    },
+                  }
+                : undefined,
             discountRedemption: discount
               ? {
                   create: {

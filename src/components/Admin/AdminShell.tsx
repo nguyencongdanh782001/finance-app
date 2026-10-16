@@ -145,6 +145,13 @@ const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     icon: Settings,
     matches: (pathname) => pathname.startsWith("/admin/settings/notifications"),
   },
+  {
+    href: "/admin/settings/payment",
+    label: "Cài đặt thanh toán",
+    group: "Hệ thống",
+    icon: Settings,
+    matches: (pathname) => pathname.startsWith("/admin/settings/payment"),
+  },
 ];
 
 const getPageTitle = (pathname: string) => {
@@ -156,6 +163,7 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/notifications")) return "Thông báo";
   if (pathname.startsWith("/admin/settings/notifications"))
     return "Cài đặt thông báo";
+  if (pathname.startsWith("/admin/settings/payment")) return "Cài đặt thanh toán";
   if (pathname === "/admin/orders") return "Đơn hàng online";
   if (pathname.startsWith("/admin/orders/")) return "Chi tiết đơn hàng";
   if (pathname.startsWith("/admin/products")) return "Sản phẩm";

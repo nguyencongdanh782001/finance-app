@@ -79,7 +79,7 @@ export default function StorefrontFooter() {
             <ShieldCheck className="size-5 shrink-0 text-[#D96C8A]" />
             <div>
               <p className="text-sm font-bold">Thanh toán an toàn</p>
-              <p className="mt-1 text-xs text-[#6F6066]">COD và MoMo</p>
+              <p className="mt-1 text-xs text-[#6F6066]">Theo cấu hình cửa hàng</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -152,7 +152,7 @@ export default function StorefrontFooter() {
           <span>
             © {new Date().getFullYear()} Quỳnh Nhi Store. Bảo lưu mọi quyền.
           </span>
-          <span>Thanh toán: COD · MoMo</span>
+          <span>Thanh toán an toàn theo cấu hình cửa hàng</span>
         </div>
       </div>
     </footer>

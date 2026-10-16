@@ -140,7 +140,6 @@ const PAYMENT_STATUS_LABELS: Record<PaymentStatusValue, string> = {
 const PAYMENT_METHOD_LABELS: Partial<Record<PaymentMethodValue, string>> = {
   CASH: "Tiền mặt",
   BANK_TRANSFER: "Chuyển khoản",
-  MOMO: "MoMo",
   COD: "COD",
   CARD: "Thẻ",
   ZALOPAY: "ZaloPay",
