@@ -1,4 +1,5 @@
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
+import OnlinePaymentPanel from "@/components/Storefront/OnlinePaymentPanel";
 import { ArrowRight, Check, PackageCheck, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
@@ -94,6 +95,7 @@ export default async function CheckoutSuccess({
               </div>
             </aside>
           </div>
+          {order ? <OnlinePaymentPanel orderNumber={order} /> : null}
         </div>
       </main>
     </StorefrontShell>
