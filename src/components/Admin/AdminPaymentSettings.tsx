@@ -202,17 +202,23 @@ export default function AdminPaymentSettings() {
                 </span>
               </span>
             </span>
-            <input
-              type="checkbox"
-              checked={settings.onlinePaymentEnabled}
-              onChange={(event) =>
-                setSettings((current) => ({
-                  ...current,
-                  onlinePaymentEnabled: event.target.checked,
-                }))
-              }
-              className="size-5 shrink-0 accent-(--admin-primary)"
-            />
+            <span className="relative shrink-0">
+              <input
+                type="checkbox"
+                checked={settings.onlinePaymentEnabled}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    onlinePaymentEnabled: event.target.checked,
+                  }))
+                }
+                className="peer sr-only"
+              />
+              <span
+                aria-hidden="true"
+                className="relative block h-6 w-11 rounded-full bg-slate-200 transition-colors after:absolute after:left-1 after:top-1 after:size-4 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:bg-(--admin-primary) peer-checked:after:translate-x-5 peer-focus-visible:ring-4 peer-focus-visible:ring-(--admin-primary)/20"
+              />
+            </span>
           </label>
           <div>
             <div className="mb-4 flex items-center gap-2">

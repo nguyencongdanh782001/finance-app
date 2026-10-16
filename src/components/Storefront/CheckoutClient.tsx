@@ -250,7 +250,7 @@ export default function CheckoutClient() {
       const [first, addressResponse, paymentResponse] = await Promise.all([
         fetch(`/api/checkout/cart-intent?token=${encodeURIComponent(token)}`),
         fetch("/api/me/addresses"),
-        fetch("/api/payment-settings"),
+        fetch("/api/payment-settings", { cache: "no-store" }),
       ]);
       let checkout;
       if (first.ok) checkout = await first.json();
