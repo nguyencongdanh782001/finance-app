@@ -1,5 +1,4 @@
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
-import OnlinePaymentPanel from "@/components/Storefront/OnlinePaymentPanel";
 import { ArrowRight, Check, PackageCheck, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
@@ -8,7 +7,7 @@ export default async function CheckoutSuccess({
 }: {
   searchParams: Promise<{ order?: string; payment?: string; amount?: string }>;
 }) {
-  const { order, payment, amount } = await searchParams;
+  const { order } = await searchParams;
 
   return (
     <StorefrontShell>
@@ -95,13 +94,6 @@ export default async function CheckoutSuccess({
               </div>
             </aside>
           </div>
-          {order ? (
-            <OnlinePaymentPanel
-              orderNumber={order}
-              paymentMethod={payment}
-              totalAmount={Number(amount || 0)}
-            />
-          ) : null}
         </div>
       </main>
     </StorefrontShell>

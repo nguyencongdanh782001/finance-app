@@ -25,6 +25,7 @@ import {
   ORDER_STATUS_CONFIG,
   getCustomerTimelineStep,
 } from "@/lib/orders/order-status";
+import OnlinePaymentPanel from "@/components/Storefront/OnlinePaymentPanel";
 
 type OrderItem = {
   id: number;
@@ -362,6 +363,11 @@ export default function CustomerOrderDetail({ orderId }: { orderId: number }) {
               {order.payments.find((payment) => payment.transactionId)?.transactionId ? <div className="flex items-start justify-between gap-4"><dt className="text-[#6F6066]">Mã giao dịch</dt><dd className="max-w-[190px] break-all text-right font-semibold">{order.payments.find((payment) => payment.transactionId)?.transactionId}</dd></div> : null}
             </dl>
           </InfoCard>
+          <OnlinePaymentPanel
+            orderNumber={order.orderNumber}
+            paymentMethod={order.paymentMethod || undefined}
+            totalAmount={order.totalAmount}
+          />
           <InfoCard title="Tóm tắt đơn hàng" icon={<PackageCheck className="size-4" />}>
             <dl className="grid gap-3 text-sm">
               <div className="flex justify-between gap-4"><dt className="text-[#6F6066]">Tạm tính</dt><dd className="font-semibold">{money(order.subtotal)}</dd></div>
