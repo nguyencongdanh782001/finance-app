@@ -426,7 +426,7 @@ export default function CheckoutClient() {
     if (!preview?.shipping.available || previewLoading)
       return setError("Chưa thể tính phí giao hàng. Vui lòng thử lại.");
     if (paymentMethod === "BANK_TRANSFER" && !paymentSettings.onlinePaymentEnabled)
-      return setError("Thanh toán VietQR hiện đang tạm đóng.");
+      return setError("Thanh toán VNPAY hiện đang tạm đóng.");
     setBusy(true);
     const response = await fetch("/api/orders/checkout", {
       method: "POST",
@@ -444,6 +444,8 @@ export default function CheckoutClient() {
     setBusy(false);
     if (!response.ok)
       return setError(data.message || "Không thể tạo đơn hàng.");
+    if (paymentMethod === "BANK_TRANSFER" && data.paymentUrl)
+      return window.location.assign(data.paymentUrl);
     window.location.assign(
       `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&payment=${encodeURIComponent(paymentMethod)}&amount=${encodeURIComponent(String(data.totalAmount ?? 0))}`,
     );
@@ -707,7 +709,7 @@ export default function CheckoutClient() {
                       [
                         ["COD", "Thanh toán khi nhận hàng", "Thanh toán cho nhân viên giao hàng."],
                         ...(paymentSettings.onlinePaymentEnabled
-                          ? [["BANK_TRANSFER", "Thanh toán online bằng VietQR", "Quét mã VietQR sau khi đặt hàng."]]
+                          ? [["BANK_TRANSFER", "Thanh toán online bằng VNPAY", "Bạn sẽ được chuyển sang cổng VNPAY sau khi đặt hàng."]]
                           : []),
                       ] as const
                     ).map(([value, title, description]) => (
@@ -726,7 +728,7 @@ export default function CheckoutClient() {
                   </div>
                   {paymentMethod === "BANK_TRANSFER" ? (
                     <p className="mt-4 rounded-xl bg-[#FFF8FA] p-4 text-sm leading-6 text-[#6F6066]">
-                      Sau khi đặt hàng, bạn sẽ nhận được mã VietQR có nội dung chuyển khoản theo đúng mã đơn.
+                      Sau khi đặt hàng, bạn sẽ được chuyển sang VNPAY để thanh toán an toàn.
                     </p>
                   ) : null}
                 </section>

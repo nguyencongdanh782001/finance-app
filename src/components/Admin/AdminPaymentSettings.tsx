@@ -129,12 +129,8 @@ export default function AdminPaymentSettings() {
     toast({ title: "Đã lưu cài đặt thanh toán", variant: "success" });
   };
 
-  const accountReady = Boolean(
-    settings.vietQrBankCode &&
-    settings.vietQrAccountNumber &&
-    settings.vietQrAccountName,
-  );
-  const enabled = settings.onlinePaymentEnabled && accountReady;
+  const accountReady = true;
+  const enabled = settings.onlinePaymentEnabled;
   const transferContent = "THANH TOAN DON HANG QN-XXXX-XXX";
   const qrPreview = useMemo(() => {
     if (!settings.vietQrBankCode || !settings.vietQrAccountNumber) return "";
@@ -172,11 +168,11 @@ export default function AdminPaymentSettings() {
             </span>
             <div className="min-w-0">
               <h2 className="text-base font-semibold text-(--admin-text)">
-                Thanh toán VietQR
+                Thanh toán VNPAY
               </h2>
               <p className="mt-1 text-sm leading-5 text-(--admin-text-secondary)">
-                Khách quét mã để chuyển khoản thủ công. Admin kiểm tra giao dịch
-                và xác nhận đơn.
+                Khách được chuyển sang cổng VNPAY. VNPAY gửi kết quả giao dịch
+                về website để tự động xác nhận đơn.
               </p>
             </div>
             <span
@@ -198,7 +194,7 @@ export default function AdminPaymentSettings() {
                   Cho phép thanh toán online
                 </strong>
                 <span className="mt-1 block text-xs leading-5 text-(--admin-text-secondary)">
-                  Hiển thị lựa chọn VietQR cho khách hàng tại bước thanh toán.
+                  Hiển thị lựa chọn VNPAY cho khách hàng tại bước thanh toán.
                 </span>
               </span>
             </span>
@@ -297,11 +293,11 @@ export default function AdminPaymentSettings() {
               <div className="flex items-center gap-2">
                 <QrCode className="size-4 text-(--admin-primary)" />
                 <h2 className="text-sm font-semibold text-(--admin-text)">
-                  Xem trước mã VietQR
+                  Cấu hình VNPAY
                 </h2>
               </div>
               <p className="mt-1 text-xs text-(--admin-text-secondary)">
-                Mã thực tế sẽ được tạo theo từng đơn hàng.
+                Thông tin merchant VNPAY được cấu hình bằng biến môi trường trên server.
               </p>
             </div>
             <div className="p-5">
@@ -309,7 +305,7 @@ export default function AdminPaymentSettings() {
                 <div className="rounded-xl border border-(--admin-border) bg-(--admin-background) p-4">
                   <img
                     src={qrPreview}
-                    alt="Xem trước mã VietQR"
+                    alt="Cấu hình VNPAY"
                     className="mx-auto size-44 rounded-lg bg-white object-contain"
                   />
                   <p className="mt-3 text-center text-xs font-medium text-(--admin-text-secondary)">
@@ -323,7 +319,7 @@ export default function AdminPaymentSettings() {
                     Chưa có dữ liệu QR
                   </p>
                   <p className="mt-1 text-xs leading-5 text-(--admin-text-muted)">
-                    Nhập mã ngân hàng và số tài khoản để xem trước.
+                    Hãy khai báo VNPAY_TMN_CODE và VNPAY_HASH_SECRET rồi bật thanh toán online.
                   </p>
                 </div>
               )}
@@ -341,15 +337,15 @@ export default function AdminPaymentSettings() {
                 <ol className="mt-3 space-y-3 text-xs leading-5 text-(--admin-text-secondary)">
                   <li className="flex gap-2">
                     <span className="font-bold text-(--admin-primary)">01</span>
-                    Khách chọn VietQR và quét mã.
+                    Khách chọn VNPAY tại checkout.
                   </li>
                   <li className="flex gap-2">
                     <span className="font-bold text-(--admin-primary)">02</span>
-                    Khách chuyển đúng số tiền, đúng nội dung.
+                    VNPAY xử lý giao dịch và trả kết quả về website.
                   </li>
                   <li className="flex gap-2">
                     <span className="font-bold text-(--admin-primary)">03</span>
-                    Admin kiểm tra app ngân hàng rồi xác nhận đơn.
+                    Backend xác thực chữ ký IPN rồi tự động xác nhận đơn.
                   </li>
                 </ol>
                 <button
