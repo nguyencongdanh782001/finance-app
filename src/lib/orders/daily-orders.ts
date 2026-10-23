@@ -1013,6 +1013,97 @@ export async function cancelOfflineOrder(
   return serializeOrder(result.order);
 }
 
+export async function expireUnpaidOnlineOrders(
+  olderThanMinutes = 30,
+) {
+  const cutoff = new Date(Date.now() - olderThanMinutes * 60 * 1000);
+  const candidates = await prisma.order.findMany({
+    where: {
+      source: OrderSource.ONLINE,
+      status: OrderStatus.PENDING,
+      paymentMethod: PaymentMethod.BANK_TRANSFER,
+      paymentStatus: { in: [PaymentStatus.PENDING, PaymentStatus.UNPAID] },
+      placedAt: { lt: cutoff },
+    },
+    include: { items: true },
+    take: 100,
+    orderBy: { placedAt: "asc" },
+  });
+
+  let expired = 0;
+  for (const candidate of candidates) {
+    const result = await prisma.$transaction(async (tx) => {
+      const order = await tx.order.findUnique({
+        where: { id: candidate.id },
+        include: { items: true },
+      });
+      if (
+        !order ||
+        order.status !== OrderStatus.PENDING ||
+        order.paymentMethod !== PaymentMethod.BANK_TRANSFER ||
+        order.paymentStatus !== PaymentStatus.PENDING &&
+        order.paymentStatus !== PaymentStatus.UNPAID
+      )
+        return null;
+
+      await applyInventoryDelta(tx, getExistingOrderQuantityMap(order), [], order.id);
+      if (order.couponId) {
+        await tx.coupon.updateMany({
+          where: { id: order.couponId, usedCount: { gt: 0 } },
+          data: { usedCount: { decrement: 1 } },
+        });
+        await tx.discountRedemption.deleteMany({ where: { orderId: order.id } });
+      }
+      await tx.payment.updateMany({
+        where: { orderId: order.id, method: PaymentMethod.BANK_TRANSFER },
+        data: { status: PaymentStatus.CANCELLED },
+      });
+      const updated = await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: OrderStatus.CANCELLED,
+          paymentStatus: PaymentStatus.CANCELLED,
+          cancelledAt: new Date(),
+          statusHistories: {
+            create: {
+              previousStatus: order.status,
+              currentStatus: OrderStatus.CANCELLED,
+              note: "Tự động hủy do chưa nhận được thanh toán trong thời hạn.",
+            },
+          },
+        },
+        select: { id: true, userId: true, orderNumber: true },
+      });
+      const notification = await createCustomerOrderNotification(tx, {
+        userId: updated.userId,
+        orderId: updated.id,
+        orderNumber: updated.orderNumber,
+        status: OrderStatus.CANCELLED,
+        eventId: `ORDER_STATUS:${updated.id}:${OrderStatus.CANCELLED}`,
+      });
+      return { ...updated, notificationId: notification?.id || null };
+    }, ORDER_TRANSACTION_OPTIONS);
+
+    if (result) {
+      expired += 1;
+      if (result.userId && result.notificationId) {
+        void sendCustomerPushBestEffort(
+          result.userId,
+          getCustomerOrderPushPayload({
+            notificationId: result.notificationId,
+            orderId: result.id,
+            orderNumber: result.orderNumber,
+            status: OrderStatus.CANCELLED,
+            eventId: `ORDER_STATUS:${result.id}:${OrderStatus.CANCELLED}`,
+            createdAt: new Date(),
+          }),
+        );
+      }
+    }
+  }
+  return { expired };
+}
+
 export async function updateOnlineOrderStatus(
   orderId: number,
   nextStatus: OrderStatus,

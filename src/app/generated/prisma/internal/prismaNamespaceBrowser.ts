@@ -190,6 +190,7 @@ export const CategoryScalarFieldEnum = {
   icon: 'icon',
   position: 'position',
   isActive: 'isActive',
+  tryOnCategory: 'tryOnCategory',
   seoImage: 'seoImage',
   metaRobots: 'metaRobots',
   slug: 'slug',

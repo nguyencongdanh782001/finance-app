@@ -45,6 +45,7 @@ const DEFAULT_FORM_VALUES: CategoryFormValues = {
   name: "",
   color: "#9EE9C8",
   icon: "shirt",
+  tryOnCategory: "NOT_SUPPORTED",
 };
 
 const CATEGORY_SORT_OPTIONS = [
@@ -63,6 +64,7 @@ const mapCategoryFromApi = (category: CategoryApiItem): CategoryItemData => ({
   name: category.name,
   color: category.color,
   icon: category.icon,
+  tryOnCategory: category.tryOnCategory || "NOT_SUPPORTED",
   productCount: category._count?.products ?? 0,
 });
 
@@ -163,6 +165,7 @@ export default function CategoryContainer() {
       name: values.name,
       color: values.color,
       icon: values.icon,
+      tryOnCategory: values.tryOnCategory,
     };
 
     if (formMode === "create") {
@@ -257,6 +260,7 @@ export default function CategoryContainer() {
           name: selectedCategory.name,
           color: selectedCategory.color,
           icon: selectedCategory.icon,
+          tryOnCategory: selectedCategory.tryOnCategory || "NOT_SUPPORTED",
         }
       : DEFAULT_FORM_VALUES;
 

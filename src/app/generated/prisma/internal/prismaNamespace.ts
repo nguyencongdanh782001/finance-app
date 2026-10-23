@@ -5743,6 +5743,7 @@ export const CategoryScalarFieldEnum = {
   icon: 'icon',
   position: 'position',
   isActive: 'isActive',
+  tryOnCategory: 'tryOnCategory',
   seoImage: 'seoImage',
   metaRobots: 'metaRobots',
   slug: 'slug',
@@ -7089,6 +7090,20 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'TryOnCategory'
+ */
+export type EnumTryOnCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TryOnCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'TryOnCategory[]'
+ */
+export type ListEnumTryOnCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TryOnCategory[]'>
     
 
 

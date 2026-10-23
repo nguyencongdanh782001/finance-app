@@ -154,6 +154,15 @@ enum PaymentMethod {
   STRIPE
 }
 
+enum TryOnCategory {
+  UPPER_BODY
+  LOWER_BODY
+  DRESSES
+  SHOES
+  ACCESSORIES
+  NOT_SUPPORTED
+}
+
 enum ShippingStatus {
   PENDING
   READY_TO_SHIP
@@ -381,6 +390,7 @@ model Category {
   icon       String
   position   Int     @default(0)
   isActive   Boolean @default(true)
+  tryOnCategory TryOnCategory @default(NOT_SUPPORTED)
   seoImage   String?
   metaRobots String?
 
@@ -403,6 +413,7 @@ model Category {
   @@index([parentId])
   @@index([position])
   @@index([isActive])
+  @@index([tryOnCategory])
   @@map("category")
 }
 

@@ -2,6 +2,13 @@ import { CategoryApiItem } from "@/interface/category";
 import type { RichTextDocument } from "@/lib/rich-text";
 
 export type ProductStatus = "PUBLIC" | "PRIVATE" | "DISCONTINUED";
+export type TryOnCategory =
+  | "UPPER_BODY"
+  | "LOWER_BODY"
+  | "DRESSES"
+  | "SHOES"
+  | "ACCESSORIES"
+  | "NOT_SUPPORTED";
 
 export interface ProductApiItem {
   id: number;

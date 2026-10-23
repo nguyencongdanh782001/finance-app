@@ -15,11 +15,22 @@ import {
   CATEGORY_ICON_OPTIONS,
 } from "@/components/Category/constants";
 import AutoCompleteField from "@/components/common/CustomFields/AutoCompleteField";
+import CustomSelect from "@/components/common/CustomFields/CustomSelect";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CategoryFormValues, CategoryIconOption } from "@/interface/category";
+import type { TryOnCategory } from "@/interface/product";
 import { CustomInputProps, CustomTextAreaProps } from "@/interface/Field";
 import { Check, Loader2, PlusCircle, Trash2 } from "lucide-react";
+
+const TRY_ON_CATEGORY_OPTIONS: Array<{ value: TryOnCategory; label: string }> = [
+  { value: "UPPER_BODY", label: "Áo / áo khoác" },
+  { value: "LOWER_BODY", label: "Quần / chân váy" },
+  { value: "DRESSES", label: "Đầm / váy liền" },
+  { value: "SHOES", label: "Dép / giày" },
+  { value: "ACCESSORIES", label: "Phụ kiện" },
+  { value: "NOT_SUPPORTED", label: "Không hỗ trợ thử đồ" },
+];
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -28,6 +39,7 @@ const validationSchema = Yup.object({
     .max(40, "Tên danh mục tối đa 40 ký tự"),
   color: Yup.string().required("Vui lòng chọn màu"),
   icon: Yup.string().required("Vui lòng chọn biểu tượng"),
+  tryOnCategory: Yup.string().required("Vui lòng chọn loại thử đồ"),
 });
 
 interface CategoryFormDialogProps {
@@ -127,6 +139,22 @@ export default function CategoryFormDialog({
                   name="name"
                   placeholder="Ví dụ: Đồ gia dụng, Phụ kiện..."
                   className="h-10 rounded-lg! border-slate-200 bg-white px-3 text-sm text-slate-700"
+                />
+              </div>
+
+              <div className="space-y-2.5">
+                <Label className="text-11px font-bold text-slate-500">
+                  Loại sản phẩm cho AI thử đồ
+                </Label>
+                <AutoCompleteField
+                  component={CustomSelect}
+                  version="field"
+                  name="tryOnCategory"
+                  fullWidth
+                  className="h-10! w-full! rounded-lg!"
+                  inputClassName="h-10! w-full! rounded-lg! border-slate-200! bg-white! px-3! text-sm!"
+                  placeholder="Chọn loại sản phẩm"
+                  optionValue={TRY_ON_CATEGORY_OPTIONS}
                 />
               </div>
 

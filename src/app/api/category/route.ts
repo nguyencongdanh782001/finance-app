@@ -97,6 +97,7 @@ export async function POST(req: Request) {
       slug,
       parentId,
       description: body.description || null,
+      tryOnCategory: body.tryOnCategory || "NOT_SUPPORTED",
     },
   });
 

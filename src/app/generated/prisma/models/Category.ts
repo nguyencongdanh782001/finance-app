@@ -45,6 +45,7 @@ export type CategoryMinAggregateOutputType = {
   icon: string | null
   position: number | null
   isActive: boolean | null
+  tryOnCategory: $Enums.TryOnCategory | null
   seoImage: string | null
   metaRobots: string | null
   slug: string | null
@@ -61,6 +62,7 @@ export type CategoryMaxAggregateOutputType = {
   icon: string | null
   position: number | null
   isActive: boolean | null
+  tryOnCategory: $Enums.TryOnCategory | null
   seoImage: string | null
   metaRobots: string | null
   slug: string | null
@@ -77,6 +79,7 @@ export type CategoryCountAggregateOutputType = {
   icon: number
   position: number
   isActive: number
+  tryOnCategory: number
   seoImage: number
   metaRobots: number
   slug: number
@@ -107,6 +110,7 @@ export type CategoryMinAggregateInputType = {
   icon?: true
   position?: true
   isActive?: true
+  tryOnCategory?: true
   seoImage?: true
   metaRobots?: true
   slug?: true
@@ -123,6 +127,7 @@ export type CategoryMaxAggregateInputType = {
   icon?: true
   position?: true
   isActive?: true
+  tryOnCategory?: true
   seoImage?: true
   metaRobots?: true
   slug?: true
@@ -139,6 +144,7 @@ export type CategoryCountAggregateInputType = {
   icon?: true
   position?: true
   isActive?: true
+  tryOnCategory?: true
   seoImage?: true
   metaRobots?: true
   slug?: true
@@ -242,6 +248,7 @@ export type CategoryGroupByOutputType = {
   icon: string
   position: number
   isActive: boolean
+  tryOnCategory: $Enums.TryOnCategory
   seoImage: string | null
   metaRobots: string | null
   slug: string | null
@@ -281,6 +288,7 @@ export type CategoryWhereInput = {
   icon?: Prisma.StringFilter<"Category"> | string
   position?: Prisma.IntFilter<"Category"> | number
   isActive?: Prisma.BoolFilter<"Category"> | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFilter<"Category"> | $Enums.TryOnCategory
   seoImage?: Prisma.StringNullableFilter<"Category"> | string | null
   metaRobots?: Prisma.StringNullableFilter<"Category"> | string | null
   slug?: Prisma.StringNullableFilter<"Category"> | string | null
@@ -303,6 +311,7 @@ export type CategoryOrderByWithRelationInput = {
   icon?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  tryOnCategory?: Prisma.SortOrder
   seoImage?: Prisma.SortOrderInput | Prisma.SortOrder
   metaRobots?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -329,6 +338,7 @@ export type CategoryWhereUniqueInput = Prisma.AtLeast<{
   icon?: Prisma.StringFilter<"Category"> | string
   position?: Prisma.IntFilter<"Category"> | number
   isActive?: Prisma.BoolFilter<"Category"> | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFilter<"Category"> | $Enums.TryOnCategory
   seoImage?: Prisma.StringNullableFilter<"Category"> | string | null
   metaRobots?: Prisma.StringNullableFilter<"Category"> | string | null
   description?: Prisma.StringNullableFilter<"Category"> | string | null
@@ -350,6 +360,7 @@ export type CategoryOrderByWithAggregationInput = {
   icon?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  tryOnCategory?: Prisma.SortOrder
   seoImage?: Prisma.SortOrderInput | Prisma.SortOrder
   metaRobots?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -374,6 +385,7 @@ export type CategoryScalarWhereWithAggregatesInput = {
   icon?: Prisma.StringWithAggregatesFilter<"Category"> | string
   position?: Prisma.IntWithAggregatesFilter<"Category"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"Category"> | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryWithAggregatesFilter<"Category"> | $Enums.TryOnCategory
   seoImage?: Prisma.StringNullableWithAggregatesFilter<"Category"> | string | null
   metaRobots?: Prisma.StringNullableWithAggregatesFilter<"Category"> | string | null
   slug?: Prisma.StringNullableWithAggregatesFilter<"Category"> | string | null
@@ -389,6 +401,7 @@ export type CategoryCreateInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -410,6 +423,7 @@ export type CategoryUncheckedCreateInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -430,6 +444,7 @@ export type CategoryUpdateInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -451,6 +466,7 @@ export type CategoryUncheckedUpdateInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -472,6 +488,7 @@ export type CategoryCreateManyInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -487,6 +504,7 @@ export type CategoryUpdateManyMutationInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -502,6 +520,7 @@ export type CategoryUncheckedUpdateManyInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -533,6 +552,7 @@ export type CategoryCountOrderByAggregateInput = {
   icon?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  tryOnCategory?: Prisma.SortOrder
   seoImage?: Prisma.SortOrder
   metaRobots?: Prisma.SortOrder
   slug?: Prisma.SortOrder
@@ -555,6 +575,7 @@ export type CategoryMaxOrderByAggregateInput = {
   icon?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  tryOnCategory?: Prisma.SortOrder
   seoImage?: Prisma.SortOrder
   metaRobots?: Prisma.SortOrder
   slug?: Prisma.SortOrder
@@ -571,6 +592,7 @@ export type CategoryMinOrderByAggregateInput = {
   icon?: Prisma.SortOrder
   position?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  tryOnCategory?: Prisma.SortOrder
   seoImage?: Prisma.SortOrder
   metaRobots?: Prisma.SortOrder
   slug?: Prisma.SortOrder
@@ -613,6 +635,10 @@ export type CategoryUncheckedCreateNestedManyWithoutParentInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type EnumTryOnCategoryFieldUpdateOperationsInput = {
+  set?: $Enums.TryOnCategory
 }
 
 export type CategoryUpdateOneWithoutChildrenNestedInput = {
@@ -725,6 +751,7 @@ export type CategoryCreateWithoutChildrenInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -745,6 +772,7 @@ export type CategoryUncheckedCreateWithoutChildrenInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -769,6 +797,7 @@ export type CategoryCreateWithoutParentInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -789,6 +818,7 @@ export type CategoryUncheckedCreateWithoutParentInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -829,6 +859,7 @@ export type CategoryUpdateWithoutChildrenInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -849,6 +880,7 @@ export type CategoryUncheckedUpdateWithoutChildrenInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -888,6 +920,7 @@ export type CategoryScalarWhereInput = {
   icon?: Prisma.StringFilter<"Category"> | string
   position?: Prisma.IntFilter<"Category"> | number
   isActive?: Prisma.BoolFilter<"Category"> | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFilter<"Category"> | $Enums.TryOnCategory
   seoImage?: Prisma.StringNullableFilter<"Category"> | string | null
   metaRobots?: Prisma.StringNullableFilter<"Category"> | string | null
   slug?: Prisma.StringNullableFilter<"Category"> | string | null
@@ -903,6 +936,7 @@ export type CategoryCreateWithoutProductsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -923,6 +957,7 @@ export type CategoryUncheckedCreateWithoutProductsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -958,6 +993,7 @@ export type CategoryUpdateWithoutProductsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -978,6 +1014,7 @@ export type CategoryUncheckedUpdateWithoutProductsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -997,6 +1034,7 @@ export type CategoryCreateWithoutCouponProductsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -1017,6 +1055,7 @@ export type CategoryUncheckedCreateWithoutCouponProductsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -1052,6 +1091,7 @@ export type CategoryUpdateWithoutCouponProductsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1072,6 +1112,7 @@ export type CategoryUncheckedUpdateWithoutCouponProductsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1091,6 +1132,7 @@ export type CategoryCreateWithoutExcludedCouponsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -1111,6 +1153,7 @@ export type CategoryUncheckedCreateWithoutExcludedCouponsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -1146,6 +1189,7 @@ export type CategoryUpdateWithoutExcludedCouponsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1166,6 +1210,7 @@ export type CategoryUncheckedUpdateWithoutExcludedCouponsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1185,6 +1230,7 @@ export type CategoryCreateWithoutProductViewEventsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -1205,6 +1251,7 @@ export type CategoryUncheckedCreateWithoutProductViewEventsInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -1240,6 +1287,7 @@ export type CategoryUpdateWithoutProductViewEventsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1260,6 +1308,7 @@ export type CategoryUncheckedUpdateWithoutProductViewEventsInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1280,6 +1329,7 @@ export type CategoryCreateManyParentInput = {
   icon: string
   position?: number
   isActive?: boolean
+  tryOnCategory?: $Enums.TryOnCategory
   seoImage?: string | null
   metaRobots?: string | null
   slug?: string | null
@@ -1294,6 +1344,7 @@ export type CategoryUpdateWithoutParentInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1314,6 +1365,7 @@ export type CategoryUncheckedUpdateWithoutParentInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1334,6 +1386,7 @@ export type CategoryUncheckedUpdateManyWithoutParentInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tryOnCategory?: Prisma.EnumTryOnCategoryFieldUpdateOperationsInput | $Enums.TryOnCategory
   seoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaRobots?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1416,6 +1469,7 @@ export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   icon?: boolean
   position?: boolean
   isActive?: boolean
+  tryOnCategory?: boolean
   seoImage?: boolean
   metaRobots?: boolean
   slug?: boolean
@@ -1439,6 +1493,7 @@ export type CategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   icon?: boolean
   position?: boolean
   isActive?: boolean
+  tryOnCategory?: boolean
   seoImage?: boolean
   metaRobots?: boolean
   slug?: boolean
@@ -1456,6 +1511,7 @@ export type CategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   icon?: boolean
   position?: boolean
   isActive?: boolean
+  tryOnCategory?: boolean
   seoImage?: boolean
   metaRobots?: boolean
   slug?: boolean
@@ -1473,6 +1529,7 @@ export type CategorySelectScalar = {
   icon?: boolean
   position?: boolean
   isActive?: boolean
+  tryOnCategory?: boolean
   seoImage?: boolean
   metaRobots?: boolean
   slug?: boolean
@@ -1482,7 +1539,7 @@ export type CategorySelectScalar = {
   updatedAt?: boolean
 }
 
-export type CategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "color" | "icon" | "position" | "isActive" | "seoImage" | "metaRobots" | "slug" | "description" | "parentId" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
+export type CategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "color" | "icon" | "position" | "isActive" | "tryOnCategory" | "seoImage" | "metaRobots" | "slug" | "description" | "parentId" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
 export type CategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parent?: boolean | Prisma.Category$parentArgs<ExtArgs>
   children?: boolean | Prisma.Category$childrenArgs<ExtArgs>
@@ -1519,6 +1576,7 @@ export type $CategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     icon: string
     position: number
     isActive: boolean
+    tryOnCategory: $Enums.TryOnCategory
     seoImage: string | null
     metaRobots: string | null
     /**
@@ -1964,6 +2022,7 @@ export interface CategoryFieldRefs {
   readonly icon: Prisma.FieldRef<"Category", 'String'>
   readonly position: Prisma.FieldRef<"Category", 'Int'>
   readonly isActive: Prisma.FieldRef<"Category", 'Boolean'>
+  readonly tryOnCategory: Prisma.FieldRef<"Category", 'TryOnCategory'>
   readonly seoImage: Prisma.FieldRef<"Category", 'String'>
   readonly metaRobots: Prisma.FieldRef<"Category", 'String'>
   readonly slug: Prisma.FieldRef<"Category", 'String'>

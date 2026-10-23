@@ -129,6 +129,7 @@ export async function PUT(
       slug,
       parentId,
       description: body.description || null,
+      tryOnCategory: body.tryOnCategory || "NOT_SUPPORTED",
     },
   });
 
