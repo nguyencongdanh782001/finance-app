@@ -80,7 +80,8 @@ erDiagram
     Category { int id PK
         int parentId FK
         string name
-        string slug }
+        string slug
+        TryOnCategory tryOnCategory }
     Brand { int id PK
         string name UK
         string slug UK }
@@ -205,7 +206,12 @@ erDiagram
         int orderId FK
         PaymentMethod method
         PaymentStatus status
-        Decimal amount }
+        Decimal amount
+        string transactionId
+        string providerTransactionId
+        Json providerPayload
+        Json webhookPayload
+        DateTime paidAt }
     PaymentLog { int id PK
         int paymentId FK
         PaymentLogType type }
@@ -237,6 +243,12 @@ erDiagram
     Order ||--o{ Payment : payments
     Payment ||--o{ PaymentLog : logs
     Order ||--o{ Shipping : ships
+
+    VNPAY_Gateway { string vnp_TxnRef
+        string vnp_ResponseCode
+        string vnp_TransactionNo
+        string vnp_SecureHash }
+    VNPAY_Gateway ||--o{ Payment : confirms
 
     %% ==================== INVENTORY ====================
     Warehouse { int id PK
@@ -416,12 +428,31 @@ erDiagram
     Product ||--o{ HomepageSectionProduct : featured
 ```
 
+## Luồng thanh toán VNPAY
+
+```mermaid
+flowchart LR
+    C[Khách hàng] -->|Đặt đơn BANK_TRANSFER| O[Order]
+    O --> P[Payment PENDING]
+    P -->|Tạo URL thanh toán| V[VNPAY Gateway]
+    V -->|Return URL| R[Trang kết quả checkout]
+    V -->|IPN + vnp_SecureHash| I[/api/payments/vnpay/ipn]
+    I -->|Kiểm tra chữ ký, mã đơn, số tiền| P
+    I -->|Hợp lệ| S[Payment PAID]
+    S --> O2[Order PAID / isPaid = true]
+    O2 --> N[Admin notification + outbox]
+```
+
+VNPAY là hệ thống bên ngoài, không phải bảng trong database. Bảng `Payment` lưu mã giao dịch và payload để đối soát; chỉ IPN hợp lệ mới được phép cập nhật `Order` sang `PAID`.
+
 ## Các thay đổi đáng chú ý so với ERD cũ
 
 - Bổ sung StoreSetting và ShippingConfiguration cho cài đặt thanh toán/giao hàng.
-- Bổ sung Payment → PaymentLog, phục vụ trạng thái thanh toán online thủ công.
+- Bổ sung Payment → PaymentLog, lưu trạng thái và lịch sử xác nhận thanh toán VNPAY.
+- Bổ sung liên kết logic VNPAY Gateway → Payment qua `vnp_TxnRef`, `vnp_TransactionNo` và chữ ký `vnp_SecureHash`.
+- Category lưu `tryOnCategory`, để backend thử đồ dùng loại do admin chọn thay vì đoán từ tên sản phẩm.
 - Bổ sung OrderInvoice, OrderInvoiceItem, InvoiceSequence và user phát hành/hủy hóa đơn.
-- Bổ sung AdminNotification, AdminNotificationRecipient, NotificationOutbox cho luồng báo admin khi khách xác nhận đã chuyển khoản.
+- Bổ sung AdminNotification, AdminNotificationRecipient, NotificationOutbox cho luồng báo admin khi VNPAY xác nhận thanh toán.
 - Cập nhật Order với người tạo/cập nhật, địa chỉ giao hàng/thanh toán, paidAmount, remainingAmount, paymentStatus và isPaid.
 - Cập nhật DailySoldProductContribution để liên kết thêm daily sale, sản phẩm và biến thể.
 - Bổ sung audit, product import/draft, favorite adjustment, analytics và CMS đang có trong Prisma.
