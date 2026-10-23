@@ -25,7 +25,7 @@ import {
   ProductStatus,
 } from "@/interface/product";
 import { ProductImageDraft } from "@/components/Product/ProductFormDialog";
-import { FileSpreadsheet, Plus } from "lucide-react";
+import { FileSpreadsheet, LoaderCircle, Plus } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -118,6 +118,7 @@ export default function ProductContainer() {
     (searchParams.get("sort") as ProductSortValue) || DEFAULT_SORT,
   );
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -150,6 +151,7 @@ export default function ProductContainer() {
     const requestId = ++productRequestId.current;
     const showLoading = options?.showLoading ?? false;
     const append = options?.append ?? false;
+    const refresh = !showLoading && !append;
 
     if (showLoading) {
       setIsInitialLoading(true);
@@ -157,6 +159,10 @@ export default function ProductContainer() {
 
     if (append) {
       setIsFetchingMore(true);
+    }
+
+    if (refresh) {
+      setIsRefreshing(true);
     }
 
     const res = await financeAPI.getProductList({
@@ -198,6 +204,10 @@ export default function ProductContainer() {
 
     if (append) {
       setIsFetchingMore(false);
+    }
+
+    if (refresh) {
+      setIsRefreshing(false);
     }
   };
 
@@ -735,6 +745,7 @@ export default function ProductContainer() {
               value={search}
               onChange={setSearch}
               placeholder="Tìm tên, SKU, mã vạch, màu hoặc size"
+              loading={isRefreshing || debouncedSearch !== search.trim()}
             />
           }
           filters={
@@ -783,6 +794,13 @@ export default function ProductContainer() {
             {products.length} sản phẩm
           </p>
         </div>
+
+        {isRefreshing || debouncedSearch !== search.trim() ? (
+          <div className="mt-3 flex items-center gap-2 text-xs font-medium text-(--admin-primary)">
+            <LoaderCircle className="size-3.5 animate-spin" />
+            Đang tìm sản phẩm...
+          </div>
+        ) : null}
 
         <div className="mt-4">
           {isInitialLoading ? (

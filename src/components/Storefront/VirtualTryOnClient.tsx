@@ -22,7 +22,26 @@ type Product = {
   title: string;
   imageUrl: string;
   sellPrice: number | string;
+  category?: { name?: string | null; tryOnCategory?: string | null } | null;
 };
+
+type GarmentCategory = "all" | "UPPER_BODY" | "LOWER_BODY" | "DRESSES" | "SHOES" | "ACCESSORIES" | "NOT_SUPPORTED" | "UNKNOWN";
+
+const garmentCategoryLabels: Record<GarmentCategory, string> = {
+  all: "Tất cả",
+  UPPER_BODY: "Áo",
+  LOWER_BODY: "Quần · chân váy",
+  DRESSES: "Đầm · váy liền",
+  SHOES: "Dép · giày",
+  ACCESSORIES: "Phụ kiện",
+  NOT_SUPPORTED: "Không hỗ trợ",
+  UNKNOWN: "Chưa phân loại",
+};
+
+const getGarmentCategory = (product: Product): Exclude<GarmentCategory, "all"> =>
+  product.category?.tryOnCategory && product.category.tryOnCategory in garmentCategoryLabels
+    ? (product.category.tryOnCategory as Exclude<GarmentCategory, "all">)
+    : "UNKNOWN";
 
 const formatPrice = (value: number | string) =>
   `${new Intl.NumberFormat("vi-VN").format(Number(value))}đ`;
@@ -41,6 +60,7 @@ export default function VirtualTryOnClient() {
   const resultRef = useRef<HTMLElement>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [productQuery, setProductQuery] = useState("");
+  const [garmentFilter, setGarmentFilter] = useState<GarmentCategory>("all");
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
   );
@@ -97,11 +117,12 @@ export default function VirtualTryOnClient() {
 
   const visibleProducts = useMemo(() => {
     const query = productQuery.trim().toLocaleLowerCase("vi");
-    if (!query) return products;
-    return products.filter((product) =>
-      product.title.toLocaleLowerCase("vi").includes(query),
-    );
-  }, [productQuery, products]);
+    return products.filter((product) => {
+      const matchesQuery = !query || product.title.toLocaleLowerCase("vi").includes(query);
+      const matchesCategory = garmentFilter === "all" || getGarmentCategory(product) === garmentFilter;
+      return matchesQuery && matchesCategory;
+    });
+  }, [garmentFilter, productQuery, products]);
 
   const chooseFile = (nextFile: File | undefined) => {
     if (!nextFile) return;
@@ -121,6 +142,10 @@ export default function VirtualTryOnClient() {
   const generate = async () => {
     if (!file || !selectedProductId) {
       setError("Hãy tải ảnh và chọn một sản phẩm trước nhé.");
+      return;
+    }
+    if (selectedProduct && getGarmentCategory(selectedProduct) !== "UPPER_BODY") {
+      setError("Sản phẩm này chưa được AI hiện tại hỗ trợ. Hãy chọn sản phẩm loại Áo.");
       return;
     }
     setGenerating(true);
@@ -266,6 +291,22 @@ export default function VirtualTryOnClient() {
               />
             </label>
 
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1" aria-label="Lọc loại quần áo">
+              {(Object.keys(garmentCategoryLabels) as GarmentCategory[]).map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => setGarmentFilter(category)}
+                  className={`whitespace-nowrap rounded-full px-3 py-2 text-xs font-extrabold transition ${garmentFilter === category ? "bg-[#D96C8A] text-white" : "bg-[#FFF3F6] text-[#A43E5F] hover:bg-[#FCE0E8]"}`}
+                >
+                  {garmentCategoryLabels[category]}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-[11px] leading-5 text-[#A39197]">
+              Hiện AI đang hỗ trợ thử <strong>Áo</strong>. Loại sản phẩm lấy từ phân loại admin, không tự đoán theo tên.
+            </p>
+
             {loadingProducts ? (
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
                 {[1, 2, 3, 4, 5, 6].map((item) => (
@@ -303,6 +344,9 @@ export default function VirtualTryOnClient() {
                             <Check className="size-4" />
                           </span>
                         )}
+                        <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-1 text-[10px] font-extrabold text-[#A43E5F] shadow-sm">
+                          {garmentCategoryLabels[getGarmentCategory(product)]}
+                        </span>
                       </div>
                       <div className="p-2.5">
                         <p className="line-clamp-2 min-h-8 text-xs font-bold leading-4 text-[#3B2D32]">

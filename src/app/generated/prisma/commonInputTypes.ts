@@ -169,6 +169,13 @@ export type BoolFilter<$PrismaModel = never> = {
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
 }
 
+export type EnumTryOnCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.TryOnCategory | Prisma.EnumTryOnCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTryOnCategoryFilter<$PrismaModel> | $Enums.TryOnCategory
+}
+
 export type IntNullableFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
@@ -186,6 +193,16 @@ export type BoolWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedBoolFilter<$PrismaModel>
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
+export type EnumTryOnCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TryOnCategory | Prisma.EnumTryOnCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTryOnCategoryWithAggregatesFilter<$PrismaModel> | $Enums.TryOnCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTryOnCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTryOnCategoryFilter<$PrismaModel>
 }
 
 export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -1223,12 +1240,29 @@ export type NestedBoolFilter<$PrismaModel = never> = {
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
 }
 
+export type NestedEnumTryOnCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.TryOnCategory | Prisma.EnumTryOnCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTryOnCategoryFilter<$PrismaModel> | $Enums.TryOnCategory
+}
+
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedBoolFilter<$PrismaModel>
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
+export type NestedEnumTryOnCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TryOnCategory | Prisma.EnumTryOnCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TryOnCategory[] | Prisma.ListEnumTryOnCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTryOnCategoryWithAggregatesFilter<$PrismaModel> | $Enums.TryOnCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTryOnCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTryOnCategoryFilter<$PrismaModel>
 }
 
 export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {

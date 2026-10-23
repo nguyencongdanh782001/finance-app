@@ -21,6 +21,15 @@ interface CategoryItemProps {
   onDelete: (category: CategoryItemData) => void;
 }
 
+const tryOnLabels = {
+  UPPER_BODY: "Áo",
+  LOWER_BODY: "Quần · chân váy",
+  DRESSES: "Đầm · váy liền",
+  SHOES: "Dép · giày",
+  ACCESSORIES: "Phụ kiện",
+  NOT_SUPPORTED: "Không hỗ trợ AI",
+} as const;
+
 export default function CategoryItem({
   category,
   onEdit,
@@ -50,6 +59,9 @@ export default function CategoryItem({
             <p className="mt-0.5 text-sm font-medium text-(--admin-text-secondary)">
               {category.productCount.toLocaleString("vi-VN")} sản phẩm
             </p>
+            <span className="mt-1 inline-flex rounded-full bg-(--admin-primary-soft) px-2 py-0.5 text-[10px] font-bold text-(--admin-primary)">
+              {tryOnLabels[category.tryOnCategory || "NOT_SUPPORTED"]}
+            </span>
           </div>
         </Link>
 

@@ -171,7 +171,7 @@ export const publicProductSelect = {
   categoryId: true,
   gender: true,
   category: {
-    select: { id: true, name: true, slug: true, color: true, icon: true },
+    select: { id: true, name: true, slug: true, color: true, icon: true, tryOnCategory: true },
   },
   images: {
     where: { variantId: null },

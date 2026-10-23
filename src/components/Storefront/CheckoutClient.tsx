@@ -445,7 +445,7 @@ export default function CheckoutClient() {
     if (!response.ok)
       return setError(data.message || "Không thể tạo đơn hàng.");
     window.location.assign(
-      `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&payment=${encodeURIComponent(paymentMethod)}`,
+      `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&payment=${encodeURIComponent(paymentMethod)}&amount=${encodeURIComponent(String(data.totalAmount ?? 0))}`,
     );
   };
   const subtotal = useMemo(

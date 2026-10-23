@@ -382,7 +382,13 @@ export async function POST(request: Request) {
                 })),
               },
             },
-            select: { id: true, orderNumber: true },
+            select: {
+              id: true,
+              orderNumber: true,
+              totalAmount: true,
+              paymentMethod: true,
+              paymentStatus: true,
+            },
           });
           for (const { item, price, cost } of lines)
             await tx.inventoryTransaction.create({
@@ -628,7 +634,13 @@ export async function POST(request: Request) {
               },
             },
           },
-          select: { id: true, orderNumber: true },
+          select: {
+            id: true,
+            orderNumber: true,
+            totalAmount: true,
+            paymentMethod: true,
+            paymentStatus: true,
+          },
         });
         await tx.inventoryTransaction.create({
           data: {

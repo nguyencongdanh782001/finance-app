@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import type { TryOnCategory } from "@/interface/product";
 
 export interface CategoryItemData {
   id: number;
@@ -6,6 +7,7 @@ export interface CategoryItemData {
   description?: string;
   color: string;
   icon: string;
+  tryOnCategory?: TryOnCategory;
   productCount: number;
 }
 
@@ -26,6 +28,7 @@ export interface CategoryFormValues {
   name: string;
   color: string;
   icon: string;
+  tryOnCategory: TryOnCategory;
 }
 
 export interface CategoryApiItem {
@@ -33,6 +36,7 @@ export interface CategoryApiItem {
   name: string;
   color: string;
   icon: string;
+  tryOnCategory?: TryOnCategory;
   _count?: {
     products: number;
   };
@@ -50,4 +54,5 @@ export interface CategoryPayload {
   slug?: string;
   parentId?: number | null;
   description?: string;
+  tryOnCategory?: TryOnCategory;
 }

@@ -210,6 +210,18 @@ export const PaymentMethod = {
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
 
 
+export const TryOnCategory = {
+  UPPER_BODY: 'UPPER_BODY',
+  LOWER_BODY: 'LOWER_BODY',
+  DRESSES: 'DRESSES',
+  SHOES: 'SHOES',
+  ACCESSORIES: 'ACCESSORIES',
+  NOT_SUPPORTED: 'NOT_SUPPORTED'
+} as const
+
+export type TryOnCategory = (typeof TryOnCategory)[keyof typeof TryOnCategory]
+
+
 export const ShippingStatus = {
   PENDING: 'PENDING',
   READY_TO_SHIP: 'READY_TO_SHIP',

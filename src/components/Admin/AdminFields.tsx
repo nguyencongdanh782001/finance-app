@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import type { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
-import { RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
+import { LoaderCircle, RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import { useState, type ComponentType, type ReactNode } from "react";
 
 type SelectOption = { value: string; label: string; disabled?: boolean };
@@ -89,14 +89,20 @@ export function AdminSearchInput({
   value,
   onChange,
   placeholder,
+  loading = false,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
+  loading?: boolean;
 }) {
   return (
     <div className="flex h-10 min-w-0 items-center gap-2 rounded-lg border border-(--admin-border) bg-(--admin-surface) px-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10">
-      <Search className="size-4 shrink-0 text-slate-400" />
+      {loading ? (
+        <LoaderCircle className="size-4 shrink-0 animate-spin text-(--admin-primary)" />
+      ) : (
+        <Search className="size-4 shrink-0 text-slate-400" />
+      )}
       <input
         data-slot="input"
         value={value}
