@@ -94,5 +94,3 @@ chính”, mở ứng dụng từ biểu tượng vừa cài, đăng nhập Admi
 cài PWA, bật thông báo tại cùng màn hình, sau đó dùng “Gửi thông báo thử”.
 
 Google OAuth (`NEXT_PUBLIC_GOOGLE_CLIENT_ID`) vẫn được giữ nguyên. Không cần bản đồ cho luồng giao hàng; nếu thêm bản đồ sau này phải dùng OSM/Leaflet và giữ attribution.
-
-test
