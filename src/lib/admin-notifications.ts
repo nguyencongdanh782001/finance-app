@@ -158,7 +158,7 @@ export async function createOnlinePaymentSuccessNotification(
   });
   const createdAt = new Date();
   const title = "Khách đã báo chuyển khoản";
-  const message = `Đơn ${order.orderNumber} đang chờ Admin kiểm tra giao dịch VietQR.`;
+  const message = `Đơn ${order.orderNumber} đang chờ VNPAY xác nhận thanh toán.`;
   const notification = await tx.adminNotification.create({
     data: {
       type: AdminNotificationType.ONLINE_PAYMENT_SUCCESS,

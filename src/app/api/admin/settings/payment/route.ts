@@ -1,6 +1,5 @@
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
-import { getVietQrConfig } from "@/lib/vietqr";
 
 const isAdmin = (request: Request) =>
   ["ADMIN", "SUPER_ADMIN"].includes(request.headers.get("x-user-role") || "");
@@ -18,12 +17,11 @@ export async function GET(request: Request) {
     where: { id: 1 },
     select: { onlinePaymentEnabled: true, vietQrBankCode: true, vietQrAccountNumber: true, vietQrAccountName: true },
   });
-  const envConfig = await getVietQrConfig();
   return NextResponse.json(dto(settings || {
     onlinePaymentEnabled: false,
-    vietQrBankCode: envConfig.config?.bankCode || null,
-    vietQrAccountNumber: envConfig.config?.accountNumber || null,
-    vietQrAccountName: envConfig.config?.accountName || null,
+    vietQrBankCode: null,
+    vietQrAccountNumber: null,
+    vietQrAccountName: null,
   }));
 }
 
@@ -34,12 +32,6 @@ export async function PUT(request: Request) {
   const bankCode = String(body.vietQrBankCode || "").trim().toUpperCase();
   const accountNumber = String(body.vietQrAccountNumber || "").trim();
   const accountName = String(body.vietQrAccountName || "").trim().toUpperCase();
-  if (enabled && (!bankCode || !accountNumber || !accountName)) {
-    return NextResponse.json(
-      { message: "Vui lòng nhập đầy đủ ngân hàng, số tài khoản và tên tài khoản VietQR." },
-      { status: 422 },
-    );
-  }
   const settings = await prisma.storeSetting.upsert({
     where: { id: 1 },
     create: { id: 1, onlinePaymentEnabled: enabled, vietQrBankCode: bankCode || null, vietQrAccountNumber: accountNumber || null, vietQrAccountName: accountName || null },

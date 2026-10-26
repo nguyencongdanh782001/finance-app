@@ -37,7 +37,8 @@ const CRON_API_PATHS = [
 const PUBLIC_POST_PATHS = [
   "/api/chat-assistant",
   "/api/virtual-try-on",
-  "/api/payments/sepay/webhook",
+  "/api/payments/vnpay/ipn",
+  "/api/payments/vnpay/return",
 ];
 const isCustomerFavoriteApi = (pathname: string) =>
   pathname === "/api/me/favorites" ||

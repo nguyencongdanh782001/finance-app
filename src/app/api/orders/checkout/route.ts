@@ -14,7 +14,7 @@ import {
   getCustomerOrderPushPayload,
   sendCustomerPushBestEffort,
 } from "@/lib/customer-notifications";
-import { getVietQrConfig } from "@/lib/vietqr";
+import { buildVnpayPaymentUrl, getVnpayConfig } from "@/lib/vnpay";
 
 const fail = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -71,12 +71,16 @@ export async function POST(request: Request) {
     destinationLongitude = Number(savedAddress.longitude);
   }
   const requestedOnlinePayment = body.paymentMethod === "BANK_TRANSFER";
-  const paymentSettings = await getVietQrConfig();
+  const paymentSettings = await prisma.storeSetting.findUnique({
+    where: { id: 1 },
+    select: { onlinePaymentEnabled: true },
+  });
+  const vnpayConfig = getVnpayConfig(new URL(request.url).origin);
   if (
     requestedOnlinePayment &&
-    !paymentSettings.enabled
+    (!paymentSettings?.onlinePaymentEnabled || !vnpayConfig)
   ) {
-    return fail("Thanh toán VietQR hiện đang tạm đóng.", 422);
+    return fail("Thanh toán VNPAY hiện đang tạm đóng hoặc chưa được cấu hình.", 422);
   }
   const paymentMethod = requestedOnlinePayment ? "BANK_TRANSFER" : "COD";
   const couponCode = String(body.couponCode || "").trim();
@@ -128,7 +132,13 @@ export async function POST(request: Request) {
       async (tx) => {
         const existing = await tx.order.findUnique({
           where: { idempotencyKey: token },
-          select: { id: true, orderNumber: true },
+          select: {
+            id: true,
+            orderNumber: true,
+            totalAmount: true,
+            paymentMethod: true,
+            paymentStatus: true,
+          },
         });
         if (existing) return { order: existing, eventKey: null };
         if (payload.intentType === "CART") {
@@ -340,7 +350,7 @@ export async function POST(request: Request) {
                         logs: {
                           create: {
                             type: "CREATED",
-                            message: "Tạo yêu cầu thanh toán VietQR",
+                            message: "Tạo yêu cầu thanh toán VNPAY",
                           },
                         },
                       },
@@ -592,7 +602,7 @@ export async function POST(request: Request) {
                       logs: {
                         create: {
                           type: "CREATED",
-                          message: "Tạo yêu cầu thanh toán VietQR",
+                          message: "Tạo yêu cầu thanh toán VNPAY",
                         },
                       },
                     },
@@ -695,7 +705,16 @@ export async function POST(request: Request) {
         }),
       );
     }
-    return NextResponse.json(result.order, { status: 201 });
+    const paymentUrl =
+      result.order.paymentMethod === "BANK_TRANSFER" && vnpayConfig
+        ? buildVnpayPaymentUrl({
+            config: vnpayConfig,
+            orderNumber: result.order.orderNumber,
+            amount: Number(result.order.totalAmount),
+            ipAddress: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
+          })
+        : null;
+    return NextResponse.json({ ...result.order, paymentUrl }, { status: 201 });
   } catch (cause) {
     return fail(
       cause instanceof Error ? cause.message : "Không thể tạo đơn hàng.",

@@ -37,7 +37,7 @@ export async function POST(
       });
       if (!order) throw new Error("Không tìm thấy đơn hàng.");
       if (order.paymentMethod !== "BANK_TRANSFER") {
-        throw new Error("Đơn hàng này không dùng thanh toán VietQR.");
+        throw new Error("Đơn hàng này không dùng thanh toán VNPAY.");
       }
       if (["CANCELLED", "REFUNDED"].includes(order.status)) {
         throw new Error("Đơn hàng không còn hiệu lực để xác nhận thanh toán.");
@@ -58,7 +58,7 @@ export async function POST(
           logs: {
             create: {
               type: "MANUAL_UPDATE",
-              message: "Khách hàng báo đã chuyển khoản VietQR",
+              message: "Khách hàng yêu cầu kiểm tra thanh toán VNPAY",
               payload: { userId },
             },
           },
