@@ -60,7 +60,7 @@ export function buildVnpayPaymentUrl({
   ipAddress?: string;
 }) {
   const now = new Date();
-  const createDate = new Intl.DateTimeFormat("en-GB", {
+  const dateParts = new Intl.DateTimeFormat("en-US", {
     timeZone: "Asia/Ho_Chi_Minh",
     year: "numeric",
     month: "2-digit",
@@ -69,9 +69,18 @@ export function buildVnpayPaymentUrl({
     minute: "2-digit",
     second: "2-digit",
     hour12: false,
-  })
-    .format(now)
-    .replace(/[/, :]/g, "");
+  }).formatToParts(now).reduce<Record<string, string>>((parts, part) => {
+    if (part.type !== "literal") parts[part.type] = part.value;
+    return parts;
+  }, {});
+  const createDate = [
+    dateParts.year,
+    dateParts.month,
+    dateParts.day,
+    dateParts.hour,
+    dateParts.minute,
+    dateParts.second,
+  ].join("");
   const params: Record<string, string> = {
     vnp_Version: config.version,
     vnp_Command: config.command,
