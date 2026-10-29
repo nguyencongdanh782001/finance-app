@@ -14,7 +14,7 @@ import {
   getCustomerOrderPushPayload,
   sendCustomerPushBestEffort,
 } from "@/lib/customer-notifications";
-import { buildVnpayPaymentUrl, getVnpayConfig } from "@/lib/vnpay";
+import { getVietQrConfig } from "@/lib/vietqr";
 
 const fail = (message: string, status = 400) =>
   NextResponse.json({ message }, { status });
@@ -71,16 +71,9 @@ export async function POST(request: Request) {
     destinationLongitude = Number(savedAddress.longitude);
   }
   const requestedOnlinePayment = body.paymentMethod === "BANK_TRANSFER";
-  const paymentSettings = await prisma.storeSetting.findUnique({
-    where: { id: 1 },
-    select: { onlinePaymentEnabled: true },
-  });
-  const vnpayConfig = getVnpayConfig(new URL(request.url).origin);
-  if (
-    requestedOnlinePayment &&
-    (!paymentSettings?.onlinePaymentEnabled || !vnpayConfig)
-  ) {
-    return fail("Thanh toán VNPAY hiện đang tạm đóng hoặc chưa được cấu hình.", 422);
+  const paymentSettings = await getVietQrConfig();
+  if (requestedOnlinePayment && !paymentSettings.enabled) {
+    return fail("Thanh toán chuyển khoản hiện đang tạm đóng.", 422);
   }
   const paymentMethod = requestedOnlinePayment ? "BANK_TRANSFER" : "COD";
   const couponCode = String(body.couponCode || "").trim();
@@ -339,7 +332,8 @@ export async function POST(request: Request) {
                 },
               },
               paymentMethod,
-              paymentStatus: paymentMethod === "BANK_TRANSFER" ? "PENDING" : "UNPAID",
+              paymentStatus:
+                paymentMethod === "BANK_TRANSFER" ? "PENDING" : "UNPAID",
               payments:
                 paymentMethod === "BANK_TRANSFER"
                   ? {
@@ -350,7 +344,7 @@ export async function POST(request: Request) {
                         logs: {
                           create: {
                             type: "CREATED",
-                            message: "Tạo yêu cầu thanh toán VNPAY",
+                            message: "Tạo yêu cầu thanh toán chuyển khoản",
                           },
                         },
                       },
@@ -591,7 +585,8 @@ export async function POST(request: Request) {
               },
             },
             paymentMethod,
-            paymentStatus: paymentMethod === "BANK_TRANSFER" ? "PENDING" : "UNPAID",
+            paymentStatus:
+              paymentMethod === "BANK_TRANSFER" ? "PENDING" : "UNPAID",
             payments:
               paymentMethod === "BANK_TRANSFER"
                 ? {
@@ -602,7 +597,7 @@ export async function POST(request: Request) {
                       logs: {
                         create: {
                           type: "CREATED",
-                          message: "Tạo yêu cầu thanh toán VNPAY",
+                          message: "Tạo yêu cầu thanh toán chuyển khoản",
                         },
                       },
                     },
@@ -705,16 +700,10 @@ export async function POST(request: Request) {
         }),
       );
     }
-    const paymentUrl =
-      result.order.paymentMethod === "BANK_TRANSFER" && vnpayConfig
-        ? buildVnpayPaymentUrl({
-            config: vnpayConfig,
-            orderNumber: result.order.orderNumber,
-            amount: Number(result.order.totalAmount),
-            ipAddress: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
-          })
-        : null;
-    return NextResponse.json({ ...result.order, paymentUrl }, { status: 201 });
+    return NextResponse.json(
+      { ...result.order, paymentUrl: null },
+      { status: 201 },
+    );
   } catch (cause) {
     return fail(
       cause instanceof Error ? cause.message : "Không thể tạo đơn hàng.",

@@ -179,8 +179,12 @@ export default function CheckoutClient() {
   const skipCouponPreviewRef = useRef(false);
   const previewAbortRef = useRef<AbortController | null>(null);
   const couponTriggerRef = useRef<HTMLButtonElement>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"COD" | "BANK_TRANSFER">("COD");
-  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>({ onlinePaymentEnabled: false });
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "BANK_TRANSFER">(
+    "COD",
+  );
+  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>({
+    onlinePaymentEnabled: false,
+  });
   const [preview, setPreview] = useState<Preview | null>(null);
   const [loading, setLoading] = useState(true);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -328,10 +332,7 @@ export default function CheckoutClient() {
       return;
     }
     setError("");
-    if (
-      !items.length ||
-      !selectedId
-    ) {
+    if (!items.length || !selectedId) {
       setPreview(null);
       setPreviewLoading(Boolean(items.length && selectedId));
       return;
@@ -377,13 +378,7 @@ export default function CheckoutClient() {
       window.clearTimeout(timer);
       controller?.abort();
     };
-  }, [
-    appliedCoupon,
-    items.length,
-    selectedId,
-    token,
-    addressRevision,
-  ]);
+  }, [appliedCoupon, items.length, selectedId, token, addressRevision]);
 
   const applyCoupon = async (code: string) => {
     setPreviewLoading(true);
@@ -425,8 +420,11 @@ export default function CheckoutClient() {
       return setError("Vui lòng chọn hoặc nhập địa chỉ giao hàng hợp lệ.");
     if (!preview?.shipping.available || previewLoading)
       return setError("Chưa thể tính phí giao hàng. Vui lòng thử lại.");
-    if (paymentMethod === "BANK_TRANSFER" && !paymentSettings.onlinePaymentEnabled)
-      return setError("Thanh toán VNPAY hiện đang tạm đóng.");
+    if (
+      paymentMethod === "BANK_TRANSFER" &&
+      !paymentSettings.onlinePaymentEnabled
+    )
+      return setError("Thanh toán chuyển khoản hiện đang tạm đóng.");
     setBusy(true);
     const response = await fetch("/api/orders/checkout", {
       method: "POST",
@@ -444,8 +442,6 @@ export default function CheckoutClient() {
     setBusy(false);
     if (!response.ok)
       return setError(data.message || "Không thể tạo đơn hàng.");
-    if (paymentMethod === "BANK_TRANSFER" && data.paymentUrl)
-      return window.location.assign(data.paymentUrl);
     window.location.assign(
       `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&payment=${encodeURIComponent(paymentMethod)}&amount=${encodeURIComponent(String(data.totalAmount ?? 0))}`,
     );
@@ -628,18 +624,18 @@ export default function CheckoutClient() {
                       />
                     </button>
                   ) : null}
-              </section>
-              <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
-                <h2 className="text-lg font-extrabold">Ghi chú đơn hàng</h2>
-                <textarea
-                  value={orderNote}
-                  onChange={(event) => setOrderNote(event.target.value)}
-                  placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."
-                  maxLength={500}
-                  className="mt-4 min-h-24 w-full rounded-xl border border-[#EAE1E4] p-3 text-sm outline-none focus:border-[#D96C8A]"
-                />
-              </section>
-              <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+                </section>
+                <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
+                  <h2 className="text-lg font-extrabold">Ghi chú đơn hàng</h2>
+                  <textarea
+                    value={orderNote}
+                    onChange={(event) => setOrderNote(event.target.value)}
+                    placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."
+                    maxLength={500}
+                    className="mt-4 min-h-24 w-full rounded-xl border border-[#EAE1E4] p-3 text-sm outline-none focus:border-[#D96C8A]"
+                  />
+                </section>
+                <section className="rounded-2xl border border-[#EAE1E4] bg-white p-5">
                   <h2 className="text-lg font-extrabold">Sản phẩm đặt mua</h2>
                   <div className="mt-4 divide-y divide-[#EAE1E4]">
                     {items.map((item) => (
@@ -707,16 +703,28 @@ export default function CheckoutClient() {
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     {(
                       [
-                        ["COD", "Thanh toán khi nhận hàng", "Thanh toán cho nhân viên giao hàng."],
+                        [
+                          "COD",
+                          "Thanh toán khi nhận hàng",
+                          "Thanh toán cho nhân viên giao hàng.",
+                        ],
                         ...(paymentSettings.onlinePaymentEnabled
-                          ? [["BANK_TRANSFER", "Thanh toán online bằng VNPAY", "Bạn sẽ được chuyển sang cổng VNPAY sau khi đặt hàng."]]
+                          ? [
+                              [
+                                "BANK_TRANSFER",
+                                "Chuyển khoản ngân hàng",
+                                "Bạn chuyển khoản theo thông tin hiển thị sau khi đặt hàng; admin sẽ kiểm tra thủ công.",
+                              ],
+                            ]
                           : []),
                       ] as const
                     ).map(([value, title, description]) => (
                       <button
                         type="button"
                         key={value}
-                        onClick={() => setPaymentMethod(value as "COD" | "BANK_TRANSFER")}
+                        onClick={() =>
+                          setPaymentMethod(value as "COD" | "BANK_TRANSFER")
+                        }
                         className={`rounded-xl border p-4 text-left ${paymentMethod === value ? "border-[#D96C8A] bg-[#FFF8FA]" : "border-[#EAE1E4]"}`}
                       >
                         <strong className="block text-sm">{title}</strong>
@@ -728,7 +736,9 @@ export default function CheckoutClient() {
                   </div>
                   {paymentMethod === "BANK_TRANSFER" ? (
                     <p className="mt-4 rounded-xl bg-[#FFF8FA] p-4 text-sm leading-6 text-[#6F6066]">
-                      Sau khi đặt hàng, bạn sẽ được chuyển sang VNPAY để thanh toán an toàn.
+                      Sau khi đặt hàng, mã QR và thông tin tài khoản sẽ được
+                      hiển thị. Bạn hãy chuyển đúng số tiền và nội dung đơn
+                      hàng, sau đó báo đã chuyển khoản để admin kiểm tra.
                     </p>
                   ) : null}
                 </section>
@@ -776,9 +786,7 @@ export default function CheckoutClient() {
                 <button
                   type="button"
                   onClick={() => void submit()}
-                  disabled={
-                    busy || previewLoading
-                  }
+                  disabled={busy || previewLoading}
                   className="mt-5 hidden h-12 w-full rounded-xl bg-[#D96C8A] text-sm font-bold text-white disabled:opacity-50 lg:block"
                 >
                   {busy ? "Đang tạo đơn hàng..." : "Đặt hàng"}
@@ -809,9 +817,7 @@ export default function CheckoutClient() {
               <button
                 type="button"
                 onClick={() => void submit()}
-                disabled={
-                  busy || previewLoading
-                }
+                disabled={busy || previewLoading}
                 className="h-11 rounded-xl bg-[#D96C8A] px-5 text-sm font-bold text-white disabled:opacity-50"
               >
                 {busy ? "Đang đặt..." : "Đặt hàng"}

@@ -168,11 +168,11 @@ export default function AdminPaymentSettings() {
             </span>
             <div className="min-w-0">
               <h2 className="text-base font-semibold text-(--admin-text)">
-                Thanh toán VNPAY
+                Chuyển khoản ngân hàng
               </h2>
               <p className="mt-1 text-sm leading-5 text-(--admin-text-secondary)">
-                Khách được chuyển sang cổng VNPAY. VNPAY gửi kết quả giao dịch
-                về website để tự động xác nhận đơn.
+                Khách chuyển khoản theo thông tin tài khoản hoặc mã QR. Admin sẽ
+                kiểm tra giao dịch và tự xác nhận đơn hàng.
               </p>
             </div>
             <span
@@ -191,10 +191,11 @@ export default function AdminPaymentSettings() {
               </span>
               <span>
                 <strong className="block text-sm font-semibold text-(--admin-text)">
-                  Cho phép thanh toán online
+                  Cho phép chuyển khoản
                 </strong>
                 <span className="mt-1 block text-xs leading-5 text-(--admin-text-secondary)">
-                  Hiển thị lựa chọn VNPAY cho khách hàng tại bước thanh toán.
+                  Hiển thị lựa chọn chuyển khoản cho khách hàng tại bước thanh
+                  toán.
                 </span>
               </span>
             </span>
@@ -293,11 +294,11 @@ export default function AdminPaymentSettings() {
               <div className="flex items-center gap-2">
                 <QrCode className="size-4 text-(--admin-primary)" />
                 <h2 className="text-sm font-semibold text-(--admin-text)">
-                  Cấu hình VNPAY
+                  Mã QR chuyển khoản
                 </h2>
               </div>
               <p className="mt-1 text-xs text-(--admin-text-secondary)">
-                Thông tin merchant VNPAY được cấu hình bằng biến môi trường trên server.
+                Mã QR được tạo theo số tiền và mã đơn hàng của từng đơn.
               </p>
             </div>
             <div className="p-5">
@@ -305,7 +306,7 @@ export default function AdminPaymentSettings() {
                 <div className="rounded-xl border border-(--admin-border) bg-(--admin-background) p-4">
                   <img
                     src={qrPreview}
-                    alt="Cấu hình VNPAY"
+                    alt="Mã QR chuyển khoản"
                     className="mx-auto size-44 rounded-lg bg-white object-contain"
                   />
                   <p className="mt-3 text-center text-xs font-medium text-(--admin-text-secondary)">
@@ -319,7 +320,8 @@ export default function AdminPaymentSettings() {
                     Chưa có dữ liệu QR
                   </p>
                   <p className="mt-1 text-xs leading-5 text-(--admin-text-muted)">
-                    Hãy khai báo VNPAY_TMN_CODE và VNPAY_HASH_SECRET rồi bật thanh toán online.
+                    Hãy nhập mã ngân hàng, số tài khoản và tên chủ tài khoản rồi
+                    bật chuyển khoản.
                   </p>
                 </div>
               )}
@@ -337,15 +339,16 @@ export default function AdminPaymentSettings() {
                 <ol className="mt-3 space-y-3 text-xs leading-5 text-(--admin-text-secondary)">
                   <li className="flex gap-2">
                     <span className="font-bold text-(--admin-primary)">01</span>
-                    Khách chọn VNPAY tại checkout.
+                    Khách chọn chuyển khoản tại checkout.
                   </li>
                   <li className="flex gap-2">
                     <span className="font-bold text-(--admin-primary)">02</span>
-                    VNPAY xử lý giao dịch và trả kết quả về website.
+                    Khách chuyển đúng số tiền và nội dung theo mã đơn hàng.
                   </li>
                   <li className="flex gap-2">
                     <span className="font-bold text-(--admin-primary)">03</span>
-                    Backend xác thực chữ ký IPN rồi tự động xác nhận đơn.
+                    Khách bấm “Tôi đã chuyển khoản”, sau đó admin kiểm tra và
+                    xác nhận thủ công.
                   </li>
                 </ol>
                 <button

@@ -19,27 +19,6 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const escapeCsvValue = (value: string | number) => {
-  const normalizedValue = String(value).replace(/"/g, '""');
-  return `"${normalizedValue}"`;
-};
-
-const formatCsvDate = (value: string) => {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}/${month}/${day}`;
-};
-
-const formatNumber = (value: number) => value.toLocaleString("vi-VN");
-
 const MonthDetail = () => {
   const params = useParams();
 
@@ -88,10 +67,10 @@ const MonthDetail = () => {
     (day) => day.soldProducts.length > 0,
   );
 
-  const handleExportCsv = async () => {
+  const handleExportExcel = async () => {
     if (!monthlyDetailData || !hasSoldProducts) {
       toast({
-        title: "Không có sản phẩm bán ra để xuất CSV",
+        title: "Không có sản phẩm bán ra để xuất Excel",
         className: "bg-red-1 text-white text-sm font-medium w-fit",
         duration: 3000,
       });
@@ -100,108 +79,29 @@ const MonthDetail = () => {
 
     try {
       setIsExporting(true);
-      let monthlyProfit = 0;
-      const detailRows = soldProductsByDay
-        .flatMap((day) =>
-          day.soldProducts.flatMap((product) => {
-            const totalQuantity = product.sales.reduce(
-              (sum, sale) => sum + sale.quantity,
-              0,
-            );
-            const sellPrices = Array.from(
-              new Set(product.sales.map((sale) => sale.sellPrice)),
-            ).sort((a, b) => a - b);
-            const totalRevenue = product.sales.reduce(
-              (sum, sale) => sum + sale.sellPrice * sale.quantity,
-              0,
-            );
-            const totalCost = product.importPrice * totalQuantity;
-            const dayProfit = totalRevenue - totalCost;
-
-            monthlyProfit += dayProfit;
-
-            return {
-              date: formatCsvDate(day.date),
-              productTitle: product.productTitle,
-              categoryName: product.categoryName,
-              quantity: totalQuantity,
-              importPrice: product.importPrice,
-              sellPrices,
-              totalRevenue,
-              dayProfit,
-            };
-          }),
-        )
-        .sort((a, b) => {
-          if (a.date !== b.date) return a.date.localeCompare(b.date);
-          return a.productTitle.localeCompare(b.productTitle, "vi");
-        });
-
-      const rows = [
-        [
-          `Báo cáo sản phẩm bán - ${monthlyDetailData.year}/${String(
-            monthlyDetailData.month,
-          ).padStart(2, "0")}`,
-        ],
-        [""],
-        [
-          "Ngày",
-          "Sản phẩm",
-          "Danh mục",
-          "Số lượng",
-          "Giá nhập",
-          "Giá bán",
-          "Doanh thu ngày",
-          "Lợi nhuận ngày",
-        ],
-        ...detailRows.map((row) => [
-          row.date,
-          row.productTitle,
-          row.categoryName,
-          String(row.quantity),
-          formatNumber(row.importPrice),
-          row.sellPrices.map((price) => formatNumber(price)).join(" / "),
-          formatNumber(row.totalRevenue),
-          formatNumber(row.dayProfit),
-        ]),
-        [""],
-        [
-          "Tổng lợi nhuận tháng",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          formatNumber(monthlyProfit),
-        ],
-      ];
-
-      const csvContent = rows
-        .map((row) => row.map((cell) => escapeCsvValue(cell)).join(","))
-        .join("\n");
-      const csvBlob = new Blob([`\uFEFF${csvContent}`], {
-        type: "text/csv;charset=utf-8;",
+      const response = await fetch(`/api/monthly/detail/${id}/export`, {
+        cache: "no-store",
       });
-      const downloadUrl = window.URL.createObjectURL(csvBlob);
+      if (!response.ok) throw new Error("Không thể tạo file Excel.");
+      const excelBlob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(excelBlob);
       const link = document.createElement("a");
-      const fileMonth = String(monthlyDetailData.month).padStart(2, "0");
 
       link.href = downloadUrl;
-      link.download = `monthly-sold-products-${monthlyDetailData.year}-${fileMonth}.csv`;
+      link.download = `monthly-sold-products-${monthlyDetailData.year}-${String(monthlyDetailData.month).padStart(2, "0")}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(downloadUrl);
 
       toast({
-        title: "Xuất CSV thành công",
+        title: "Xuất Excel thành công",
         className: "bg-green-1 text-white text-sm font-medium w-fit",
         duration: 3000,
       });
     } catch {
       toast({
-        title: "Xuất CSV thất bại",
+        title: "Xuất Excel thất bại",
         className: "bg-red-1 text-white text-sm font-medium w-fit",
         duration: 3000,
       });
@@ -232,7 +132,7 @@ const MonthDetail = () => {
             <Button
               type="button"
               variant="adminPrimary"
-              onClick={handleExportCsv}
+              onClick={handleExportExcel}
               disabled={isExporting || !hasSoldProducts}
               className="h-10 rounded-lg px-4"
             >
@@ -241,7 +141,7 @@ const MonthDetail = () => {
               ) : (
                 <Download className="size-4" />
               )}
-              Xuất CSV sản phẩm bán
+              Xuất Excel sản phẩm bán
             </Button>
           }
         />

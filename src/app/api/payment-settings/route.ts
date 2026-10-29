@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import { getVietQrConfig } from "@/lib/vietqr";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET() {
-  const settings = await prisma.storeSetting.findUnique({ where: { id: 1 }, select: { onlinePaymentEnabled: true } });
+  const { enabled, config } = await getVietQrConfig();
   return NextResponse.json(
     {
-      onlinePaymentEnabled: settings?.onlinePaymentEnabled === true,
+      onlinePaymentEnabled: enabled,
+      vietQrBankCode: config?.bankCode || null,
+      vietQrAccountNumber: config?.accountNumber || null,
+      vietQrAccountName: config?.accountName || null,
+      vietQrTemplate: config?.template || "compact2",
     },
     {
       headers: {

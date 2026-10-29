@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1500" viewBox="0 0 2200 1500">
+<defs><style>.sys{fill:#fff;stroke:#5b8bd9;stroke-width:2}.uc{fill:#eaf3ff;stroke:#6d9bdf;stroke-width:2}.title{font:700 28px Arial;fill:#1f2937}.head{font:700 19px Arial;fill:#1f2937}.txt{font:15px Arial;fill:#26364b}.line{stroke:#526f9f;stroke-width:2;fill:none}</style></defs>
+<rect width="2200" height="1500" fill="white"/>
+<text class="title" x="1100" y="48" text-anchor="middle">USE CASE TỔNG QUÁT – HỆ THỐNG QUẢN LÝ VÀ BÁN HÀNG TRỰC TUYẾN</text>
+<rect class="sys" x="250" y="90" width="1700" height="1220" rx="16"/>
+<text class="head" x="1100" y="130" text-anchor="middle">HỆ THỐNG QUẢN LÝ VÀ BÁN HÀNG TRỰC TUYẾN</text>
+<line x1="1100" y1="160" x2="1100" y2="1270" stroke="#b4c7e4" stroke-width="2" stroke-dasharray="10 8"/>
+<text class="head" x="700" y="185" text-anchor="middle">KHÁCH HÀNG</text><text class="head" x="1500" y="185" text-anchor="middle">QUẢN TRỊ VIÊN</text>
+
+<!-- Customer actor, one connection point and one vertical lane -->
+<g class="line"><circle cx="90" cy="720" r="23"/><path d="M90 743V815M42 768H138M90 815L52 880M90 815L128 880M138 768H220M220 270V1170M220 270H430M220 400H430M220 530H430M220 660H430M220 790H430M220 920H430M220 1050H430M220 1170H430"/></g>
+<text class="head" x="90" y="915" text-anchor="middle">Khách hàng</text>
+
+<ellipse class="uc" cx="570" cy="270" rx="140" ry="39"/><text class="txt" x="570" y="276" text-anchor="middle">Xác thực tài khoản</text>
+<ellipse class="uc" cx="570" cy="400" rx="140" ry="39"/><text class="txt" x="570" y="406" text-anchor="middle">Quản lý tài khoản</text>
+<ellipse class="uc" cx="570" cy="530" rx="140" ry="39"/><text class="txt" x="570" y="536" text-anchor="middle">Khám phá sản phẩm</text>
+<ellipse class="uc" cx="570" cy="660" rx="140" ry="39"/><text class="txt" x="570" y="666" text-anchor="middle">Quản lý giỏ hàng</text>
+<ellipse class="uc" cx="570" cy="790" rx="140" ry="39"/><text class="txt" x="570" y="796" text-anchor="middle">Đặt hàng và thanh toán</text>
+<ellipse class="uc" cx="570" cy="920" rx="140" ry="39"/><text class="txt" x="570" y="926" text-anchor="middle">Theo dõi đơn hàng</text>
+<ellipse class="uc" cx="570" cy="1050" rx="140" ry="39"/><text class="txt" x="570" y="1056" text-anchor="middle">Đánh giá sản phẩm</text>
+<ellipse class="uc" cx="570" cy="1170" rx="140" ry="39"/><text class="txt" x="570" y="1176" text-anchor="middle">Trải nghiệm mua sắm</text>
+
+<!-- Admin actor, one connection point and one vertical lane -->
+<g class="line"><circle cx="2110" cy="720" r="23"/><path d="M2110 743V815M2062 768H2158M2110 815L2072 880M2110 815L2148 880M2062 768H1980M1980 270V1170M1980 270H1770M1980 400H1770M1980 530H1770M1980 660H1770M1980 790H1770M1980 920H1770M1980 1050H1770M1980 1170H1770"/></g>
+<text class="head" x="2110" y="915" text-anchor="middle">Quản trị viên</text>
+
+<ellipse class="uc" cx="1630" cy="270" rx="140" ry="39"/><text class="txt" x="1630" y="276" text-anchor="middle">Đăng nhập quản trị</text>
+<ellipse class="uc" cx="1630" cy="400" rx="140" ry="39"/><text class="txt" x="1630" y="406" text-anchor="middle">Quản lý tài khoản</text>
+<ellipse class="uc" cx="1630" cy="530" rx="140" ry="39"/><text class="txt" x="1630" y="536" text-anchor="middle">Xem Dashboard</text>
+<ellipse class="uc" cx="1630" cy="660" rx="140" ry="39"/><text class="txt" x="1630" y="666" text-anchor="middle">Quản lý sản phẩm</text>
+<ellipse class="uc" cx="1630" cy="790" rx="140" ry="39"/><text class="txt" x="1630" y="796" text-anchor="middle">Quản lý đơn hàng</text>
+<ellipse class="uc" cx="1630" cy="920" rx="140" ry="39"/><text class="txt" x="1630" y="926" text-anchor="middle">Quản lý khách hàng</text>
+<ellipse class="uc" cx="1630" cy="1050" rx="140" ry="39"/><text class="txt" x="1630" y="1056" text-anchor="middle">Quản lý tài chính</text>
+<ellipse class="uc" cx="1630" cy="1170" rx="140" ry="39"/><text class="txt" x="1630" y="1176" text-anchor="middle">Quản lý nội dung và ưu đãi</text>
+
+<rect class="sys" x="50" y="1360" width="620" height="70" rx="8"/><text class="head" x="75" y="1390">Chú thích</text><line class="line" x1="80" y1="1410" x2="185" y2="1410"/><text class="txt" x="205" y="1416">Association: liên kết actor với chức năng</text>
+<text class="head" x="1100" y="1415" text-anchor="middle">Hình 2.5. Sơ đồ Use Case tổng quát của hệ thống</text>
+</svg>

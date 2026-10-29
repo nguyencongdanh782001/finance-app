@@ -297,7 +297,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         <div className="flex h-16 items-center border-b border-white/8">
           <AdminBrand />
         </div>
-        <div className="flex-1 py-5">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-5">
           <AdminNavigation orderAttentionCount={orderAttentionCount} />
         </div>
       </aside>
@@ -317,7 +317,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                   <Menu className="size-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent className="flex flex-col bg-(--admin-sidebar) p-0 text-white [&>button]:text-slate-300 [&>button:hover]:bg-white/10 [&>button:hover]:text-white">
+              <SheetContent className="!overflow-hidden flex flex-col bg-(--admin-sidebar) p-0 text-white [&>button]:text-slate-300 [&>button:hover]:bg-white/10 [&>button:hover]:text-white">
                 <SheetTitle className="sr-only">Menu quản trị</SheetTitle>
                 <SheetDescription className="sr-only">
                   Điều hướng các trang quản trị của cửa hàng
@@ -325,7 +325,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                 <div className="flex h-16 items-center border-b border-white/8 pr-12">
                   <AdminBrand />
                 </div>
-                <div className="flex-1 py-5">
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-5">
                   <AdminNavigation
                     mobile
                     orderAttentionCount={orderAttentionCount}
