@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><style>.a{fill:#e5f0ff;stroke:#6090d8;stroke-width:2}.b{fill:#e6f7ea;stroke:#69aa7b;stroke-width:2}.c{fill:#fff3cf;stroke:#d4a843;stroke-width:2}.d{fill:#f0e9ff;stroke:#9671cf;stroke-width:2}.t{font:700 24px Arial;fill:#202938}.h{font:700 18px Arial;fill:#202938}.p{font:15px Arial;fill:#27364a}.l{stroke:#607fae;stroke-width:2;fill:none;marker-end:url(#arrow)}</style><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#607fae"/></marker></defs>
+<rect width="1600" height="900" fill="white"/>
+<text class="t" x="800" y="45" text-anchor="middle">SƠ ĐỒ KIẾN TRÚC HỆ THỐNG QUẢN LÝ VÀ BÁN HÀNG</text>
+<rect class="a" x="55" y="175" width="310" height="180" rx="10"/><text class="h" x="210" y="215" text-anchor="middle">GIAO DIỆN KHÁCH HÀNG</text><text class="p" x="210" y="255" text-anchor="middle">Next.js / React</text><text class="p" x="210" y="285" text-anchor="middle">Storefront, tài khoản, giỏ hàng</text><text class="p" x="210" y="315" text-anchor="middle">Checkout, đánh giá, membership</text>
+<rect class="b" x="55" y="475" width="310" height="180" rx="10"/><text class="h" x="210" y="515" text-anchor="middle">GIAO DIỆN QUẢN TRỊ</text><text class="p" x="210" y="555" text-anchor="middle">Next.js / React</text><text class="p" x="210" y="585" text-anchor="middle">Sản phẩm, đơn hàng, khách hàng</text><text class="p" x="210" y="615" text-anchor="middle">Tài chính, nội dung, thông báo</text>
+<rect class="d" x="510" y="105" width="650" height="600" rx="12"/><text class="h" x="835" y="145" text-anchor="middle">NEXT.JS FULL-STACK APPLICATION</text>
+<rect class="a" x="590" y="180" width="490" height="65" rx="8"/><text class="h" x="835" y="220" text-anchor="middle">App Router / Server &amp; Client Components</text>
+<rect class="c" x="590" y="275" width="490" height="65" rx="8"/><text class="h" x="835" y="315" text-anchor="middle">API Route Handlers / REST JSON</text>
+<rect class="c" x="590" y="370" width="490" height="65" rx="8"/><text class="h" x="835" y="410" text-anchor="middle">Authentication &amp; Authorization</text>
+<rect class="b" x="590" y="465" width="490" height="65" rx="8"/><text class="h" x="835" y="505" text-anchor="middle">Business Logic &amp; Validation</text>
+<rect class="b" x="590" y="560" width="490" height="65" rx="8"/><text class="h" x="835" y="600" text-anchor="middle">Prisma ORM / Data Access</text>
+<text class="p" x="835" y="670" text-anchor="middle">Logging • Error Handling • Rate Limit • Audit Log</text>
+<rect class="c" x="1280" y="360" width="250" height="120" rx="10"/><text class="h" x="1405" y="400" text-anchor="middle">POSTGRESQL</text><text class="p" x="1405" y="435" text-anchor="middle">Users, products, orders</text><text class="p" x="1405" y="460" text-anchor="middle">Payments, finance, inventory</text>
+<path class="l" d="M365 265H585"/><path class="l" d="M365 565H585"/><path class="l" d="M1080 592H1275"/>
+<text class="p" x="475" y="250" text-anchor="middle">HTTPS / REST / JSON</text><text class="p" x="475" y="550" text-anchor="middle">HTTPS / REST / JSON</text><text class="p" x="1180" y="575" text-anchor="middle">SQL queries</text>
+<path class="l" d="M1160 300H1240V420H1275"/><text class="p" x="1210" y="285" text-anchor="middle">Prisma</text>
+<rect class="b" x="1260" y="600" width="290" height="115" rx="10"/><text class="h" x="1405" y="635" text-anchor="middle">DỊCH VỤ TÍCH HỢP</text><text class="p" x="1405" y="665" text-anchor="middle">Cloudinary • VNPAY • Geoapify</text><text class="p" x="1405" y="690" text-anchor="middle">Gemini • Gradio • Web Push</text>
+<path class="l" d="M1160 520H1240V655H1255"/>
+<text class="p" x="800" y="820" text-anchor="middle">Hình 1.2. Sơ đồ kiến trúc hệ thống</text>
+</svg>

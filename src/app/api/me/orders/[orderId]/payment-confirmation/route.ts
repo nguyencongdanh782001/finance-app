@@ -19,7 +19,10 @@ export async function POST(
     orderId < 1 ||
     request.headers.get("x-user-role") !== "CUSTOMER"
   ) {
-    return NextResponse.json({ message: "Vui lòng đăng nhập." }, { status: 401 });
+    return NextResponse.json(
+      { message: "Vui lòng đăng nhập." },
+      { status: 401 },
+    );
   }
 
   try {
@@ -37,12 +40,13 @@ export async function POST(
       });
       if (!order) throw new Error("Không tìm thấy đơn hàng.");
       if (order.paymentMethod !== "BANK_TRANSFER") {
-        throw new Error("Đơn hàng này không dùng thanh toán VNPAY.");
+        throw new Error("Đơn hàng này không dùng thanh toán chuyển khoản.");
       }
       if (["CANCELLED", "REFUNDED"].includes(order.status)) {
         throw new Error("Đơn hàng không còn hiệu lực để xác nhận thanh toán.");
       }
-      if (order.paymentStatus === PaymentStatus.PAID) return { order, outbox: null };
+      if (order.paymentStatus === PaymentStatus.PAID)
+        return { order, outbox: null };
 
       const payment = await tx.payment.findFirst({
         where: { orderId, method: "BANK_TRANSFER" },
@@ -58,7 +62,7 @@ export async function POST(
           logs: {
             create: {
               type: "MANUAL_UPDATE",
-              message: "Khách hàng yêu cầu kiểm tra thanh toán VNPAY",
+              message: "Khách hàng báo đã chuyển khoản, chờ admin kiểm tra",
               payload: { userId },
             },
           },
@@ -69,7 +73,10 @@ export async function POST(
         data: { paymentStatus: PaymentStatus.PROCESSING },
         select: { id: true, orderNumber: true, paymentStatus: true },
       });
-      const notification = await createOnlinePaymentSuccessNotification(tx, updated);
+      const notification = await createOnlinePaymentSuccessNotification(
+        tx,
+        updated,
+      );
       return { order: updated, outbox: notification };
     });
 
@@ -85,7 +92,12 @@ export async function POST(
     return NextResponse.json(result.order);
   } catch (error) {
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : "Không thể xác nhận thanh toán." },
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Không thể xác nhận thanh toán.",
+      },
       { status: 400 },
     );
   }
