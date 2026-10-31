@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1050" viewBox="0 0 1800 1050">
+<defs><style>.sys{fill:#fff;stroke:#5b8bd9;stroke-width:2}.uc{fill:#eaf3ff;stroke:#6d9bdf;stroke-width:2}.incbox{fill:#fff;stroke:#86abe3;stroke-width:1.5}.extbox{fill:#fff7df;stroke:#d5a63a;stroke-width:1.5}.title{font:700 27px Arial;fill:#1f2937}.head{font:700 18px Arial;fill:#1f2937}.txt{font:15px Arial;fill:#26364b}.line{stroke:#526f9f;stroke-width:2;fill:none}.inc{stroke:#526f9f;stroke-width:1.8;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}.extend{stroke:#c79023;stroke-width:1.8;stroke-dasharray:8 6;fill:none;marker-end:url(#gold)}</style><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0 0L11 4L0 8Z" fill="#526f9f"/></marker><marker id="gold" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0 0L11 4L0 8Z" fill="#c79023"/></marker></defs>
+<rect width="1800" height="1050" fill="white"/><text class="title" x="900" y="45" text-anchor="middle">UC-KH-02: QUẢN LÝ TÀI KHOẢN</text>
+<rect class="sys" x="230" y="90" width="1340" height="760" rx="16"/><text class="head" x="900" y="130" text-anchor="middle">CHỨC NĂNG QUẢN LÝ TÀI KHOẢN KHÁCH HÀNG</text>
+
+<!-- Actor and one junction -->
+<g class="line"><circle cx="80" cy="470" r="23"/><path d="M80 493V565M32 518H128M80 565L42 630M80 565L118 630M128 518H190M190 245V700M190 245H365M190 400H365M190 555H365M190 700H365"/></g><text class="head" x="80" y="680" text-anchor="middle">Khách hàng</text>
+
+<!-- Parent use case -->
+<ellipse class="uc" cx="520" cy="245" rx="150" ry="40"/><text class="txt" x="520" y="251" text-anchor="middle">Quản lý tài khoản</text><path class="line" d="M365 245H300"/>
+<rect class="extbox" x="760" y="195" width="210" height="46" rx="5"/><text class="txt" x="865" y="224" text-anchor="middle">Trang hồ sơ cá nhân</text><rect class="incbox" x="1000" y="195" width="210" height="46" rx="5"/><text class="txt" x="1105" y="224" text-anchor="middle">Cập nhật thông tin</text>
+<rect class="incbox" x="760" y="260" width="210" height="46" rx="5"/><text class="txt" x="865" y="289" text-anchor="middle">Đổi mật khẩu</text><rect class="incbox" x="1000" y="260" width="210" height="46" rx="5"/><text class="txt" x="1105" y="289" text-anchor="middle">Quản lý địa chỉ</text>
+<rect class="incbox" x="760" y="325" width="210" height="46" rx="5"/><text class="txt" x="865" y="354" text-anchor="middle">Thêm địa chỉ</text><rect class="incbox" x="1000" y="325" width="210" height="46" rx="5"/><text class="txt" x="1105" y="354" text-anchor="middle">Địa chỉ mặc định</text>
+<rect class="incbox" x="760" y="390" width="210" height="46" rx="5"/><text class="txt" x="865" y="419" text-anchor="middle">Sản phẩm yêu thích</text><rect class="incbox" x="1000" y="390" width="210" height="46" rx="5"/><text class="txt" x="1105" y="419" text-anchor="middle">Xóa sản phẩm yêu thích</text>
+
+<!-- Include and extend relations -->
+<path class="extend" d="M670 245H720V218H750"/><text class="txt" x="680" y="232">«extend»</text>
+<path class="inc" d="M670 245H720V218H990M670 245H720V283H750M670 245H720V283H990M670 245H720V348H750M670 245H720V348H990M670 245H720V413H750M670 245H720V413H990"/><text class="txt" x="1180" y="480">«include»</text>
+
+<!-- Use case descriptions -->
+<rect class="sys" x="300" y="900" width="1200" height="75" rx="8"/><text class="txt" x="330" y="930">«extend»: Trang hồ sơ hiển thị ngay khi khách hàng mở khu vực tài khoản.</text><text class="txt" x="330" y="955">«include»: Các chức năng còn lại được thực hiện sau khi khách hàng chọn nút hoặc thao tác tương ứng.</text>
+<text class="head" x="900" y="1025" text-anchor="middle">Hình 2.8. Use Case UC-KH-02: Quản lý tài khoản</text>
+</svg>
