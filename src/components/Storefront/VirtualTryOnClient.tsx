@@ -25,7 +25,15 @@ type Product = {
   category?: { name?: string | null; tryOnCategory?: string | null } | null;
 };
 
-type GarmentCategory = "all" | "UPPER_BODY" | "LOWER_BODY" | "DRESSES" | "SHOES" | "ACCESSORIES" | "NOT_SUPPORTED" | "UNKNOWN";
+type GarmentCategory =
+  | "all"
+  | "UPPER_BODY"
+  | "LOWER_BODY"
+  | "DRESSES"
+  | "SHOES"
+  | "ACCESSORIES"
+  | "NOT_SUPPORTED"
+  | "UNKNOWN";
 
 const garmentCategoryLabels: Record<GarmentCategory, string> = {
   all: "Tất cả",
@@ -38,15 +46,24 @@ const garmentCategoryLabels: Record<GarmentCategory, string> = {
   UNKNOWN: "Chưa phân loại",
 };
 
-const getGarmentCategory = (product: Product): Exclude<GarmentCategory, "all"> =>
-  product.category?.tryOnCategory && product.category.tryOnCategory in garmentCategoryLabels
+const getGarmentCategory = (
+  product: Product,
+): Exclude<GarmentCategory, "all"> =>
+  product.category?.tryOnCategory &&
+  product.category.tryOnCategory in garmentCategoryLabels
     ? (product.category.tryOnCategory as Exclude<GarmentCategory, "all">)
     : "UNKNOWN";
 
 const formatPrice = (value: number | string) =>
   `${new Intl.NumberFormat("vi-VN").format(Number(value))}đ`;
 
-const StepLabel = ({ number, children }: { number: string; children: string }) => (
+const StepLabel = ({
+  number,
+  children,
+}: {
+  number: string;
+  children: string;
+}) => (
   <div className="flex items-center gap-2">
     <span className="flex size-7 items-center justify-center rounded-full bg-[#FCEEF3] text-xs font-extrabold text-[#A43E5F]">
       {number}
@@ -70,10 +87,12 @@ export default function VirtualTryOnClient() {
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     let active = true;
-    fetch("/api/products?limit=100&sort=newest")
+    fetch("/api/products?limit=100&sort=newest", { signal: controller.signal })
       .then(async (response) => {
         if (!response.ok) throw new Error("Không thể tải sản phẩm.");
         return (await response.json()) as { data?: Product[] };
@@ -84,14 +103,20 @@ export default function VirtualTryOnClient() {
         setProducts(available);
         setSelectedProductId(available[0]?.id || null);
       })
-      .catch(() => {
-        if (active) setError("Không thể tải danh sách sản phẩm.");
+      .catch((cause) => {
+        if (
+          active &&
+          !(cause instanceof Error && cause.name === "AbortError")
+        ) {
+          setError("Không thể tải danh sách sản phẩm.");
+        }
       })
       .finally(() => {
         if (active) setLoadingProducts(false);
       });
     return () => {
       active = false;
+      controller.abort();
     };
   }, []);
 
@@ -118,8 +143,11 @@ export default function VirtualTryOnClient() {
   const visibleProducts = useMemo(() => {
     const query = productQuery.trim().toLocaleLowerCase("vi");
     return products.filter((product) => {
-      const matchesQuery = !query || product.title.toLocaleLowerCase("vi").includes(query);
-      const matchesCategory = garmentFilter === "all" || getGarmentCategory(product) === garmentFilter;
+      const matchesQuery =
+        !query || product.title.toLocaleLowerCase("vi").includes(query);
+      const matchesCategory =
+        garmentFilter === "all" ||
+        getGarmentCategory(product) === garmentFilter;
       return matchesQuery && matchesCategory;
     });
   }, [garmentFilter, productQuery, products]);
@@ -139,13 +167,20 @@ export default function VirtualTryOnClient() {
     setFile(nextFile);
   };
 
+  const isSupportedProduct = (product: Product) =>
+    ["UPPER_BODY", "LOWER_BODY", "DRESSES"].includes(
+      getGarmentCategory(product),
+    );
+
   const generate = async () => {
     if (!file || !selectedProductId) {
       setError("Hãy tải ảnh và chọn một sản phẩm trước nhé.");
       return;
     }
-    if (selectedProduct && getGarmentCategory(selectedProduct) !== "UPPER_BODY") {
-      setError("Sản phẩm này chưa được AI hiện tại hỗ trợ. Hãy chọn sản phẩm loại Áo.");
+    if (selectedProduct && !isSupportedProduct(selectedProduct)) {
+      setError(
+        "Sản phẩm này chưa được AI hiện tại hỗ trợ. Hãy chọn áo, quần hoặc váy.",
+      );
       return;
     }
     setGenerating(true);
@@ -179,7 +214,7 @@ export default function VirtualTryOnClient() {
   return (
     <StorefrontShell>
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
-        <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#FFF1F5] via-[#FFF9FA] to-[#F8EFF2] px-5 py-7 sm:px-8 sm:py-9">
+        <section className="relative overflow-hidden rounded-[28px] bg-linear-to-br from-[#FFF1F5] via-[#FFF9FA] to-[#F8EFF2] px-5 py-7 sm:px-8 sm:py-9">
           <div className="absolute -right-16 -top-20 size-64 rounded-full bg-[#E7A0B4]/20 blur-3xl" />
           <div className="relative max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs font-extrabold text-[#A43E5F] shadow-sm">
@@ -193,9 +228,15 @@ export default function VirtualTryOnClient() {
               bạn.
             </p>
             <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-[#8E6672]">
-              <span className="rounded-full bg-white/75 px-3 py-2">1 ảnh của bạn</span>
-              <span className="rounded-full bg-white/75 px-3 py-2">1 sản phẩm</span>
-              <span className="rounded-full bg-white/75 px-3 py-2">Không cần đăng nhập</span>
+              <span className="rounded-full bg-white/75 px-3 py-2">
+                1 ảnh của bạn
+              </span>
+              <span className="rounded-full bg-white/75 px-3 py-2">
+                1 sản phẩm
+              </span>
+              <span className="rounded-full bg-white/75 px-3 py-2">
+                Không cần đăng nhập
+              </span>
             </div>
           </div>
         </section>
@@ -221,7 +262,17 @@ export default function VirtualTryOnClient() {
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
-              className={`group relative mt-5 flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[22px] border-2 text-center transition ${previewUrl ? "border-[#E8CBD4] bg-[#F8F1F2]" : "border-dashed border-[#E8CBD4] bg-[#FFF9FA] hover:border-[#D96C8A] hover:bg-[#FFF4F7]"}`}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setDragActive(true);
+              }}
+              onDragLeave={() => setDragActive(false)}
+              onDrop={(event) => {
+                event.preventDefault();
+                setDragActive(false);
+                chooseFile(event.dataTransfer.files?.[0]);
+              }}
+              className={`group relative mt-5 flex aspect-4/5 w-full items-center justify-center overflow-hidden rounded-[22px] border-2 text-center transition ${previewUrl ? "border-[#E8CBD4] bg-[#F8F1F2]" : dragActive ? "border-[#D96C8A] bg-[#FFF0F4]" : "border-dashed border-[#E8CBD4] bg-[#FFF9FA] hover:border-[#D96C8A] hover:bg-[#FFF4F7]"}`}
             >
               {previewUrl ? (
                 <>
@@ -252,6 +303,7 @@ export default function VirtualTryOnClient() {
               ref={inputRef}
               type="file"
               accept="image/jpeg,image/png"
+              capture="user"
               className="hidden"
               onChange={(event) => {
                 chooseFile(event.target.files?.[0]);
@@ -260,7 +312,10 @@ export default function VirtualTryOnClient() {
             />
             <div className="mt-3 flex items-start gap-2 text-xs leading-5 text-[#8B7A80]">
               <Camera className="mt-0.5 size-3.5 shrink-0" />
-              <span>Tránh ảnh có nhiều người hoặc bị che khuất.</span>
+              <span>
+                Trên điện thoại, bạn có thể chụp trực tiếp. Tránh ảnh có nhiều
+                người hoặc bị che khuất.
+              </span>
             </div>
           </section>
 
@@ -291,20 +346,26 @@ export default function VirtualTryOnClient() {
               />
             </label>
 
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1" aria-label="Lọc loại quần áo">
-              {(Object.keys(garmentCategoryLabels) as GarmentCategory[]).map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() => setGarmentFilter(category)}
-                  className={`whitespace-nowrap rounded-full px-3 py-2 text-xs font-extrabold transition ${garmentFilter === category ? "bg-[#D96C8A] text-white" : "bg-[#FFF3F6] text-[#A43E5F] hover:bg-[#FCE0E8]"}`}
-                >
-                  {garmentCategoryLabels[category]}
-                </button>
-              ))}
+            <div
+              className="mt-3 flex gap-2 overflow-x-auto pb-1"
+              aria-label="Lọc loại quần áo"
+            >
+              {(Object.keys(garmentCategoryLabels) as GarmentCategory[]).map(
+                (category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setGarmentFilter(category)}
+                    className={`whitespace-nowrap rounded-full px-3 py-2 text-xs font-extrabold transition ${garmentFilter === category ? "bg-[#D96C8A] text-white" : "bg-[#FFF3F6] text-[#A43E5F] hover:bg-[#FCE0E8]"}`}
+                  >
+                    {garmentCategoryLabels[category]}
+                  </button>
+                ),
+              )}
             </div>
-            <p className="mt-2 text-[11px] leading-5 text-[#A39197]">
-              Hiện AI đang hỗ trợ thử <strong>Áo</strong>. Loại sản phẩm lấy từ phân loại admin, không tự đoán theo tên.
+            <p className="mt-2 text-11px leading-5 text-[#A39197]">
+              AI hiện hỗ trợ thử <strong>áo, quần và váy</strong>. Sản phẩm khác
+              được đánh dấu rõ để bạn không chọn nhầm.
             </p>
 
             {loadingProducts ? (
@@ -312,12 +373,12 @@ export default function VirtualTryOnClient() {
                 {[1, 2, 3, 4, 5, 6].map((item) => (
                   <div
                     key={item}
-                    className="aspect-[4/5] animate-pulse rounded-2xl bg-[#F6EEF0]"
+                    className="aspect-4/5 animate-pulse rounded-2xl bg-[#F6EEF0]"
                   />
                 ))}
               </div>
             ) : products.length && visibleProducts.length ? (
-              <div className="mt-4 grid max-h-[420px] grid-cols-2 gap-3 overflow-y-auto pr-1 sm:grid-cols-3 xl:grid-cols-4">
+              <div className="mt-4 grid max-h-105 grid-cols-2 gap-3 overflow-y-auto pr-1 sm:grid-cols-3 xl:grid-cols-4">
                 {visibleProducts.map((product) => {
                   const selected = product.id === selectedProductId;
                   return (
@@ -332,7 +393,7 @@ export default function VirtualTryOnClient() {
                       }}
                       className={`group overflow-hidden rounded-2xl border-2 text-left transition ${selected ? "border-[#D96C8A] bg-[#FFF3F6] shadow-[0_8px_20px_rgba(217,108,138,0.12)]" : "border-transparent bg-[#FAF8F8] hover:border-[#E8CBD4]"}`}
                     >
-                      <div className="relative aspect-[4/5] overflow-hidden bg-[#F1EAEC]">
+                      <div className="relative aspect-4/5 overflow-hidden bg-[#F1EAEC]">
                         <img
                           src={product.imageUrl}
                           alt={product.title}
@@ -344,7 +405,12 @@ export default function VirtualTryOnClient() {
                             <Check className="size-4" />
                           </span>
                         )}
-                        <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-1 text-[10px] font-extrabold text-[#A43E5F] shadow-sm">
+                        {!isSupportedProduct(product) && (
+                          <span className="absolute inset-0 flex items-center justify-center bg-[#3A2930]/45 px-2 text-center text-11px font-extrabold text-white">
+                            Chưa hỗ trợ thử đồ
+                          </span>
+                        )}
+                        <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-1 text-10px font-extrabold text-[#A43E5F] shadow-sm">
                           {garmentCategoryLabels[getGarmentCategory(product)]}
                         </span>
                       </div>
@@ -387,7 +453,7 @@ export default function VirtualTryOnClient() {
                   className="size-12 rounded-xl object-cover"
                 />
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold text-[#A39197]">
+                  <p className="text-11px font-semibold text-[#A39197]">
                     Đang chọn
                   </p>
                   <p className="truncate text-sm font-extrabold text-[#3B2D32]">
@@ -414,7 +480,9 @@ export default function VirtualTryOnClient() {
               >
                 <Loader2 className="mt-0.5 size-4 shrink-0 animate-spin text-[#D96C8A]" />
                 <span>
-                  <strong className="text-[#3B2D32]">AI đang xử lý ảnh...</strong>
+                  <strong className="text-[#3B2D32]">
+                    AI đang xử lý ảnh...
+                  </strong>
                   <br />
                   Có thể cần chờ một chút vì đây là phiên bản miễn phí.
                 </span>
@@ -424,7 +492,12 @@ export default function VirtualTryOnClient() {
             <button
               type="button"
               onClick={() => void generate()}
-              disabled={generating || !file || !selectedProductId}
+              disabled={
+                generating ||
+                !file ||
+                !selectedProductId ||
+                Boolean(selectedProduct && !isSupportedProduct(selectedProduct))
+              }
               className="sticky bottom-3 z-10 mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#D96C8A] px-5 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(217,108,138,0.28)] transition hover:bg-[#C85B7B] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {generating ? (
@@ -454,18 +527,18 @@ export default function VirtualTryOnClient() {
                   Bạn thấy thế nào?
                 </h2>
               </div>
-              <div className="flex gap-2">
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                 <button
                   type="button"
                   onClick={() => setResultUrl("")}
-                  className="rounded-full border border-[#E8CBD4] px-3.5 py-2 text-xs font-bold text-[#A43E5F] transition hover:bg-[#FFF3F6]"
+                  className="rounded-full border border-[#E8CBD4] px-3.5 py-2 text-xs font-bold text-[#A43E5F] transition hover:bg-[#FFF3F6] sm:whitespace-nowrap"
                 >
                   Thử bộ khác
                 </button>
                 <a
                   href={resultUrl}
                   download="anh-thu-do.png"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-[#3A2930] px-3.5 py-2 text-xs font-bold text-white transition hover:bg-[#513B44]"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#3A2930] px-3.5 py-2 text-xs font-bold text-white transition hover:bg-[#513B44] sm:whitespace-nowrap"
                 >
                   <Download className="size-3.5" /> Lưu ảnh
                 </a>
@@ -475,13 +548,13 @@ export default function VirtualTryOnClient() {
               <img
                 src={resultUrl}
                 alt={`Ảnh thử đồ ${selectedProduct?.title || "sản phẩm"}`}
-                className="max-h-[720px] w-auto rounded-2xl object-contain"
+                className="max-h-180 max-w-full rounded-2xl object-contain"
               />
             </div>
             <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-xs leading-5 text-[#8B7A80]">
               <Info className="mt-0.5 size-3.5 shrink-0" />
-              Ảnh AI chỉ mang tính minh họa. Màu sắc và độ vừa vặn thực tế có thể
-              khác.
+              Ảnh AI chỉ mang tính minh họa. Màu sắc và độ vừa vặn thực tế có
+              thể khác.
             </p>
           </section>
         )}
