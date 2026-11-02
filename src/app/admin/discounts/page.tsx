@@ -42,7 +42,7 @@ type Coupon = {
   }[];
   source?: "MANUAL" | "BIRTHDAY";
   birthdayYear?: number | null;
-  recipientUser?: { displayName: string | null; email: string | null } | null;
+  recipientUser?: { displayName: string | null; email: string | null; phone?: string | null } | null;
   startsAt?: string | null;
   endsAt?: string | null;
 };
@@ -70,6 +70,7 @@ type DiscountForm = {
   membershipDiscounts: MembershipDiscount[];
   startsAt: string;
   endsAt: string;
+  recipientPhone: string;
 };
 const initialForm: DiscountForm = {
   name: "",
@@ -84,6 +85,7 @@ const initialForm: DiscountForm = {
   membershipDiscounts: [],
   startsAt: "",
   endsAt: "",
+  recipientPhone: "",
 };
 const discountValidationSchema = Yup.object({
   name: Yup.string().trim().required("Vui lòng nhập tên chương trình."),
@@ -252,6 +254,7 @@ export default function DiscountsPage() {
             ...item,
             discountRate: Number(item.discountRate),
           })),
+        recipientPhone: form.recipientPhone || undefined,
       }),
     });
     const data = await response.json();
@@ -383,6 +386,20 @@ export default function DiscountsPage() {
                   placeholder="Chọn đối tượng áp dụng"
                   hasError={hasError("firstOrderOnly")}
                   onChange={(value) => updateForm("firstOrderOnly", value)}
+                />
+              </Field>
+              <Field
+                label="Tặng riêng cho khách hàng (SĐT)"
+                hint="Để trống nếu mã dùng cho tất cả khách hàng. Số điện thoại phải thuộc tài khoản khách hàng đang hoạt động."
+              >
+                <Input
+                  standalone
+                  value={form.recipientPhone}
+                  onManualChange={(value) => updateForm("recipientPhone", value)}
+                  placeholder="Ví dụ: 0912 345 678"
+                  aria-label="Số điện thoại khách hàng nhận voucher"
+                  inputMode="tel"
+                  className={fieldClassName("recipientPhone")}
                 />
               </Field>
               <Field label="Loại giảm giá">
@@ -636,9 +653,14 @@ export default function DiscountsPage() {
                             {coupon.source === "BIRTHDAY" ? (
                               <span className="mt-1 block text-xs font-normal text-(--admin-primary)">
                                 Sinh nhật ·{" "}
-                                {coupon.recipientUser?.email || "khách hàng"}
+                            {coupon.recipientUser?.phone || coupon.recipientUser?.email || "khách hàng"}
                               </span>
                             ) : null}
+                        {coupon.recipientUser && coupon.source !== "BIRTHDAY" ? (
+                          <span className="mt-1 block text-xs font-normal text-(--admin-primary)">
+                            Tặng riêng · {coupon.recipientUser.phone || coupon.recipientUser.email || "khách hàng"}
+                          </span>
+                        ) : null}
                           </td>
                           <td className="p-3 font-semibold text-(--admin-primary)">
                             {coupon.code}
@@ -706,7 +728,12 @@ export default function DiscountsPage() {
                         {coupon.source === "BIRTHDAY" ? (
                           <p className="mt-1 text-xs text-(--admin-primary)">
                             🎂 Sinh nhật ·{" "}
-                            {coupon.recipientUser?.email || "khách hàng"}
+                            {coupon.recipientUser?.phone || coupon.recipientUser?.email || "khách hàng"}
+                          </p>
+                        ) : null}
+                        {coupon.recipientUser && coupon.source !== "BIRTHDAY" ? (
+                          <p className="mt-1 text-xs text-(--admin-primary)">
+                            Tặng riêng · {coupon.recipientUser.phone || coupon.recipientUser.email || "khách hàng"}
                           </p>
                         ) : null}
                         <p className="mt-1 inline-flex rounded-md bg-(--admin-primary-soft) px-2 py-1 font-mono text-xs font-bold tracking-wide text-(--admin-primary)">

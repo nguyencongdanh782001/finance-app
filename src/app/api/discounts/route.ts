@@ -2,6 +2,7 @@ import { getAdminFromRequest } from "@/lib/orders/daily-orders";
 import { generateDiscountCode, generatePublicToken, getDiscountStatus, normalizeDiscountCode } from "@/lib/discounts";
 import prisma from "@/lib/db";
 import { CouponType } from "@/app/generated/prisma/client";
+import { isValidVietnamesePhone, normalizeVietnamesePhone } from "@/lib/auth/validation";
 import { NextResponse } from "next/server";
 
 const errorResponse = (error: unknown) =>
@@ -43,6 +44,8 @@ const parsePayload = (body: Record<string, unknown>) => {
   if (body.startsAt && !startsAt) throw new Error("Ngày bắt đầu không hợp lệ.");
   if (body.endsAt && !endsAt) throw new Error("Ngày kết thúc không hợp lệ.");
   if (startsAt && endsAt && startsAt > endsAt) throw new Error("Ngày kết thúc phải sau ngày bắt đầu.");
+  const recipientPhone = normalizeVietnamesePhone(String(body.recipientPhone || "").trim());
+  if (recipientPhone && !isValidVietnamesePhone(recipientPhone)) throw new Error("Số điện thoại người nhận không hợp lệ.");
   return {
     name,
     description: String(body.description || "").trim() || null,
@@ -59,13 +62,14 @@ const parsePayload = (body: Record<string, unknown>) => {
     firstOrderOnly: body.firstOrderOnly === true,
     isActive: body.isActive !== false,
     membershipDiscounts,
+    recipientPhone,
   };
 };
 
 export async function GET(request: Request) {
   try {
     getAdminFromRequest(request);
-    const coupons = await prisma.coupon.findMany({ orderBy: { createdAt: "desc" }, include: { recipientUser: { select: { displayName: true, email: true } }, applicableMemberships: { include: { membership: { select: { id: true, name: true } } } } } });
+    const coupons = await prisma.coupon.findMany({ orderBy: { createdAt: "desc" }, include: { recipientUser: { select: { displayName: true, email: true, phone: true } }, applicableMemberships: { include: { membership: { select: { id: true, name: true } } } } } });
     return NextResponse.json(coupons.map((coupon) => ({ ...coupon, status: getDiscountStatus(coupon), value: Number(coupon.value), minOrderAmount: coupon.minOrderAmount ? Number(coupon.minOrderAmount) : null, maxDiscountAmount: coupon.maxDiscountAmount ? Number(coupon.maxDiscountAmount) : null, membershipDiscounts: coupon.applicableMemberships.map((item) => ({ membershipId: item.membershipId, membershipName: item.membership.name, discountRate: Number(item.discountRate) })), recipientUser: coupon.recipientUser, source: coupon.source, birthdayYear: coupon.birthdayYear })));
   } catch (error) { return errorResponse(error); }
 }
@@ -75,8 +79,18 @@ export async function POST(request: Request) {
     getAdminFromRequest(request);
     const body = (await request.json()) as Record<string, unknown>;
     const data = parsePayload(body);
-    const { membershipDiscounts, ...couponData } = data;
-    const coupon = await prisma.coupon.create({ data: { ...couponData, publicToken: generatePublicToken(), applicableMemberships: membershipDiscounts.length ? { create: membershipDiscounts } : undefined } });
+    const { membershipDiscounts, recipientPhone, ...couponData } = data;
+    let recipientUserId: number | null = null;
+    if (recipientPhone) {
+      const recipient = await prisma.user.findUnique({
+        where: { phone: recipientPhone },
+        select: { id: true, role: true, status: true },
+      });
+      if (!recipient || recipient.role !== "CUSTOMER") throw new Error("Không tìm thấy khách hàng với số điện thoại này.");
+      if (recipient.status !== "ACTIVE") throw new Error("Tài khoản khách hàng này không đang hoạt động.");
+      recipientUserId = recipient.id;
+    }
+    const coupon = await prisma.coupon.create({ data: { ...couponData, recipientUserId, publicToken: generatePublicToken(), applicableMemberships: membershipDiscounts.length ? { create: membershipDiscounts } : undefined } });
     return NextResponse.json(coupon, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message.includes("Unique constraint")) return NextResponse.json({ message: "Mã giảm giá đã tồn tại." }, { status: 409 });
