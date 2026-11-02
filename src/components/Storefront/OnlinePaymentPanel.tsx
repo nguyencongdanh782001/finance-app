@@ -18,6 +18,7 @@ type Props = {
   orderNumber: string;
   paymentMethod?: string;
   totalAmount?: number;
+  compact?: boolean;
 };
 type Order = {
   id: number;
@@ -40,6 +41,7 @@ export default function OnlinePaymentPanel({
   orderNumber,
   paymentMethod,
   totalAmount = 0,
+  compact = false,
 }: Props) {
   const [order, setOrder] = useState<Order | null>(
     paymentMethod === "BANK_TRANSFER" && totalAmount > 0
@@ -144,7 +146,9 @@ export default function OnlinePaymentPanel({
   if (loading || !order || !isBankTransfer) return null;
 
   return (
-    <section className="mx-auto mt-6 max-w-5xl rounded-[2rem] border border-[#F4D6DF] bg-[#FFF8FA] p-6 shadow-[0_14px_40px_rgba(77,47,58,0.06)] sm:p-8">
+    <section
+      className={`mx-auto mt-6 w-full min-w-0 rounded-[2rem] border border-[#F4D6DF] bg-[#FFF8FA] shadow-[0_14px_40px_rgba(77,47,58,0.06)] ${compact ? "p-4" : "max-w-5xl p-6 sm:p-8"}`}
+    >
       <div className="flex items-start gap-3">
         <div
           className={`flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white ${isPaid ? "text-[#398866]" : isExpired ? "text-[#A43E5F]" : "text-[#D96C8A]"}`}
@@ -186,9 +190,13 @@ export default function OnlinePaymentPanel({
       </div>
 
       {!isPaid && !isExpired ? (
-        <div className="mt-6 grid gap-5 rounded-2xl border border-white bg-white p-5 md:grid-cols-[minmax(0,1fr)_220px]">
-          <div>
-            <div className="grid gap-3 text-sm text-[#6F686B] sm:grid-cols-2">
+        <div
+          className={`mt-6 grid min-w-0 gap-5 rounded-2xl border border-white bg-white ${compact ? "grid-cols-1 p-4" : "p-5 md:grid-cols-[minmax(0,1fr)_220px]"}`}
+        >
+          <div className="min-w-0">
+            <div
+              className={`grid gap-3 text-sm text-[#6F686B] ${compact ? "grid-cols-1" : "sm:grid-cols-2"}`}
+            >
               <p>
                 <strong className="text-[#3B2D32]">Mã đơn:</strong>
                 <br />
@@ -200,7 +208,7 @@ export default function OnlinePaymentPanel({
                 {money(order.totalAmount)}
               </p>
             </div>
-            <div className="mt-5 space-y-2 rounded-xl bg-[#FFFCFA] p-4 text-sm text-[#6F686B]">
+            <div className="mt-5 space-y-2 rounded-xl bg-[#FFFCFA] p-4 text-sm break-words text-[#6F686B]">
               <p>
                 <strong className="text-[#3B2D32]">Ngân hàng / BIN:</strong>{" "}
                 {settings?.vietQrBankCode || "Chưa cấu hình"}
@@ -218,12 +226,12 @@ export default function OnlinePaymentPanel({
                 DON HANG {order.orderNumber}
               </p>
             </div>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <div className={`mt-5 flex flex-col gap-3 ${compact ? "" : "md:flex-row"}`}>
               <button
                 type="button"
                 onClick={() => void reportTransfer()}
                 disabled={confirming || isReported}
-                className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#D96C8A] px-5 text-sm font-extrabold text-white hover:bg-[#C85B7B] disabled:cursor-not-allowed disabled:opacity-50"
+                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#D96C8A] px-5 text-sm font-extrabold text-white hover:bg-[#C85B7B] disabled:cursor-not-allowed disabled:opacity-50 ${compact ? "w-full" : "flex-1"}`}
               >
                 {confirming ? (
                   <LoaderCircle className="size-4 animate-spin" />
@@ -240,7 +248,7 @@ export default function OnlinePaymentPanel({
                 type="button"
                 onClick={() => void loadOrder(true)}
                 disabled={refreshing}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#EAE1E4] px-4 text-sm font-bold text-[#A43E5F] hover:bg-[#FFF7F9] disabled:opacity-50"
+                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#EAE1E4] px-4 text-sm font-bold text-[#A43E5F] hover:bg-[#FFF7F9] disabled:opacity-50 ${compact ? "w-full" : ""}`}
               >
                 <RefreshCw
                   className={`size-4 ${refreshing ? "animate-spin" : ""}`}
@@ -255,11 +263,11 @@ export default function OnlinePaymentPanel({
             ) : null}
           </div>
           {qrUrl ? (
-            <div className="rounded-xl border border-[#EAE1E4] bg-[#FFFCFA] p-3 text-center">
+            <div className="min-w-0 rounded-xl border border-[#EAE1E4] bg-[#FFFCFA] p-3 text-center">
               <img
                 src={qrUrl}
                 alt="Mã QR chuyển khoản"
-                className="mx-auto size-44 rounded-lg bg-white object-contain"
+                className={`${compact ? "h-auto aspect-square w-full max-w-44" : "size-44"} mx-auto rounded-lg bg-white object-contain`}
               />
               <p className="mt-2 text-xs font-bold text-[#6F686B]">
                 Quét mã để chuyển khoản
