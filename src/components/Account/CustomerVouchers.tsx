@@ -66,7 +66,8 @@ function VoucherCard({ voucher }: { voucher: Voucher }) {
           </div>
           {voucher.description ? <p className="mt-3 text-sm leading-6 text-[#6F6066]">{voucher.description}</p> : null}
           <div className="mt-4 grid gap-1 text-xs text-[#8B7A80]">
-            <p>Hạn dùng: <strong className="text-[#6F6066]">{date(voucher.expiresAt)}</strong></p>
+            {voucher.startsAt ? <p>Thời gian bắt đầu: <strong className="text-[#6F6066]">{date(voucher.startsAt)}</strong></p> : null}
+            <p>Thời gian kết thúc: <strong className="text-[#6F6066]">{date(voucher.expiresAt)}</strong></p>
             {voucher.minimumOrderValue ? <p>Đơn tối thiểu: <strong className="text-[#6F6066]">{money(voucher.minimumOrderValue)}</strong></p> : null}
             {voucher.remainingUsage !== null ? <p>Còn lại: <strong className="text-[#6F6066]">{voucher.remainingUsage} lượt</strong></p> : null}
           </div>
@@ -97,7 +98,7 @@ export default function CustomerVouchers() {
   }, []);
 
   const visibleVouchers = useMemo(
-    () => (vouchers || []).filter((voucher) => filter === "ALL" || (filter === "ACTIVE" ? voucher.status === "ACTIVE" : voucher.status === "USED")),
+    () => (vouchers || []).filter((voucher) => voucher.status !== "PAUSED").filter((voucher) => filter === "ALL" || (filter === "ACTIVE" ? voucher.status === "ACTIVE" : voucher.status === "USED")),
     [filter, vouchers],
   );
 

@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, MapPin, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 import { storefrontFooterLinks } from "@/components/Storefront/storefront-navigation";
-import { getStorefrontContent } from "@/components/Storefront/storefront-content-cache";
 import { useEffect, useState } from "react";
 
 function FooterGroup({
@@ -45,11 +44,8 @@ export default function StorefrontFooter() {
     Array<{ title: string; slug: string }>
   >([]);
   useEffect(() => {
-    getStorefrontContent("footer-policies", () =>
-      fetch("/api/policies?footer=true").then((response) =>
-        response.ok ? response.json() : Promise.reject(),
-      ),
-    )
+    fetch(`/api/policies?footer=true&t=${Date.now()}`, { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((data: { items?: Array<{ title: string; slug: string }> }) =>
         setPolicies(data.items || []),
       )
@@ -113,13 +109,10 @@ export default function StorefrontFooter() {
           <FooterGroup title="Khám phá" links={storefrontFooterLinks} />
           <FooterGroup
             title="Hỗ trợ"
-            links={[
-              { label: "Chính sách cửa hàng", href: "/policies" },
-              ...policies.map((policy) => ({
-                label: policy.title,
-                href: `/policies?policy=${encodeURIComponent(policy.slug)}`,
-              })),
-            ]}
+            links={policies.map((policy) => ({
+              label: policy.title,
+              href: `/policies?policy=${encodeURIComponent(policy.slug)}`,
+            }))}
           />
           <div>
             <div className="flex items-center gap-2">
