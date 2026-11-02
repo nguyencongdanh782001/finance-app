@@ -32,6 +32,53 @@ export async function GET(request: Request) {
   }
 
   const url = new URL(request.url);
+  if (url.searchParams.get("view") === "wallet") {
+    const coupons = await prisma.coupon.findMany({
+      where: { OR: [{ recipientUserId: null }, { recipientUserId: userId }] },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      include: {
+        redemptions: {
+          where: { order: { userId } },
+          select: { id: true },
+        },
+      },
+    });
+
+    return NextResponse.json({
+      coupons: coupons.map((coupon) => {
+        const status = getDiscountStatus(coupon);
+        const usedByCustomer = coupon.redemptions.length;
+        const remainingUsage =
+          coupon.usageLimitPerUser === null
+            ? null
+            : Math.max(0, coupon.usageLimitPerUser - usedByCustomer);
+        return {
+          id: String(coupon.id),
+          code: coupon.code,
+          title: coupon.name,
+          description: coupon.description,
+          discountType: coupon.type,
+          discountValue: Number(coupon.value),
+          maximumDiscount: coupon.maxDiscountAmount
+            ? Number(coupon.maxDiscountAmount)
+            : null,
+          minimumOrderValue: coupon.minOrderAmount
+            ? Number(coupon.minOrderAmount)
+            : null,
+          startsAt: coupon.startsAt?.toISOString() || null,
+          expiresAt: coupon.endsAt?.toISOString() || null,
+          status:
+            remainingUsage === 0 && status === "ACTIVE"
+              ? "USED"
+              : status,
+          remainingUsage,
+          usedByCustomer,
+          source: coupon.source,
+        };
+      }),
+    });
+  }
   const token =
     url.searchParams.get("checkoutSessionId") ||
     url.searchParams.get("intent") ||

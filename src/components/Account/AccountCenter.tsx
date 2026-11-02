@@ -6,6 +6,7 @@ import { FormikProvider, useFormik } from "formik";
 import * as Yup from "yup";
 import StorefrontShell from "@/components/Storefront/StorefrontShell";
 import CustomerOrderDetail from "@/components/Account/CustomerOrderDetail";
+import CustomerVouchers from "@/components/Account/CustomerVouchers";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { toast } from "@/hook/use-toast";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ import {
   ShieldCheck,
   UserRound,
   Search,
+  TicketPercent,
   Trash2,
 } from "lucide-react";
 import {
@@ -165,6 +167,7 @@ function Sidebar({
     { href: "/account/profile", label: "Thông tin cá nhân", icon: UserRound },
     { href: "/account/addresses", label: "Sổ địa chỉ", icon: MapPin },
     { href: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
+    { href: "/account/vouchers", label: "Voucher của tôi", icon: TicketPercent },
   ];
   const name = profile?.displayName || "Khách hàng";
   return (
@@ -209,13 +212,14 @@ function Sidebar({
           const active =
             path === href ||
             (href === "/account/orders" && path.startsWith(href));
+          const voucherActive = href === "/account/vouchers" && path.startsWith(href);
           return (
             <button
               key={href}
               type="button"
               onClick={() => router.push(href)}
-              aria-current={active ? "page" : undefined}
-              className={`relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D96C8A] ${active ? "bg-[#FCEEF3] text-[#D96C8A] before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:bg-[#D96C8A]" : "text-[#6F6066] hover:rounded-xl hover:bg-white hover:text-[#D96C8A]"}`}
+            aria-current={active || voucherActive ? "page" : undefined}
+              className={`relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D96C8A] ${active || voucherActive ? "bg-[#FCEEF3] text-[#D96C8A] before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:bg-[#D96C8A]" : "text-[#6F6066] hover:rounded-xl hover:bg-white hover:text-[#D96C8A]"}`}
             >
               <Icon className="size-4.5" />
               {text}
@@ -249,6 +253,7 @@ function MobileNav({
     { href: "/account/profile", label: "Thông tin cá nhân", icon: UserRound },
     { href: "/account/addresses", label: "Sổ địa chỉ", icon: MapPin },
     { href: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
+    { href: "/account/vouchers", label: "Voucher của tôi", icon: TicketPercent },
   ];
   return (
     <div className="mb-6 lg:hidden">
@@ -1700,6 +1705,7 @@ export default function AccountCenter({
     | "profile"
     | "addresses"
     | "orders"
+    | "vouchers"
     | "order-detail";
   orderId?: number;
 }) {
@@ -1724,6 +1730,8 @@ export default function AccountCenter({
       <AddressesPage />
     ) : section === "orders" ? (
       <OrdersPage />
+    ) : section === "vouchers" ? (
+      <CustomerVouchers />
     ) : section === "order-detail" && orderId ? (
       <CustomerOrderDetail orderId={orderId} />
     ) : (
