@@ -317,8 +317,8 @@ export default function CustomerOrderDetail({ orderId }: { orderId: number }) {
         <Timeline order={order} />
       </InfoCard>
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="grid gap-5">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid min-w-0 gap-5">
           <InfoCard title={`Sản phẩm (${order.items.length})`} icon={<ShoppingBag className="size-4" />}>
             <div className="divide-y divide-[#EAE1E4]">
               {order.items.map((item) => (
@@ -354,12 +354,12 @@ export default function CustomerOrderDetail({ orderId }: { orderId: number }) {
           {order.history.length ? <InfoCard title="Lịch sử đơn hàng" icon={<Clock3 className="size-4" />}><div className="grid gap-4">{order.history.slice().reverse().map((entry) => <div key={entry.id} className="flex gap-3"><span className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-full bg-[#FCEEF3] text-[#A43E5F]"><CheckCircle2 className="size-4" /></span><div className="min-w-0"><p className="text-sm font-extrabold">{ORDER_STATUS_CONFIG[entry.status].label}</p><p className="mt-1 text-xs text-[#8B7A80]">{dateTime(entry.createdAt)}</p>{entry.publicNote ? <p className="mt-1 text-sm text-[#6F6066]">{entry.publicNote}</p> : null}</div></div>)}</div></InfoCard> : null}
         </div>
 
-        <aside className="grid content-start gap-5">
+        <aside className="grid min-w-0 content-start gap-5">
           <InfoCard title="Thanh toán" icon={<CreditCard className="size-4" />}>
             <dl className="grid gap-3 text-sm">
-              <div className="flex items-start justify-between gap-4"><dt className="text-[#6F6066]">Phương thức</dt><dd className="max-w-[190px] text-right font-bold">{order.paymentMethod ? paymentMethodLabels[order.paymentMethod] || order.paymentMethod : "—"}</dd></div>
-              <div className="flex items-start justify-between gap-4"><dt className="text-[#6F6066]">Trạng thái</dt><dd className={`text-right font-bold ${order.paymentStatus === "PAID" ? "text-emerald-700" : "text-[#A43E5F]"}`}>{paymentStatusLabels[order.paymentStatus] || order.paymentStatus}</dd></div>
-              {order.paidAt ? <div className="flex items-start justify-between gap-4"><dt className="text-[#6F6066]">Thanh toán lúc</dt><dd className="text-right font-semibold">{dateTime(order.paidAt)}</dd></div> : null}
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><dt className="text-[#6F6066]">Phương thức</dt><dd className="max-w-[190px] break-words text-right font-bold">{order.paymentMethod ? paymentMethodLabels[order.paymentMethod] || order.paymentMethod : "—"}</dd></div>
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><dt className="text-[#6F6066]">Trạng thái</dt><dd className={`text-right font-bold ${order.paymentStatus === "PAID" ? "text-emerald-700" : "text-[#A43E5F]"}`}>{paymentStatusLabels[order.paymentStatus] || order.paymentStatus}</dd></div>
+              {order.paidAt ? <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><dt className="text-[#6F6066]">Thanh toán lúc</dt><dd className="text-right font-semibold">{dateTime(order.paidAt)}</dd></div> : null}
               {order.payments.find((payment) => payment.transactionId)?.transactionId ? <div className="flex items-start justify-between gap-4"><dt className="text-[#6F6066]">Mã giao dịch</dt><dd className="max-w-[190px] break-all text-right font-semibold">{order.payments.find((payment) => payment.transactionId)?.transactionId}</dd></div> : null}
             </dl>
           </InfoCard>
@@ -367,14 +367,15 @@ export default function CustomerOrderDetail({ orderId }: { orderId: number }) {
             orderNumber={order.orderNumber}
             paymentMethod={order.paymentMethod || undefined}
             totalAmount={order.totalAmount}
+            compact
           />
           <InfoCard title="Tóm tắt đơn hàng" icon={<PackageCheck className="size-4" />}>
             <dl className="grid gap-3 text-sm">
-              <div className="flex justify-between gap-4"><dt className="text-[#6F6066]">Tạm tính</dt><dd className="font-semibold">{money(order.subtotal)}</dd></div>
-              {order.discountAmount > 0 ? <div className="flex justify-between gap-4 text-[#A43E5F]"><dt>Giảm giá{order.discount.couponCode ? ` (${order.discount.couponCode})` : ""}</dt><dd className="font-bold">-{money(order.discountAmount)}</dd></div> : null}
-              <div className="flex justify-between gap-4"><dt className="text-[#6F6066]">Phí vận chuyển</dt><dd className="font-semibold">{order.shippingFee ? money(order.shippingFee) : "Miễn phí"}</dd></div>
-              {order.taxAmount > 0 ? <div className="flex justify-between gap-4"><dt className="text-[#6F6066]">Thuế</dt><dd className="font-semibold">{money(order.taxAmount)}</dd></div> : null}
-              <div className="mt-1 flex justify-between gap-4 border-t border-[#EAE1E4] pt-4"><dt className="font-extrabold">Tổng cộng</dt><dd className="text-lg font-extrabold text-[#A43E5F]">{money(order.totalAmount)}</dd></div>
+              <div className="flex flex-wrap justify-between gap-x-4 gap-y-1"><dt className="text-[#6F6066]">Tạm tính</dt><dd className="font-semibold">{money(order.subtotal)}</dd></div>
+              {order.discountAmount > 0 ? <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 text-[#A43E5F]"><dt>Giảm giá{order.discount.couponCode ? ` (${order.discount.couponCode})` : ""}</dt><dd className="font-bold">-{money(order.discountAmount)}</dd></div> : null}
+              <div className="flex flex-wrap justify-between gap-x-4 gap-y-1"><dt className="text-[#6F6066]">Phí vận chuyển</dt><dd className="font-semibold">{order.shippingFee ? money(order.shippingFee) : "Miễn phí"}</dd></div>
+              {order.taxAmount > 0 ? <div className="flex flex-wrap justify-between gap-x-4 gap-y-1"><dt className="text-[#6F6066]">Thuế</dt><dd className="font-semibold">{money(order.taxAmount)}</dd></div> : null}
+              <div className="mt-1 flex flex-wrap justify-between gap-x-4 gap-y-1 border-t border-[#EAE1E4] pt-4"><dt className="font-extrabold">Tổng cộng</dt><dd className="text-lg font-extrabold text-[#A43E5F]">{money(order.totalAmount)}</dd></div>
             </dl>
           </InfoCard>
           {order.note ? <InfoCard title="Ghi chú giao hàng" icon={<MapPin className="size-4" />}><p className="text-sm leading-6 text-[#6F6066]">{order.note}</p></InfoCard> : null}

@@ -55,6 +55,21 @@ const getVtonClient = () => {
   return clientPromise;
 };
 
+// The public IDM-VTON Space only exposes the original upper-body schema.
+// A category field must only be sent to an explicitly configured multi-category Space.
+const isCategoryAwareSpace = (space: string) =>
+  space !== DEFAULT_VTON_SPACE && process.env.VTON_CATEGORY_MODE === "true";
+
+const isMiragicSpace = (space: string) =>
+  space.toLowerCase().includes("miragic-ai/miragic-virtual-try-on") ||
+  space.toLowerCase().includes("miragic-ai-miragic-virtual-try-on");
+
+const miragicGarmentType: Record<GarmentCategory, string> = {
+  upper_body: "Top",
+  lower_body: "Bottom",
+  dresses: "Dress/Suit",
+};
+
 const garmentCategoryLabel: Record<GarmentCategory, string> = {
   upper_body: "áo",
   lower_body: "quần hoặc chân váy",
@@ -173,7 +188,9 @@ export async function POST(request: Request) {
     NOT_SUPPORTED: null,
   };
   const garmentCategory = garmentCategoryMap[product.category.tryOnCategory];
-  const categoryAwareVton = process.env.VTON_CATEGORY_MODE === "true";
+  const configuredSpace = process.env.VTON_SPACE_ID?.trim() || DEFAULT_VTON_SPACE;
+  const categoryAwareVton = isCategoryAwareSpace(configuredSpace);
+  const miragicSpace = isMiragicSpace(configuredSpace);
 
   if (!garmentCategory) {
     return NextResponse.json(
@@ -189,7 +206,7 @@ export async function POST(request: Request) {
       {
         message:
           `Sản phẩm này thuộc nhóm ${garmentCategoryLabel[garmentCategory]}. ` +
-          "Backend AI hiện tại mới hỗ trợ áo; hãy cấu hình VTON_CATEGORY_MODE=true với Space đa danh mục để thử sản phẩm này.",
+          "Backend AI hiện tại mới hỗ trợ áo; hãy cấu hình VTON_SPACE_ID tới Space đa danh mục để thử sản phẩm này.",
         garmentCategory,
       },
       { status: 422 },
@@ -246,6 +263,14 @@ export async function POST(request: Request) {
         // Keep the ImageEditor input in the shape expected by the public
         // yisol Space. Its composite layer is optional; sending the person
         // image there as well causes some Gradio versions to reject the job.
+        if (miragicSpace) {
+          return client.predict("/virtual_tryon", {
+            human_img: personImage,
+            garment_img: garmentImage,
+            garment_type: miragicGarmentType[garmentCategory],
+          });
+        }
+
         const inputs: Record<string, unknown> = {
           dict: {
             background: personImage,
