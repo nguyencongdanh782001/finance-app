@@ -46,7 +46,9 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({
-      coupons: coupons.map((coupon) => {
+      coupons: coupons
+        .filter((coupon) => getDiscountStatus(coupon) !== "PAUSED")
+        .map((coupon) => {
         const status = getDiscountStatus(coupon);
         const usedByCustomer = coupon.redemptions.length;
         const remainingUsage =
@@ -76,7 +78,7 @@ export async function GET(request: Request) {
           usedByCustomer,
           source: coupon.source,
         };
-      }),
+        }),
     });
   }
   const token =
