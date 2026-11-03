@@ -4,12 +4,22 @@ import prisma from "@/lib/db";
 import { uploadImageToCloudinary } from "@/lib/cloudinary-upload";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+// The public Gradio Space can spend several minutes waking up and processing
+// a queued request. Keep this above the application timeout so the route does
+// not cancel a job while the configured hosting platform still allows it.
+export const maxDuration = 300;
 
 const DEFAULT_VTON_SPACE = "https://yisol-idm-vton.hf.space";
 const MAX_PERSON_IMAGE_BYTES = 8 * 1024 * 1024;
 const MAX_PRODUCT_IMAGE_BYTES = 8 * 1024 * 1024;
-const REQUEST_TIMEOUT_MS = 110_000;
+const REQUEST_TIMEOUT_MS = Math.max(
+  60_000,
+  Number(process.env.VTON_TIMEOUT_MS) || 240_000,
+);
+const DENOISE_STEPS = Math.max(
+  10,
+  Math.min(30, Number(process.env.VTON_DENOISE_STEPS) || 20),
+);
 
 type GarmentCategory = "upper_body" | "lower_body" | "dresses";
 
@@ -111,6 +121,10 @@ const isSpaceBusyError = (error: unknown) => {
     (term) => message.includes(term),
   );
 };
+
+const isSpaceInferenceError = (error: unknown) =>
+  error instanceof Error &&
+  error.message.toLowerCase().includes("an error occurred");
 
 export async function POST(request: Request) {
   if (!consumeRateLimit(getClientKey(request))) {
@@ -281,7 +295,7 @@ export async function POST(request: Request) {
           garment_des: product.title,
           is_checked: true,
           is_checked_crop: false,
-          denoise_steps: 30,
+          denoise_steps: DENOISE_STEPS,
           seed: 42,
         };
         // Only add this field when a custom Space explicitly supports it.
@@ -347,6 +361,15 @@ export async function POST(request: Request) {
         {
           message:
             "AI miễn phí đang bận hoặc đang khởi động. Vui lòng thử lại sau ít phút.",
+        },
+        { status: 503 },
+      );
+    }
+    if (isSpaceInferenceError(error)) {
+      return NextResponse.json(
+        {
+          message:
+            "AI provider hiện đang lỗi khi tạo ảnh. Vui lòng thử lại sau hoặc liên hệ quản trị viên để đổi provider.",
         },
         { status: 503 },
       );

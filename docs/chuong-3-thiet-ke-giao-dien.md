@@ -278,3 +278,43 @@ Các bảng dữ liệu được chuyển thành thẻ thông tin trên màn hì
 ### 3.3.3. Trạng thái phản hồi giao diện
 
 Các màn hình có trạng thái đang tải, không có dữ liệu, lỗi kết nối, thao tác thành công và thao tác thất bại. Những thao tác quan trọng như thanh toán, hủy đơn, xác nhận thanh toán và cập nhật dữ liệu đều hiển thị thông báo kết quả cho người dùng.
+
+## 3.4. Triển khai tích hợp tính năng thanh toán
+
+### 3.4.1. Cấu hình thông tin nhận chuyển khoản
+
+Quản trị viên cấu hình phương thức thanh toán chuyển khoản trong trang cài đặt thanh toán. Các thông tin gồm ngân hàng hoặc mã BIN, số tài khoản và tên chủ tài khoản. Dữ liệu này được lưu trong hệ thống và sử dụng để tạo mã VietQR cho từng đơn hàng.
+
+**Hình 3.43. Trang cấu hình thông tin thanh toán ngân hàng**
+
+_Chèn ảnh tự chụp màn hình cấu hình ngân hàng trong khu vực quản trị tại đây._
+
+Website hiện sử dụng VietQR để tạo mã QR theo số tiền và nội dung thanh toán của đơn hàng. Hệ thống không tự động kết nối trực tiếp với tài khoản ngân hàng để xác nhận giao dịch.
+
+### 3.4.2. Hiển thị phương thức thanh toán tại trang checkout
+
+Tại trang checkout, khách hàng có thể lựa chọn thanh toán khi nhận hàng hoặc chuyển khoản ngân hàng. Khi chọn chuyển khoản, hệ thống kiểm tra cấu hình thanh toán và hiển thị hướng dẫn tương ứng.
+
+**Hình 3.44. Lựa chọn phương thức thanh toán tại trang checkout**
+
+_Chèn ảnh tự chụp màn hình lựa chọn COD và chuyển khoản tại đây._
+
+Sau khi tạo đơn hàng, khách hàng được hiển thị mã đơn, số tiền cần thanh toán, thông tin tài khoản nhận tiền và mã QR. Nội dung chuyển khoản được tạo theo mã đơn hàng để hỗ trợ quản trị viên đối chiếu.
+
+### 3.4.3. Khách hàng thông báo đã chuyển khoản
+
+Sau khi hoàn tất chuyển khoản, khách hàng bấm nút **“Tôi đã chuyển khoản”** trên trang chi tiết đơn hàng. Hệ thống cập nhật trạng thái thanh toán sang trạng thái chờ quản trị viên kiểm tra và gửi thông báo đến khu vực quản trị.
+
+**Hình 3.45. Khách hàng thông báo đã chuyển khoản**
+
+_Chèn ảnh tự chụp màn hình mã QR và nút “Tôi đã chuyển khoản” tại đây._
+
+### 3.4.4. Quản trị viên kiểm tra và xác nhận thanh toán
+
+Quản trị viên mở chi tiết đơn hàng, kiểm tra giao dịch trên ứng dụng ngân hàng và đối chiếu số tiền, nội dung chuyển khoản với thông tin đơn hàng. Nếu giao dịch hợp lệ, quản trị viên xác nhận thanh toán và tiếp tục xử lý đơn.
+
+**Hình 3.46. Quản trị viên kiểm tra và xác nhận thanh toán**
+
+_Chèn ảnh tự chụp màn hình chi tiết đơn hàng và thao tác xác nhận tại đây._
+
+Luồng xử lý này giúp hạn chế việc xác nhận nhầm giao dịch. Tuy nhiên, do chưa tích hợp webhook ngân hàng, trạng thái thanh toán chuyển khoản vẫn cần được quản trị viên kiểm tra và cập nhật thủ công.
