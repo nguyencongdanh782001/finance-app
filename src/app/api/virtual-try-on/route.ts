@@ -102,12 +102,14 @@ const garmentCategoryLabel: Record<GarmentCategory, string> = {
 
 const GEMINI_IMAGE_ENDPOINT =
   "https://generativelanguage.googleapis.com/v1beta/models";
-const DEFAULT_GEMINI_IMAGE_MODEL = "gemini-2.5-flash-image";
+const DEFAULT_GEMINI_IMAGE_MODEL = "gemini-3.1-flash-image";
 
 const getGeminiImageModel = () => {
   const configured = process.env.GEMINI_IMAGE_MODEL?.trim();
   // Do not accidentally use the text-only GEMINI_MODEL in Production.
-  return configured && configured.toLowerCase().includes("image")
+  return configured &&
+    configured.toLowerCase().includes("image") &&
+    !configured.toLowerCase().includes("gemini-2.5-flash-image")
     ? configured
     : DEFAULT_GEMINI_IMAGE_MODEL;
 };
