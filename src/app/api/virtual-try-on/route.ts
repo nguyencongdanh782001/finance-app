@@ -104,6 +104,14 @@ const GEMINI_IMAGE_ENDPOINT =
   "https://generativelanguage.googleapis.com/v1beta/models";
 const DEFAULT_GEMINI_IMAGE_MODEL = "gemini-2.5-flash-image";
 
+const getGeminiImageModel = () => {
+  const configured = process.env.GEMINI_IMAGE_MODEL?.trim();
+  // Do not accidentally use the text-only GEMINI_MODEL in Production.
+  return configured && configured.toLowerCase().includes("image")
+    ? configured
+    : DEFAULT_GEMINI_IMAGE_MODEL;
+};
+
 const isObject = (value: unknown): value is JsonObject =>
   typeof value === "object" && value !== null;
 
@@ -161,8 +169,7 @@ const generateWithGemini = async ({
     throw new Error("Gemini image provider is not configured");
   }
 
-  const model =
-    process.env.GEMINI_IMAGE_MODEL?.trim() || DEFAULT_GEMINI_IMAGE_MODEL;
+  const model = getGeminiImageModel();
   const itemKind =
     garmentCategory === "accessory"
       ? "fashion accessory or hat"
@@ -219,7 +226,7 @@ This is a virtual try-on preview for an online fashion store.
             },
           ],
           generationConfig: {
-            responseModalities: ["IMAGE"],
+          responseModalities: ["TEXT", "IMAGE"],
             imageConfig: { aspectRatio: "3:4" },
           },
         }),
@@ -232,7 +239,12 @@ This is a virtual try-on preview for an online fashion store.
         isObject(payload?.error) && typeof payload.error.message === "string"
           ? payload.error.message
           : `Gemini image request failed with ${response.status}`;
-      throw new Error(providerMessage);
+      const providerError = new Error(providerMessage) as Error & {
+        providerStatus?: number;
+      };
+      providerError.name = "GeminiProviderError";
+      providerError.providerStatus = response.status;
+      throw providerError;
     }
     const candidates = Array.isArray(payload?.candidates)
       ? payload.candidates
@@ -566,12 +578,19 @@ export async function POST(request: Request) {
       error,
     });
     if (stage === "gemini-image-generation") {
+      const providerStatus =
+        error instanceof Error &&
+        typeof (error as Error & { providerStatus?: unknown }).providerStatus ===
+          "number"
+          ? (error as Error & { providerStatus: number }).providerStatus
+          : undefined;
       return NextResponse.json(
         {
           code: "GEMINI_IMAGE_GENERATION_FAILED",
           message:
             "Gemini không tạo được ảnh thử đồ. Vui lòng kiểm tra Gemini API key/model trong môi trường Production.",
           requestId,
+          ...(providerStatus ? { providerStatus } : {}),
         },
         { status: 502 },
       );
