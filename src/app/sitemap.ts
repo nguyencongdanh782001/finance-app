@@ -4,6 +4,11 @@ import type { MetadataRoute } from "next";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const baseUrl = siteUrl.replace(/\/$/, "");
 
+// Sitemap data depends on the live database. Generate it on request instead
+// of making production builds fail or log connection warnings when the DB is
+// temporarily unavailable during CI/build time.
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/`, changeFrequency: "daily", priority: 1 },

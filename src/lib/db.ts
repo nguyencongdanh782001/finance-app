@@ -21,14 +21,23 @@ const getDatabaseUrl = () => {
     );
   }
 
+  // pg-connection-string is changing the meaning of `sslmode=require` in its
+  // next major version. Preserve the current behavior explicitly so builds
+  // and runtime logs stay warning-free without exposing or rewriting secrets.
+  if (
+    databaseUrl.includes("sslmode=require") &&
+    !databaseUrl.includes("uselibpqcompat=")
+  ) {
+    return `${databaseUrl}&uselibpqcompat=true`;
+  }
+
   return databaseUrl;
 };
 
 const getPrismaClient = () => {
   const cachedPrisma = globalForPrisma.prisma;
   const cachedRuntime = cachedPrisma as unknown as
-    | Record<string, unknown>
-    | undefined;
+    Record<string, unknown> | undefined;
 
   if (cachedPrisma && cachedRuntime?.dailySoldProductContribution) {
     return cachedPrisma;

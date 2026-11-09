@@ -2,7 +2,88 @@
 /* eslint-disable @next/next/no-img-element */
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, LogOut, MapPin, Package, TicketPercent, UserRound } from "lucide-react";
-type SidebarProfile = { displayName: string | null; phone: string | null; avatarUrl?: string | null };
-const links = [["/account", "Tổng quan", Home], ["/account/profile", "Thông tin cá nhân", UserRound], ["/account/addresses", "Sổ địa chỉ", MapPin], ["/account/orders", "Đơn hàng của tôi", Package], ["/account/vouchers", "Voucher của tôi", TicketPercent]] as const;
-export default function AccountSidebar({ profile }: { profile: SidebarProfile | null }) { const pathname = usePathname(); const router = useRouter(); const { logout } = useAuth(); const name = profile?.displayName || "Khách hàng"; return <aside className="sticky top-[120px] hidden w-64 shrink-0 self-start lg:block"><div className="mb-6 flex items-center gap-3 border-b border-[#EAE1E4] pb-6"><div className="flex size-12 items-center justify-center overflow-hidden rounded-full bg-[#FCEEF3] font-bold text-[#A43E5F]">{profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" className="size-full object-cover" /> : name.split(" ").map((part) => part[0]).join("").slice(-2).toUpperCase()}</div><div className="min-w-0"><p className="truncate font-extrabold">{name}</p><p className="mt-0.5 text-xs text-[#6F6066]">{profile?.phone || "Chưa xác thực"}</p></div></div><nav className="grid gap-1" aria-label="Tài khoản">{links.map(([href, label, Icon]) => { const active = pathname === href || (href === "/account/orders" && pathname.startsWith(href)); return <button key={href} type="button" onClick={() => router.push(href)} aria-current={active ? "page" : undefined} className={`relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D96C8A] ${active ? "bg-[#FCEEF3] text-[#D96C8A] before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:bg-[#D96C8A]" : "text-[#6F6066] hover:rounded-xl hover:bg-white hover:text-[#D96C8A]"}`}><Icon className="size-[18px]" />{label}</button>; })}</nav><button type="button" onClick={() => void logout().then(() => router.push("/"))} className="mt-8 flex min-h-11 items-center gap-3 px-3 text-sm font-bold text-[#6F6066] hover:text-[#D96C8A]"><LogOut className="size-[18px]" />Đăng xuất</button></aside>; }
+import {
+  Home,
+  LogOut,
+  MapPin,
+  Package,
+  TicketPercent,
+  UserRound,
+} from "lucide-react";
+type SidebarProfile = {
+  displayName: string | null;
+  phone: string | null;
+  avatarUrl?: string | null;
+};
+const links = [
+  ["/account", "Tổng quan", Home],
+  ["/account/profile", "Thông tin cá nhân", UserRound],
+  ["/account/addresses", "Sổ địa chỉ", MapPin],
+  ["/account/orders", "Đơn hàng của tôi", Package],
+  ["/account/vouchers", "Voucher của tôi", TicketPercent],
+] as const;
+export default function AccountSidebar({
+  profile,
+}: {
+  profile: SidebarProfile | null;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
+  const name = profile?.displayName || "Khách hàng";
+  return (
+    <aside className="sticky top-30 hidden w-64 shrink-0 self-start lg:block">
+      <div className="mb-6 flex items-center gap-3 border-b border-[#EAE1E4] pb-6">
+        <div className="flex size-12 items-center justify-center overflow-hidden rounded-full bg-[#FCEEF3] font-bold text-[#A43E5F]">
+          {profile?.avatarUrl ? (
+            <img
+              src={profile.avatarUrl}
+              alt=""
+              className="size-full object-cover"
+            />
+          ) : (
+            name
+              .split(" ")
+              .map((part) => part[0])
+              .join("")
+              .slice(-2)
+              .toUpperCase()
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="truncate font-extrabold">{name}</p>
+          <p className="mt-0.5 text-xs text-[#6F6066]">
+            {profile?.phone || "Chưa xác thực"}
+          </p>
+        </div>
+      </div>
+      <nav className="grid gap-1" aria-label="Tài khoản">
+        {links.map(([href, label, Icon]) => {
+          const active =
+            pathname === href ||
+            (href === "/account/orders" && pathname.startsWith(href));
+          return (
+            <button
+              key={href}
+              type="button"
+              onClick={() => router.push(href)}
+              aria-current={active ? "page" : undefined}
+              className={`relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D96C8A] ${active ? "bg-[#FCEEF3] text-[#D96C8A] before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:bg-[#D96C8A]" : "text-[#6F6066] hover:rounded-xl hover:bg-white hover:text-[#D96C8A]"}`}
+            >
+              <Icon className="size-4.5" />
+              {label}
+            </button>
+          );
+        })}
+      </nav>
+      <button
+        type="button"
+        onClick={() => void logout().then(() => router.push("/"))}
+        className="mt-8 flex min-h-11 items-center gap-3 px-3 text-sm font-bold text-[#6F6066] hover:text-[#D96C8A]"
+      >
+        <LogOut className="size-4.5" />
+        Đăng xuất
+      </button>
+    </aside>
+  );
+}
