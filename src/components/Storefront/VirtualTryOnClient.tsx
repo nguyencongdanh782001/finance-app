@@ -32,7 +32,6 @@ type GarmentCategory =
   | "DRESSES"
   | "ACCESSORIES"
   | "SHOES"
-  | "ACCESSORIES"
   | "NOT_SUPPORTED"
   | "UNKNOWN";
 

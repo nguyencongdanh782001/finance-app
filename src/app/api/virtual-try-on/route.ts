@@ -51,7 +51,11 @@ const getClientKey = (request: Request) =>
   request.headers.get("x-real-ip") ||
   "unknown";
 
-const supportedMimeTypes = new Set(["image/jpeg", "image/png"]);
+const supportedMimeTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
 
 const jpegProductUrl = (url: string) =>
   url.includes("/upload/")
@@ -267,6 +271,8 @@ const isSpaceInferenceError = (error: unknown) =>
   error.message.toLowerCase().includes("an error occurred");
 
 export async function POST(request: Request) {
+  const requestId = request.headers.get("x-request-id") || crypto.randomUUID();
+  let stage = "validate-request";
   if (!consumeRateLimit(getClientKey(request))) {
     return NextResponse.json(
       { message: "Bạn đã thử quá nhiều lần. Vui lòng chờ một phút." },
@@ -381,6 +387,7 @@ export async function POST(request: Request) {
   }
 
   const productController = new AbortController();
+  stage = "download-product-image";
   const productTimeoutId = setTimeout(
     () => productController.abort(),
     20_000,
@@ -429,6 +436,7 @@ export async function POST(request: Request) {
     let outputBytes: ArrayBuffer | null = null;
     let outputType = "image/png";
     if (useGemini) {
+      stage = "gemini-image-generation";
       const prediction = await generateWithGemini({
         personBytes,
         personMimeType: file.type,
@@ -445,6 +453,7 @@ export async function POST(request: Request) {
         decoded.byteOffset + decoded.byteLength,
       ) as ArrayBuffer;
     } else {
+      stage = "vton-image-generation";
       const prediction = await Promise.race([
         (async () => {
           const client = await getVtonClient();
@@ -493,6 +502,7 @@ export async function POST(request: Request) {
     }
 
     let persistedImageUrl = imageUrl;
+    stage = "download-ai-result";
     if (!outputBytes) {
       const outputResponse = await fetch(imageUrl);
       if (!outputResponse.ok) {
@@ -506,6 +516,7 @@ export async function POST(request: Request) {
         "image/png";
       outputBytes = await outputResponse.arrayBuffer();
     }
+    stage = "persist-ai-result";
     const outputFile = new File([outputBytes], `try-on-${product.id}.png`, {
       type: outputType,
     });
@@ -548,9 +559,29 @@ export async function POST(request: Request) {
         { status: 503 },
       );
     }
-    console.error("Free virtual try-on request failed", error);
+    console.error("Virtual try-on request failed", {
+      requestId,
+      stage,
+      provider: useGemini ? "gemini" : "vton",
+      error,
+    });
+    if (stage === "gemini-image-generation") {
+      return NextResponse.json(
+        {
+          code: "GEMINI_IMAGE_GENERATION_FAILED",
+          message:
+            "Gemini không tạo được ảnh thử đồ. Vui lòng kiểm tra Gemini API key/model trong môi trường Production.",
+          requestId,
+        },
+        { status: 502 },
+      );
+    }
     return NextResponse.json(
-      { message: "Không thể tạo ảnh thử đồ lúc này. Vui lòng thử lại." },
+      {
+        code: "VIRTUAL_TRY_ON_FAILED",
+        message: "Không thể tạo ảnh thử đồ lúc này. Vui lòng thử lại.",
+        requestId,
+      },
       { status: 502 },
     );
   } finally {
