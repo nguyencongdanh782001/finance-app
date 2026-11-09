@@ -26,7 +26,7 @@ const tryOnLabels = {
   LOWER_BODY: "Quần · chân váy",
   DRESSES: "Đầm · váy liền",
   SHOES: "Dép · giày",
-  ACCESSORIES: "Phụ kiện",
+  ACCESSORIES: "Nón · phụ kiện",
   NOT_SUPPORTED: "Không hỗ trợ AI",
 } as const;
 

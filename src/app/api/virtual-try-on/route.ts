@@ -21,7 +21,11 @@ const DENOISE_STEPS = Math.max(
   Math.min(30, Number(process.env.VTON_DENOISE_STEPS) || 20),
 );
 
-type GarmentCategory = "upper_body" | "lower_body" | "dresses";
+type GarmentCategory =
+  | "upper_body"
+  | "lower_body"
+  | "dresses"
+  | "accessory";
 
 type RateBucket = { count: number; resetAt: number };
 type JsonObject = Record<string, unknown>;
@@ -78,13 +82,19 @@ const miragicGarmentType: Record<GarmentCategory, string> = {
   upper_body: "Top",
   lower_body: "Bottom",
   dresses: "Dress/Suit",
+  accessory: "Accessory",
 };
 
 const garmentCategoryLabel: Record<GarmentCategory, string> = {
   upper_body: "áo",
   lower_body: "quần hoặc chân váy",
   dresses: "đầm hoặc váy liền",
+  accessory: "nón hoặc phụ kiện",
 };
+
+const GEMINI_IMAGE_ENDPOINT =
+  "https://generativelanguage.googleapis.com/v1beta/models";
+const DEFAULT_GEMINI_IMAGE_MODEL = "gemini-2.5-flash-image";
 
 const isObject = (value: unknown): value is JsonObject =>
   typeof value === "object" && value !== null;
@@ -108,6 +118,124 @@ const getOutputUrl = (value: unknown): string | null => {
     if (url) return url;
   }
   return null;
+};
+
+const getInlineImage = (value: unknown): { data: string; mimeType: string } | null => {
+  if (!isObject(value)) return null;
+  const inlineData = value.inlineData;
+  if (!isObject(inlineData) || typeof inlineData.data !== "string") return null;
+  return {
+    data: inlineData.data,
+    mimeType:
+      typeof inlineData.mimeType === "string"
+        ? inlineData.mimeType
+        : "image/png",
+  };
+};
+
+const generateAccessoryWithGemini = async ({
+  personBytes,
+  personMimeType,
+  productBytes,
+  productMimeType,
+  productTitle,
+}: {
+  personBytes: ArrayBuffer;
+  personMimeType: string;
+  productBytes: ArrayBuffer;
+  productMimeType: string;
+  productTitle: string;
+}) => {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error("Gemini image provider is not configured");
+  }
+
+  const model =
+    process.env.GEMINI_IMAGE_MODEL?.trim() || DEFAULT_GEMINI_IMAGE_MODEL;
+  const prompt = `
+Edit the provided full-body person photo to show the person wearing the exact
+fashion accessory shown in the second reference image. The accessory is:
+"${productTitle}".
+
+This is a virtual try-on preview for an online fashion store.
+- Preserve the person's face, identity, body, pose, skin tone, hair, hands,
+  clothing, lighting, camera angle, background, and image framing.
+- Add only the accessory from the product reference. If it is a hat, cap, or
+  headwear, place it naturally on the person's head with correct perspective,
+  scale, shadows, and hair occlusion.
+- Reproduce the product's real color, material, shape, logo placement, and
+  details. Do not invent a different product.
+- Do not add text, watermark, extra people, extra accessories, or change the
+  background. Return one photorealistic edited image only.
+`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    Math.max(60_000, Number(process.env.VTON_GEMINI_TIMEOUT_MS) || 180_000),
+  );
+
+  try {
+    const response = await fetch(
+      `${GEMINI_IMAGE_ENDPOINT}/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: "user",
+              parts: [
+                { text: prompt },
+                {
+                  inlineData: {
+                    mimeType: personMimeType,
+                    data: Buffer.from(personBytes).toString("base64"),
+                  },
+                },
+                {
+                  inlineData: {
+                    mimeType: productMimeType,
+                    data: Buffer.from(productBytes).toString("base64"),
+                  },
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            responseModalities: ["IMAGE"],
+            imageConfig: { aspectRatio: "3:4" },
+          },
+        }),
+        signal: controller.signal,
+      },
+    );
+    const payload = (await response.json().catch(() => null)) as JsonObject | null;
+    if (!response.ok) {
+      const providerMessage =
+        isObject(payload?.error) && typeof payload.error.message === "string"
+          ? payload.error.message
+          : `Gemini image request failed with ${response.status}`;
+      throw new Error(providerMessage);
+    }
+    const candidates = Array.isArray(payload?.candidates)
+      ? payload.candidates
+      : [];
+    const parts = isObject(candidates[0])
+      ? (candidates[0] as JsonObject).content
+      : null;
+    const responseParts = isObject(parts) ? parts.parts : null;
+    if (!Array.isArray(responseParts)) {
+      throw new Error("Gemini did not return an image");
+    }
+    for (const part of responseParts) {
+      const image = getInlineImage(part);
+      if (image) return image;
+    }
+    throw new Error("Gemini did not return an image");
+  } finally {
+    clearTimeout(timeoutId);
+  }
 };
 
 const isTimeoutError = (error: unknown) =>
@@ -198,7 +326,7 @@ export async function POST(request: Request) {
     LOWER_BODY: "lower_body",
     DRESSES: "dresses",
     SHOES: null,
-    ACCESSORIES: null,
+    ACCESSORIES: "accessory",
     NOT_SUPPORTED: null,
   };
   const garmentCategory = garmentCategoryMap[product.category.tryOnCategory];
@@ -215,7 +343,12 @@ export async function POST(request: Request) {
       { status: 422 },
     );
   }
-  if (garmentCategory !== "upper_body" && !categoryAwareVton) {
+  const isAccessory = garmentCategory === "accessory";
+  if (
+    !isAccessory &&
+    garmentCategory !== "upper_body" &&
+    !categoryAwareVton
+  ) {
     return NextResponse.json(
       {
         message:
@@ -224,6 +357,17 @@ export async function POST(request: Request) {
         garmentCategory,
       },
       { status: 422 },
+    );
+  }
+
+  if (isAccessory && !process.env.GEMINI_API_KEY?.trim()) {
+    return NextResponse.json(
+      {
+        message:
+          "Để thử nón/phụ kiện, quản trị viên cần cấu hình GEMINI_API_KEY và GEMINI_IMAGE_MODEL ở server.",
+        garmentCategory,
+      },
+      { status: 503 },
     );
   }
 
@@ -262,7 +406,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const personBlob = new Blob([await file.arrayBuffer()], {
+    const personBytes = await file.arrayBuffer();
+    const personBlob = new Blob([personBytes], {
       type: file.type,
     });
     const garmentBlob = new Blob([productBytes], {
@@ -271,46 +416,65 @@ export async function POST(request: Request) {
     const personImage = handle_file(personBlob);
     const garmentImage = handle_file(garmentBlob);
 
-    const prediction = await Promise.race([
-      (async () => {
-        const client = await getVtonClient();
-        // Keep the ImageEditor input in the shape expected by the public
-        // yisol Space. Its composite layer is optional; sending the person
-        // image there as well causes some Gradio versions to reject the job.
-        if (miragicSpace) {
-          return client.predict("/virtual_tryon", {
-            human_img: personImage,
-            garment_img: garmentImage,
-            garment_type: miragicGarmentType[garmentCategory],
-          });
-        }
+    let imageUrl: string | null = null;
+    let outputBytes: ArrayBuffer | null = null;
+    let outputType = "image/png";
+    if (isAccessory) {
+      const prediction = await generateAccessoryWithGemini({
+        personBytes,
+        personMimeType: file.type,
+        productBytes,
+        productMimeType: productContentType,
+        productTitle: product.title,
+      });
+      imageUrl = `data:${prediction.mimeType};base64,${prediction.data}`;
+      outputType = prediction.mimeType;
+      const decoded = Buffer.from(prediction.data, "base64");
+      outputBytes = decoded.buffer.slice(
+        decoded.byteOffset,
+        decoded.byteOffset + decoded.byteLength,
+      ) as ArrayBuffer;
+    } else {
+      const prediction = await Promise.race([
+        (async () => {
+          const client = await getVtonClient();
+          // Keep the ImageEditor input in the shape expected by the public
+          // yisol Space. Its composite layer is optional; sending the person
+          // image there as well causes some Gradio versions to reject the job.
+          if (miragicSpace) {
+            return client.predict("/virtual_tryon", {
+              human_img: personImage,
+              garment_img: garmentImage,
+              garment_type: miragicGarmentType[garmentCategory],
+            });
+          }
 
-        const inputs: Record<string, unknown> = {
-          dict: {
-            background: personImage,
-            layers: [],
-            composite: null,
-          },
-          garm_img: garmentImage,
-          garment_des: product.title,
-          is_checked: true,
-          is_checked_crop: false,
-          denoise_steps: DENOISE_STEPS,
-          seed: 42,
-        };
-        // Only add this field when a custom Space explicitly supports it.
-        if (categoryAwareVton) inputs.category = garmentCategory;
-        return client.predict("/tryon", inputs);
-      })(),
-      new Promise<never>((_, reject) => {
-        predictionTimeoutId = setTimeout(
-          () => reject(new Error("Virtual try-on request timeout")),
-          REQUEST_TIMEOUT_MS,
-        );
-      }),
-    ]);
-
-    const imageUrl = getOutputUrl(prediction.data);
+          const inputs: Record<string, unknown> = {
+            dict: {
+              background: personImage,
+              layers: [],
+              composite: null,
+            },
+            garm_img: garmentImage,
+            garment_des: product.title,
+            is_checked: true,
+            is_checked_crop: false,
+            denoise_steps: DENOISE_STEPS,
+            seed: 42,
+          };
+          // Only add this field when a custom Space explicitly supports it.
+          if (categoryAwareVton) inputs.category = garmentCategory;
+          return client.predict("/tryon", inputs);
+        })(),
+        new Promise<never>((_, reject) => {
+          predictionTimeoutId = setTimeout(
+            () => reject(new Error("Virtual try-on request timeout")),
+            REQUEST_TIMEOUT_MS,
+          );
+        }),
+      ]);
+      imageUrl = getOutputUrl(prediction.data);
+    }
     if (!imageUrl) {
       return NextResponse.json(
         { message: "AI không trả về được ảnh thử đồ." },
@@ -319,7 +483,7 @@ export async function POST(request: Request) {
     }
 
     let persistedImageUrl = imageUrl;
-    if (!imageUrl.startsWith("data:")) {
+    if (!outputBytes) {
       const outputResponse = await fetch(imageUrl);
       if (!outputResponse.ok) {
         return NextResponse.json(
@@ -327,22 +491,22 @@ export async function POST(request: Request) {
           { status: 502 },
         );
       }
-      const outputType =
+      outputType =
         outputResponse.headers.get("content-type")?.split(";")[0] ||
         "image/png";
-      const outputBytes = await outputResponse.arrayBuffer();
-      const outputFile = new File([outputBytes], `try-on-${product.id}.png`, {
-        type: outputType,
-      });
-      try {
-        const uploaded = await uploadImageToCloudinary(
-          outputFile,
-          "finance-app/try-on",
-        );
-        persistedImageUrl = uploaded.url;
-      } catch (error) {
-        console.warn("Could not persist try-on image to Cloudinary", error);
-      }
+      outputBytes = await outputResponse.arrayBuffer();
+    }
+    const outputFile = new File([outputBytes], `try-on-${product.id}.png`, {
+      type: outputType,
+    });
+    try {
+      const uploaded = await uploadImageToCloudinary(
+        outputFile,
+        "finance-app/try-on",
+      );
+      persistedImageUrl = uploaded.url;
+    } catch (error) {
+      console.warn("Could not persist try-on image to Cloudinary", error);
     }
 
     return NextResponse.json({
