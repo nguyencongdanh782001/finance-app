@@ -69,14 +69,18 @@ const getVtonClient = () => {
   return clientPromise;
 };
 
-// The public IDM-VTON Space only exposes the original upper-body schema.
-// A category field must only be sent to an explicitly configured multi-category Space.
-const isCategoryAwareSpace = (space: string) =>
-  space !== DEFAULT_VTON_SPACE && process.env.VTON_CATEGORY_MODE === "true";
-
 const isMiragicSpace = (space: string) =>
   space.toLowerCase().includes("miragic-ai/miragic-virtual-try-on") ||
   space.toLowerCase().includes("miragic-ai-miragic-virtual-try-on");
+
+// The public IDM-VTON Space only exposes the original upper-body schema.
+// Miragic's known Space is category-aware; accept it automatically so a
+// missing/quoted environment flag cannot silently downgrade the provider to
+// upper-body-only mode.
+const isCategoryAwareSpace = (space: string) =>
+  space !== DEFAULT_VTON_SPACE &&
+  (process.env.VTON_CATEGORY_MODE?.trim().toLowerCase() === "true" ||
+    isMiragicSpace(space));
 
 const miragicGarmentType: Record<GarmentCategory, string> = {
   upper_body: "Top",
@@ -133,18 +137,20 @@ const getInlineImage = (value: unknown): { data: string; mimeType: string } | nu
   };
 };
 
-const generateAccessoryWithGemini = async ({
+const generateWithGemini = async ({
   personBytes,
   personMimeType,
   productBytes,
   productMimeType,
   productTitle,
+  garmentCategory,
 }: {
   personBytes: ArrayBuffer;
   personMimeType: string;
   productBytes: ArrayBuffer;
   productMimeType: string;
   productTitle: string;
+  garmentCategory: GarmentCategory;
 }) => {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
@@ -153,17 +159,23 @@ const generateAccessoryWithGemini = async ({
 
   const model =
     process.env.GEMINI_IMAGE_MODEL?.trim() || DEFAULT_GEMINI_IMAGE_MODEL;
+  const itemKind =
+    garmentCategory === "accessory"
+      ? "fashion accessory or hat"
+      : "garment or clothing item";
   const prompt = `
 Edit the provided full-body person photo to show the person wearing the exact
-fashion accessory shown in the second reference image. The accessory is:
+${itemKind} shown in the second reference image. The product is:
 "${productTitle}".
 
 This is a virtual try-on preview for an online fashion store.
 - Preserve the person's face, identity, body, pose, skin tone, hair, hands,
   clothing, lighting, camera angle, background, and image framing.
-- Add only the accessory from the product reference. If it is a hat, cap, or
-  headwear, place it naturally on the person's head with correct perspective,
-  scale, shadows, and hair occlusion.
+- Add or replace only the clothing/accessory from the product reference. If it
+  is a hat, cap, or headwear, place it naturally on the person's head with
+  correct perspective, scale, shadows, and hair occlusion. If it is a top,
+  bottom, skirt, dress, or one-piece garment, fit it naturally to the person's
+  body while preserving the person's pose and proportions.
 - Reproduce the product's real color, material, shape, logo placement, and
   details. Do not invent a different product.
 - Do not add text, watermark, extra people, extra accessories, or change the
@@ -331,6 +343,8 @@ export async function POST(request: Request) {
   };
   const garmentCategory = garmentCategoryMap[product.category.tryOnCategory];
   const configuredSpace = process.env.VTON_SPACE_ID?.trim() || DEFAULT_VTON_SPACE;
+  const provider = process.env.VTON_PROVIDER?.trim().toLowerCase() || "gemini";
+  const useGemini = provider !== "vton";
   const categoryAwareVton = isCategoryAwareSpace(configuredSpace);
   const miragicSpace = isMiragicSpace(configuredSpace);
 
@@ -343,12 +357,7 @@ export async function POST(request: Request) {
       { status: 422 },
     );
   }
-  const isAccessory = garmentCategory === "accessory";
-  if (
-    !isAccessory &&
-    garmentCategory !== "upper_body" &&
-    !categoryAwareVton
-  ) {
+  if (!useGemini && garmentCategory !== "upper_body" && !categoryAwareVton) {
     return NextResponse.json(
       {
         message:
@@ -360,11 +369,11 @@ export async function POST(request: Request) {
     );
   }
 
-  if (isAccessory && !process.env.GEMINI_API_KEY?.trim()) {
+  if (useGemini && !process.env.GEMINI_API_KEY?.trim()) {
     return NextResponse.json(
       {
         message:
-          "Để thử nón/phụ kiện, quản trị viên cần cấu hình GEMINI_API_KEY và GEMINI_IMAGE_MODEL ở server.",
+          "Để thử đồ bằng Gemini, quản trị viên cần cấu hình GEMINI_API_KEY và GEMINI_IMAGE_MODEL ở server.",
         garmentCategory,
       },
       { status: 503 },
@@ -419,13 +428,14 @@ export async function POST(request: Request) {
     let imageUrl: string | null = null;
     let outputBytes: ArrayBuffer | null = null;
     let outputType = "image/png";
-    if (isAccessory) {
-      const prediction = await generateAccessoryWithGemini({
+    if (useGemini) {
+      const prediction = await generateWithGemini({
         personBytes,
         personMimeType: file.type,
         productBytes,
         productMimeType: productContentType,
         productTitle: product.title,
+        garmentCategory,
       });
       imageUrl = `data:${prediction.mimeType};base64,${prediction.data}`;
       outputType = prediction.mimeType;
