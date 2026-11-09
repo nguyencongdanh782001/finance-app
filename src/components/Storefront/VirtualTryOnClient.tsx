@@ -30,6 +30,7 @@ type GarmentCategory =
   | "UPPER_BODY"
   | "LOWER_BODY"
   | "DRESSES"
+  | "ACCESSORIES"
   | "SHOES"
   | "ACCESSORIES"
   | "NOT_SUPPORTED"
@@ -41,7 +42,7 @@ const garmentCategoryLabels: Record<GarmentCategory, string> = {
   LOWER_BODY: "Quần · chân váy",
   DRESSES: "Đầm · váy liền",
   SHOES: "Dép · giày",
-  ACCESSORIES: "Phụ kiện",
+  ACCESSORIES: "Nón · phụ kiện",
   NOT_SUPPORTED: "Không hỗ trợ",
   UNKNOWN: "Chưa phân loại",
 };
@@ -168,7 +169,7 @@ export default function VirtualTryOnClient() {
   };
 
   const isSupportedProduct = (product: Product) =>
-    ["UPPER_BODY", "LOWER_BODY", "DRESSES"].includes(
+    ["UPPER_BODY", "LOWER_BODY", "DRESSES", "ACCESSORIES"].includes(
       getGarmentCategory(product),
     );
 
@@ -179,7 +180,7 @@ export default function VirtualTryOnClient() {
     }
     if (selectedProduct && !isSupportedProduct(selectedProduct)) {
       setError(
-        "Sản phẩm này chưa được AI hiện tại hỗ trợ. Hãy chọn áo, quần hoặc váy.",
+        "Sản phẩm này chưa được AI hiện tại hỗ trợ. Hãy chọn áo, nón, quần, đầm hoặc váy.",
       );
       return;
     }
@@ -364,7 +365,7 @@ export default function VirtualTryOnClient() {
               )}
             </div>
             <p className="mt-2 text-11px leading-5 text-[#A39197]">
-              AI hiện hỗ trợ thử <strong>áo, quần và váy</strong>. Sản phẩm khác
+              AI hiện hỗ trợ thử <strong>áo, nón, quần, đầm và váy</strong>. Sản phẩm khác
               được đánh dấu rõ để bạn không chọn nhầm.
             </p>
 

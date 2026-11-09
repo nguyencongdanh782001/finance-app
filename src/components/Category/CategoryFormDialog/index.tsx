@@ -28,7 +28,7 @@ const TRY_ON_CATEGORY_OPTIONS: Array<{ value: TryOnCategory; label: string }> = 
   { value: "LOWER_BODY", label: "Quần / chân váy" },
   { value: "DRESSES", label: "Đầm / váy liền" },
   { value: "SHOES", label: "Dép / giày" },
-  { value: "ACCESSORIES", label: "Phụ kiện" },
+  { value: "ACCESSORIES", label: "Nón / phụ kiện" },
   { value: "NOT_SUPPORTED", label: "Không hỗ trợ thử đồ" },
 ];
 
