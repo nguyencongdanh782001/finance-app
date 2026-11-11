@@ -363,8 +363,10 @@ export async function POST(request: Request) {
   };
   const garmentCategory = garmentCategoryMap[product.category.tryOnCategory];
   const configuredSpace = process.env.VTON_SPACE_ID?.trim() || DEFAULT_VTON_SPACE;
-  const provider = process.env.VTON_PROVIDER?.trim().toLowerCase() || "gemini";
-  const useGemini = provider !== "vton";
+  const provider = process.env.VTON_PROVIDER?.trim().toLowerCase() || "vton";
+  // Keep clothing on the free VTON path. Gemini is opt-in for accessories;
+  // a broken/expired image plan must never take shirts offline.
+  const useGemini = provider === "gemini" && garmentCategory === "accessory";
   const categoryAwareVton = isCategoryAwareSpace(configuredSpace);
   const miragicSpace = isMiragicSpace(configuredSpace);
 
