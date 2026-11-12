@@ -10,6 +10,7 @@ export const runtime = "nodejs";
 export const maxDuration = 300;
 
 const DEFAULT_VTON_SPACE = "https://yisol-idm-vton.hf.space";
+const DEFAULT_KOLORS_SPACE = "Kwai-Kolors/Kolors-Virtual-Try-On";
 const DEFAULT_FASHN_SPACE = "merve/fashn-vton-1.5";
 const MAX_PERSON_IMAGE_BYTES = 8 * 1024 * 1024;
 const MAX_PRODUCT_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -77,7 +78,10 @@ const jpegProductUrl = (url: string) =>
 
 const getVtonClient = () => {
   if (!clientPromise) {
-    const space = process.env.VTON_SPACE_ID?.trim() || DEFAULT_VTON_SPACE;
+    const provider = process.env.VTON_PROVIDER?.trim().toLowerCase();
+    const space =
+      process.env.VTON_SPACE_ID?.trim() ||
+      (provider === "kolors" ? DEFAULT_KOLORS_SPACE : DEFAULT_VTON_SPACE);
     clientPromise = Client.connect(space).catch((error) => {
       clientPromise = null;
       throw error;
@@ -435,9 +439,11 @@ export async function POST(request: Request) {
   const configuredSpace = process.env.VTON_SPACE_ID?.trim() || DEFAULT_VTON_SPACE;
   const provider = process.env.VTON_PROVIDER?.trim().toLowerCase() || "vton";
   const useFashn = provider === "fashn";
+  const useKolors = provider === "kolors";
   // Gemini is opt-in for accessories; FASHN handles clothing categories.
   const useGemini = provider === "gemini" && garmentCategory === "accessory";
-  const categoryAwareVton = useFashn || isCategoryAwareSpace(configuredSpace);
+  const categoryAwareVton =
+    useFashn || useKolors || isCategoryAwareSpace(configuredSpace);
   const miragicSpace = isMiragicSpace(configuredSpace);
 
   if (!garmentCategory) {
@@ -584,6 +590,12 @@ export async function POST(request: Request) {
             });
           }
           const client = await getVtonClient();
+          if (useKolors) {
+            // This Space has no named API endpoint. Its public Gradio config
+            // exposes the try-on action as dependency/function index 2 with
+            // [person image, garment image, seed, random-seed] inputs.
+            return client.predict(2, [personImage, garmentImage, 0, true]);
+          }
           // Keep the ImageEditor input in the shape expected by the public
           // yisol Space. Its composite layer is optional; sending the person
           // image there as well causes some Gradio versions to reject the job.
