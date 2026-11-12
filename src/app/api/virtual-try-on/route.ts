@@ -10,6 +10,7 @@ export const runtime = "nodejs";
 export const maxDuration = 300;
 
 const DEFAULT_VTON_SPACE = "https://yisol-idm-vton.hf.space";
+const DEFAULT_FASHN_SPACE = "merve/fashn-vton-1.5";
 const MAX_PERSON_IMAGE_BYTES = 8 * 1024 * 1024;
 const MAX_PRODUCT_IMAGE_BYTES = 8 * 1024 * 1024;
 const REQUEST_TIMEOUT_MS = Math.max(
@@ -20,6 +21,17 @@ const DENOISE_STEPS = Math.max(
   10,
   Math.min(30, Number(process.env.VTON_DENOISE_STEPS) || 20),
 );
+const boundedNumber = (
+  value: string | undefined,
+  fallback: number,
+  minimum: number,
+  maximum: number,
+) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed)
+    ? Math.max(minimum, Math.min(maximum, parsed))
+    : fallback;
+};
 
 type GarmentCategory =
   | "upper_body"
@@ -32,6 +44,7 @@ type JsonObject = Record<string, unknown>;
 
 const rateBuckets = new Map<string, RateBucket>();
 let clientPromise: Promise<Client> | null = null;
+let fashnClientPromise: Promise<Client> | null = null;
 
 const consumeRateLimit = (key: string) => {
   const now = Date.now();
@@ -73,6 +86,18 @@ const getVtonClient = () => {
   return clientPromise;
 };
 
+const getFashnClient = () => {
+  if (!fashnClientPromise) {
+    const space =
+      process.env.FASHN_VTON_SPACE_ID?.trim() || DEFAULT_FASHN_SPACE;
+    fashnClientPromise = Client.connect(space).catch((error) => {
+      fashnClientPromise = null;
+      throw error;
+    });
+  }
+  return fashnClientPromise;
+};
+
 const isMiragicSpace = (space: string) =>
   space.toLowerCase().includes("miragic-ai/miragic-virtual-try-on") ||
   space.toLowerCase().includes("miragic-ai-miragic-virtual-try-on");
@@ -91,6 +116,13 @@ const miragicGarmentType: Record<GarmentCategory, string> = {
   lower_body: "Bottom",
   dresses: "Dress/Suit",
   accessory: "Accessory",
+};
+
+const fashnGarmentCategory: Record<GarmentCategory, string | null> = {
+  upper_body: "tops",
+  lower_body: "bottoms",
+  dresses: "one-pieces",
+  accessory: null,
 };
 
 const garmentCategoryLabel: Record<GarmentCategory, string> = {
@@ -364,10 +396,10 @@ export async function POST(request: Request) {
   const garmentCategory = garmentCategoryMap[product.category.tryOnCategory];
   const configuredSpace = process.env.VTON_SPACE_ID?.trim() || DEFAULT_VTON_SPACE;
   const provider = process.env.VTON_PROVIDER?.trim().toLowerCase() || "vton";
-  // Keep clothing on the free VTON path. Gemini is opt-in for accessories;
-  // a broken/expired image plan must never take shirts offline.
+  const useFashn = provider === "fashn";
+  // Gemini is opt-in for accessories; FASHN handles clothing categories.
   const useGemini = provider === "gemini" && garmentCategory === "accessory";
-  const categoryAwareVton = isCategoryAwareSpace(configuredSpace);
+  const categoryAwareVton = useFashn || isCategoryAwareSpace(configuredSpace);
   const miragicSpace = isMiragicSpace(configuredSpace);
 
   if (!garmentCategory) {
@@ -375,6 +407,16 @@ export async function POST(request: Request) {
       {
         message: "Loại sản phẩm này chưa được AI thử đồ hỗ trợ.",
         garmentCategory: product.category.tryOnCategory,
+      },
+      { status: 422 },
+    );
+  }
+  if (useFashn && !fashnGarmentCategory[garmentCategory]) {
+    return NextResponse.json(
+      {
+        message:
+          "FASHN hiện hỗ trợ áo, quần/chân váy và đầm/váy liền; chưa hỗ trợ nón hoặc phụ kiện.",
+        garmentCategory,
       },
       { status: 422 },
     );
@@ -472,6 +514,29 @@ export async function POST(request: Request) {
       stage = "vton-image-generation";
       const prediction = await Promise.race([
         (async () => {
+          if (useFashn) {
+            const client = await getFashnClient();
+            return client.predict("/try_on", {
+              person_image: personImage,
+              garment_image: garmentImage,
+              category: fashnGarmentCategory[garmentCategory],
+              garment_photo_type: "flat-lay",
+              num_timesteps: boundedNumber(
+                process.env.FASHN_NUM_TIMESTEPS,
+                20,
+                10,
+                50,
+              ),
+              guidance_scale: boundedNumber(
+                process.env.FASHN_GUIDANCE_SCALE,
+                2,
+                1,
+                3,
+              ),
+              seed: 42,
+              segmentation_free: true,
+            });
+          }
           const client = await getVtonClient();
           // Keep the ImageEditor input in the shape expected by the public
           // yisol Space. Its composite layer is optional; sending the person
