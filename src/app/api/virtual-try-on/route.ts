@@ -125,6 +125,44 @@ const fashnGarmentCategory: Record<GarmentCategory, string | null> = {
   accessory: null,
 };
 
+const generateWithFashnApi = async ({
+  personBlob,
+  garmentBlob,
+  garmentCategory,
+}: {
+  personBlob: Blob;
+  garmentBlob: Blob;
+  garmentCategory: GarmentCategory;
+}) => {
+  const apiUrl = process.env.FASHN_VTON_API_URL?.trim();
+  const category = fashnGarmentCategory[garmentCategory];
+  if (!apiUrl || !category) {
+    throw new Error("FASHN self-hosted API is not configured");
+  }
+
+  const body = new FormData();
+  body.append("person_image", personBlob, "person-image");
+  body.append("garment_image", garmentBlob, "garment-image");
+  body.append("category", category);
+  body.append("garment_photo_type", "flat-lay");
+  body.append("num_timesteps", process.env.FASHN_NUM_TIMESTEPS?.trim() || "30");
+  body.append("guidance_scale", process.env.FASHN_GUIDANCE_SCALE?.trim() || "1.5");
+  body.append("seed", "42");
+  body.append("segmentation_free", "true");
+
+  const response = await fetch(`${apiUrl.replace(/\/$/, "")}/try-on`, {
+    method: "POST",
+    body,
+  });
+  if (!response.ok) {
+    throw new Error(`FASHN self-hosted API failed with ${response.status}`);
+  }
+  return {
+    bytes: await response.arrayBuffer(),
+    mimeType: response.headers.get("content-type")?.split(";")[0] || "image/png",
+  };
+};
+
 const garmentCategoryLabel: Record<GarmentCategory, string> = {
   upper_body: "áo",
   lower_body: "quần hoặc chân váy",
@@ -514,6 +552,14 @@ export async function POST(request: Request) {
       stage = "vton-image-generation";
       const prediction = await Promise.race([
         (async () => {
+          if (useFashn && process.env.FASHN_VTON_API_URL?.trim()) {
+            const result = await generateWithFashnApi({
+              personBlob,
+              garmentBlob,
+              garmentCategory,
+            });
+            return { selfHosted: true, result };
+          }
           if (useFashn) {
             const client = await getFashnClient();
             return client.predict("/try_on", {
@@ -573,7 +619,12 @@ export async function POST(request: Request) {
           );
         }),
       ]);
-      imageUrl = getOutputUrl(prediction.data);
+      if (!("data" in prediction)) {
+        outputBytes = prediction.result.bytes;
+        outputType = prediction.result.mimeType;
+      } else {
+        imageUrl = getOutputUrl(prediction.data);
+      }
     }
     if (!imageUrl) {
       return NextResponse.json(

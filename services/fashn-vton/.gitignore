@@ -1,0 +1,7 @@
+weights/
+outputs/
+__pycache__/
+.venv/
+.pytest_cache/
+.cache/
+*.pyc
