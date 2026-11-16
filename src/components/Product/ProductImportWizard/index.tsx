@@ -659,6 +659,16 @@ export default function ProductImportWizard() {
                 </Button>
               ) : null}
             </div>
+            {detail.errorCount ? (
+              <Alert variant="warning" className="mt-5">
+                <AlertCircle />
+                <AlertTitle>File còn lỗi, chưa thể tiếp tục nhập</AlertTitle>
+                <AlertDescription>
+                  Hãy tải file lỗi để xem vị trí cần sửa, cập nhật file Excel,
+                  sau đó chọn “Sửa file và kiểm tra lại”.
+                </AlertDescription>
+              </Alert>
+            ) : null}
             <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
               {[
                 [
@@ -828,27 +838,40 @@ export default function ProductImportWizard() {
             ))}
           </div>
           <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div className="flex items-center gap-2 text-xs text-(--admin-text-muted)">
-              <span>
-                Trang {detail.pagination.page}/
-                {Math.max(1, detail.pagination.totalPages)}
-              </span>
+            <div className="flex flex-wrap items-center gap-3">
               <Button
-                size="icon-sm"
+                type="button"
                 variant="ghost"
-                disabled={page <= 1}
-                onClick={() => setPage((value) => value - 1)}
+                className="border border-(--admin-border)"
+                onClick={() => setStep(2)}
               >
-                <ChevronLeft />
+                <ChevronLeft className="size-4" />
+                {detail.errorCount
+                  ? "Sửa file và kiểm tra lại"
+                  : "Quay lại tải file"}
               </Button>
-              <Button
-                size="icon-sm"
-                variant="ghost"
-                disabled={page >= detail.pagination.totalPages}
-                onClick={() => setPage((value) => value + 1)}
-              >
-                <ChevronRight />
-              </Button>
+              <div className="flex items-center gap-2 text-xs text-(--admin-text-muted)">
+                <span>
+                  Trang {detail.pagination.page}/
+                  {Math.max(1, detail.pagination.totalPages)}
+                </span>
+                <Button
+                  size="icon-sm"
+                  variant="ghost"
+                  disabled={page <= 1}
+                  onClick={() => setPage((value) => value - 1)}
+                >
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  size="icon-sm"
+                  variant="ghost"
+                  disabled={page >= detail.pagination.totalPages}
+                  onClick={() => setPage((value) => value + 1)}
+                >
+                  <ChevronRight />
+                </Button>
+              </div>
             </div>
             <Button
               variant="adminPrimary"

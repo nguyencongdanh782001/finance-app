@@ -49,6 +49,20 @@ PRO_DIRECT_DATABASE_URL="postgresql://...@.../neondb?sslmode=require"
 
 Có thể chuyển dữ liệu bằng `pg_dump`/`pg_restore` từ database cũ sang Neon. Chỉ cập nhật `PRO_DATABASE_URL` trên Vercel sau khi đã kiểm tra dữ liệu và chạy `npm run db:migrate:deploy` với `PRO_DIRECT_DATABASE_URL`.
 
+### Backup database production
+
+Sau khi khai báo `PRO_DIRECT_DATABASE_URL` hoặc `PRO_DATABASE_URL` trong file
+`.env`, chạy:
+
+```bash
+make backup-prod
+```
+
+Lệnh tạo file `production-backup-YYYYMMDD-HHMMSS.dump` ở thư mục gốc của
+project. Đây là PostgreSQL custom dump, có thể khôi phục bằng `pg_restore`.
+Các file backup local đã được thêm vào `.gitignore` và không được commit lên
+repository.
+
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 # finance-app
