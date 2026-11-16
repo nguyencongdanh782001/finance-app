@@ -172,6 +172,32 @@ test("per-product template allows the optional image section to be empty", async
   assert.equal(result.errors.length, 0);
 });
 
+test("blank image URLs are ignored even when image metadata is present", async () => {
+  const workbookBuffer = await createPerProductImportTemplate();
+  const workbook = new ExcelJS.Workbook();
+  const arrayBuffer = workbookBuffer.buffer.slice(
+    workbookBuffer.byteOffset,
+    workbookBuffer.byteOffset + workbookBuffer.byteLength,
+  ) as ArrayBuffer;
+  await workbook.xlsx.load(arrayBuffer);
+  const productSheet = getSheet(workbook, "SP-001");
+  const imageSectionRow = productSheet
+    .getRows(1, productSheet.rowCount)
+    ?.find((row) => row.getCell(1).text === "Hình ảnh")?.number;
+  assert.ok(imageSectionRow);
+  productSheet.getCell(imageSectionRow + 2, 2).value = null;
+  productSheet.getCell(imageSectionRow + 3, 2).value = null;
+
+  const result = await parseAndValidateProductWorkbook(
+    Buffer.from(await workbook.xlsx.writeBuffer()),
+    { categorySlugs: ["ao-thun"], productSlugs: [], variantSkus: [] },
+    { createMissingCategories: false, forcePrivate: false },
+  );
+  assert.equal(result.totals.valid, 1);
+  assert.equal(result.source.products[0].images.length, 0);
+  assert.equal(result.errors.length, 0);
+});
+
 test("product import allows an empty image sheet", async () => {
   const result = await parse((workbook) => {
     getSheet(workbook, PRODUCT_IMPORT_SHEETS.images).spliceRows(2, 1);

@@ -483,6 +483,11 @@ export async function parseAndValidateProductWorkbook(
       imageRows.push(...parsed.images);
     });
   }
+  // An image row is optional. Ignore placeholder rows where only metadata was
+  // left behind but the actual URL is blank.
+  imageRows = imageRows.filter((row) =>
+    normalizeText(valueOf(row, "image_url")),
+  );
   const totalRows =
     categoryRows.length +
     productRows.length +
