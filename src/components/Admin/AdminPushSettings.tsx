@@ -2,6 +2,7 @@
 
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hook/use-toast";
 import { Bell, CheckCircle2, Loader2, Smartphone, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -63,7 +64,8 @@ const waitForServiceWorker = () =>
 const ensureServiceWorker = async () => {
   const existing = await navigator.serviceWorker.getRegistration("/");
   const registration =
-    existing || (await navigator.serviceWorker.register("/sw.js", { scope: "/" }));
+    existing ||
+    (await navigator.serviceWorker.register("/sw.js", { scope: "/" }));
 
   if (registration.active) return registration;
   return waitForServiceWorker();
@@ -71,18 +73,23 @@ const ensureServiceWorker = async () => {
 
 export default function AdminPushSettings() {
   const [devices, setDevices] = useState<Device[]>([]);
+  const [loadingDevices, setLoadingDevices] = useState(true);
   const [busy, setBusy] = useState(false);
   const [unsupported, setUnsupported] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
   const [deviceToRemove, setDeviceToRemove] = useState<Device | null>(null);
-  const [permission, setPermission] = useState<NotificationPermission>(
-    "default",
-  );
+  const [permission, setPermission] =
+    useState<NotificationPermission>("default");
   const isNotificationEnabled = devices.some((device) => device.isActive);
 
   const load = async () => {
-    const response = await fetch("/api/admin/push-subscriptions");
-    if (response.ok) setDevices((await response.json()).data);
+    setLoadingDevices(true);
+    try {
+      const response = await fetch("/api/admin/push-subscriptions");
+      if (response.ok) setDevices((await response.json()).data);
+    } finally {
+      setLoadingDevices(false);
+    }
   };
 
   useEffect(() => {
@@ -247,9 +254,9 @@ export default function AdminPushSettings() {
                   ? "Không được hỗ trợ"
                   : permission === "denied"
                     ? "Quyền thông báo đang bị chặn"
-                  : isNotificationEnabled
-                    ? "Đã bật trên thiết bị này"
-                    : "Chưa bật"}
+                    : isNotificationEnabled
+                      ? "Đã bật trên thiết bị này"
+                      : "Chưa bật"}
               </p>
               <p className="text-xs text-(--admin-text-muted)">
                 {unsupported
@@ -261,7 +268,9 @@ export default function AdminPushSettings() {
           <Button
             type="button"
             onClick={() => void enable()}
-            disabled={busy || unsupported || isNotificationEnabled}
+            disabled={
+              loadingDevices || busy || unsupported || isNotificationEnabled
+            }
             aria-pressed={isNotificationEnabled}
             className={
               isNotificationEnabled
@@ -269,21 +278,44 @@ export default function AdminPushSettings() {
                 : undefined
             }
           >
-            {isNotificationEnabled ? (
+            {isNotificationEnabled && !loadingDevices ? (
               <CheckCircle2 className="size-4" />
-            ) : busy ? (
+            ) : loadingDevices || busy ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Bell className="size-4" />
             )}{" "}
-            {isNotificationEnabled ? "Đã bật thông báo" : "Bật thông báo"}
+            {loadingDevices
+              ? "Đang tải..."
+              : isNotificationEnabled
+                ? "Đã bật thông báo"
+                : busy
+                  ? "Đang bật thông báo..."
+                  : "Bật thông báo"}
           </Button>
         </div>
       </div>
       <div className="rounded-xl border border-(--admin-border) bg-white p-5 shadow-sm">
         <h2 className="font-bold text-(--admin-text)">Thiết bị đã đăng ký</h2>
         <div className="mt-3 divide-y divide-(--admin-border)">
-          {devices.length ? (
+          {loadingDevices ? (
+            <div
+              className="space-y-3 py-3"
+              aria-label="Đang tải danh sách thiết bị"
+            >
+              {["device-skeleton-1", "device-skeleton-2"].map((key) => (
+                <div key={key} className="flex items-center gap-3">
+                  <Skeleton className="size-5 rounded-md" />
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-56 max-w-full" />
+                  </div>
+                  <Skeleton className="size-4 rounded-full" />
+                  <Skeleton className="size-9 rounded-md" />
+                </div>
+              ))}
+            </div>
+          ) : devices.length ? (
             devices.map((device) => (
               <div
                 key={device.id}

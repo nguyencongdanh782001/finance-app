@@ -1,36 +1,30 @@
 "use client";
 
-import CustomSelect from "@/components/common/CustomFields/CustomSelect";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  LoaderCircle,
+  RotateCcw,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
-import { LoaderCircle, RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
-import { useState, type ComponentType, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 type SelectOption = { value: string; label: string; disabled?: boolean };
-type RuntimeSelectProps = {
-  field: FieldInputProps<string>;
-  form: FormikProps<Record<string, string>>;
-  meta: FieldMetaProps<string>;
-  optionValue: SelectOption[];
-  placeholder: string;
-  searchable?: boolean;
-  disabled?: boolean;
-  className?: string;
-  inputClassName?: string;
-  lblClassName?: string;
-  popoverTrgVariant?: { variant?: string };
-};
-
-const RuntimeCustomSelect =
-  CustomSelect as unknown as ComponentType<RuntimeSelectProps>;
-
 export function AdminSelect({
   name,
   value,
@@ -50,38 +44,35 @@ export function AdminSelect({
   hasError?: boolean;
   disabled?: boolean;
 }) {
-  const field = {
-    name,
-    value,
-    onChange: () => undefined,
-    onBlur: () => undefined,
-  } satisfies FieldInputProps<string>;
-  const form = {
-    setFieldValue: (_field: string, nextValue: unknown) => {
-      onChange(String(nextValue));
-      return Promise.resolve();
-    },
-    errors: {},
-    touched: {},
-  } as unknown as FormikProps<Record<string, string>>;
+  void searchable;
 
   return (
-    <RuntimeCustomSelect
-      field={field}
-      form={form}
-      meta={{} as FieldMetaProps<string>}
-      optionValue={options}
-      placeholder={placeholder}
-      searchable={searchable}
+    <Select
+      name={name}
+      value={value || "__empty__"}
+      onValueChange={(nextValue) =>
+        onChange(nextValue === "__empty__" ? "" : nextValue)
+      }
       disabled={disabled}
-      className="w-full! max-w-full! min-w-0! sm:w-full!"
-      inputClassName={cn(
-        "h-10! w-full! max-w-full! min-w-0! rounded-lg! border-slate-200! bg-white! text-sm! font-medium!",
-        hasError && "border-[#C64040]! focus:border-[#C64040]!",
-      )}
-      lblClassName="text-sm"
-      popoverTrgVariant={{ variant: "search-box--lgray" }}
-    />
+    >
+      <SelectTrigger
+        aria-label={placeholder}
+        className={`h-10! w-full! max-w-full! min-w-0! rounded-lg! border-(--admin-border)! bg-white! text-sm! font-medium! text-(--admin-text-secondary)! focus:border-(--admin-primary)! focus:ring-2! focus:ring-(--admin-primary)/15! ${hasError ? "border-[#C64040]! focus:border-[#C64040]!" : ""}`}
+      >
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem
+            key={option.value || "__empty__"}
+            value={option.value || "__empty__"}
+            disabled={option.disabled}
+          >
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
