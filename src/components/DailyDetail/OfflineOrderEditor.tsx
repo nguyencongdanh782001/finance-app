@@ -666,8 +666,8 @@ function ProductSearchPanel({
         product={variantProduct}
         existingItems={selectedItems}
         onClose={() => setVariantProduct(null)}
-        onAdd={(option) => {
-          onAdd(option, 1);
+        onAdd={(option, quantity) => {
+          onAdd(option, quantity);
           setVariantProduct(null);
         }}
       />
@@ -1752,7 +1752,10 @@ export function OfflineOrderEditor({
       </Dialog>
 
       <Dialog open={closeConfirmOpen} onOpenChange={setCloseConfirmOpen}>
-        <DialogContent className="max-w-md rounded-2xl border-[#EAE1E4] bg-white p-5 shadow-xl">
+        <DialogContent
+          overlayClassName="z-[95]"
+          className="z-[96] max-w-md rounded-2xl border-[#EAE1E4] bg-white p-5 shadow-xl"
+        >
           <DialogTitle className="text-lg font-extrabold text-[#2D2226]">
             Đóng đơn hàng đang nhập?
           </DialogTitle>
@@ -1762,15 +1765,16 @@ export function OfflineOrderEditor({
           <div className="mt-5 flex justify-end gap-2">
             <Button
               type="button"
-              variant="ghost"
-              className="rounded-lg border border-[#EAE1E4] text-[#65545B] hover:bg-[#F8F5F6]"
+              variant="adminPrimary"
+              className="rounded-lg font-bold shadow-sm"
               onClick={() => setCloseConfirmOpen(false)}
             >
               Tiếp tục nhập
             </Button>
             <Button
               type="button"
-              className="rounded-lg bg-[#D96C8A] font-bold text-white hover:bg-[#C85B7B]"
+              variant="ghost"
+              className="rounded-lg border border-[#E9A5B7] font-semibold text-[#B3475E] hover:bg-[#FFF0F2]"
               onClick={confirmClose}
             >
               Đóng và bỏ dữ liệu
