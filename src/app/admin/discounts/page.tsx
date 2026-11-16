@@ -42,9 +42,22 @@ type Coupon = {
   }[];
   source?: "MANUAL" | "BIRTHDAY";
   birthdayYear?: number | null;
-  recipientUser?: { displayName: string | null; email: string | null; phone?: string | null } | null;
+  recipientUser?: {
+    displayName: string | null;
+    email: string | null;
+    phone?: string | null;
+  } | null;
   startsAt?: string | null;
   endsAt?: string | null;
+};
+
+const couponStatusLabels: Record<string, string> = {
+  ACTIVE: "Đang hoạt động",
+  PAUSED: "Tạm dừng",
+  UPCOMING: "Sắp diễn ra",
+  EXPIRED: "Đã hết hạn",
+  EXHAUSTED: "Đã hết lượt",
+  USED: "Đã sử dụng",
 };
 type Membership = {
   id: number;
@@ -395,7 +408,9 @@ export default function DiscountsPage() {
                 <Input
                   standalone
                   value={form.recipientPhone}
-                  onManualChange={(value) => updateForm("recipientPhone", value)}
+                  onManualChange={(value) =>
+                    updateForm("recipientPhone", value)
+                  }
                   placeholder="Ví dụ: 0912 345 678"
                   aria-label="Số điện thoại khách hàng nhận voucher"
                   inputMode="tel"
@@ -653,14 +668,20 @@ export default function DiscountsPage() {
                             {coupon.source === "BIRTHDAY" ? (
                               <span className="mt-1 block text-xs font-normal text-(--admin-primary)">
                                 Sinh nhật ·{" "}
-                            {coupon.recipientUser?.phone || coupon.recipientUser?.email || "khách hàng"}
+                                {coupon.recipientUser?.phone ||
+                                  coupon.recipientUser?.email ||
+                                  "khách hàng"}
                               </span>
                             ) : null}
-                        {coupon.recipientUser && coupon.source !== "BIRTHDAY" ? (
-                          <span className="mt-1 block text-xs font-normal text-(--admin-primary)">
-                            Tặng riêng · {coupon.recipientUser.phone || coupon.recipientUser.email || "khách hàng"}
-                          </span>
-                        ) : null}
+                            {coupon.recipientUser &&
+                            coupon.source !== "BIRTHDAY" ? (
+                              <span className="mt-1 block text-xs font-normal text-(--admin-primary)">
+                                Tặng riêng ·{" "}
+                                {coupon.recipientUser.phone ||
+                                  coupon.recipientUser.email ||
+                                  "khách hàng"}
+                              </span>
+                            ) : null}
                           </td>
                           <td className="p-3 font-semibold text-(--admin-primary)">
                             {coupon.code}
@@ -683,7 +704,8 @@ export default function DiscountsPage() {
                           </td>
                           <td className="p-3">
                             <span className="rounded-full bg-(--admin-primary-soft) px-2 py-1 text-xs font-semibold text-(--admin-primary)">
-                              {coupon.status}
+                              {couponStatusLabels[coupon.status] ||
+                                coupon.status}
                             </span>
                           </td>
                           <td className="p-3">{renderActions(coupon)}</td>
@@ -728,12 +750,18 @@ export default function DiscountsPage() {
                         {coupon.source === "BIRTHDAY" ? (
                           <p className="mt-1 text-xs text-(--admin-primary)">
                             🎂 Sinh nhật ·{" "}
-                            {coupon.recipientUser?.phone || coupon.recipientUser?.email || "khách hàng"}
+                            {coupon.recipientUser?.phone ||
+                              coupon.recipientUser?.email ||
+                              "khách hàng"}
                           </p>
                         ) : null}
-                        {coupon.recipientUser && coupon.source !== "BIRTHDAY" ? (
+                        {coupon.recipientUser &&
+                        coupon.source !== "BIRTHDAY" ? (
                           <p className="mt-1 text-xs text-(--admin-primary)">
-                            Tặng riêng · {coupon.recipientUser.phone || coupon.recipientUser.email || "khách hàng"}
+                            Tặng riêng ·{" "}
+                            {coupon.recipientUser.phone ||
+                              coupon.recipientUser.email ||
+                              "khách hàng"}
                           </p>
                         ) : null}
                         <p className="mt-1 inline-flex rounded-md bg-(--admin-primary-soft) px-2 py-1 font-mono text-xs font-bold tracking-wide text-(--admin-primary)">
@@ -741,7 +769,7 @@ export default function DiscountsPage() {
                         </p>
                       </div>
                       <span className="shrink-0 rounded-full bg-(--admin-primary-soft) px-2 py-1 text-11px font-semibold text-(--admin-primary)">
-                        {coupon.status}
+                        {couponStatusLabels[coupon.status] || coupon.status}
                       </span>
                     </div>
                     <dl className="mt-4 grid grid-cols-2 gap-3 border-y border-(--admin-border) py-3 text-sm">

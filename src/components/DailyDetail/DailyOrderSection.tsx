@@ -1454,7 +1454,9 @@ export default function DailyOrderSection({
                       {activeTab === "ONLINE" ? (
                         <StatusBadge status={order.status} />
                       ) : null}
-                      <PaymentBadge status={order.paymentStatus} />
+                      <div className="justify-self-center">
+                        <PaymentBadge status={order.paymentStatus} />
+                      </div>
                       <p className="whitespace-nowrap text-right text-sm font-extrabold text-slate-800">
                         {formatMoney(order.totalAmount)}
                       </p>
