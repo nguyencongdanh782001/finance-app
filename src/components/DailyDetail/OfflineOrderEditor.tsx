@@ -112,6 +112,8 @@ const emptyForm = (): OrderFormState => ({
   userId: null,
 });
 
+const formSignature = (form: OrderFormState) => JSON.stringify(form);
+
 const snapshotColorCode = (snapshot: unknown) => {
   if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
     return "";
@@ -1366,11 +1368,17 @@ export function OfflineOrderEditor({
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerLoading, setCustomerLoading] = useState(false);
   const [idempotencyKey, setIdempotencyKey] = useState(createIdempotencyKey);
+  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false);
+  const [initialFormSignature, setInitialFormSignature] = useState<
+    string | null
+  >(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
     if (!open) {
       initializedRef.current = false;
+      setInitialFormSignature(null);
+      setCloseConfirmOpen(false);
       setCartOpen(false);
       setForm(emptyForm());
       setDiscountPreview(null);
@@ -1381,7 +1389,7 @@ export function OfflineOrderEditor({
     if (initializedRef.current || productsLoading) return;
 
     if (mode === "edit" && order) {
-      setForm({
+      const nextForm: OrderFormState = {
         paymentMethod:
           order.paymentMethod === "BANK_TRANSFER"
             ? order.paymentMethod
@@ -1423,15 +1431,43 @@ export function OfflineOrderEditor({
               quantity: String(item.quantity),
             };
           }),
-      });
+      };
+      setForm(nextForm);
+      setInitialFormSignature(formSignature(nextForm));
     } else {
-      setForm(emptyForm());
+      const nextForm = emptyForm();
+      setForm(nextForm);
+      setInitialFormSignature(formSignature(nextForm));
       setCustomer(null);
       setIdempotencyKey(createIdempotencyKey());
     }
     setError("");
     initializedRef.current = true;
   }, [mode, open, order, products, productsLoading]);
+
+  const hasUnsavedChanges =
+    initialFormSignature !== null &&
+    initialFormSignature !== formSignature(form);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      onOpenChange(true);
+      return;
+    }
+
+    if (submitting) return;
+    if (hasUnsavedChanges) {
+      setCloseConfirmOpen(true);
+      return;
+    }
+    onOpenChange(false);
+  };
+
+  const confirmClose = () => {
+    setCloseConfirmOpen(false);
+    setInitialFormSignature(formSignature(form));
+    onOpenChange(false);
+  };
 
   const lookupCustomer = async () => {
     const phone = form.customerPhone.trim();
@@ -1567,7 +1603,10 @@ export function OfflineOrderEditor({
         },
         order?.id,
       );
-      if (success) onOpenChange(false);
+      if (success) {
+        setInitialFormSignature(formSignature(form));
+        onOpenChange(false);
+      }
     } catch (submitError) {
       const message =
         submitError instanceof Error
@@ -1612,103 +1651,133 @@ export function OfflineOrderEditor({
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="shop-order-modal flex h-dvh max-h-dvh max-w-none flex-col overflow-hidden bg-[#F8F5F6] p-0 shadow-none xl:h-[min(94dvh,900px)] xl:w-[min(95vw,1440px)] xl:rounded-2xl xl:border xl:border-[#EAE1E4] xl:shadow-xl"
-        style={
-          {
-            "--pos-background": COLORS.background,
-            "--pos-border": COLORS.border,
-            "--pos-text": COLORS.text,
-            "--pos-muted": COLORS.muted,
-            "--pos-accent": COLORS.accent,
-            "--pos-accent-hover": COLORS.accentHover,
-            "--pos-accent-soft": COLORS.accentSoft,
-          } as React.CSSProperties
-        }
-      >
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#EAE1E4] bg-white px-4 sm:px-5">
-          <div className="min-w-0">
-            <DialogTitle className="truncate text-lg font-bold text-[#2D2226] sm:text-xl">
-              {mode === "edit" ? "Sửa đơn tại shop" : "Tạo đơn tại shop"}
-            </DialogTitle>
-            <DialogDescription className="mt-0.5 hidden text-xs text-[#8B7A80] sm:block">
-              Chọn sản phẩm bên trái và hoàn tất đơn ở giỏ hàng.
-            </DialogDescription>
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent
+          className="shop-order-modal flex h-dvh max-h-dvh max-w-none flex-col overflow-hidden bg-[#F8F5F6] p-0 shadow-none xl:h-[min(94dvh,900px)] xl:w-[min(95vw,1440px)] xl:rounded-2xl xl:border xl:border-[#EAE1E4] xl:shadow-xl"
+          style={
+            {
+              "--pos-background": COLORS.background,
+              "--pos-border": COLORS.border,
+              "--pos-text": COLORS.text,
+              "--pos-muted": COLORS.muted,
+              "--pos-accent": COLORS.accent,
+              "--pos-accent-hover": COLORS.accentHover,
+              "--pos-accent-soft": COLORS.accentSoft,
+            } as React.CSSProperties
+          }
+        >
+          <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#EAE1E4] bg-white px-4 sm:px-5">
+            <div className="min-w-0">
+              <DialogTitle className="truncate text-lg font-bold text-[#2D2226] sm:text-xl">
+                {mode === "edit" ? "Sửa đơn tại shop" : "Tạo đơn tại shop"}
+              </DialogTitle>
+              <DialogDescription className="mt-0.5 hidden text-xs text-[#8B7A80] sm:block">
+                Chọn sản phẩm bên trái và hoàn tất đơn ở giỏ hàng.
+              </DialogDescription>
+            </div>
+            <DialogClose asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="rounded-lg text-[#65545B] hover:bg-[#F8F5F6] focus-visible:ring-[#D96C8A]/30"
+                aria-label="Đóng trình tạo đơn"
+              >
+                <X className="size-4" />
+              </Button>
+            </DialogClose>
+          </header>
+
+          <div className="grid h-full min-h-0 flex-1 xl:grid-cols-[minmax(0,3fr)_minmax(430px,2fr)]">
+            <div className="flex h-full min-h-0 flex-1 flex-col xl:pb-0">
+              <ProductSearchPanel
+                products={products}
+                selectedItems={form.items}
+                loading={productsLoading}
+                onAdd={addItem}
+                onRemoveProduct={(productId) => (
+                  setDiscountPreview(null),
+                  setForm((current) => ({
+                    ...current,
+                    items: current.items.filter(
+                      (item) => item.productId !== productId,
+                    ),
+                    couponCode: "",
+                  }))
+                )}
+                onSearchChange={onProductSearchChange}
+              />
+            </div>
+            <div className="hidden min-h-0 xl:block">{cart}</div>
           </div>
-          <DialogClose asChild>
+
+          <div className="fixed inset-x-0 bottom-0 z-10 border-t border-[#EAE1E4] bg-white px-4 py-3 pb-[max(12px,env(safe-area-inset-bottom))] xl:hidden">
+            <div className="mx-auto flex max-w-3xl flex-col gap-2">
+              <div className="flex items-center justify-between gap-3">
+                <p className="truncate text-xs font-semibold text-[#65545B]">
+                  {form.items.length
+                    ? `${form.items.length} sản phẩm · ${totals.quantity} món`
+                    : "Chưa chọn sản phẩm"}
+                </p>
+                <p className="shrink-0 text-base font-extrabold text-[#2D2226]">
+                  {formatMoney(totals.amount)}
+                </p>
+              </div>
+              <Button
+                type="button"
+                className="h-11 w-full rounded-lg bg-[#D96C8A] font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
+                disabled={!form.items.length || submitting}
+                onClick={() => setCartOpen(true)}
+              >
+                <ShoppingBag className="size-4" />
+                Xem đơn
+              </Button>
+            </div>
+          </div>
+
+          <Sheet open={cartOpen} onOpenChange={setCartOpen}>
+            <SheetContent
+              side="right"
+              className="shop-order-modal z-(--z-dialog) h-svh! min-h-svh! w-full! max-w-full! overflow-hidden p-0 sm:h-dvh! sm:min-h-0 sm:w-[min(92vw,560px)]!"
+            >
+              <SheetTitle className="sr-only">Đơn hàng hiện tại</SheetTitle>
+              <SheetDescription className="sr-only">
+                Chỉnh sản phẩm, thanh toán và hoàn tất đơn tại shop.
+              </SheetDescription>
+              {cart}
+            </SheetContent>
+          </Sheet>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={closeConfirmOpen} onOpenChange={setCloseConfirmOpen}>
+        <DialogContent className="max-w-md rounded-2xl border-[#EAE1E4] bg-white p-5 shadow-xl">
+          <DialogTitle className="text-lg font-extrabold text-[#2D2226]">
+            Đóng đơn hàng đang nhập?
+          </DialogTitle>
+          <DialogDescription className="mt-2 text-sm leading-6 text-[#65545B]">
+            Dữ liệu đơn hàng chưa lưu sẽ bị mất nếu bạn đóng cửa sổ này.
+          </DialogDescription>
+          <div className="mt-5 flex justify-end gap-2">
             <Button
               type="button"
               variant="ghost"
-              size="icon-sm"
-              className="rounded-lg text-[#65545B] hover:bg-[#F8F5F6] focus-visible:ring-[#D96C8A]/30"
-              aria-label="Đóng trình tạo đơn"
+              className="rounded-lg border border-[#EAE1E4] text-[#65545B] hover:bg-[#F8F5F6]"
+              onClick={() => setCloseConfirmOpen(false)}
             >
-              <X className="size-4" />
+              Tiếp tục nhập
             </Button>
-          </DialogClose>
-        </header>
-
-        <div className="grid h-full min-h-0 flex-1 xl:grid-cols-[minmax(0,3fr)_minmax(430px,2fr)]">
-          <div className="flex h-full min-h-0 flex-1 flex-col xl:pb-0">
-            <ProductSearchPanel
-              products={products}
-              selectedItems={form.items}
-              loading={productsLoading}
-              onAdd={addItem}
-              onRemoveProduct={(productId) => (
-                setDiscountPreview(null),
-                setForm((current) => ({
-                  ...current,
-                  items: current.items.filter(
-                    (item) => item.productId !== productId,
-                  ),
-                  couponCode: "",
-                }))
-              )}
-              onSearchChange={onProductSearchChange}
-            />
-          </div>
-          <div className="hidden min-h-0 xl:block">{cart}</div>
-        </div>
-
-        <div className="fixed inset-x-0 bottom-0 z-10 border-t border-[#EAE1E4] bg-white px-4 py-3 pb-[max(12px,env(safe-area-inset-bottom))] xl:hidden">
-          <div className="mx-auto flex max-w-3xl flex-col gap-2">
-            <div className="flex items-center justify-between gap-3">
-              <p className="truncate text-xs font-semibold text-[#65545B]">
-                {form.items.length
-                  ? `${form.items.length} sản phẩm · ${totals.quantity} món`
-                  : "Chưa chọn sản phẩm"}
-              </p>
-              <p className="shrink-0 text-base font-extrabold text-[#2D2226]">
-                {formatMoney(totals.amount)}
-              </p>
-            </div>
             <Button
               type="button"
-              className="h-11 w-full rounded-lg bg-[#D96C8A] font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
-              disabled={!form.items.length || submitting}
-              onClick={() => setCartOpen(true)}
+              className="rounded-lg bg-[#D96C8A] font-bold text-white hover:bg-[#C85B7B]"
+              onClick={confirmClose}
             >
-              <ShoppingBag className="size-4" />
-              Xem đơn
+              Đóng và bỏ dữ liệu
             </Button>
           </div>
-        </div>
-
-        <Sheet open={cartOpen} onOpenChange={setCartOpen}>
-          <SheetContent
-            side="right"
-            className="shop-order-modal z-(--z-dialog) h-svh! min-h-svh! w-full! max-w-full! overflow-hidden p-0 sm:h-dvh! sm:min-h-0 sm:w-[min(92vw,560px)]!"
-          >
-            <SheetTitle className="sr-only">Đơn hàng hiện tại</SheetTitle>
-            <SheetDescription className="sr-only">
-              Chỉnh sản phẩm, thanh toán và hoàn tất đơn tại shop.
-            </SheetDescription>
-            {cart}
-          </SheetContent>
-        </Sheet>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

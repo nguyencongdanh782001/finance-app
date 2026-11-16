@@ -175,6 +175,9 @@ export const financeAPI = {
     search?: string;
     categoryId?: number;
     sort?: "title-asc" | "title-desc" | "createdAt-desc" | "createdAt-asc";
+    minPrice?: number;
+    maxPrice?: number;
+    stockStatus?: "IN_STOCK" | "OUT_OF_STOCK";
     page?: number;
     limit?: number;
   }): Promise<IAPIResponse<ProductListResponse>> => {

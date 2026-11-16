@@ -56,6 +56,7 @@ type ProductSortValue = (typeof PRODUCT_SORT_OPTIONS)[number]["value"];
 
 const DEFAULT_SORT: ProductSortValue = "createdAt-desc";
 const PRODUCT_LIST_RETURN_STATE = "admin-products-return-state";
+const PRICE_FILTER_DEBOUNCE_MS = 300;
 
 const DEFAULT_FORM_VALUES: ProductFormValues = {
   title: "",
@@ -114,6 +115,19 @@ export default function ProductContainer() {
   const [categoryFilter, setCategoryFilter] = useState(
     searchParams.get("categoryId") || "",
   );
+  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
+  const [stockFilter, setStockFilter] = useState(
+    searchParams.get("stockStatus") || "",
+  );
+  const debouncedMinPrice = useDebouncedValue(
+    minPrice.trim(),
+    PRICE_FILTER_DEBOUNCE_MS,
+  );
+  const debouncedMaxPrice = useDebouncedValue(
+    maxPrice.trim(),
+    PRICE_FILTER_DEBOUNCE_MS,
+  );
   const [sortBy, setSortBy] = useState<ProductSortValue>(
     (searchParams.get("sort") as ProductSortValue) || DEFAULT_SORT,
   );
@@ -168,6 +182,12 @@ export default function ProductContainer() {
     const res = await financeAPI.getProductList({
       search: debouncedSearch || undefined,
       categoryId: categoryFilter ? Number(categoryFilter) : undefined,
+      minPrice: debouncedMinPrice ? Number(debouncedMinPrice) : undefined,
+      maxPrice: debouncedMaxPrice ? Number(debouncedMaxPrice) : undefined,
+      stockStatus:
+        stockFilter === "IN_STOCK" || stockFilter === "OUT_OF_STOCK"
+          ? stockFilter
+          : undefined,
       sort: sortBy,
       page: nextPage,
       limit,
@@ -229,7 +249,14 @@ export default function ProductContainer() {
 
     setPage(1);
     void fetchProducts(1);
-  }, [debouncedSearch, categoryFilter, sortBy]);
+  }, [
+    debouncedSearch,
+    categoryFilter,
+    debouncedMinPrice,
+    debouncedMaxPrice,
+    stockFilter,
+    sortBy,
+  ]);
 
   useEffect(() => {
     if (isInitialLoading) return;
@@ -270,6 +297,24 @@ export default function ProductContainer() {
       params.delete("categoryId");
     }
 
+    if (debouncedMinPrice) {
+      params.set("minPrice", debouncedMinPrice);
+    } else {
+      params.delete("minPrice");
+    }
+
+    if (debouncedMaxPrice) {
+      params.set("maxPrice", debouncedMaxPrice);
+    } else {
+      params.delete("maxPrice");
+    }
+
+    if (stockFilter) {
+      params.set("stockStatus", stockFilter);
+    } else {
+      params.delete("stockStatus");
+    }
+
     if (sortBy !== DEFAULT_SORT) {
       params.set("sort", sortBy);
     } else {
@@ -280,7 +325,16 @@ export default function ProductContainer() {
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
       scroll: false,
     });
-  }, [debouncedSearch, categoryFilter, sortBy, pathname, router]);
+  }, [
+    debouncedSearch,
+    categoryFilter,
+    debouncedMinPrice,
+    debouncedMaxPrice,
+    stockFilter,
+    sortBy,
+    pathname,
+    router,
+  ]);
 
   useEffect(() => {
     const node = loadMoreRef.current;
@@ -312,6 +366,9 @@ export default function ProductContainer() {
     totalPage,
     search,
     categoryFilter,
+    debouncedMinPrice,
+    debouncedMaxPrice,
+    stockFilter,
     sortBy,
   ]);
 
@@ -771,19 +828,59 @@ export default function ProductContainer() {
                 placeholder="Sắp xếp"
                 onChange={(value) => setSortBy(value as ProductSortValue)}
               />
+              <div className="flex h-10 min-w-0 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2">
+                <input
+                  type="number"
+                  min="0"
+                  inputMode="numeric"
+                  value={minPrice}
+                  onChange={(event) => setMinPrice(event.target.value)}
+                  placeholder="Giá từ"
+                  aria-label="Giá bán từ"
+                  className="min-w-0 w-1/2 bg-transparent px-1 text-sm outline-none placeholder:text-(--admin-text-muted)"
+                />
+                <span className="text-slate-300">–</span>
+                <input
+                  type="number"
+                  min="0"
+                  inputMode="numeric"
+                  value={maxPrice}
+                  onChange={(event) => setMaxPrice(event.target.value)}
+                  placeholder="Giá đến"
+                  aria-label="Giá bán đến"
+                  className="min-w-0 w-1/2 bg-transparent px-1 text-sm outline-none placeholder:text-(--admin-text-muted)"
+                />
+              </div>
+              <AdminSelect
+                name="productStock"
+                value={stockFilter}
+                options={[
+                  { value: "", label: "Tất cả tồn kho" },
+                  { value: "IN_STOCK", label: "Còn hàng" },
+                  { value: "OUT_OF_STOCK", label: "Hết hàng" },
+                ]}
+                placeholder="Tất cả tồn kho"
+                onChange={setStockFilter}
+              />
             </>
           }
           activeFilterCount={
             Number(Boolean(search)) +
             Number(Boolean(categoryFilter)) +
+            Number(Boolean(debouncedMinPrice)) +
+            Number(Boolean(debouncedMaxPrice)) +
+            Number(Boolean(stockFilter)) +
             Number(sortBy !== DEFAULT_SORT)
           }
           onReset={() => {
             setSearch("");
             setCategoryFilter("");
+            setMinPrice("");
+            setMaxPrice("");
+            setStockFilter("");
             setSortBy(DEFAULT_SORT);
           }}
-          desktopClassName="sm:grid-cols-[minmax(220px,1fr)_minmax(160px,220px)_minmax(140px,160px)_auto]"
+          desktopClassName="sm:grid-cols-[minmax(220px,1fr)_minmax(150px,190px)_minmax(140px,170px)_minmax(190px,240px)_minmax(140px,180px)_auto]"
         />
 
         <div className="mt-5 flex items-center justify-between gap-3 border-t border-(--admin-border) pt-4">

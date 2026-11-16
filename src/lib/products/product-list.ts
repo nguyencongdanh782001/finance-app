@@ -134,11 +134,22 @@ export function buildSharedProductFilters(
     };
   }
   if (query.stockStatus) {
-    variantFilters.push(
+    const stockVariantFilter =
       query.stockStatus === "IN_STOCK"
         ? { isActive: true, quantity: { gt: 0 } }
-        : { isActive: true, quantity: { lte: 0 } },
-    );
+        : { isActive: true, quantity: { lte: 0 } };
+
+    if (variantFilters.length) {
+      variantFilters.push(stockVariantFilter);
+    } else {
+      filters.OR = [
+        { variants: { some: stockVariantFilter } },
+        {
+          variants: { none: {} },
+          quantity: query.stockStatus === "IN_STOCK" ? { gt: 0 } : { lte: 0 },
+        },
+      ];
+    }
   }
   if (variantFilters.length)
     filters.variants = { some: { AND: variantFilters } };
@@ -171,7 +182,14 @@ export const publicProductSelect = {
   categoryId: true,
   gender: true,
   category: {
-    select: { id: true, name: true, slug: true, color: true, icon: true, tryOnCategory: true },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      color: true,
+      icon: true,
+      tryOnCategory: true,
+    },
   },
   images: {
     where: { variantId: null },
