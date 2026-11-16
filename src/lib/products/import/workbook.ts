@@ -326,7 +326,7 @@ export async function createPerProductImportTemplate() {
     ],
     [
       "Thông tin sản phẩm",
-      "Nhập giá trị ở cột value, giữ nguyên tên field ở cột field.",
+      "Nhập giá trị ở cột value. category_key có dropdown để chọn theo tên danh mục.",
     ],
     ["Biến thể", "Nhập từng màu/size/SKU trên một dòng trong bảng Biến thể."],
     [
@@ -365,6 +365,24 @@ export async function createPerProductImportTemplate() {
   );
   categories.addRow(["1", "Áo", "ao"]);
   categories.addRow(["2", "Áo thun", "ao-thun"]);
+  categories.getCell("D1").value = "category_option";
+  categories.getCell("D1").font = { color: { argb: HEADER_TEXT }, bold: true };
+  categories.getCell("D1").fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: HEADER_FILL },
+  };
+  categories.getColumn(4).hidden = true;
+  for (let row = 2; row <= PRODUCT_IMPORT_LIMITS.maxProducts + 1; row += 1) {
+    categories.getCell(row, 4).value = {
+      formula: `IF(OR(A${row}="",B${row}=""),"",A${row}&" - "&B${row})`,
+      result: "",
+    };
+  }
+  workbook.definedNames.add(
+    `'${PRODUCT_IMPORT_SHEETS.categories}'!$D$2:$D$${PRODUCT_IMPORT_LIMITS.maxProducts + 1}`,
+    "CategoryOptions",
+  );
 
   const productSheet = workbook.addWorksheet("SP-001", {
     views: [{ state: "frozen", ySplit: 1 }],
@@ -422,6 +440,14 @@ export async function createPerProductImportTemplate() {
     "Áo thun đen",
   ]);
   productSheet.autoFilter = { from: "A1", to: "B1" };
+  productSheet.getCell(5, 2).dataValidation = {
+    type: "list",
+    allowBlank: false,
+    formulae: ["CategoryOptions"],
+    showErrorMessage: true,
+    errorTitle: "Danh mục không hợp lệ",
+    error: "Chọn danh mục từ danh sách.",
+  };
 
   return Buffer.from(await workbook.xlsx.writeBuffer());
 }

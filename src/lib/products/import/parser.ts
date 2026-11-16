@@ -30,6 +30,11 @@ type RowReader = {
 
 const normalizeText = (value: unknown) => String(value ?? "").trim();
 const normalizedKey = (value: string) => value.trim().toLocaleLowerCase("vi");
+const normalizeCategoryReference = (value: ImportCellValue) => {
+  const reference = normalizeText(value);
+  const displayValue = reference.match(/^(\d+)\s*[-–—|]\s*.+$/);
+  return displayValue?.[1] || reference;
+};
 
 export const slugifyImportValue = (value: string) =>
   value
@@ -690,7 +695,7 @@ export async function parseAndValidateProductWorkbook(
       key,
       name,
       slug: slugifyImportValue(normalizeText(valueOf(row, "slug")) || name),
-      categoryKey: normalizeText(valueOf(row, "category_key")),
+      categoryKey: normalizeCategoryReference(valueOf(row, "category_key")),
       categorySlug: slugifyImportValue(
         normalizeText(valueOf(row, "category_slug")),
       ),
