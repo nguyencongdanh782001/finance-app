@@ -448,6 +448,22 @@ export async function createPerProductImportTemplate() {
     errorTitle: "Danh mục không hợp lệ",
     error: "Chọn danh mục từ danh sách.",
   };
+  productSheet.getCell(8, 2).dataValidation = {
+    type: "list",
+    allowBlank: false,
+    formulae: ['"WOMEN,MEN,UNISEX,KIDS"'],
+    showErrorMessage: true,
+    errorTitle: "Giới tính không hợp lệ",
+    error: "Chọn giới tính từ danh sách.",
+  };
+  productSheet.getCell(9, 2).dataValidation = {
+    type: "list",
+    allowBlank: false,
+    formulae: ['"PUBLIC,PRIVATE,DISCONTINUED"'],
+    showErrorMessage: true,
+    errorTitle: "Trạng thái không hợp lệ",
+    error: "Chọn trạng thái từ danh sách.",
+  };
 
   return Buffer.from(await workbook.xlsx.writeBuffer());
 }
