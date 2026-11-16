@@ -732,6 +732,9 @@ export async function parseAndValidateProductWorkbook(
   const existingSkus = new Set(database.variantSkus.map(normalizedKey));
   const existingSlugs = new Set(database.productSlugs.map(normalizedKey));
   const existingCategories = new Set(database.categorySlugs.map(normalizedKey));
+  const existingCategoryKeys = new Set(
+    (database.categoryKeys || []).map(normalizedKey),
+  );
   variants.forEach((variant) => {
     const key = normalizedKey(variant.sku);
     if (key) fileSkus.set(key, (fileSkus.get(key) || 0) + 1);
@@ -818,45 +821,52 @@ export async function parseAndValidateProductWorkbook(
       );
     if (product.categoryKey) {
       const category = categoryMap.get(normalizedKey(product.categoryKey));
-      if (!category)
+      const categoryKeyExists = existingCategoryKeys.has(
+        normalizedKey(product.categoryKey),
+      );
+      if (!category && !categoryKeyExists)
         productError(
           "category_key",
           product.categoryKey,
           "CATEGORY_NOT_FOUND",
-          "category_key không tồn tại trong sheet Danh mục.",
+          "category_key không tồn tại trong database hoặc sheet Danh mục.",
         );
-      else if (invalidCategoryKeys.has(normalizedKey(category.key)))
-        productError(
-          "category_key",
-          product.categoryKey,
-          "INVALID_CATEGORY",
-          "Danh mục tham chiếu đang có lỗi.",
-        );
-      else if (
-        !options.createMissingCategories &&
-        !existingCategories.has(normalizedKey(category.slug))
-      )
-        productError(
-          "category_key",
-          product.categoryKey,
-          "CATEGORY_CREATION_NOT_CONFIRMED",
-          "Danh mục chưa tồn tại. Hãy bật xác nhận tạo danh mục mới.",
-        );
-      else if (
-        options.createMissingCategories &&
-        !existingCategories.has(normalizedKey(category.slug))
-      )
-        addError(errors, {
-          sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
-          row: product.row,
-          column: "category_key",
-          field: "category_key",
-          value: product.categoryKey,
-          code: "CATEGORY_WILL_BE_CREATED",
-          message: `Danh mục “${category.name}” sẽ được tạo khi nhập.`,
-          severity: "WARNING",
-          productKey: product.key,
-        });
+      else if (categoryKeyExists) {
+        // category_key already points to an existing database category.
+      } else if (category) {
+        if (invalidCategoryKeys.has(normalizedKey(category.key)))
+          productError(
+            "category_key",
+            product.categoryKey,
+            "INVALID_CATEGORY",
+            "Danh mục tham chiếu đang có lỗi.",
+          );
+        else if (
+          !options.createMissingCategories &&
+          !existingCategories.has(normalizedKey(category.slug))
+        )
+          productError(
+            "category_key",
+            product.categoryKey,
+            "CATEGORY_CREATION_NOT_CONFIRMED",
+            "Danh mục chưa tồn tại. Hãy bật xác nhận tạo danh mục mới.",
+          );
+        else if (
+          options.createMissingCategories &&
+          !existingCategories.has(normalizedKey(category.slug))
+        )
+          addError(errors, {
+            sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
+            row: product.row,
+            column: "category_key",
+            field: "category_key",
+            value: product.categoryKey,
+            code: "CATEGORY_WILL_BE_CREATED",
+            message: `Danh mục “${category.name}” sẽ được tạo khi nhập.`,
+            severity: "WARNING",
+            productKey: product.key,
+          });
+      }
     } else if (!existingCategories.has(normalizedKey(product.categorySlug))) {
       productError(
         "category_slug",

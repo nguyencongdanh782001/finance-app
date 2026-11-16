@@ -178,6 +178,7 @@ export type ProductImportValidation = {
 
 export type ProductImportDatabaseContext = {
   categorySlugs: string[];
+  categoryKeys?: string[];
   productSlugs: string[];
   variantSkus: string[];
 };
