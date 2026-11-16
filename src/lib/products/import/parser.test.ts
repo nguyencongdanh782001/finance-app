@@ -4,6 +4,7 @@ import ExcelJS from "exceljs";
 import { parseAndValidateProductWorkbook } from "./parser.ts";
 import {
   createProductImportErrorWorkbook,
+  createPerProductImportTemplate,
   createProductImportTemplate,
 } from "./workbook.ts";
 import {
@@ -107,6 +108,20 @@ test("valid workbook preserves an SKU with a leading zero", async () => {
   const result = await parse();
   assert.equal(result.totals.valid, 1);
   assert.equal(result.source.products[0].defaultSku, "00123");
+});
+
+test("per-product template imports product, variants and images from one sheet", async () => {
+  const result = await parseAndValidateProductWorkbook(
+    await createPerProductImportTemplate(),
+    { categorySlugs: ["ao-thun"], productSlugs: [], variantSkus: [] },
+    { createMissingCategories: false, forcePrivate: false },
+  );
+  assert.equal(result.totals.products, 1);
+  assert.equal(result.totals.valid, 1);
+  assert.equal(result.totals.variants, 2);
+  assert.equal(result.totals.images, 2);
+  assert.equal(result.source.products[0].sheet, "SP-001");
+  assert.equal(result.errors.length, 0);
 });
 
 test("product import allows an empty image sheet", async () => {

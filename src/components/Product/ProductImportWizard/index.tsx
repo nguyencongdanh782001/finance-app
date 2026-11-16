@@ -437,8 +437,9 @@ export default function ProductImportWizard() {
               Chuẩn bị file theo mẫu chuẩn
             </h2>
             <p className="mt-2 text-sm leading-6 text-(--admin-text-secondary)">
-              Workbook gồm Hướng dẫn, Danh mục, Sản phẩm, Biến thể và Hình ảnh.
-              Không đổi tên sheet hoặc cột liên kết.
+              Mỗi sheet bắt đầu bằng SP- là một sản phẩm, bên trong có thông
+              tin, biến thể và hình ảnh. Không đổi tên sheet hoặc các field liên
+              kết.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {[
@@ -446,7 +447,7 @@ export default function ProductImportWizard() {
                 "Status: PUBLIC, PRIVATE, DISCONTINUED",
                 "Giá VND và tồn kho phải là số nguyên",
                 "SKU và stable key luôn nhập dưới dạng text",
-                "Mỗi sản phẩm cần ít nhất một ảnh chung",
+                "Mỗi sản phẩm là một sheet riêng, dễ sao chép và quản lý",
                 "Upload chỉ validate, chưa tạo sản phẩm",
               ].map((item) => (
                 <div

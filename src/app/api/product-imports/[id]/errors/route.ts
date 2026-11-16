@@ -28,7 +28,9 @@ export async function GET(
   const runtimeErrors = asImportResults(resultPayload.items)
     .filter((item) => item.status === "FAILED")
     .map((item) => ({
-      sheet: "Sản phẩm",
+      sheet:
+        source.products.find((product) => product.key === item.productKey)
+          ?.sheet || "Sản phẩm",
       row:
         source.products.find((product) => product.key === item.productKey)
           ?.row || 0,

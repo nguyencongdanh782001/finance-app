@@ -5,6 +5,8 @@ import {
   PRODUCT_IMPORT_HEADERS,
   PRODUCT_IMPORT_LIMITS,
   PRODUCT_IMPORT_SHEETS,
+  PRODUCT_PER_SHEET_HEADERS,
+  PRODUCT_PER_SHEET_SECTIONS,
   type ImportCellError,
   type ImportCellValue,
   type ImportImage,
@@ -21,6 +23,7 @@ import {
 type SheetKey = keyof typeof PRODUCT_IMPORT_HEADERS;
 type RowReader = {
   row: number;
+  sheet?: string;
   values: Record<string, ImportCellValue>;
   formulas: Set<string>;
 };
@@ -141,6 +144,159 @@ const readSheet = (
   return rows;
 };
 
+const readPerProductSheet = (
+  worksheet: Worksheet,
+  errors: ImportCellError[],
+): {
+  product: RowReader;
+  variants: RowReader[];
+  images: RowReader[];
+} | null => {
+  const sheet = worksheet.name;
+  const firstHeader = worksheet.getRow(1);
+  const firstHeaders = [
+    normalizeText(firstHeader.getCell(1).text).toLowerCase(),
+    normalizeText(firstHeader.getCell(2).text).toLowerCase(),
+  ];
+  PRODUCT_PER_SHEET_HEADERS.product.forEach((header, index) => {
+    if (firstHeaders[index] === header) return;
+    errors.push({
+      sheet,
+      row: 1,
+      column: header,
+      field: header,
+      value: null,
+      code: "MISSING_HEADER",
+      message: `Sheet sản phẩm thiếu cột “${header}”.`,
+      severity: "ERROR",
+    });
+  });
+
+  const productValues: Record<string, ImportCellValue> = {};
+  const productFormulas = new Set<string>();
+  let productRow = 2;
+  let variantsStart = -1;
+  let imagesStart = -1;
+  for (let rowNumber = 2; rowNumber <= worksheet.rowCount; rowNumber += 1) {
+    const label = normalizeText(worksheet.getRow(rowNumber).getCell(1).text);
+    if (label === PRODUCT_PER_SHEET_SECTIONS.variants) {
+      variantsStart = rowNumber;
+      break;
+    }
+    if (label === PRODUCT_PER_SHEET_SECTIONS.images) {
+      imagesStart = rowNumber;
+      break;
+    }
+    if (!label) continue;
+    if (PRODUCT_IMPORT_HEADERS.products.includes(label as never)) {
+      const cell = worksheet.getRow(rowNumber).getCell(2);
+      const parsed = getCellValue(cell);
+      productValues[label] = parsed.value;
+      if (parsed.formula) productFormulas.add(label);
+      if (label === "product_key") productRow = rowNumber;
+    }
+  }
+  PRODUCT_IMPORT_HEADERS.products.forEach((header) => {
+    if (!(header in productValues)) productValues[header] = null;
+  });
+
+  const readTable = (
+    sectionRow: number,
+    headers: readonly string[],
+  ): RowReader[] => {
+    if (sectionRow < 0) return [];
+    const headerRowNumber = sectionRow + 1;
+    const headerRow = worksheet.getRow(headerRowNumber);
+    const headerIndex = new Map<string, number>();
+    for (let column = 1; column <= headerRow.cellCount; column += 1) {
+      const header = normalizeText(
+        headerRow.getCell(column).text,
+      ).toLowerCase();
+      if (header) headerIndex.set(header, column);
+    }
+    headers.forEach((header) => {
+      if (!headerIndex.has(header)) {
+        errors.push({
+          sheet,
+          row: headerRowNumber,
+          column: header,
+          field: header,
+          value: null,
+          code: "MISSING_HEADER",
+          message: `Sheet sản phẩm thiếu cột “${header}” trong bảng ${worksheet.getRow(sectionRow).getCell(1).text}.`,
+          severity: "ERROR",
+        });
+      }
+    });
+    const rows: RowReader[] = [];
+    for (
+      let rowNumber = headerRowNumber + 1;
+      rowNumber <= worksheet.rowCount;
+      rowNumber += 1
+    ) {
+      const row = worksheet.getRow(rowNumber);
+      const values: Record<string, ImportCellValue> = {};
+      const formulas = new Set<string>();
+      let hasValue = false;
+      headers.forEach((header) => {
+        const column = headerIndex.get(header);
+        const parsed = column
+          ? getCellValue(row.getCell(column))
+          : { value: null, formula: false };
+        values[header] = parsed.value;
+        if (parsed.formula) formulas.add(header);
+        if (parsed.value !== null && parsed.value !== "") hasValue = true;
+      });
+      if (!hasValue) break;
+      rows.push({ row: rowNumber, values, formulas, sheet });
+    }
+    return rows;
+  };
+
+  if (variantsStart >= 0) {
+    const nextSection = worksheet
+      .getRows(variantsStart + 1, worksheet.rowCount - variantsStart)
+      ?.find((row) =>
+        [PRODUCT_PER_SHEET_SECTIONS.images].includes(
+          normalizeText(row.getCell(1).text) as never,
+        ),
+      );
+    if (nextSection) imagesStart = nextSection.number;
+  }
+  if (imagesStart < 0) {
+    for (let rowNumber = 2; rowNumber <= worksheet.rowCount; rowNumber += 1) {
+      if (
+        normalizeText(worksheet.getRow(rowNumber).getCell(1).text) ===
+        PRODUCT_PER_SHEET_SECTIONS.images
+      ) {
+        imagesStart = rowNumber;
+        break;
+      }
+    }
+  }
+
+  return {
+    product: {
+      row: productRow,
+      values: productValues,
+      formulas: productFormulas,
+      sheet,
+    },
+    variants: readTable(variantsStart, PRODUCT_PER_SHEET_HEADERS.variants).map(
+      (row) => ({
+        ...row,
+        values: { ...row.values, product_key: productValues.product_key },
+      }),
+    ),
+    images: readTable(imagesStart, PRODUCT_PER_SHEET_HEADERS.images).map(
+      (row) => ({
+        ...row,
+        values: { ...row.values, product_key: productValues.product_key },
+      }),
+    ),
+  };
+};
+
 const parseInteger = (value: ImportCellValue) => {
   if (typeof value === "number") return Number.isInteger(value) ? value : null;
   if (typeof value !== "string" || !/^-?\d+$/.test(value.trim())) return null;
@@ -245,7 +401,18 @@ export async function parseAndValidateProductWorkbook(
     throw new Error("File Excel bị lỗi hoặc không đúng định dạng .xlsx.");
   }
 
-  const requiredSheets = Object.values(PRODUCT_IMPORT_SHEETS);
+  const legacyProductSheet = workbook.getWorksheet(
+    PRODUCT_IMPORT_SHEETS.products,
+  );
+  const usesLegacyLayout = Boolean(
+    legacyProductSheet &&
+    normalizeText(
+      legacyProductSheet.getRow(1).getCell(1).text,
+    ).toLowerCase() === "product_key",
+  );
+  const requiredSheets = usesLegacyLayout
+    ? Object.values(PRODUCT_IMPORT_SHEETS)
+    : [PRODUCT_IMPORT_SHEETS.instructions, PRODUCT_IMPORT_SHEETS.categories];
   requiredSheets.forEach((sheet) => {
     if (!workbook.getWorksheet(sheet))
       addError(errors, {
@@ -264,9 +431,44 @@ export async function parseAndValidateProductWorkbook(
     return sheet ? readSheet(sheet, PRODUCT_IMPORT_HEADERS[key], errors) : [];
   };
   const categoryRows = getRows("categories");
-  const productRows = getRows("products");
-  const variantRows = getRows("variants");
-  const imageRows = getRows("images");
+  let productRows: RowReader[] = [];
+  let variantRows: RowReader[] = [];
+  let imageRows: RowReader[] = [];
+  if (usesLegacyLayout) {
+    productRows = getRows("products");
+    variantRows = getRows("variants");
+    imageRows = getRows("images");
+  } else {
+    const reservedSheetNames = new Set<string>([
+      PRODUCT_IMPORT_SHEETS.instructions,
+      PRODUCT_IMPORT_SHEETS.categories,
+      PRODUCT_IMPORT_SHEETS.products,
+      PRODUCT_IMPORT_SHEETS.variants,
+      PRODUCT_IMPORT_SHEETS.images,
+    ]);
+    const productSheets = workbook.worksheets.filter(
+      (sheet) => !reservedSheetNames.has(sheet.name),
+    );
+    if (!productSheets.length) {
+      addError(errors, {
+        sheet: "Workbook",
+        row: 0,
+        column: "sheet",
+        field: "sheet",
+        value: null,
+        code: "MISSING_SHEET",
+        message:
+          "File phải có ít nhất một sheet sản phẩm (tên bắt đầu bằng SP-).",
+      });
+    }
+    productSheets.forEach((sheet) => {
+      const parsed = readPerProductSheet(sheet, errors);
+      if (!parsed) return;
+      productRows.push(parsed.product);
+      variantRows.push(...parsed.variants);
+      imageRows.push(...parsed.images);
+    });
+  }
   const totalRows =
     categoryRows.length +
     productRows.length +
@@ -448,6 +650,7 @@ export async function parseAndValidateProductWorkbook(
   });
 
   const variants: ImportVariant[] = variantRows.map((row) => ({
+    sheet: row.sheet,
     row: row.row,
     productKey: normalizeText(valueOf(row, "product_key")),
     color: normalizeText(valueOf(row, "color")),
@@ -459,6 +662,7 @@ export async function parseAndValidateProductWorkbook(
     isActive: parseBoolean(valueOf(row, "is_active")),
   }));
   const images: ImportImage[] = imageRows.map((row) => ({
+    sheet: row.sheet,
     row: row.row,
     productKey: normalizeText(valueOf(row, "product_key")),
     variantSku: normalizeText(valueOf(row, "variant_sku")),
@@ -472,6 +676,7 @@ export async function parseAndValidateProductWorkbook(
     const name = normalizeText(valueOf(row, "name"));
     const rawGender = normalizeText(valueOf(row, "gender")).toUpperCase();
     return {
+      sheet: row.sheet,
       row: row.row,
       key,
       name,
@@ -527,7 +732,7 @@ export async function parseAndValidateProductWorkbook(
       message: string,
     ) =>
       addError(errors, {
-        sheet: PRODUCT_IMPORT_SHEETS.products,
+        sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
         row: product.row,
         column,
         field: column,
@@ -623,7 +828,7 @@ export async function parseAndValidateProductWorkbook(
         !existingCategories.has(normalizedKey(category.slug))
       )
         addError(errors, {
-          sheet: PRODUCT_IMPORT_SHEETS.products,
+          sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
           row: product.row,
           column: "category_key",
           field: "category_key",
@@ -695,7 +900,7 @@ export async function parseAndValidateProductWorkbook(
       );
     if (options.forcePrivate && product.status && product.status !== "PRIVATE")
       addError(errors, {
-        sheet: PRODUCT_IMPORT_SHEETS.products,
+        sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
         row: product.row,
         column: "status",
         field: "status",
@@ -712,7 +917,7 @@ export async function parseAndValidateProductWorkbook(
       : Math.max(0, product.defaultStock || 0);
     if (product.status === "PUBLIC" && totalStock <= 0)
       addError(errors, {
-        sheet: PRODUCT_IMPORT_SHEETS.products,
+        sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
         row: product.row,
         column: "status",
         field: "status",
@@ -727,7 +932,7 @@ export async function parseAndValidateProductWorkbook(
   products.forEach((product) => {
     if ((productKeyCount.get(normalizedKey(product.key)) || 0) > 1)
       addError(errors, {
-        sheet: PRODUCT_IMPORT_SHEETS.products,
+        sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
         row: product.row,
         column: "product_key",
         field: "product_key",
@@ -739,7 +944,7 @@ export async function parseAndValidateProductWorkbook(
       });
     if ((productSlugCount.get(normalizedKey(product.slug)) || 0) > 1)
       addError(errors, {
-        sheet: PRODUCT_IMPORT_SHEETS.products,
+        sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
         row: product.row,
         column: "slug",
         field: "slug",
@@ -766,7 +971,7 @@ export async function parseAndValidateProductWorkbook(
       message: string,
     ) =>
       addError(errors, {
-        sheet: PRODUCT_IMPORT_SHEETS.variants,
+        sheet: variant.sheet || PRODUCT_IMPORT_SHEETS.variants,
         row: variant.row,
         column,
         field: column,
@@ -861,7 +1066,7 @@ export async function parseAndValidateProductWorkbook(
     .forEach((product) => {
       if (existingSkus.has(normalizedKey(product.defaultSku)))
         addError(errors, {
-          sheet: PRODUCT_IMPORT_SHEETS.products,
+          sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
           row: product.row,
           column: "default_sku",
           field: "default_sku",
@@ -873,7 +1078,7 @@ export async function parseAndValidateProductWorkbook(
         });
       if ((fileSkus.get(normalizedKey(product.defaultSku)) || 0) > 1)
         addError(errors, {
-          sheet: PRODUCT_IMPORT_SHEETS.products,
+          sheet: product.sheet || PRODUCT_IMPORT_SHEETS.products,
           row: product.row,
           column: "default_sku",
           field: "default_sku",
@@ -896,7 +1101,7 @@ export async function parseAndValidateProductWorkbook(
       message: string,
     ) =>
       addError(errors, {
-        sheet: PRODUCT_IMPORT_SHEETS.images,
+        sheet: image.sheet || PRODUCT_IMPORT_SHEETS.images,
         row: image.row,
         column,
         field: column,
@@ -1002,21 +1207,32 @@ export async function parseAndValidateProductWorkbook(
       row,
       values,
     })),
-    [PRODUCT_IMPORT_SHEETS.products]: productRows.map(({ row, values }) => ({
-      row,
-      values,
-    })),
-    [PRODUCT_IMPORT_SHEETS.variants]: variantRows.map(({ row, values }) => ({
-      row,
-      values,
-    })),
-    [PRODUCT_IMPORT_SHEETS.images]: imageRows.map(({ row, values }) => ({
-      row,
-      values,
-    })),
   };
+  if (usesLegacyLayout) {
+    originalRows[PRODUCT_IMPORT_SHEETS.products] = productRows.map(
+      ({ row, values }) => ({ row, values }),
+    );
+    originalRows[PRODUCT_IMPORT_SHEETS.variants] = variantRows.map(
+      ({ row, values }) => ({ row, values }),
+    );
+    originalRows[PRODUCT_IMPORT_SHEETS.images] = imageRows.map(
+      ({ row, values }) => ({ row, values }),
+    );
+  } else {
+    const productSheetNames = new Set(
+      productRows.map((row) => row.sheet).filter(Boolean) as string[],
+    );
+    productSheetNames.forEach((sheet) => {
+      originalRows[sheet] = [
+        ...productRows.filter((row) => row.sheet === sheet),
+        ...variantRows.filter((row) => row.sheet === sheet),
+        ...imageRows.filter((row) => row.sheet === sheet),
+      ].map(({ row, values }) => ({ row, values }));
+    });
+  }
   const source: ProductImportSource = {
     version: 1,
+    layout: usesLegacyLayout ? "legacy" : "per-product",
     categories,
     products,
     originalRows,

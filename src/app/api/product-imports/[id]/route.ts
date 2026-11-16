@@ -39,7 +39,7 @@ export async function GET(
         (candidate) => candidate.key === item.productKey,
       );
       return {
-        sheet: "Sản phẩm",
+        sheet: product?.sheet || "Sản phẩm",
         row: product?.row || 0,
         column: "product_key",
         field: "product_key",

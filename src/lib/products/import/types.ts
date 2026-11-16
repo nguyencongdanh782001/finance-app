@@ -56,6 +56,17 @@ export const PRODUCT_IMPORT_HEADERS = {
   ],
 } as const;
 
+export const PRODUCT_PER_SHEET_HEADERS = {
+  product: ["field", "value"],
+  variants: ["color", "size", "sku", "price", "cost", "stock", "is_active"],
+  images: ["variant_sku", "image_url", "sort_order", "is_primary", "alt_text"],
+} as const;
+
+export const PRODUCT_PER_SHEET_SECTIONS = {
+  variants: "Biến thể",
+  images: "Hình ảnh",
+} as const;
+
 export type ImportSeverity = "ERROR" | "WARNING";
 export type ImportCellValue = string | number | boolean | null;
 
@@ -92,6 +103,7 @@ export type ImportCategory = {
 };
 
 export type ImportVariant = {
+  sheet?: string;
   row: number;
   productKey: string;
   color: string;
@@ -104,6 +116,7 @@ export type ImportVariant = {
 };
 
 export type ImportImage = {
+  sheet?: string;
   row: number;
   productKey: string;
   variantSku: string;
@@ -114,6 +127,7 @@ export type ImportImage = {
 };
 
 export type ImportProduct = {
+  sheet?: string;
   row: number;
   key: string;
   name: string;
@@ -141,6 +155,7 @@ export type ImportRawRow = {
 
 export type ProductImportSource = {
   version: 1;
+  layout?: "legacy" | "per-product";
   categories: ImportCategory[];
   products: ImportProduct[];
   originalRows: Record<string, ImportRawRow[]>;

@@ -4,6 +4,8 @@ import {
   PRODUCT_IMPORT_HEADERS,
   PRODUCT_IMPORT_LIMITS,
   PRODUCT_IMPORT_SHEETS,
+  PRODUCT_PER_SHEET_HEADERS,
+  PRODUCT_PER_SHEET_SECTIONS,
   type ImportCellError,
   type ImportCellValue,
   type ProductImportSource,
@@ -284,6 +286,146 @@ export async function createProductImportTemplate() {
   return Buffer.from(await workbook.xlsx.writeBuffer());
 }
 
+export async function createPerProductImportTemplate() {
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = "Finance App";
+  workbook.created = new Date();
+  workbook.modified = new Date();
+
+  const instructions = workbook.addWorksheet(
+    PRODUCT_IMPORT_SHEETS.instructions,
+    {
+      views: [{ state: "frozen", ySplit: 3 }],
+    },
+  );
+  instructions.columns = [{ width: 28 }, { width: 100 }];
+  instructions.mergeCells("A1:B1");
+  instructions.getCell("A1").value = "HƯỚNG DẪN NHẬP SẢN PHẨM TỪ EXCEL";
+  instructions.getCell("A1").font = {
+    bold: true,
+    size: 16,
+    color: { argb: HEADER_TEXT },
+  };
+  instructions.getCell("A1").fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: HEADER_FILL },
+  };
+  instructions.getCell("A1").alignment = {
+    vertical: "middle",
+    horizontal: "center",
+  };
+  instructions.getRow(1).height = 34;
+  instructions.addRow([]);
+  instructions.addRow(["Mục", "Quy tắc"]);
+  styleHeader(instructions.getRow(3));
+  [
+    [
+      "Cấu trúc file",
+      "Mỗi sheet bắt đầu bằng SP- là một sản phẩm. Không đổi tên sheet.",
+    ],
+    [
+      "Thông tin sản phẩm",
+      "Nhập giá trị ở cột value, giữ nguyên tên field ở cột field.",
+    ],
+    ["Biến thể", "Nhập từng màu/size/SKU trên một dòng trong bảng Biến thể."],
+    [
+      "Hình ảnh",
+      "Mỗi URL ảnh là một dòng trong bảng Hình ảnh; URL phải công khai HTTP/HTTPS.",
+    ],
+    [
+      "Danh mục",
+      "Copy các dòng từ file Xuất Excel ở trang Danh mục vào sheet Danh mục của file này.",
+    ],
+    [
+      "Giới hạn",
+      `Tối đa ${PRODUCT_IMPORT_LIMITS.maxProducts.toLocaleString("vi-VN")} sản phẩm, ${PRODUCT_IMPORT_LIMITS.maxRows.toLocaleString("vi-VN")} dòng và ${(PRODUCT_IMPORT_LIMITS.maxFileSize / 1024 / 1024).toLocaleString("vi-VN")} MB.`,
+    ],
+    [
+      "An toàn",
+      "File chỉ được kiểm tra trước; dữ liệu chỉ ghi sau bước xác nhận nhập.",
+    ],
+  ].forEach((row) => instructions.addRow(row));
+  instructions.eachRow((row, rowNumber) => {
+    if (rowNumber > 3 && rowNumber % 2 === 0)
+      row.eachCell((cell) => {
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: SOFT_FILL },
+        };
+      });
+    row.alignment = { vertical: "top", wrapText: true };
+  });
+
+  const categories = prepareDataSheet(
+    workbook,
+    PRODUCT_IMPORT_SHEETS.categories,
+    PRODUCT_IMPORT_HEADERS.categories,
+  );
+  categories.addRow(["category-1", "Áo", "ao", ""]);
+  categories.addRow(["category-2", "Áo thun", "ao-thun", "category-1"]);
+
+  const productSheet = workbook.addWorksheet("SP-001", {
+    views: [{ state: "frozen", ySplit: 1 }],
+  });
+  productSheet.columns = [
+    { width: 28 },
+    { width: 48 },
+    { width: 16 },
+    { width: 16 },
+    { width: 16 },
+    { width: 16 },
+    { width: 16 },
+  ];
+  productSheet.addRow([...PRODUCT_PER_SHEET_HEADERS.product]);
+  styleHeader(productSheet.getRow(1));
+  [
+    ["product_key", "SP-001"],
+    ["name", "Áo thun cơ bản"],
+    ["slug", "ao-thun-co-ban"],
+    ["category_key", "category-2"],
+    ["category_slug", "ao-thun"],
+    ["brand", ""],
+    ["gender", "UNISEX"],
+    ["status", "PRIVATE"],
+    ["short_description", "Áo thun mặc hằng ngày"],
+    ["description", "Mô tả chi tiết sản phẩm"],
+    ["has_variants", true],
+    ["default_sku", ""],
+    ["default_price", ""],
+    ["default_cost", ""],
+    ["default_stock", ""],
+  ].forEach((row) => productSheet.addRow(row));
+  productSheet.addRow([]);
+  productSheet.addRow([PRODUCT_PER_SHEET_SECTIONS.variants]);
+  productSheet.addRow([...PRODUCT_PER_SHEET_HEADERS.variants]);
+  styleHeader(productSheet.getRow(productSheet.rowCount));
+  productSheet.addRow(["Đen", "M", "AT-DEN-M", 150000, 70000, 20, true]);
+  productSheet.addRow(["Trắng", "L", "AT-TRANG-L", 150000, 70000, 15, true]);
+  productSheet.addRow([]);
+  productSheet.addRow([PRODUCT_PER_SHEET_SECTIONS.images]);
+  productSheet.addRow([...PRODUCT_PER_SHEET_HEADERS.images]);
+  styleHeader(productSheet.getRow(productSheet.rowCount));
+  productSheet.addRow([
+    "",
+    "https://example.com/ao-thun.jpg",
+    0,
+    true,
+    "Áo thun cơ bản",
+  ]);
+  productSheet.addRow([
+    "AT-DEN-M",
+    "https://example.com/ao-thun-den.jpg",
+    1,
+    true,
+    "Áo thun đen",
+  ]);
+  productSheet.autoFilter = { from: "A1", to: "B1" };
+
+  return Buffer.from(await workbook.xlsx.writeBuffer());
+}
+
 const sheetHeaders = new Map<string, readonly string[]>([
   [PRODUCT_IMPORT_SHEETS.categories, PRODUCT_IMPORT_HEADERS.categories],
   [PRODUCT_IMPORT_SHEETS.products, PRODUCT_IMPORT_HEADERS.products],
@@ -310,7 +452,69 @@ export async function createProductImportErrorWorkbook(
 
   Object.entries(source.originalRows).forEach(([sheetName, rows]) => {
     const headers = sheetHeaders.get(sheetName);
-    if (!headers) return;
+    if (!headers) {
+      if (source.layout !== "per-product") return;
+      const selectedRows = rows.filter((row) => {
+        const productKey = String(
+          row.values.product_key || "",
+        ).toLocaleLowerCase("vi");
+        return (
+          errorsBySheetRow.has(`${sheetName}:${row.row}`) ||
+          invalidProductKeys.has(productKey)
+        );
+      });
+      if (
+        !selectedRows.length &&
+        !errors.some((error) => error.sheet === sheetName)
+      )
+        return;
+      const sheet = prepareDataSheet(workbook, sheetName, [
+        "row",
+        "data",
+        "import_status",
+        "error_columns",
+        "error_messages",
+      ]);
+      selectedRows.forEach((rawRow) => {
+        const directErrors =
+          errorsBySheetRow.get(`${sheetName}:${rawRow.row}`) || [];
+        const productKey = String(
+          rawRow.values.product_key || "",
+        ).toLocaleLowerCase("vi");
+        const relatedErrors = directErrors.length
+          ? directErrors
+          : errors.filter(
+              (error) =>
+                error.productKey?.toLocaleLowerCase("vi") === productKey,
+            );
+        const hasError = relatedErrors.some(
+          (error) => error.severity === "ERROR",
+        );
+        const row = sheet.addRow([
+          rawRow.row,
+          protectPlainText(JSON.stringify(rawRow.values)),
+          hasError ? "ERROR" : "WARNING",
+          [
+            ...new Set(
+              relatedErrors.map((error) => error.column).filter(Boolean),
+            ),
+          ].join(", "),
+          relatedErrors
+            .map((error) => protectPlainText(error.message))
+            .join(" | "),
+        ]);
+        row.eachCell((cell, column) => {
+          if (column >= 3) {
+            cell.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: hasError ? ERROR_FILL : WARNING_FILL },
+            };
+          }
+        });
+      });
+      return;
+    }
     const selectedRows = rows.filter((row) => {
       const productKey = String(row.values.product_key || "").toLocaleLowerCase(
         "vi",

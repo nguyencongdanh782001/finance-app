@@ -880,7 +880,7 @@ export default function ProductContainer() {
             setStockFilter("");
             setSortBy(DEFAULT_SORT);
           }}
-          desktopClassName="sm:grid-cols-[minmax(220px,1fr)_minmax(150px,190px)_minmax(140px,170px)_minmax(190px,240px)_minmax(140px,180px)_auto]"
+          desktopClassName="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[minmax(220px,1fr)_minmax(150px,190px)_minmax(140px,170px)_minmax(190px,240px)_minmax(140px,180px)_auto]"
         />
 
         <div className="mt-5 flex items-center justify-between gap-3 border-t border-(--admin-border) pt-4">

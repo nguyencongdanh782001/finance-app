@@ -4,6 +4,8 @@ import type { TryOnCategory } from "@/interface/product";
 export interface CategoryItemData {
   id: number;
   name: string;
+  slug?: string | null;
+  parentId?: number | null;
   description?: string;
   color: string;
   icon: string;

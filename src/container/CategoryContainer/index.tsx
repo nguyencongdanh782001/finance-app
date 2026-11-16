@@ -22,7 +22,8 @@ import {
   CategoryFormValues,
   CategoryItemData,
 } from "@/interface/category";
-import { Plus } from "lucide-react";
+import ExcelJS from "exceljs";
+import { Download, Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -62,6 +63,8 @@ const DEFAULT_SORT: CategorySortValue = "name-asc";
 const mapCategoryFromApi = (category: CategoryApiItem): CategoryItemData => ({
   id: category.id,
   name: category.name,
+  slug: category.slug,
+  parentId: category.parentId,
   color: category.color,
   icon: category.icon,
   tryOnCategory: category.tryOnCategory || "NOT_SUPPORTED",
@@ -84,6 +87,7 @@ export default function CategoryContainer() {
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const fetchCategories = async (showLoading = false) => {
     if (showLoading) {
@@ -136,6 +140,92 @@ export default function CategoryContainer() {
     setFormMode("create");
     setSelectedCategory(null);
     setIsFormOpen(true);
+  };
+
+  const handleExport = async () => {
+    if (!categories.length) {
+      toast({
+        title: "Chưa có danh mục để xuất",
+        description: "Hãy tạo ít nhất một danh mục trước.",
+        className: "bg-red-1 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = "Quỳnh Nhi Store";
+      workbook.created = new Date();
+      const sheet = workbook.addWorksheet("Danh mục", {
+        views: [{ state: "frozen", ySplit: 1 }],
+      });
+      const headers = [
+        "category_key",
+        "name",
+        "slug",
+        "parent_category_key",
+      ];
+      sheet.addRow(headers);
+      const headerRow = sheet.getRow(1);
+      headerRow.height = 26;
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFD96C8A" },
+        };
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+      });
+
+      sheet.columns = [
+        { key: "category_key", width: 20 },
+        { key: "name", width: 30 },
+        { key: "slug", width: 32 },
+        { key: "parent_category_key", width: 24 },
+      ];
+      sheet.autoFilter = { from: "A1", to: "D1" };
+      [...categories]
+        .sort((first, second) => first.id - second.id)
+        .forEach((category) => {
+          const categoryKey = `category-${category.id}`;
+          sheet.addRow([
+            categoryKey,
+            category.name,
+            category.slug || category.name,
+            category.parentId ? `category-${category.parentId}` : "",
+          ]);
+        });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "danh-muc-import-san-pham.xlsx";
+      anchor.click();
+      URL.revokeObjectURL(url);
+      toast({
+        title: "Đã xuất danh mục",
+        description:
+          "Mở file import sản phẩm và copy các dòng trong sheet Danh mục sang.",
+        className: "bg-green-16 text-white text-sm font-medium w-fit",
+        duration: 3500,
+      });
+    } catch {
+      toast({
+        title: "Xuất danh mục thất bại",
+        description: "Vui lòng thử lại sau.",
+        className: "bg-red-1 text-white text-sm font-medium w-fit",
+        duration: 3000,
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleEdit = (category: CategoryItemData) => {
@@ -293,15 +383,27 @@ export default function CategoryContainer() {
         title="Danh mục sản phẩm"
         description="Tổ chức sản phẩm theo nhóm để quản lý và tìm kiếm nhanh hơn."
         actions={
-          <Button
-            type="button"
-            variant="adminPrimary"
-            className="h-10 rounded-lg"
-            onClick={handleCreate}
-          >
-            <Plus className="size-4" />
-            Thêm danh mục
-          </Button>
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-10 rounded-lg border border-(--admin-primary-border) text-(--admin-primary) hover:bg-(--admin-primary-soft)"
+              onClick={() => void handleExport()}
+              disabled={isExporting}
+            >
+              <Download className="size-4" />
+              <span>Xuất Excel</span>
+            </Button>
+            <Button
+              type="button"
+              variant="adminPrimary"
+              className="h-10 rounded-lg"
+              onClick={handleCreate}
+            >
+              <Plus className="size-4" />
+              Thêm danh mục
+            </Button>
+          </>
         }
       />
 
