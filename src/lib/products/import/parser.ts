@@ -430,7 +430,16 @@ export async function parseAndValidateProductWorkbook(
     const sheet = workbook.getWorksheet(PRODUCT_IMPORT_SHEETS[key]);
     return sheet ? readSheet(sheet, PRODUCT_IMPORT_HEADERS[key], errors) : [];
   };
-  const categoryRows = getRows("categories");
+  const categorySheet = workbook.getWorksheet(PRODUCT_IMPORT_SHEETS.categories);
+  const categoryRows = categorySheet
+    ? readSheet(
+        categorySheet,
+        usesLegacyLayout
+          ? PRODUCT_IMPORT_HEADERS.categories
+          : PRODUCT_PER_SHEET_HEADERS.categories,
+        errors,
+      )
+    : [];
   let productRows: RowReader[] = [];
   let variantRows: RowReader[] = [];
   let imageRows: RowReader[] = [];

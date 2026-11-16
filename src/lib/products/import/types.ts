@@ -57,6 +57,7 @@ export const PRODUCT_IMPORT_HEADERS = {
 } as const;
 
 export const PRODUCT_PER_SHEET_HEADERS = {
+  categories: ["category_key", "name", "slug"],
   product: ["field", "value"],
   variants: ["color", "size", "sku", "price", "cost", "stock", "is_active"],
   images: ["variant_sku", "image_url", "sort_order", "is_primary", "alt_text"],

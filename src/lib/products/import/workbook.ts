@@ -361,10 +361,10 @@ export async function createPerProductImportTemplate() {
   const categories = prepareDataSheet(
     workbook,
     PRODUCT_IMPORT_SHEETS.categories,
-    PRODUCT_IMPORT_HEADERS.categories,
+    PRODUCT_PER_SHEET_HEADERS.categories,
   );
-  categories.addRow(["category-1", "Áo", "ao", ""]);
-  categories.addRow(["category-2", "Áo thun", "ao-thun", "category-1"]);
+  categories.addRow(["1", "Áo", "ao"]);
+  categories.addRow(["2", "Áo thun", "ao-thun"]);
 
   const productSheet = workbook.addWorksheet("SP-001", {
     views: [{ state: "frozen", ySplit: 1 }],
@@ -384,7 +384,7 @@ export async function createPerProductImportTemplate() {
     ["product_key", "SP-001"],
     ["name", "Áo thun cơ bản"],
     ["slug", "ao-thun-co-ban"],
-    ["category_key", "category-2"],
+    ["category_key", "2"],
     ["category_slug", "ao-thun"],
     ["brand", ""],
     ["gender", "UNISEX"],

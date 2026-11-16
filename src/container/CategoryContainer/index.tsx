@@ -161,12 +161,7 @@ export default function CategoryContainer() {
       const sheet = workbook.addWorksheet("Danh mục", {
         views: [{ state: "frozen", ySplit: 1 }],
       });
-      const headers = [
-        "category_key",
-        "name",
-        "slug",
-        "parent_category_key",
-      ];
+      const headers = ["category_key", "name", "slug"];
       sheet.addRow(headers);
       const headerRow = sheet.getRow(1);
       headerRow.height = 26;
@@ -184,18 +179,16 @@ export default function CategoryContainer() {
         { key: "category_key", width: 20 },
         { key: "name", width: 30 },
         { key: "slug", width: 32 },
-        { key: "parent_category_key", width: 24 },
       ];
-      sheet.autoFilter = { from: "A1", to: "D1" };
+      sheet.autoFilter = { from: "A1", to: "C1" };
       [...categories]
         .sort((first, second) => first.id - second.id)
         .forEach((category) => {
-          const categoryKey = `category-${category.id}`;
+          const categoryKey = String(category.id);
           sheet.addRow([
             categoryKey,
             category.name,
             category.slug || category.name,
-            category.parentId ? `category-${category.parentId}` : "",
           ]);
         });
 
