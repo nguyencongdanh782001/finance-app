@@ -71,6 +71,30 @@ type PreviewItem = {
   errors: Array<{ message: string; severity: "ERROR" | "WARNING" }>;
 };
 
+const ImportErrorList = ({ errors }: { errors: PreviewItem["errors"] }) =>
+  errors.length ? (
+    <ul className="space-y-1.5">
+      {errors.map((error, index) => (
+        <li
+          key={`${error.severity}-${error.message}-${index}`}
+          className="flex items-start gap-1.5"
+        >
+          <span
+            className={cn(
+              "mt-0.5 shrink-0 text-[10px] font-bold uppercase",
+              error.severity === "ERROR" ? "text-rose-600" : "text-amber-600",
+            )}
+          >
+            {error.severity === "ERROR" ? "Lỗi" : "Cảnh báo"}:
+          </span>
+          <span>{error.message}</span>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <span>Sẵn sàng nhập</span>
+  );
+
 type JobDetail = {
   job: {
     id: string;
@@ -750,8 +774,7 @@ export default function ProductImportWizard() {
                     </TableCell>
                     <TableCell>{item.images}</TableCell>
                     <TableCell className="max-w-80 whitespace-normal text-xs text-(--admin-text-muted)">
-                      {item.errors.map((error) => error.message).join(" · ") ||
-                        "Sẵn sàng nhập"}
+                      <ImportErrorList errors={item.errors} />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -797,9 +820,9 @@ export default function ProductImportWizard() {
                   </div>
                 ) : null}
                 {item.errors.length ? (
-                  <p className="mt-2 text-xs leading-5 text-rose-600">
-                    {item.errors.map((error) => error.message).join(" · ")}
-                  </p>
+                  <div className="mt-2 text-xs leading-5 text-rose-600">
+                    <ImportErrorList errors={item.errors} />
+                  </div>
                 ) : null}
               </article>
             ))}
