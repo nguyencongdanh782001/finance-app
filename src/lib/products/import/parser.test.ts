@@ -111,8 +111,23 @@ test("valid workbook preserves an SKU with a leading zero", async () => {
 });
 
 test("per-product template imports product, variants and images from one sheet", async () => {
+  const workbookBuffer = await createPerProductImportTemplate();
+  const workbook = new ExcelJS.Workbook();
+  const arrayBuffer = workbookBuffer.buffer.slice(
+    workbookBuffer.byteOffset,
+    workbookBuffer.byteOffset + workbookBuffer.byteLength,
+  ) as ArrayBuffer;
+  await workbook.xlsx.load(arrayBuffer);
+  const productSheet = getSheet(workbook, "SP-001");
+  const productFields = productSheet
+    .getRows(2, 14)
+    ?.map((row) => row.getCell(1).text);
+  assert.ok(productFields);
+  assert.ok(!productFields.includes("category_slug"));
+  assert.ok(!productFields.includes("brand"));
+
   const result = await parseAndValidateProductWorkbook(
-    await createPerProductImportTemplate(),
+    workbookBuffer,
     { categorySlugs: ["ao-thun"], productSlugs: [], variantSkus: [] },
     { createMissingCategories: false, forcePrivate: false },
   );

@@ -403,8 +403,6 @@ export async function createPerProductImportTemplate() {
     ["name", "Áo thun cơ bản"],
     ["slug", "ao-thun-co-ban"],
     ["category_key", "2"],
-    ["category_slug", "ao-thun"],
-    ["brand", ""],
     ["gender", "UNISEX"],
     ["status", "PRIVATE"],
     ["short_description", "Áo thun mặc hằng ngày"],
@@ -448,7 +446,7 @@ export async function createPerProductImportTemplate() {
     errorTitle: "Danh mục không hợp lệ",
     error: "Chọn danh mục từ danh sách.",
   };
-  productSheet.getCell(8, 2).dataValidation = {
+  productSheet.getCell(6, 2).dataValidation = {
     type: "list",
     allowBlank: false,
     formulae: ['"WOMEN,MEN,UNISEX,KIDS"'],
@@ -456,7 +454,7 @@ export async function createPerProductImportTemplate() {
     errorTitle: "Giới tính không hợp lệ",
     error: "Chọn giới tính từ danh sách.",
   };
-  productSheet.getCell(9, 2).dataValidation = {
+  productSheet.getCell(7, 2).dataValidation = {
     type: "list",
     allowBlank: false,
     formulae: ['"PUBLIC,PRIVATE,DISCONTINUED"'],
