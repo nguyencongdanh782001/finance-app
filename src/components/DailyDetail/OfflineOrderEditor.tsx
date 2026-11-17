@@ -1754,7 +1754,7 @@ export function OfflineOrderEditor({
       <Dialog open={closeConfirmOpen} onOpenChange={setCloseConfirmOpen}>
         <DialogContent
           overlayClassName="z-[95]"
-          className="z-[96] max-w-md rounded-2xl border-[#EAE1E4] bg-white p-5 shadow-xl"
+          className="z-[96] w-[calc(100%-2rem)] max-w-md rounded-2xl border-[#EAE1E4] bg-white p-5 shadow-xl"
         >
           <DialogTitle className="text-lg font-extrabold text-[#2D2226]">
             Đóng đơn hàng đang nhập?

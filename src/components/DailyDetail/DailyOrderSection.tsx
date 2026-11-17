@@ -616,7 +616,7 @@ function CancelDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-xl border-slate-200 bg-white p-5 shadow-xl">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md rounded-xl border-slate-200 bg-white p-5 shadow-xl">
         <DialogTitle className="text-xl font-extrabold text-slate-800">
           Hủy đơn tại shop
         </DialogTitle>
