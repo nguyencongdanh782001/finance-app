@@ -84,14 +84,6 @@ const findOrCreateCategory = async (
   };
 
   if (product.categoryKey) {
-    const categoryId = Number(product.categoryKey);
-    if (Number.isInteger(categoryId) && categoryId > 0) {
-      const existing = await tx.category.findFirst({
-        where: { id: categoryId, isActive: true },
-        select: { id: true },
-      });
-      if (existing) return existing.id;
-    }
     const definition = categoryMap.get(normalizedKey(product.categoryKey));
     if (!definition) throw new Error("category_key không tồn tại.");
     return resolveDefinition(definition);
