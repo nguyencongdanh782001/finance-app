@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     const [categories, products, skus] = await Promise.all([
       prisma.category.findMany({
         where: { slug: { not: null } },
-        select: { slug: true },
+        select: { id: true, slug: true },
       }),
       prisma.product.findMany({
         where: { slug: { not: null } },
@@ -117,6 +117,7 @@ export async function POST(request: Request) {
         categorySlugs: categories.flatMap((item) =>
           item.slug ? [item.slug] : [],
         ),
+        categoryKeys: categories.map((item) => String(item.id)),
         productSlugs: products.flatMap((item) =>
           item.slug ? [item.slug] : [],
         ),

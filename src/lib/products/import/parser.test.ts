@@ -15,6 +15,7 @@ import {
 
 const context = {
   categorySlugs: ["ao"],
+  categoryKeys: [] as string[],
   productSlugs: [] as string[],
   variantSkus: [] as string[],
 };
@@ -108,6 +109,22 @@ test("valid workbook preserves an SKU with a leading zero", async () => {
   const result = await parse();
   assert.equal(result.totals.valid, 1);
   assert.equal(result.source.products[0].defaultSku, "00123");
+});
+
+test("existing category ids are accepted without repeating the category row", async () => {
+  const result = await parse(
+    (workbook) => {
+      getSheet(workbook, PRODUCT_IMPORT_SHEETS.products)
+        .getRow(2)
+        .getCell(4).value = "26";
+      getSheet(workbook, PRODUCT_IMPORT_SHEETS.products)
+        .getRow(2)
+        .getCell(5).value = "";
+    },
+    { categorySlugs: [], categoryKeys: ["26"] },
+  );
+  assert.equal(result.totals.valid, 1);
+  assert.equal(result.errors.length, 0);
 });
 
 test("per-product template imports product, variants and images from one sheet", async () => {
