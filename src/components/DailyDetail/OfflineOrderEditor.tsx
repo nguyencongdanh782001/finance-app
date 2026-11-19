@@ -551,6 +551,17 @@ function ProductSearchPanel({
     ],
     [products],
   );
+  const hasCategoryFilter = categories.length > 2;
+
+  useEffect(() => {
+    if (
+      category !== "ALL" &&
+      !categories.some((option) => option.value === category)
+    ) {
+      setCategory("ALL");
+    }
+  }, [categories, category]);
+
   const searchTokens = getSearchTokens(debouncedSearch);
   const isSearching = loading || search.trim() !== debouncedSearch.trim();
   const filtered = products.filter(
@@ -604,7 +615,12 @@ function ProductSearchPanel({
             {filtered.length} kết quả
           </span>
         </div>
-        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_220px]">
+        <div
+          className={cn(
+            "grid gap-2",
+            hasCategoryFilter && "sm:grid-cols-[minmax(0,1fr)_220px]",
+          )}
+        >
           <Input
             ref={searchRef}
             standalone
@@ -624,14 +640,16 @@ function ProductSearchPanel({
             classNameContainer="h-10 rounded-lg border border-[#EAE1E4] bg-white focus-within:border-[#D96C8A] focus-within:ring-2 focus-within:ring-[#D96C8A]/15"
             className="h-9! rounded-lg! border-0! bg-transparent! px-2! pr-10! text-sm! text-[#2D2226] placeholder:text-[#9B8C91]"
           />
-          <AdminSelect
-            name="offlineOrderCategory"
-            value={category}
-            options={categories}
-            placeholder="Danh mục"
-            searchable
-            onChange={setCategory}
-          />
+          {hasCategoryFilter ? (
+            <AdminSelect
+              name="offlineOrderCategory"
+              value={category}
+              options={categories}
+              placeholder="Danh mục"
+              searchable
+              onChange={setCategory}
+            />
+          ) : null}
         </div>
       </div>
 
@@ -1236,148 +1254,154 @@ function OrderCart({
         )}
       </div>
 
-      <div className="h-125 shrink-0 overflow-hidden border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:px-5 xl:h-auto xl:min-h-0 xl:flex-[1_1_55%] xl:overflow-y-auto xl:overscroll-contain 3xl:flex-[1_1_auto]">
-        <div className="border-b border-[#EAE1E4] py-3">
-          <label className="text-xs font-bold text-[#2D2226]">
-            Khách hàng / số điện thoại
-            <div className="mt-1.5 flex gap-2">
-              <Input
-                standalone
-                value={form.customerPhone}
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                onManualChange={(value) =>
-                  onChange({ customerPhone: value, userId: null })
-                }
-                placeholder="Nhập số điện thoại khách hàng"
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    onLookupCustomer();
+      <div className="flex h-125 min-h-0 shrink-0 flex-col overflow-hidden border-t border-[#EAE1E4] bg-white xl:h-auto xl:min-h-0 xl:flex-[1_1_55%] 3xl:flex-[1_1_auto]">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 sm:px-5">
+          <div className="border-b border-[#EAE1E4] py-3">
+            <label className="text-xs font-bold text-[#2D2226]">
+              Khách hàng / số điện thoại
+              <div className="mt-1.5 flex gap-2">
+                <Input
+                  standalone
+                  value={form.customerPhone}
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  onManualChange={(value) =>
+                    onChange({ customerPhone: value, userId: null })
                   }
-                }}
-                icon={<Phone className="ml-3 size-4 shrink-0 text-[#9B8C91]" />}
-                classNameContainer="h-10 min-w-0 flex-1 rounded-lg border border-[#EAE1E4] bg-white focus-within:border-[#D96C8A] focus-within:ring-2 focus-within:ring-[#D96C8A]/15"
-                className="h-9! rounded-lg! border-0! bg-transparent! px-2! text-sm! text-[#2D2226] placeholder:text-[#9B8C91]"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                className="h-10 shrink-0 rounded-lg border border-[#EAE1E4] px-3 text-[#A43E5F] hover:bg-[#FCEEF3] focus-visible:ring-[#D96C8A]/30"
-                disabled={customerLoading}
-                onClick={onLookupCustomer}
-              >
-                {customerLoading ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Search className="size-4" />
-                )}
-                <span className="sr-only">Tìm khách hàng</span>
-              </Button>
-            </div>
-          </label>
-          {customer ? (
-            <div className="mt-2 rounded-lg bg-[#FCEEF3] px-3 py-2 text-xs text-[#65545B]">
-              <p className="font-bold text-[#2D2226]">
-                {customer.displayName || customer.phone}
+                  placeholder="Nhập số điện thoại khách hàng"
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      onLookupCustomer();
+                    }
+                  }}
+                  icon={
+                    <Phone className="ml-3 size-4 shrink-0 text-[#9B8C91]" />
+                  }
+                  classNameContainer="h-10 min-w-0 flex-1 rounded-lg border border-[#EAE1E4] bg-white focus-within:border-[#D96C8A] focus-within:ring-2 focus-within:ring-[#D96C8A]/15"
+                  className="h-9! rounded-lg! border-0! bg-transparent! px-2! text-sm! text-[#2D2226] placeholder:text-[#9B8C91]"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-10 shrink-0 rounded-lg border border-[#EAE1E4] px-3 text-[#A43E5F] hover:bg-[#FCEEF3] focus-visible:ring-[#D96C8A]/30"
+                  disabled={customerLoading}
+                  onClick={onLookupCustomer}
+                >
+                  {customerLoading ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Search className="size-4" />
+                  )}
+                  <span className="sr-only">Tìm khách hàng</span>
+                </Button>
+              </div>
+            </label>
+            {customer ? (
+              <div className="mt-2 rounded-lg bg-[#FCEEF3] px-3 py-2 text-xs text-[#65545B]">
+                <p className="font-bold text-[#2D2226]">
+                  {customer.displayName || customer.phone}
+                </p>
+                <p className="mt-0.5">
+                  {customer.membership
+                    ? `${customer.membership.name} · Giảm mặc định ${customer.membership.discountRate}%`
+                    : "Chưa có hạng membership"}
+                </p>
+              </div>
+            ) : null}
+          </div>
+          <CouponSection
+            items={form.items}
+            value={discountPreview}
+            onChange={onCouponChange}
+            onApplied={onDiscountPreviewChange}
+          />
+          <div className="border-t border-[#EAE1E4] py-3">
+            <label className="block text-xs font-semibold text-[#65545B]">
+              Giảm tiền đơn hàng
+              <div className="relative mt-1.5">
+                <NumericInput
+                  standalone
+                  value={form.manualDiscountAmount}
+                  onManualChange={(value) =>
+                    onChange({ manualDiscountAmount: value })
+                  }
+                  inputMode="numeric"
+                  placeholder="0"
+                  aria-label="Giảm tiền đơn hàng"
+                  classNameContainer="w-full"
+                  className="h-10! w-full! rounded-lg! border-[#EAE1E4]! bg-white! px-3! pr-8! text-right! text-sm! font-bold! text-[#2D2226] focus:border-[#D96C8A]! focus:ring-2! focus:ring-[#D96C8A]/15!"
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-[#8B7A80]">
+                  đ
+                </span>
+              </div>
+            </label>
+            {manualDiscountAmount > totals.amount ? (
+              <p className="mt-1.5 text-xs font-medium text-[#B3475E]">
+                Mức giảm không được vượt quá tạm tính đơn hàng.
               </p>
-              <p className="mt-0.5">
-                {customer.membership
-                  ? `${customer.membership.name} · Giảm mặc định ${customer.membership.discountRate}%`
-                  : "Chưa có hạng membership"}
-              </p>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
+          <PaymentSection form={form} onChange={onChange} />
         </div>
-        <CouponSection
-          items={form.items}
-          value={discountPreview}
-          onChange={onCouponChange}
-          onApplied={onDiscountPreviewChange}
-        />
-        <div className="border-t border-[#EAE1E4] py-3">
-          <label className="block text-xs font-semibold text-[#65545B]">
-            Giảm tiền đơn hàng
-            <div className="relative mt-1.5">
-              <NumericInput
-                standalone
-                value={form.manualDiscountAmount}
-                onManualChange={(value) =>
-                  onChange({ manualDiscountAmount: value })
-                }
-                inputMode="numeric"
-                placeholder="0"
-                aria-label="Giảm tiền đơn hàng"
-                classNameContainer="w-full"
-                className="h-10! w-full! rounded-lg! border-[#EAE1E4]! bg-white! px-3! pr-8! text-right! text-sm! font-bold! text-[#2D2226] focus:border-[#D96C8A]! focus:ring-2! focus:ring-[#D96C8A]/15!"
-              />
-              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-[#8B7A80]">
-                đ
+        <div className="shrink-0 border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_16px_rgba(45,34,38,0.06)] sm:px-5">
+          <div className="space-y-2 text-sm">
+            {totalDiscountAmount > 0 ? (
+              <div className="flex items-center justify-between text-[#65545B]">
+                <span>Tạm tính</span>
+                <span>{formatMoney(totals.amount)}</span>
+              </div>
+            ) : null}
+            {manualDiscountAmount > 0 ? (
+              <div className="flex items-center justify-between text-[#397354]">
+                <span>Giảm tiền đơn hàng</span>
+                <span>-{formatMoney(manualDiscountAmount)}</span>
+              </div>
+            ) : null}
+            {discountPreview ? (
+              <div className="flex items-center justify-between text-[#397354]">
+                <span>Mã {discountPreview.code}</span>
+                <span>-{formatMoney(couponDiscountAmount)}</span>
+              </div>
+            ) : null}
+            <div className="flex items-center justify-between text-[#65545B]">
+              <span>Tổng số lượng</span>
+              <span className="font-bold text-[#2D2226]">
+                {totals.quantity.toLocaleString("vi-VN")}
               </span>
             </div>
-          </label>
-          {manualDiscountAmount > totals.amount ? (
-            <p className="mt-1.5 text-xs font-medium text-[#B3475E]">
-              Mức giảm không được vượt quá tạm tính đơn hàng.
+            <div className="flex items-end justify-between gap-3">
+              <span className="font-semibold text-[#2D2226]">
+                Tổng thanh toán
+              </span>
+              <span className="text-xl font-extrabold tracking-tight text-[#2D2226]">
+                {formatMoney(payableTotal)}
+              </span>
+            </div>
+          </div>
+          {error ? (
+            <p className="mt-3 rounded-lg bg-[#FFF0F2] px-3 py-2 text-sm font-medium text-[#B3475E]">
+              {error}
             </p>
           ) : null}
+          <Button
+            type="button"
+            className="mt-3 h-12 w-full rounded-lg bg-[#D96C8A] text-base font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
+            disabled={!form.items.length || invalid || submitting}
+            onClick={onSubmit}
+          >
+            {submitting ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                Đang lưu đơn
+              </span>
+            ) : (
+              `${mode === "edit" ? "Lưu đơn" : "Tạo đơn"} · ${formatMoney(payableTotal)}`
+            )}
+          </Button>
         </div>
-        <PaymentSection form={form} onChange={onChange} />
-        <div className="space-y-2 pb-4 text-sm">
-          {totalDiscountAmount > 0 ? (
-            <div className="flex items-center justify-between text-[#65545B]">
-              <span>Tạm tính</span>
-              <span>{formatMoney(totals.amount)}</span>
-            </div>
-          ) : null}
-          {manualDiscountAmount > 0 ? (
-            <div className="flex items-center justify-between text-[#397354]">
-              <span>Giảm tiền đơn hàng</span>
-              <span>-{formatMoney(manualDiscountAmount)}</span>
-            </div>
-          ) : null}
-          {discountPreview ? (
-            <div className="flex items-center justify-between text-[#397354]">
-              <span>Mã {discountPreview.code}</span>
-              <span>-{formatMoney(couponDiscountAmount)}</span>
-            </div>
-          ) : null}
-          <div className="flex items-center justify-between text-[#65545B]">
-            <span>Tổng số lượng</span>
-            <span className="font-bold text-[#2D2226]">
-              {totals.quantity.toLocaleString("vi-VN")}
-            </span>
-          </div>
-          <div className="flex items-end justify-between gap-3">
-            <span className="font-semibold text-[#2D2226]">
-              Tổng thanh toán
-            </span>
-            <span className="text-xl font-extrabold tracking-tight text-[#2D2226]">
-              {formatMoney(payableTotal)}
-            </span>
-          </div>
-        </div>
-        {error ? (
-          <p className="mb-3 rounded-lg bg-[#FFF0F2] px-3 py-2 text-sm font-medium text-[#B3475E]">
-            {error}
-          </p>
-        ) : null}
-        <Button
-          type="button"
-          className="h-12 w-full rounded-lg bg-[#D96C8A] text-base font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
-          disabled={!form.items.length || invalid || submitting}
-          onClick={onSubmit}
-        >
-          {submitting ? (
-            <span className="inline-flex items-center gap-2">
-              <span className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-              Đang lưu đơn
-            </span>
-          ) : (
-            `${mode === "edit" ? "Lưu đơn" : "Tạo đơn"} · ${formatMoney(payableTotal)}`
-          )}
-        </Button>
       </div>
     </section>
   );
