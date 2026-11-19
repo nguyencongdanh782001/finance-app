@@ -30,6 +30,14 @@ const unpaidMonthsCache = new Map<
 >();
 const unpaidMonthsRequests = new Map<number, Promise<number[]>>();
 
+export const invalidateUnpaidMonthsCache = (year?: number) => {
+  if (year === undefined) {
+    unpaidMonthsCache.clear();
+    return;
+  }
+  unpaidMonthsCache.delete(year);
+};
+
 const getUnpaidMonths = (year: number) => {
   const cached = unpaidMonthsCache.get(year);
   if (cached && Date.now() - cached.cachedAt < UNPAID_MONTHS_CACHE_TTL) {
@@ -65,6 +73,21 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
   const [month, setMonth] = useState(initialMonth);
   const [unpaidMonths, setUnpaidMonths] = useState<number[]>([]);
   const [loadingUnpaidMonths, setLoadingUnpaidMonths] = useState(false);
+  const [cacheVersion, setCacheVersion] = useState(0);
+
+  useEffect(() => {
+    const handleUnpaidMonthsChanged = () => {
+      invalidateUnpaidMonthsCache();
+      setCacheVersion((version) => version + 1);
+    };
+
+    window.addEventListener("unpaid-months-changed", handleUnpaidMonthsChanged);
+    return () =>
+      window.removeEventListener(
+        "unpaid-months-changed",
+        handleUnpaidMonthsChanged,
+      );
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -84,7 +107,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
     return () => {
       active = false;
     };
-  }, [open, year]);
+  }, [cacheVersion, open, year]);
 
   const today = new Date();
   const currentYear = today.getFullYear();

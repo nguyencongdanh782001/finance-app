@@ -1,6 +1,7 @@
 "use client";
 
 import { OfflineOrderEditor } from "@/components/DailyDetail/OfflineOrderEditor";
+import { invalidateUnpaidMonthsCache } from "@/components/Dashboard/ModalSelectMonthYear";
 import CustomSelect from "@/components/common/CustomFields/CustomSelect";
 import { Button } from "@/components/ui/button";
 import {
@@ -149,6 +150,11 @@ const PAYMENT_METHOD_LABELS: Partial<Record<PaymentMethodValue, string>> = {
 };
 
 const formatMoney = (value: number) => `${formatCurrencyVND(value)}đ`;
+
+const notifyUnpaidMonthsChanged = () => {
+  invalidateUnpaidMonthsCache();
+  window.dispatchEvent(new Event("unpaid-months-changed"));
+};
 
 const getSnapshotColorCode = (snapshot: unknown) => {
   if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
@@ -1120,6 +1126,7 @@ export default function DailyOrderSection({
     });
     await fetchOrders(false);
     onReload();
+    notifyUnpaidMonthsChanged();
     return true;
   };
 
@@ -1174,6 +1181,7 @@ export default function DailyOrderSection({
     });
     await fetchOrders(false);
     onReload();
+    notifyUnpaidMonthsChanged();
   };
 
   const resetFilters = () => {
