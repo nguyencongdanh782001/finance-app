@@ -1,14 +1,7 @@
 import prisma from "@/lib/db";
 import { withFavoriteMeta } from "@/lib/products/favorites";
+import { unstable_cache } from "next/cache";
 import { NextResponse } from "next/server";
-
-const activeWindow = {
-  isActive: true,
-  AND: [
-    { OR: [{ startsAt: null }, { startsAt: { lte: new Date() } }] },
-    { OR: [{ endsAt: null }, { endsAt: { gte: new Date() } }] },
-  ],
-};
 
 const productInclude = {
   category: true,
@@ -20,19 +13,18 @@ const productInclude = {
   },
 };
 
-export async function GET(request: Request) {
-  try {
+const getCachedHomepageData = unstable_cache(
+  async () => {
     const now = new Date();
-    const [
-      banners,
-      campaignBanners,
-      categoryBanners,
-      announcement,
-      featured,
-      sections,
-      products,
-      categories,
-    ] = await Promise.all([
+    const activeWindow = {
+      isActive: true,
+      AND: [
+        { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+        { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+      ],
+    };
+
+    return Promise.all([
       prisma.homepageBanner.findMany({
         where: {
           placement: { in: ["HERO", "HOME_HERO"] },
@@ -116,6 +108,23 @@ export async function GET(request: Request) {
         },
       }),
     ]);
+  },
+  ["homepage-public-v1"],
+  { revalidate: 300, tags: ["homepage", "products", "categories", "banners"] },
+);
+
+export async function GET(request: Request) {
+  try {
+    const [
+      banners,
+      campaignBanners,
+      categoryBanners,
+      announcement,
+      featured,
+      sections,
+      products,
+      categories,
+    ] = await getCachedHomepageData();
     const requesterRole = request.headers.get("x-user-role");
     const requesterId =
       requesterRole === "CUSTOMER"

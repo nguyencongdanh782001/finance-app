@@ -1325,6 +1325,8 @@ model Order {
   @@index([source])
   @@index([paymentMethod])
   @@index([paymentStatus])
+  @@index([paymentStatus, placedAt])
+  @@index([source, status, placedAt])
   @@index([isPaid])
   @@index([paidAt])
   @@index([placedAt])

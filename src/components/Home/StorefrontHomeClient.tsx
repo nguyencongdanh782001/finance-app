@@ -49,6 +49,7 @@ type HomepageData = {
 
 const HOMEPAGE_CACHE_TTL = 5 * 60 * 1000;
 let homepageCache: { data: HomepageData; cachedAt: number } | null = null;
+let publicHomepageRequest: Promise<HomepageData> | null = null;
 
 function ImageWithLoading({
   src,
@@ -196,8 +197,19 @@ export default function StorefrontHomeClient() {
       setLoading(true);
     }
     setError(false);
-    fetch("/api/homepage", { cache: "no-store" })
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
+    const request = !isAuthenticated
+      ? (publicHomepageRequest ??= fetch("/api/homepage")
+          .then((response) =>
+            response.ok ? response.json() : Promise.reject(),
+          )
+          .finally(() => {
+            publicHomepageRequest = null;
+          }))
+      : fetch("/api/homepage", { cache: "no-store" }).then((response) =>
+          response.ok ? response.json() : Promise.reject(),
+        );
+
+    request
       .then((value: HomepageData) => {
         homepageCache = { data: value, cachedAt: Date.now() };
         setData(value);
