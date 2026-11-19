@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { financeAPI } from "@/endpoint/financeAPI";
@@ -190,7 +190,12 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
                 >
                   <div className="flex w-full items-center justify-center text-10px">
                     <span>THÁNG</span>
-                    {unpaidMonths.includes(m) ? (
+                    {loadingUnpaidMonths ? (
+                      <span
+                        className="absolute right-2 top-2 size-2 animate-pulse rounded-full bg-slate-200"
+                        aria-label="Đang tải trạng thái thanh toán"
+                      />
+                    ) : unpaidMonths.includes(m) ? (
                       <span
                         className="absolute right-2 top-2 size-2 rounded-full bg-amber-500"
                         title="Có đơn chưa thanh toán"
@@ -207,14 +212,6 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
               );
             })}
           </div>
-          {loadingUnpaidMonths ? (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-white/55">
-              <LoaderCircle
-                className="size-5 animate-spin text-green-6"
-                aria-label="Đang tải trạng thái thanh toán"
-              />
-            </div>
-          ) : null}
         </div>
         <DialogFooter className="mt-4 w-full flex flex-col justify-center items-center gap-4.5">
           <Button
