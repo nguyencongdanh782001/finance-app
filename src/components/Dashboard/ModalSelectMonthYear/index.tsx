@@ -148,15 +148,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
             <ChevronLeft className="size-5!" />
           </Button>
 
-          <span className="flex items-center gap-2 text-lg font-semibold">
-            {year}
-            {loadingUnpaidMonths ? (
-              <LoaderCircle
-                className="size-4 animate-spin text-green-6"
-                aria-label="Đang tải trạng thái thanh toán"
-              />
-            ) : null}
-          </span>
+          <span className="text-lg font-semibold">{year}</span>
 
           <Button
             variant="ghost"
@@ -173,19 +165,20 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
         </div>
 
         {/* Month grid */}
-        <div className="w-full grid grid-cols-3 gap-3">
-          {Array.from({ length: 12 }).map((_, i) => {
-            const m = i + 1;
-            const active = m === month;
-            const disabled = isMonthDisabled(m);
+        <div className="relative w-full">
+          <div className="grid grid-cols-3 gap-3">
+            {Array.from({ length: 12 }).map((_, i) => {
+              const m = i + 1;
+              const active = m === month;
+              const disabled = isMonthDisabled(m);
 
-            return (
-              <Button
-                variant="ghost"
-                key={m}
-                disabled={disabled}
-                onClick={() => setMonth(m)}
-                className={`relative flex flex-col rounded-2xl border ${currentYear === year && currentMonth === m ? "border-blue-5" : "border-gray-1"}  p-3 transition h-23.5 text-center text-green-1 uppercase font-bold cursor-pointer disabled:cursor-not-allowed!
+              return (
+                <Button
+                  variant="ghost"
+                  key={m}
+                  disabled={disabled}
+                  onClick={() => setMonth(m)}
+                  className={`relative flex flex-col rounded-2xl border ${currentYear === year && currentMonth === m ? "border-blue-5" : "border-gray-1"}  p-3 transition h-23.5 text-center text-green-1 uppercase font-bold cursor-pointer disabled:cursor-not-allowed!
         ${
           disabled
             ? "cursor-not-allowed! opacity-50"
@@ -194,25 +187,34 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
               : ""
         }
       `}
-              >
-                <div className="flex w-full items-center justify-center text-10px">
-                  <span>THÁNG</span>
-                  {unpaidMonths.includes(m) ? (
-                    <span
-                      className="absolute right-2 top-2 size-2 rounded-full bg-amber-500"
-                      title="Có đơn chưa thanh toán"
-                      aria-label="Có đơn chưa thanh toán"
-                    />
-                  ) : null}
-                </div>
-                <div
-                  className={`text-md ${active ? "text-green-7" : "text-gray-3"}`}
                 >
-                  {m}
-                </div>
-              </Button>
-            );
-          })}
+                  <div className="flex w-full items-center justify-center text-10px">
+                    <span>THÁNG</span>
+                    {unpaidMonths.includes(m) ? (
+                      <span
+                        className="absolute right-2 top-2 size-2 rounded-full bg-amber-500"
+                        title="Có đơn chưa thanh toán"
+                        aria-label="Có đơn chưa thanh toán"
+                      />
+                    ) : null}
+                  </div>
+                  <div
+                    className={`text-md ${active ? "text-green-7" : "text-gray-3"}`}
+                  >
+                    {m}
+                  </div>
+                </Button>
+              );
+            })}
+          </div>
+          {loadingUnpaidMonths ? (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-white/55">
+              <LoaderCircle
+                className="size-5 animate-spin text-green-6"
+                aria-label="Đang tải trạng thái thanh toán"
+              />
+            </div>
+          ) : null}
         </div>
         <DialogFooter className="mt-4 w-full flex flex-col justify-center items-center gap-4.5">
           <Button
