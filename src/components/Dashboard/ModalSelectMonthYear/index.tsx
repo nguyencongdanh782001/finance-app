@@ -24,6 +24,7 @@ interface ModalSelectMonthYearProps {
 }
 
 const UNPAID_MONTHS_CACHE_TTL = 60_000;
+const MIN_LOADING_DURATION = 450;
 const unpaidMonthsCache = new Map<
   number,
   { months: number[]; cachedAt: number }
@@ -96,12 +97,27 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
     const cached = unpaidMonthsCache.get(year);
     const hasFreshCache =
       cached && Date.now() - cached.cachedAt < UNPAID_MONTHS_CACHE_TTL;
+    const loadingStartedAt = Date.now();
 
     setLoadingUnpaidMonths(!hasFreshCache);
     void getUnpaidMonths(year).then((months) => {
       if (!active) return;
-      setUnpaidMonths(months);
-      setLoadingUnpaidMonths(false);
+      const finish = () => {
+        if (!active) return;
+        setUnpaidMonths(months);
+        setLoadingUnpaidMonths(false);
+      };
+
+      if (hasFreshCache) {
+        finish();
+        return;
+      }
+
+      const remaining = Math.max(
+        0,
+        MIN_LOADING_DURATION - (Date.now() - loadingStartedAt),
+      );
+      window.setTimeout(finish, remaining);
     });
 
     return () => {
@@ -192,7 +208,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
                     <span>THÁNG</span>
                     {loadingUnpaidMonths ? (
                       <span
-                        className="absolute right-2 top-2 size-2 animate-pulse rounded-full bg-slate-200"
+                        className="absolute right-2 top-2 size-2.5 animate-[pulse_0.7s_ease-in-out_infinite] rounded-full bg-amber-300"
                         aria-label="Đang tải trạng thái thanh toán"
                       />
                     ) : unpaidMonths.includes(m) ? (
