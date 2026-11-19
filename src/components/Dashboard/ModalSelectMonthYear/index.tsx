@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { financeAPI } from "@/endpoint/financeAPI";
@@ -23,6 +23,40 @@ interface ModalSelectMonthYearProps {
   ChangeMonthYear(year: number, month: number): void;
 }
 
+const UNPAID_MONTHS_CACHE_TTL = 60_000;
+const unpaidMonthsCache = new Map<
+  number,
+  { months: number[]; cachedAt: number }
+>();
+const unpaidMonthsRequests = new Map<number, Promise<number[]>>();
+
+const getUnpaidMonths = (year: number) => {
+  const cached = unpaidMonthsCache.get(year);
+  if (cached && Date.now() - cached.cachedAt < UNPAID_MONTHS_CACHE_TTL) {
+    return Promise.resolve(cached.months);
+  }
+
+  const pending = unpaidMonthsRequests.get(year);
+  if (pending) return pending;
+
+  const request = financeAPI
+    .getUnpaidMonths(year)
+    .then((response) =>
+      response.code === RESPONSE_CODES.success
+        ? response.data?.months || []
+        : [],
+    )
+    .catch(() => [])
+    .then((months) => {
+      unpaidMonthsCache.set(year, { months, cachedAt: Date.now() });
+      return months;
+    })
+    .finally(() => unpaidMonthsRequests.delete(year));
+
+  unpaidMonthsRequests.set(year, request);
+  return request;
+};
+
 const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
   const { open, onClose, initialYear, initialMonth, ChangeMonthYear } = props;
   const router = useRouter();
@@ -30,18 +64,21 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
   const [year, setYear] = useState(initialYear);
   const [month, setMonth] = useState(initialMonth);
   const [unpaidMonths, setUnpaidMonths] = useState<number[]>([]);
+  const [loadingUnpaidMonths, setLoadingUnpaidMonths] = useState(false);
 
   useEffect(() => {
     if (!open) return;
 
     let active = true;
-    void financeAPI.getUnpaidMonths(year).then((response) => {
+    const cached = unpaidMonthsCache.get(year);
+    const hasFreshCache =
+      cached && Date.now() - cached.cachedAt < UNPAID_MONTHS_CACHE_TTL;
+
+    setLoadingUnpaidMonths(!hasFreshCache);
+    void getUnpaidMonths(year).then((months) => {
       if (!active) return;
-      setUnpaidMonths(
-        response.code === RESPONSE_CODES.success
-          ? response.data?.months || []
-          : [],
-      );
+      setUnpaidMonths(months);
+      setLoadingUnpaidMonths(false);
     });
 
     return () => {
@@ -88,7 +125,15 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
             <ChevronLeft className="size-5!" />
           </Button>
 
-          <span className="text-lg font-semibold">{year}</span>
+          <span className="flex items-center gap-2 text-lg font-semibold">
+            {year}
+            {loadingUnpaidMonths ? (
+              <LoaderCircle
+                className="size-4 animate-spin text-green-6"
+                aria-label="Đang tải trạng thái thanh toán"
+              />
+            ) : null}
+          </span>
 
           <Button
             variant="ghost"
@@ -117,7 +162,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
                 key={m}
                 disabled={disabled}
                 onClick={() => setMonth(m)}
-                className={`flex flex-col rounded-2xl border ${currentYear === year && currentMonth === m ? "border-blue-5" : "border-gray-1"}  p-3 transition h-23.5 text-center text-green-1 uppercase font-bold cursor-pointer disabled:cursor-not-allowed!
+                className={`relative flex flex-col rounded-2xl border ${currentYear === year && currentMonth === m ? "border-blue-5" : "border-gray-1"}  p-3 transition h-23.5 text-center text-green-1 uppercase font-bold cursor-pointer disabled:cursor-not-allowed!
         ${
           disabled
             ? "cursor-not-allowed! opacity-50"
@@ -127,11 +172,11 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
         }
       `}
               >
-                <div className="relative flex w-full items-center justify-center text-10px">
+                <div className="flex w-full items-center justify-center text-10px">
                   <span>THÁNG</span>
                   {unpaidMonths.includes(m) ? (
                     <span
-                      className="absolute right-0 top-0 size-2 rounded-full bg-amber-500"
+                      className="absolute right-2 top-2 size-2 rounded-full bg-amber-500"
                       title="Có đơn chưa thanh toán"
                       aria-label="Có đơn chưa thanh toán"
                     />
