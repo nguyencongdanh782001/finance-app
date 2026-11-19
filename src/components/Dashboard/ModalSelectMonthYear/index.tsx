@@ -30,13 +30,11 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
   const [year, setYear] = useState(initialYear);
   const [month, setMonth] = useState(initialMonth);
   const [unpaidMonths, setUnpaidMonths] = useState<number[]>([]);
-  const [loadingUnpaidMonths, setLoadingUnpaidMonths] = useState(false);
 
   useEffect(() => {
     if (!open) return;
 
     let active = true;
-    setLoadingUnpaidMonths(true);
     void financeAPI.getUnpaidMonths(year).then((response) => {
       if (!active) return;
       setUnpaidMonths(
@@ -44,7 +42,6 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
           ? response.data?.months || []
           : [],
       );
-      setLoadingUnpaidMonths(false);
     });
 
     return () => {
@@ -130,11 +127,11 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
         }
       `}
               >
-                <div className="flex w-full items-center justify-between text-10px">
+                <div className="relative flex w-full items-center justify-center text-10px">
                   <span>THÁNG</span>
                   {unpaidMonths.includes(m) ? (
                     <span
-                      className="size-2 rounded-full bg-amber-500"
+                      className="absolute right-0 top-0 size-2 rounded-full bg-amber-500"
                       title="Có đơn chưa thanh toán"
                       aria-label="Có đơn chưa thanh toán"
                     />
@@ -149,11 +146,6 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
             );
           })}
         </div>
-        {!loadingUnpaidMonths && unpaidMonths.length ? (
-          <p className="mt-3 text-center text-xs font-medium text-amber-600">
-            Dấu chấm vàng: tháng có đơn chưa thanh toán
-          </p>
-        ) : null}
         <DialogFooter className="mt-4 w-full flex flex-col justify-center items-center gap-4.5">
           <Button
             type="button"

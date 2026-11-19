@@ -210,7 +210,6 @@ export async function getDailySoldProducts(
           OR: [
             {
               source: "OFFLINE",
-              paymentStatus: { not: PaymentStatus.UNPAID },
               status: {
                 notIn: ["CANCELLED", "REFUNDED"],
               },
@@ -221,7 +220,6 @@ export async function getDailySoldProducts(
             },
             {
               source: "ONLINE",
-              paymentStatus: { not: PaymentStatus.UNPAID },
               status: "DELIVERED",
               OR: [
                 {
