@@ -1359,18 +1359,20 @@ function OrderCart({
               </span>
               <button
                 type="button"
-                className="inline-flex h-7 items-center gap-1 rounded-md border border-[#EAE1E4] px-1.5 text-11px font-semibold text-[#8B7A80] hover:bg-[#F8F5F6] hover:text-[#65545B]"
+                className="inline-flex size-7 items-center justify-center rounded-full border border-[#EAE1E4] text-[#8B7A80] transition-colors hover:bg-[#F8F5F6] hover:text-[#65545B] focus-visible:border-[#D96C8A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D96C8A]/15"
                 aria-expanded={summaryExpanded}
                 aria-controls="offline-order-summary"
                 aria-label={
                   summaryExpanded ? "Thu gọn tổng đơn" : "Mở rộng tổng đơn"
                 }
+                title={
+                  summaryExpanded ? "Thu gọn tổng đơn" : "Mở rộng tổng đơn"
+                }
                 onClick={() => setSummaryExpanded((expanded) => !expanded)}
               >
-                <span>{summaryExpanded ? "Thu gọn" : "Chi tiết"}</span>
                 <ChevronDown
                   className={cn(
-                    "size-3.5 transition-transform",
+                    "size-4 transition-transform",
                     summaryExpanded && "rotate-180",
                   )}
                 />
