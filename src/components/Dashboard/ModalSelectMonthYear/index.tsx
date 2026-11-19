@@ -208,7 +208,7 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
                     <span>THÁNG</span>
                     {loadingUnpaidMonths ? (
                       <span
-                        className="absolute right-2 top-2 size-2.5 animate-[pulse_0.7s_ease-in-out_infinite] rounded-full bg-amber-300"
+                        className="absolute right-2 top-2 size-2 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-slate-300"
                         aria-label="Đang tải trạng thái thanh toán"
                       />
                     ) : unpaidMonths.includes(m) ? (
