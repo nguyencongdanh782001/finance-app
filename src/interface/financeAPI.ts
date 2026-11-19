@@ -267,6 +267,7 @@ export interface DailyOrder {
   isPaid: boolean;
   subtotal: number;
   discountAmount: number;
+  manualDiscountAmount: number;
   shippingFee: number;
   taxAmount: number;
   totalCost: number;
@@ -330,6 +331,7 @@ export interface OfflineOrderPayload {
   orderedAt?: string;
   idempotencyKey?: string;
   couponCode?: string;
+  manualDiscountAmount?: number;
   userId?: number | null;
   items: {
     productId: number;

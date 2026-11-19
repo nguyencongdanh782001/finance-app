@@ -41,6 +41,7 @@ export type OfflineOrderPayload = {
   idempotencyKey?: string;
   items?: OfflineOrderItemPayload[];
   couponCode?: string;
+  manualDiscountAmount?: number;
   userId?: number | null;
 };
 
@@ -497,6 +498,7 @@ export const serializeOrder = (
     isPaid: order.isPaid,
     subtotal: Number(order.subtotal),
     discountAmount: Number(order.discountAmount),
+    manualDiscountAmount: Number(order.manualDiscountAmount),
     shippingFee: Number(order.shippingFee),
     taxAmount: Number(order.taxAmount),
     totalCost: Number(order.totalCost),
@@ -714,7 +716,14 @@ export async function createOfflineOrder(
       });
       if (!reserved.count) throw new Error("Mã giảm giá đã hết lượt sử dụng.");
     }
-    const discountAmount = discount?.discountAmount || 0;
+    const manualDiscountAmount = toMoney(payload.manualDiscountAmount);
+    if (manualDiscountAmount > calculatedOrder.subtotal) {
+      throw new Error("Giảm tiền không được vượt quá tạm tính đơn hàng.");
+    }
+    const discountAmount = Math.min(
+      calculatedOrder.subtotal,
+      manualDiscountAmount + (discount?.discountAmount || 0),
+    );
     const totalAmount = Math.max(0, calculatedOrder.subtotal - discountAmount);
     const order = await tx.order.create({
       data: {
@@ -733,6 +742,7 @@ export async function createOfflineOrder(
         completedAt: placedAt,
         subtotal: calculatedOrder.subtotal,
         discountAmount,
+        manualDiscountAmount,
         shippingFee: 0,
         taxAmount: 0,
         totalCost: calculatedOrder.totalCost,
@@ -853,7 +863,14 @@ export async function updateOfflineOrder(
       });
       if (!reserved.count) throw new Error("Mã giảm giá đã hết lượt sử dụng.");
     }
-    const discountAmount = discount?.discountAmount || 0;
+    const manualDiscountAmount = toMoney(payload.manualDiscountAmount);
+    if (manualDiscountAmount > calculatedOrder.subtotal) {
+      throw new Error("Giảm tiền không được vượt quá tạm tính đơn hàng.");
+    }
+    const discountAmount = Math.min(
+      calculatedOrder.subtotal,
+      manualDiscountAmount + (discount?.discountAmount || 0),
+    );
     const totalAmount = Math.max(0, calculatedOrder.subtotal - discountAmount);
 
     await applyInventoryDelta(
@@ -877,6 +894,7 @@ export async function updateOfflineOrder(
             : null,
         subtotal: calculatedOrder.subtotal,
         discountAmount,
+        manualDiscountAmount,
         totalCost: calculatedOrder.totalCost,
         totalAmount,
         paidAmount: paymentStatus === PaymentStatus.PAID ? totalAmount : 0,

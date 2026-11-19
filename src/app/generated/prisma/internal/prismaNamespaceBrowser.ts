@@ -738,6 +738,7 @@ export const OrderScalarFieldEnum = {
   source: 'source',
   subtotal: 'subtotal',
   discountAmount: 'discountAmount',
+  manualDiscountAmount: 'manualDiscountAmount',
   shippingFee: 'shippingFee',
   taxAmount: 'taxAmount',
   totalCost: 'totalCost',

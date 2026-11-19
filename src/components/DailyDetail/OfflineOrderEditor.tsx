@@ -58,6 +58,7 @@ type OrderFormState = {
   paymentStatus: "PAID" | "UNPAID";
   items: EditableOrderItem[];
   couponCode: string;
+  manualDiscountAmount: string;
   customerPhone: string;
   userId: number | null;
 };
@@ -108,6 +109,7 @@ const emptyForm = (): OrderFormState => ({
   paymentStatus: "PAID",
   items: [],
   couponCode: "",
+  manualDiscountAmount: "",
   customerPhone: "",
   userId: null,
 });
@@ -1165,17 +1167,25 @@ function OrderCart({
     },
     { quantity: 0, amount: 0 },
   );
-  const invalid = form.items.some((item) => {
-    const quantity = Number(item.quantity);
-    const price = parseMoney(item.unitPrice);
-    return (
-      !Number.isInteger(quantity) ||
-      quantity < 1 ||
-      quantity > item.availableStock ||
-      !Number.isInteger(price) ||
-      price < 0
-    );
-  });
+  const manualDiscountAmount = parseMoney(form.manualDiscountAmount);
+  const couponDiscountAmount = discountPreview?.discountAmount || 0;
+  const totalDiscountAmount = Math.min(
+    totals.amount,
+    manualDiscountAmount + couponDiscountAmount,
+  );
+  const payableTotal = Math.max(0, totals.amount - totalDiscountAmount);
+  const invalid =
+    form.items.some((item) => {
+      const quantity = Number(item.quantity);
+      const price = parseMoney(item.unitPrice);
+      return (
+        !Number.isInteger(quantity) ||
+        quantity < 1 ||
+        quantity > item.availableStock ||
+        !Number.isInteger(price) ||
+        price < 0
+      );
+    }) || manualDiscountAmount > totals.amount;
 
   return (
     <section className="flex h-full min-h-0 flex-col bg-white">
@@ -1286,19 +1296,52 @@ function OrderCart({
           onChange={onCouponChange}
           onApplied={onDiscountPreviewChange}
         />
+        <div className="border-t border-[#EAE1E4] py-3">
+          <label className="block text-xs font-semibold text-[#65545B]">
+            Giảm tiền đơn hàng
+            <div className="relative mt-1.5">
+              <NumericInput
+                standalone
+                value={form.manualDiscountAmount}
+                onManualChange={(value) =>
+                  onChange({ manualDiscountAmount: value })
+                }
+                inputMode="numeric"
+                placeholder="0"
+                aria-label="Giảm tiền đơn hàng"
+                classNameContainer="w-full"
+                className="h-10! w-full! rounded-lg! border-[#EAE1E4]! bg-white! px-3! pr-8! text-right! text-sm! font-bold! text-[#2D2226] focus:border-[#D96C8A]! focus:ring-2! focus:ring-[#D96C8A]/15!"
+              />
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-[#8B7A80]">
+                đ
+              </span>
+            </div>
+          </label>
+          {manualDiscountAmount > totals.amount ? (
+            <p className="mt-1.5 text-xs font-medium text-[#B3475E]">
+              Mức giảm không được vượt quá tạm tính đơn hàng.
+            </p>
+          ) : null}
+        </div>
         <PaymentSection form={form} onChange={onChange} />
         <div className="space-y-2 pb-4 text-sm">
+          {totalDiscountAmount > 0 ? (
+            <div className="flex items-center justify-between text-[#65545B]">
+              <span>Tạm tính</span>
+              <span>{formatMoney(totals.amount)}</span>
+            </div>
+          ) : null}
+          {manualDiscountAmount > 0 ? (
+            <div className="flex items-center justify-between text-[#397354]">
+              <span>Giảm tiền đơn hàng</span>
+              <span>-{formatMoney(manualDiscountAmount)}</span>
+            </div>
+          ) : null}
           {discountPreview ? (
-            <>
-              <div className="flex items-center justify-between text-[#65545B]">
-                <span>Tạm tính</span>
-                <span>{formatMoney(totals.amount)}</span>
-              </div>
-              <div className="flex items-center justify-between text-[#397354]">
-                <span>Mã {discountPreview.code}</span>
-                <span>-{formatMoney(discountPreview.discountAmount)}</span>
-              </div>
-            </>
+            <div className="flex items-center justify-between text-[#397354]">
+              <span>Mã {discountPreview.code}</span>
+              <span>-{formatMoney(couponDiscountAmount)}</span>
+            </div>
           ) : null}
           <div className="flex items-center justify-between text-[#65545B]">
             <span>Tổng số lượng</span>
@@ -1311,7 +1354,7 @@ function OrderCart({
               Tổng thanh toán
             </span>
             <span className="text-xl font-extrabold tracking-tight text-[#2D2226]">
-              {formatMoney(discountPreview?.total ?? totals.amount)}
+              {formatMoney(payableTotal)}
             </span>
           </div>
         </div>
@@ -1332,7 +1375,7 @@ function OrderCart({
               Đang lưu đơn
             </span>
           ) : (
-            `${mode === "edit" ? "Lưu đơn" : "Tạo đơn"} · ${formatMoney(discountPreview?.total ?? totals.amount)}`
+            `${mode === "edit" ? "Lưu đơn" : "Tạo đơn"} · ${formatMoney(payableTotal)}`
           )}
         </Button>
       </div>
@@ -1396,6 +1439,10 @@ export function OfflineOrderEditor({
             : "CASH",
         paymentStatus: order.paymentStatus === "UNPAID" ? "UNPAID" : "PAID",
         couponCode: "",
+        manualDiscountAmount:
+          order.manualDiscountAmount > 0
+            ? String(order.manualDiscountAmount)
+            : "",
         customerPhone: order.customer?.phone || "",
         userId: order.customer?.id || null,
         items: order.items
@@ -1599,6 +1646,7 @@ export function OfflineOrderEditor({
           userId: form.userId,
           idempotencyKey: mode === "create" ? idempotencyKey : undefined,
           couponCode: form.couponCode || undefined,
+          manualDiscountAmount: parseMoney(form.manualDiscountAmount),
           items,
         },
         order?.id,

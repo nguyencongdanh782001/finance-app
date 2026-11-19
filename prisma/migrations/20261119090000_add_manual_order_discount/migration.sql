@@ -1,0 +1,2 @@
+ALTER TABLE "order"
+ADD COLUMN "manualDiscountAmount" DECIMAL NOT NULL DEFAULT 0;

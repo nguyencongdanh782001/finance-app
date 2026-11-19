@@ -35,6 +35,7 @@ export type OrderAvgAggregateOutputType = {
   billingAddressId: number | null
   subtotal: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
+  manualDiscountAmount: runtime.Decimal | null
   shippingFee: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
   totalCost: runtime.Decimal | null
@@ -73,6 +74,7 @@ export type OrderSumAggregateOutputType = {
   billingAddressId: number | null
   subtotal: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
+  manualDiscountAmount: runtime.Decimal | null
   shippingFee: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
   totalCost: runtime.Decimal | null
@@ -115,6 +117,7 @@ export type OrderMinAggregateOutputType = {
   source: $Enums.OrderSource | null
   subtotal: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
+  manualDiscountAmount: runtime.Decimal | null
   shippingFee: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
   totalCost: runtime.Decimal | null
@@ -179,6 +182,7 @@ export type OrderMaxAggregateOutputType = {
   source: $Enums.OrderSource | null
   subtotal: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
+  manualDiscountAmount: runtime.Decimal | null
   shippingFee: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
   totalCost: runtime.Decimal | null
@@ -243,6 +247,7 @@ export type OrderCountAggregateOutputType = {
   source: number
   subtotal: number
   discountAmount: number
+  manualDiscountAmount: number
   shippingFee: number
   taxAmount: number
   totalCost: number
@@ -305,6 +310,7 @@ export type OrderAvgAggregateInputType = {
   billingAddressId?: true
   subtotal?: true
   discountAmount?: true
+  manualDiscountAmount?: true
   shippingFee?: true
   taxAmount?: true
   totalCost?: true
@@ -343,6 +349,7 @@ export type OrderSumAggregateInputType = {
   billingAddressId?: true
   subtotal?: true
   discountAmount?: true
+  manualDiscountAmount?: true
   shippingFee?: true
   taxAmount?: true
   totalCost?: true
@@ -385,6 +392,7 @@ export type OrderMinAggregateInputType = {
   source?: true
   subtotal?: true
   discountAmount?: true
+  manualDiscountAmount?: true
   shippingFee?: true
   taxAmount?: true
   totalCost?: true
@@ -449,6 +457,7 @@ export type OrderMaxAggregateInputType = {
   source?: true
   subtotal?: true
   discountAmount?: true
+  manualDiscountAmount?: true
   shippingFee?: true
   taxAmount?: true
   totalCost?: true
@@ -513,6 +522,7 @@ export type OrderCountAggregateInputType = {
   source?: true
   subtotal?: true
   discountAmount?: true
+  manualDiscountAmount?: true
   shippingFee?: true
   taxAmount?: true
   totalCost?: true
@@ -664,6 +674,7 @@ export type OrderGroupByOutputType = {
   source: $Enums.OrderSource
   subtotal: runtime.Decimal
   discountAmount: runtime.Decimal
+  manualDiscountAmount: runtime.Decimal
   shippingFee: runtime.Decimal
   taxAmount: runtime.Decimal
   totalCost: runtime.Decimal
@@ -751,6 +762,7 @@ export type OrderWhereInput = {
   source?: Prisma.EnumOrderSourceFilter<"Order"> | $Enums.OrderSource
   subtotal?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -831,6 +843,7 @@ export type OrderOrderByWithRelationInput = {
   source?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
+  manualDiscountAmount?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -914,6 +927,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   source?: Prisma.EnumOrderSourceFilter<"Order"> | $Enums.OrderSource
   subtotal?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -994,6 +1008,7 @@ export type OrderOrderByWithAggregationInput = {
   source?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
+  manualDiscountAmount?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -1066,6 +1081,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   source?: Prisma.EnumOrderSourceWithAggregatesFilter<"Order"> | $Enums.OrderSource
   subtotal?: Prisma.DecimalWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1124,6 +1140,7 @@ export type OrderCreateInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1202,6 +1219,7 @@ export type OrderUncheckedCreateInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1269,6 +1287,7 @@ export type OrderUpdateInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1347,6 +1366,7 @@ export type OrderUncheckedUpdateInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1420,6 +1440,7 @@ export type OrderCreateManyInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1478,6 +1499,7 @@ export type OrderUpdateManyMutationInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1540,6 +1562,7 @@ export type OrderUncheckedUpdateManyInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1624,6 +1647,7 @@ export type OrderCountOrderByAggregateInput = {
   source?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
+  manualDiscountAmount?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -1684,6 +1708,7 @@ export type OrderAvgOrderByAggregateInput = {
   billingAddressId?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
+  manualDiscountAmount?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -1726,6 +1751,7 @@ export type OrderMaxOrderByAggregateInput = {
   source?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
+  manualDiscountAmount?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -1790,6 +1816,7 @@ export type OrderMinOrderByAggregateInput = {
   source?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
+  manualDiscountAmount?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -1850,6 +1877,7 @@ export type OrderSumOrderByAggregateInput = {
   billingAddressId?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
+  manualDiscountAmount?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -2326,6 +2354,7 @@ export type OrderCreateWithoutSoldContributionsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2403,6 +2432,7 @@ export type OrderUncheckedCreateWithoutSoldContributionsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2485,6 +2515,7 @@ export type OrderUpdateWithoutSoldContributionsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2562,6 +2593,7 @@ export type OrderUncheckedUpdateWithoutSoldContributionsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2628,6 +2660,7 @@ export type OrderCreateWithoutUserInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2704,6 +2737,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2781,6 +2815,7 @@ export type OrderCreateWithoutCreatedByInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2857,6 +2892,7 @@ export type OrderUncheckedCreateWithoutCreatedByInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2934,6 +2970,7 @@ export type OrderCreateWithoutUpdatedByInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3010,6 +3047,7 @@ export type OrderUncheckedCreateWithoutUpdatedByInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3112,6 +3150,7 @@ export type OrderScalarWhereInput = {
   source?: Prisma.EnumOrderSourceFilter<"Order"> | $Enums.OrderSource
   subtotal?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3202,6 +3241,7 @@ export type OrderCreateWithoutMembershipBenefitRedemptionsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3279,6 +3319,7 @@ export type OrderUncheckedCreateWithoutMembershipBenefitRedemptionsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3361,6 +3402,7 @@ export type OrderUpdateWithoutMembershipBenefitRedemptionsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3438,6 +3480,7 @@ export type OrderUncheckedUpdateWithoutMembershipBenefitRedemptionsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3504,6 +3547,7 @@ export type OrderCreateWithoutShippingAddressInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3580,6 +3624,7 @@ export type OrderUncheckedCreateWithoutShippingAddressInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3657,6 +3702,7 @@ export type OrderCreateWithoutBillingAddressInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3733,6 +3779,7 @@ export type OrderUncheckedCreateWithoutBillingAddressInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3842,6 +3889,7 @@ export type OrderCreateWithoutItemsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3919,6 +3967,7 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4001,6 +4050,7 @@ export type OrderUpdateWithoutItemsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4078,6 +4128,7 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4144,6 +4195,7 @@ export type OrderCreateWithoutInvoicesInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4221,6 +4273,7 @@ export type OrderUncheckedCreateWithoutInvoicesInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4303,6 +4356,7 @@ export type OrderUpdateWithoutInvoicesInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4380,6 +4434,7 @@ export type OrderUncheckedUpdateWithoutInvoicesInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4446,6 +4501,7 @@ export type OrderCreateWithoutShippingPromotionInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4523,6 +4579,7 @@ export type OrderUncheckedCreateWithoutShippingPromotionInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4615,6 +4672,7 @@ export type OrderCreateWithoutStatusHistoriesInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4692,6 +4750,7 @@ export type OrderUncheckedCreateWithoutStatusHistoriesInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4774,6 +4833,7 @@ export type OrderUpdateWithoutStatusHistoriesInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4851,6 +4911,7 @@ export type OrderUncheckedUpdateWithoutStatusHistoriesInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4917,6 +4978,7 @@ export type OrderCreateWithoutPaymentsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4994,6 +5056,7 @@ export type OrderUncheckedCreateWithoutPaymentsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5076,6 +5139,7 @@ export type OrderUpdateWithoutPaymentsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5153,6 +5217,7 @@ export type OrderUncheckedUpdateWithoutPaymentsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5219,6 +5284,7 @@ export type OrderCreateWithoutShipmentsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5296,6 +5362,7 @@ export type OrderUncheckedCreateWithoutShipmentsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5378,6 +5445,7 @@ export type OrderUpdateWithoutShipmentsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5455,6 +5523,7 @@ export type OrderUncheckedUpdateWithoutShipmentsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5521,6 +5590,7 @@ export type OrderCreateWithoutCouponInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5598,6 +5668,7 @@ export type OrderUncheckedCreateWithoutCouponInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5690,6 +5761,7 @@ export type OrderCreateWithoutDiscountRedemptionInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5767,6 +5839,7 @@ export type OrderUncheckedCreateWithoutDiscountRedemptionInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5849,6 +5922,7 @@ export type OrderUpdateWithoutDiscountRedemptionInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5926,6 +6000,7 @@ export type OrderUncheckedUpdateWithoutDiscountRedemptionInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5992,6 +6067,7 @@ export type OrderCreateWithoutAdminNotificationsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6069,6 +6145,7 @@ export type OrderUncheckedCreateWithoutAdminNotificationsInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6151,6 +6228,7 @@ export type OrderUpdateWithoutAdminNotificationsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6228,6 +6306,7 @@ export type OrderUncheckedUpdateWithoutAdminNotificationsInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6299,6 +6378,7 @@ export type OrderCreateManyUserInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6362,6 +6442,7 @@ export type OrderCreateManyCreatedByInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6425,6 +6506,7 @@ export type OrderCreateManyUpdatedByInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6483,6 +6565,7 @@ export type OrderUpdateWithoutUserInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6559,6 +6642,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6631,6 +6715,7 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6689,6 +6774,7 @@ export type OrderUpdateWithoutCreatedByInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6765,6 +6851,7 @@ export type OrderUncheckedUpdateWithoutCreatedByInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6837,6 +6924,7 @@ export type OrderUncheckedUpdateManyWithoutCreatedByInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6895,6 +6983,7 @@ export type OrderUpdateWithoutUpdatedByInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6971,6 +7060,7 @@ export type OrderUncheckedUpdateWithoutUpdatedByInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7043,6 +7133,7 @@ export type OrderUncheckedUpdateManyWithoutUpdatedByInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7106,6 +7197,7 @@ export type OrderCreateManyShippingAddressInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7169,6 +7261,7 @@ export type OrderCreateManyBillingAddressInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7227,6 +7320,7 @@ export type OrderUpdateWithoutShippingAddressInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7303,6 +7397,7 @@ export type OrderUncheckedUpdateWithoutShippingAddressInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7375,6 +7470,7 @@ export type OrderUncheckedUpdateManyWithoutShippingAddressInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7433,6 +7529,7 @@ export type OrderUpdateWithoutBillingAddressInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7509,6 +7606,7 @@ export type OrderUncheckedUpdateWithoutBillingAddressInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7581,6 +7679,7 @@ export type OrderUncheckedUpdateManyWithoutBillingAddressInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7645,6 +7744,7 @@ export type OrderCreateManyShippingPromotionInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7702,6 +7802,7 @@ export type OrderUpdateWithoutShippingPromotionInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7779,6 +7880,7 @@ export type OrderUncheckedUpdateWithoutShippingPromotionInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7851,6 +7953,7 @@ export type OrderUncheckedUpdateManyWithoutShippingPromotionInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7914,6 +8017,7 @@ export type OrderCreateManyCouponInput = {
   source?: $Enums.OrderSource
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7971,6 +8075,7 @@ export type OrderUpdateWithoutCouponInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -8048,6 +8153,7 @@ export type OrderUncheckedUpdateWithoutCouponInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -8120,6 +8226,7 @@ export type OrderUncheckedUpdateManyWithoutCouponInput = {
   source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  manualDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -8277,6 +8384,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   source?: boolean
   subtotal?: boolean
   discountAmount?: boolean
+  manualDiscountAmount?: boolean
   shippingFee?: boolean
   taxAmount?: boolean
   totalCost?: boolean
@@ -8358,6 +8466,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   source?: boolean
   subtotal?: boolean
   discountAmount?: boolean
+  manualDiscountAmount?: boolean
   shippingFee?: boolean
   taxAmount?: boolean
   totalCost?: boolean
@@ -8429,6 +8538,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   source?: boolean
   subtotal?: boolean
   discountAmount?: boolean
+  manualDiscountAmount?: boolean
   shippingFee?: boolean
   taxAmount?: boolean
   totalCost?: boolean
@@ -8500,6 +8610,7 @@ export type OrderSelectScalar = {
   source?: boolean
   subtotal?: boolean
   discountAmount?: boolean
+  manualDiscountAmount?: boolean
   shippingFee?: boolean
   taxAmount?: boolean
   totalCost?: boolean
@@ -8551,7 +8662,7 @@ export type OrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "idempotencyKey" | "userId" | "createdById" | "updatedById" | "shippingAddressId" | "billingAddressId" | "status" | "source" | "subtotal" | "discountAmount" | "shippingFee" | "taxAmount" | "totalCost" | "profit" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "isPaid" | "paidAt" | "couponId" | "discountCodeSnapshot" | "receiverName" | "receiverPhone" | "receiverAddress" | "receiverWard" | "receiverDistrict" | "receiverProvince" | "latitude" | "longitude" | "shippingDistanceMeters" | "shippingDistanceKm" | "shippingEstimatedMinutes" | "shippingOriginAddress" | "shippingOriginLatitude" | "shippingOriginLongitude" | "shippingDestinationLatitude" | "shippingDestinationLongitude" | "shippingRawDistanceMeters" | "shippingRoundedDistanceKm" | "shippingFreeDistanceKm" | "shippingDiscountPercent" | "shippingChargeableDistanceKm" | "shippingBaseFee" | "shippingPricePerKm" | "shippingFeeBeforePromotion" | "shippingDiscount" | "shippingPromotionId" | "shippingPromotionName" | "shippingQuoteProvider" | "shippingCalculatedAt" | "note" | "placedAt" | "completedAt" | "deliveredAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "idempotencyKey" | "userId" | "createdById" | "updatedById" | "shippingAddressId" | "billingAddressId" | "status" | "source" | "subtotal" | "discountAmount" | "manualDiscountAmount" | "shippingFee" | "taxAmount" | "totalCost" | "profit" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "isPaid" | "paidAt" | "couponId" | "discountCodeSnapshot" | "receiverName" | "receiverPhone" | "receiverAddress" | "receiverWard" | "receiverDistrict" | "receiverProvince" | "latitude" | "longitude" | "shippingDistanceMeters" | "shippingDistanceKm" | "shippingEstimatedMinutes" | "shippingOriginAddress" | "shippingOriginLatitude" | "shippingOriginLongitude" | "shippingDestinationLatitude" | "shippingDestinationLongitude" | "shippingRawDistanceMeters" | "shippingRoundedDistanceKm" | "shippingFreeDistanceKm" | "shippingDiscountPercent" | "shippingChargeableDistanceKm" | "shippingBaseFee" | "shippingPricePerKm" | "shippingFeeBeforePromotion" | "shippingDiscount" | "shippingPromotionId" | "shippingPromotionName" | "shippingQuoteProvider" | "shippingCalculatedAt" | "note" | "placedAt" | "completedAt" | "deliveredAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   createdBy?: boolean | Prisma.Order$createdByArgs<ExtArgs>
@@ -8623,6 +8734,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     source: $Enums.OrderSource
     subtotal: runtime.Decimal
     discountAmount: runtime.Decimal
+    manualDiscountAmount: runtime.Decimal
     shippingFee: runtime.Decimal
     taxAmount: runtime.Decimal
     totalCost: runtime.Decimal
@@ -9123,6 +9235,7 @@ export interface OrderFieldRefs {
   readonly source: Prisma.FieldRef<"Order", 'OrderSource'>
   readonly subtotal: Prisma.FieldRef<"Order", 'Decimal'>
   readonly discountAmount: Prisma.FieldRef<"Order", 'Decimal'>
+  readonly manualDiscountAmount: Prisma.FieldRef<"Order", 'Decimal'>
   readonly shippingFee: Prisma.FieldRef<"Order", 'Decimal'>
   readonly taxAmount: Prisma.FieldRef<"Order", 'Decimal'>
   readonly totalCost: Prisma.FieldRef<"Order", 'Decimal'>
