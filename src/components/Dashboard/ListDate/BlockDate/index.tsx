@@ -9,13 +9,15 @@ import { useRouter } from "next/navigation";
 type CalendarCell = {
   date: Date | null;
   dayNumber?: number;
-  data?: DailyFinance;
+  data?: DailyDay;
 };
+
+type DailyDay = DailyFinance & { hasUnpaidOrders: boolean };
 
 type Props = {
   year: number;
   month: number; // 1 - 12
-  days: DailyFinance[];
+  days: DailyDay[];
   isLoading: boolean;
 };
 
@@ -29,8 +31,8 @@ function toLocalDateKey(date: Date) {
 }
 
 // ================== NORMALIZE DATA ==================
-function normalizeDays(days: DailyFinance[]) {
-  const map = new Map<string, DailyFinance>();
+function normalizeDays(days: DailyDay[]) {
+  const map = new Map<string, DailyDay>();
 
   days.forEach((d) => {
     const key = toLocalDateKey(new Date(d.date));
@@ -44,7 +46,7 @@ function normalizeDays(days: DailyFinance[]) {
 function buildCalendar(
   year: number,
   month: number,
-  dayMap: Map<string, DailyFinance>,
+  dayMap: Map<string, DailyDay>,
 ): CalendarCell[] {
   const cells: CalendarCell[] = [];
 
@@ -131,6 +133,13 @@ export default function BlockDate({ year, month, days, isLoading }: Props) {
             >
               {isCurrentDay && (
                 <div className="absolute size-2 rounded-full bg-blue-5 -right-0.5 -top-0.5" />
+              )}
+              {cell.data?.hasUnpaidOrders && (
+                <span
+                  className="absolute left-1 top-1 size-1.5 rounded-full bg-amber-500"
+                  title="Có đơn chưa thanh toán"
+                  aria-label="Có đơn chưa thanh toán"
+                />
               )}
 
               {/* Day number */}

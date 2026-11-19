@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
   Check,
+  ChevronDown,
   ImageOff,
   Loader2,
   Minus,
@@ -1176,6 +1177,7 @@ function OrderCart({
   customerLoading: boolean;
   onLookupCustomer: () => void;
 }) {
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
   const totals = form.items.reduce(
     (result, item) => {
       const quantity = Number(item.quantity || 0);
@@ -1347,40 +1349,62 @@ function OrderCart({
           <PaymentSection form={form} onChange={onChange} />
         </div>
         <div className="shrink-0 border-t border-[#EAE1E4] bg-white px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_16px_rgba(45,34,38,0.06)] sm:px-5">
-          <div className="space-y-2 text-sm">
-            {totalDiscountAmount > 0 ? (
-              <div className="flex items-center justify-between text-[#65545B]">
-                <span>Tạm tính</span>
-                <span>{formatMoney(totals.amount)}</span>
-              </div>
-            ) : null}
-            {manualDiscountAmount > 0 ? (
-              <div className="flex items-center justify-between text-[#397354]">
-                <span>Giảm tiền đơn hàng</span>
-                <span>-{formatMoney(manualDiscountAmount)}</span>
-              </div>
-            ) : null}
-            {discountPreview ? (
-              <div className="flex items-center justify-between text-[#397354]">
-                <span>Mã {discountPreview.code}</span>
-                <span>-{formatMoney(couponDiscountAmount)}</span>
-              </div>
-            ) : null}
-            <div className="flex items-center justify-between text-[#65545B]">
-              <span>Tổng số lượng</span>
-              <span className="font-bold text-[#2D2226]">
-                {totals.quantity.toLocaleString("vi-VN")}
-              </span>
-            </div>
-            <div className="flex items-end justify-between gap-3">
-              <span className="font-semibold text-[#2D2226]">
-                Tổng thanh toán
-              </span>
+          <div className="flex w-full items-center justify-between gap-3 text-left text-sm">
+            <span className="font-semibold text-[#2D2226]">
+              Tổng thanh toán
+            </span>
+            <span className="flex items-center gap-2">
               <span className="text-xl font-extrabold tracking-tight text-[#2D2226]">
                 {formatMoney(payableTotal)}
               </span>
-            </div>
+              <button
+                type="button"
+                className="inline-flex h-7 items-center gap-1 rounded-md border border-[#EAE1E4] px-1.5 text-11px font-semibold text-[#8B7A80] hover:bg-[#F8F5F6] hover:text-[#65545B]"
+                aria-expanded={summaryExpanded}
+                aria-controls="offline-order-summary"
+                aria-label={
+                  summaryExpanded ? "Thu gọn tổng đơn" : "Mở rộng tổng đơn"
+                }
+                onClick={() => setSummaryExpanded((expanded) => !expanded)}
+              >
+                <span>{summaryExpanded ? "Thu gọn" : "Chi tiết"}</span>
+                <ChevronDown
+                  className={cn(
+                    "size-3.5 transition-transform",
+                    summaryExpanded && "rotate-180",
+                  )}
+                />
+              </button>
+            </span>
           </div>
+          {summaryExpanded ? (
+            <div id="offline-order-summary" className="mt-2 space-y-2 text-sm">
+              {totalDiscountAmount > 0 ? (
+                <div className="flex items-center justify-between text-[#65545B]">
+                  <span>Tạm tính</span>
+                  <span>{formatMoney(totals.amount)}</span>
+                </div>
+              ) : null}
+              {manualDiscountAmount > 0 ? (
+                <div className="flex items-center justify-between text-[#397354]">
+                  <span>Giảm tiền đơn hàng</span>
+                  <span>-{formatMoney(manualDiscountAmount)}</span>
+                </div>
+              ) : null}
+              {discountPreview ? (
+                <div className="flex items-center justify-between text-[#397354]">
+                  <span>Mã {discountPreview.code}</span>
+                  <span>-{formatMoney(couponDiscountAmount)}</span>
+                </div>
+              ) : null}
+              <div className="flex items-center justify-between text-[#65545B]">
+                <span>Tổng số lượng</span>
+                <span className="font-bold text-[#2D2226]">
+                  {totals.quantity.toLocaleString("vi-VN")}
+                </span>
+              </div>
+            </div>
+          ) : null}
           {error ? (
             <p className="mt-3 rounded-lg bg-[#FFF0F2] px-3 py-2 text-sm font-medium text-[#B3475E]">
               {error}
@@ -1388,7 +1412,7 @@ function OrderCart({
           ) : null}
           <Button
             type="button"
-            className="mt-3 h-12 w-full rounded-lg bg-[#D96C8A] text-base font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
+            className="mt-3 h-10 w-full rounded-lg bg-[#D96C8A] text-sm font-bold text-white hover:bg-[#C85B7B] focus-visible:ring-[#D96C8A]/35"
             disabled={!form.items.length || invalid || submitting}
             onClick={onSubmit}
           >

@@ -61,7 +61,7 @@ export function AdminSelect({
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="z-[calc(var(--z-dialog)+1)]">
         {options.map((option) => (
           <SelectItem
             key={option.value || "__empty__"}

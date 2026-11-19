@@ -1,9 +1,18 @@
 import prisma from "@/lib/db";
+import { OrderStatus, PaymentStatus } from "@/app/generated/prisma/client";
 import { NextResponse } from "next/server";
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
 }
+
+const vietnamDateKey = (date: Date) =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -73,6 +82,26 @@ export async function GET(req: Request) {
     },
   });
 
+  const monthStart = new Date(
+    Date.UTC(year, month - 1, 1) - 7 * 60 * 60 * 1000,
+  );
+  const monthEnd = new Date(Date.UTC(year, month, 1) - 7 * 60 * 60 * 1000);
+  const unpaidOrders = await prisma.order.findMany({
+    where: {
+      placedAt: { gte: monthStart, lt: monthEnd },
+      paymentStatus: PaymentStatus.UNPAID,
+      status: { not: OrderStatus.CANCELLED },
+    },
+    select: { placedAt: true },
+  });
+  const unpaidDateKeys = new Set(
+    unpaidOrders.map((order) => vietnamDateKey(order.placedAt)),
+  );
+  const days = monthly.days.map((day) => ({
+    ...day,
+    hasUnpaidOrders: unpaidDateKeys.has(vietnamDateKey(day.date)),
+  }));
+
   // 5️⃣ Return fresh data
   return NextResponse.json({
     id: monthly.id,
@@ -81,7 +110,7 @@ export async function GET(req: Request) {
     totalDailyProfit,
     totalExpense,
     profit,
-    days: monthly.days,
+    days,
     expenses: monthly.expenses,
   });
 }

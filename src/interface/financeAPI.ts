@@ -5,7 +5,7 @@ import type {
 
 export type MonthlyResponse = {
   id: number;
-  days: DailyFinance[];
+  days: Array<DailyFinance & { hasUnpaidOrders: boolean }>;
 } & MonthlyFinance;
 
 export type Expense = {
@@ -229,13 +229,7 @@ export type PaymentStatusValue =
   | "REFUNDED"
   | "PARTIALLY_REFUNDED";
 export type PaymentMethodValue =
-  | "CASH"
-  | "COD"
-  | "CARD"
-  | "BANK_TRANSFER"
-  | "ZALOPAY"
-  | "PAYPAL"
-  | "STRIPE";
+  "CASH" | "COD" | "CARD" | "BANK_TRANSFER" | "ZALOPAY" | "PAYPAL" | "STRIPE";
 
 export interface DailyOrderItem {
   id: number;
