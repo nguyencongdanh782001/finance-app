@@ -72,6 +72,8 @@ const EMPTY_RESPONSE: DailySoldProductGroupListResponse = {
     totalQuantity: 0,
     totalAmount: 0,
     totalProfit: null,
+    pendingQuantity: 0,
+    pendingAmount: 0,
   },
   pagination: { page: 1, limit: 10, totalGroups: 0, totalPages: 1 },
 };
@@ -270,6 +272,13 @@ export default function FormProducts({
           </div>
         </div>
       </div>
+      {currentResult.summary.pendingQuantity > 0 ? (
+        <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700">
+          Chờ thanh toán:{" "}
+          {currentResult.summary.pendingQuantity.toLocaleString("vi-VN")} sản
+          phẩm · {formatMoney(currentResult.summary.pendingAmount)}
+        </div>
+      ) : null}
 
       <div className="mt-5 grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_180px_auto]">
         <div className="flex min-w-0 items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-3">
@@ -360,7 +369,7 @@ export default function FormProducts({
         <>
           <div className="mt-5 hidden grid-cols-[minmax(0,1fr)_72px_112px_28px] gap-3 px-4 pb-2 text-10px font-extrabold uppercase text-slate-400 sm:grid lg:grid-cols-[minmax(0,1.5fr)_64px_66px_118px_100px_100px_28px]">
             <span>Sản phẩm</span>
-            <span className="text-right">Đã bán</span>
+            <span className="text-right">Số lượng</span>
             <span className="hidden text-right lg:block">Lượt bán</span>
             <span className="hidden text-right lg:block">Giá bán</span>
             <span className="text-right">Thành tiền</span>

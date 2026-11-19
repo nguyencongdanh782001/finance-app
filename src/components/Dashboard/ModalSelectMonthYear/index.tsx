@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { financeAPI } from "@/endpoint/financeAPI";
+import { RESPONSE_CODES } from "@/constant/codes";
 
 interface ModalSelectMonthYearProps {
   open: boolean;
@@ -27,6 +29,28 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
 
   const [year, setYear] = useState(initialYear);
   const [month, setMonth] = useState(initialMonth);
+  const [unpaidMonths, setUnpaidMonths] = useState<number[]>([]);
+  const [loadingUnpaidMonths, setLoadingUnpaidMonths] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+
+    let active = true;
+    setLoadingUnpaidMonths(true);
+    void financeAPI.getUnpaidMonths(year).then((response) => {
+      if (!active) return;
+      setUnpaidMonths(
+        response.code === RESPONSE_CODES.success
+          ? response.data?.months || []
+          : [],
+      );
+      setLoadingUnpaidMonths(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [open, year]);
 
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -106,7 +130,16 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
         }
       `}
               >
-                <div className="text-10px">THÁNG</div>
+                <div className="flex w-full items-center justify-between text-10px">
+                  <span>THÁNG</span>
+                  {unpaidMonths.includes(m) ? (
+                    <span
+                      className="size-2 rounded-full bg-amber-500"
+                      title="Có đơn chưa thanh toán"
+                      aria-label="Có đơn chưa thanh toán"
+                    />
+                  ) : null}
+                </div>
                 <div
                   className={`text-md ${active ? "text-green-7" : "text-gray-3"}`}
                 >
@@ -116,6 +149,11 @@ const ModalSelectMonthYear = (props: ModalSelectMonthYearProps) => {
             );
           })}
         </div>
+        {!loadingUnpaidMonths && unpaidMonths.length ? (
+          <p className="mt-3 text-center text-xs font-medium text-amber-600">
+            Dấu chấm vàng: tháng có đơn chưa thanh toán
+          </p>
+        ) : null}
         <DialogFooter className="mt-4 w-full flex flex-col justify-center items-center gap-4.5">
           <Button
             type="button"

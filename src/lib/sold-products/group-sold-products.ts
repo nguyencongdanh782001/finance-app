@@ -17,6 +17,8 @@ export type SoldProductGroup = {
   totalAmount: number;
   totalCost: number | null;
   totalProfit: number | null;
+  pendingQuantity: number;
+  pendingAmount: number;
   saleCount: number;
   variantCount: number;
   minUnitPrice: number;
@@ -55,9 +57,7 @@ export const getSoldProductGroupKey = (item: SoldProductListItem) => {
   return `unlinked:${item.id}`;
 };
 
-const sumNullable = (
-  values: Array<number | null>,
-): number | null =>
+const sumNullable = (values: Array<number | null>): number | null =>
   values.some((value) => value !== null)
     ? values.reduce<number>((sum, value) => sum + (value ?? 0), 0)
     : null;
@@ -91,19 +91,35 @@ export function groupSoldProducts(
         .filter((id): id is number => id !== null),
     );
     const unitPrices = sales.map((sale) => sale.unitPrice);
+    const billableSales = sales.filter(
+      (sale) => sale.paymentStatus !== "UNPAID",
+    );
+    const pendingSales = sales.filter(
+      (sale) => sale.paymentStatus === "UNPAID",
+    );
 
     return {
       groupKey,
       productId: first.productId,
       productName: first.productName,
-      imageUrl:
-        sales.find((sale) => Boolean(sale.imageUrl))?.imageUrl ?? null,
+      imageUrl: sales.find((sale) => Boolean(sale.imageUrl))?.imageUrl ?? null,
       categoryName:
         sales.find((sale) => Boolean(sale.categoryName))?.categoryName ?? null,
       totalQuantity: sales.reduce((sum, sale) => sum + sale.quantity, 0),
-      totalAmount: sales.reduce((sum, sale) => sum + sale.totalAmount, 0),
-      totalCost: sumNullable(sales.map((sale) => sale.totalCost)),
-      totalProfit: sumNullable(sales.map((sale) => sale.profit)),
+      totalAmount: billableSales.reduce(
+        (sum, sale) => sum + sale.totalAmount,
+        0,
+      ),
+      totalCost: sumNullable(billableSales.map((sale) => sale.totalCost)),
+      totalProfit: sumNullable(billableSales.map((sale) => sale.profit)),
+      pendingQuantity: pendingSales.reduce(
+        (sum, sale) => sum + sale.quantity,
+        0,
+      ),
+      pendingAmount: pendingSales.reduce(
+        (sum, sale) => sum + sale.totalAmount,
+        0,
+      ),
       saleCount: sales.length,
       variantCount: variantIds.size,
       minUnitPrice: Math.min(...unitPrices),

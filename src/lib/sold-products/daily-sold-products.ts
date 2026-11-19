@@ -6,7 +6,7 @@ import type {
   Product,
   ProductVariant,
 } from "@/app/generated/prisma/client";
-import { Prisma } from "@/app/generated/prisma/client";
+import { PaymentStatus, Prisma } from "@/app/generated/prisma/client";
 import type prisma from "@/lib/db";
 import { getVietnamDayRange } from "@/lib/orders/daily-orders";
 import { isSoldOrderEligible } from "./sold-order-eligibility";
@@ -35,6 +35,7 @@ type OrderSoldItem = OrderItem & {
     orderNumber: string;
     source: OrderSource;
     status: OrderStatus;
+    paymentStatus: PaymentStatus;
     placedAt: Date;
     deliveredAt: Date | null;
     completedAt: Date | null;
@@ -65,6 +66,7 @@ export type SoldProductListItem = {
   orderId: number | null;
   orderCode: string | null;
   orderSource: OrderSource | null;
+  paymentStatus?: PaymentStatus;
   readOnly: true;
   createdAt: string;
 };
@@ -102,7 +104,9 @@ const mapOrderItem = (item: OrderSoldItem): SoldProductListItem => {
   const unitCost = toMoney(item.unitCost);
   const saleDate =
     item.order.source === "ONLINE"
-      ? (item.order.deliveredAt ?? item.order.completedAt ?? item.order.placedAt)
+      ? (item.order.deliveredAt ??
+        item.order.completedAt ??
+        item.order.placedAt)
       : item.order.placedAt;
 
   return {
@@ -117,7 +121,8 @@ const mapOrderItem = (item: OrderSoldItem): SoldProductListItem => {
         size: item.size,
         color: item.color,
         sku: item.sku,
-      }) ?? getVariantName(item.variant ?? { size: null, color: null, sku: null }),
+      }) ??
+      getVariantName(item.variant ?? { size: null, color: null, sku: null }),
     sku: item.sku,
     imageUrl: item.productImageUrl ?? item.product?.imageUrl ?? null,
     categoryName: item.product?.category.name ?? null,
@@ -130,6 +135,7 @@ const mapOrderItem = (item: OrderSoldItem): SoldProductListItem => {
     orderId: item.order.id,
     orderCode: item.order.orderNumber,
     orderSource: item.order.source,
+    paymentStatus: item.order.paymentStatus,
     readOnly: true,
     createdAt: item.createdAt.toISOString(),
   };
@@ -159,6 +165,7 @@ const mapLegacyItem = (item: LegacySoldProduct): SoldProductListItem[] =>
       orderId: null,
       orderCode: null,
       orderSource: null,
+      paymentStatus: "PAID",
       readOnly: true,
       createdAt: item.createdAt.toISOString(),
     };
@@ -203,6 +210,7 @@ export async function getDailySoldProducts(
           OR: [
             {
               source: "OFFLINE",
+              paymentStatus: { not: PaymentStatus.UNPAID },
               status: {
                 notIn: ["CANCELLED", "REFUNDED"],
               },
@@ -213,6 +221,7 @@ export async function getDailySoldProducts(
             },
             {
               source: "ONLINE",
+              paymentStatus: { not: PaymentStatus.UNPAID },
               status: "DELIVERED",
               OR: [
                 {
@@ -240,6 +249,7 @@ export async function getDailySoldProducts(
             orderNumber: true,
             source: true,
             status: true,
+            paymentStatus: true,
             placedAt: true,
             deliveredAt: true,
             completedAt: true,

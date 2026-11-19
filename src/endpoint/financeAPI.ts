@@ -8,6 +8,7 @@ import {
   DailySoldProductGroupListResponse,
   MonthlyDetailResponse,
   MonthlyResponse,
+  UnpaidMonthsResponse,
   OfflineOrderPayload,
   UpdateDailyRequest,
   UploadImageResponse,
@@ -43,6 +44,11 @@ export const financeAPI = {
     month: number,
   ): Promise<IAPIResponse<MonthlyResponse>> => {
     return appAxios.get(API_ROUTES.getMonthlyData(year, month));
+  },
+  getUnpaidMonths: (
+    year: number,
+  ): Promise<IAPIResponse<UnpaidMonthsResponse>> => {
+    return appAxios.get(API_ROUTES.getUnpaidMonths(year));
   },
   getYearlyRevenue: (
     year: number,

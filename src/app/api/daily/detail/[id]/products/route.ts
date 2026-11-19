@@ -52,12 +52,7 @@ export async function GET(
   const limit = parsePositiveInteger(searchParams.get("limit"), 10, 50);
   const search = searchParams.get("search")?.trim();
   const requestedSource = searchParams.get("source");
-  const validSources = new Set([
-    "ALL",
-    "OFFLINE",
-    "ONLINE",
-    "LEGACY_MANUAL",
-  ]);
+  const validSources = new Set(["ALL", "OFFLINE", "ONLINE", "LEGACY_MANUAL"]);
   const source = validSources.has(requestedSource ?? "")
     ? (requestedSource as SoldProductSource | "ALL")
     : "ALL";
@@ -76,6 +71,14 @@ export async function GET(
       totalProfit: groups.some((group) => group.totalProfit !== null)
         ? groups.reduce((sum, group) => sum + (group.totalProfit ?? 0), 0)
         : null,
+      pendingQuantity: groups.reduce(
+        (sum, group) => sum + group.pendingQuantity,
+        0,
+      ),
+      pendingAmount: groups.reduce(
+        (sum, group) => sum + group.pendingAmount,
+        0,
+      ),
     },
     pagination: groupedPage.pagination,
   });

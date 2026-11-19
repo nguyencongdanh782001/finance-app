@@ -8,6 +8,11 @@ export type MonthlyResponse = {
   days: Array<DailyFinance & { hasUnpaidOrders: boolean }>;
 } & MonthlyFinance;
 
+export type UnpaidMonthsResponse = {
+  year: number;
+  months: number[];
+};
+
 export type Expense = {
   id: number;
   name: string;
@@ -150,6 +155,7 @@ export interface DailySoldProductItem {
   orderId: number | null;
   orderCode: string | null;
   orderSource: OrderSourceValue | null;
+  paymentStatus: PaymentStatusValue;
   readOnly: true;
   createdAt: string;
 }
@@ -171,6 +177,8 @@ export interface DailySoldProductGroup {
   totalAmount: number;
   totalCost: number | null;
   totalProfit: number | null;
+  pendingQuantity: number;
+  pendingAmount: number;
   saleCount: number;
   variantCount: number;
   minUnitPrice: number;
@@ -186,6 +194,8 @@ export interface DailySoldProductGroupListResponse {
     totalQuantity: number;
     totalAmount: number;
     totalProfit: number | null;
+    pendingQuantity: number;
+    pendingAmount: number;
   };
   pagination: {
     page: number;

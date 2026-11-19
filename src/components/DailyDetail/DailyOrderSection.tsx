@@ -827,7 +827,13 @@ function OrderRow({
   onAdvanceStatus: (order: DailyOrder) => void;
 }) {
   return (
-    <article className="w-full max-w-full min-w-0 rounded-2xl border border-slate-100 bg-white p-3">
+    <article
+      className={`w-full max-w-full min-w-0 rounded-2xl border p-3 ${
+        order.paymentStatus === "UNPAID"
+          ? "border-amber-200 bg-amber-50/40"
+          : "border-slate-100 bg-white"
+      }`}
+    >
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
           <p
@@ -1395,7 +1401,11 @@ export default function DailyOrderSection({
                   {displayedOrders.map((order) => (
                     <div
                       key={order.id}
-                      className={`grid items-center gap-3 border-b border-slate-50 px-4 py-3 last:border-b-0 ${
+                      className={`grid items-center gap-3 border-b px-4 py-3 last:border-b-0 ${
+                        order.paymentStatus === "UNPAID"
+                          ? "border-amber-100 bg-amber-50/40"
+                          : "border-slate-50"
+                      } ${
                         activeTab === "ONLINE"
                           ? "grid-cols-[150px_180px_minmax(220px,1fr)_120px_140px_120px_96px]"
                           : "grid-cols-[150px_minmax(220px,1fr)_140px_120px_120px_96px]"

@@ -7,6 +7,8 @@ export const API_ROUTES = {
     APP_API_URL(`summary/current-year?year=${year}`),
   getMonthlyData: (year: number, month: number) =>
     APP_API_URL(`monthly?year=${year}&month=${month}`),
+  getUnpaidMonths: (year: number) =>
+    APP_API_URL(`monthly/unpaid-status?year=${year}`),
   getYearlyRevenue: (year: number) =>
     APP_API_URL(`summary/yearly-revenue?year=${year}`),
   getYearlyExpense: (year: number) =>

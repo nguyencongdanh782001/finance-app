@@ -42,6 +42,14 @@ const formatTime = (value: string, includeDate = false) =>
     ...(includeDate ? { day: "2-digit", month: "2-digit" } : {}),
   });
 
+function PaymentStatusBadge({ status }: { status: string }) {
+  return status === "UNPAID" ? (
+    <span className="inline-flex whitespace-nowrap rounded-full bg-amber-100 px-2 py-1 text-11px font-bold text-amber-700">
+      Chưa thanh toán
+    </span>
+  ) : null;
+}
+
 export const getPriceRangeLabel = (group: DailySoldProductGroup) =>
   group.minUnitPrice === group.maxUnitPrice
     ? formatMoney(group.minUnitPrice)
@@ -82,7 +90,13 @@ function SourceBadge({ source }: { source: SoldProductSourceValue }) {
 
 function SaleDesktopRow({ sale }: { sale: DailySoldProductSale }) {
   return (
-    <div className="grid min-w-0 grid-cols-[minmax(98px,1.2fr)_72px_minmax(76px,0.75fr)_40px_78px_86px_86px_50px] items-center gap-2 border-t border-slate-100 px-4 py-3 text-sm">
+    <div
+      className={`grid min-w-0 grid-cols-[minmax(98px,1.2fr)_72px_minmax(76px,0.75fr)_40px_78px_86px_86px_50px] items-center gap-2 border-t px-4 py-3 text-sm ${
+        sale.paymentStatus === "UNPAID"
+          ? "border-amber-100 bg-amber-50/60"
+          : "border-slate-100"
+      }`}
+    >
       <div className="min-w-0">
         <p className="truncate font-bold text-slate-700">
           {sale.variantName ?? "Không phân loại"}
@@ -93,7 +107,10 @@ function SaleDesktopRow({ sale }: { sale: DailySoldProductSale }) {
           </p>
         ) : null}
       </div>
-      <SourceBadge source={sale.source} />
+      <div className="flex flex-wrap items-center gap-1.5">
+        <SourceBadge source={sale.source} />
+        <PaymentStatusBadge status={sale.paymentStatus} />
+      </div>
       <span className="truncate font-bold text-slate-600">
         {sale.orderCode ?? "-"}
       </span>
@@ -103,13 +120,19 @@ function SaleDesktopRow({ sale }: { sale: DailySoldProductSale }) {
       <span className="whitespace-nowrap text-right font-bold text-slate-700">
         {formatMoney(sale.unitPrice)}
       </span>
-      <span className="whitespace-nowrap text-right font-extrabold text-slate-800">
+      <span
+        className={`whitespace-nowrap text-right font-extrabold ${
+          sale.paymentStatus === "UNPAID" ? "text-amber-700" : "text-slate-800"
+        }`}
+      >
         {formatMoney(sale.totalAmount)}
       </span>
       <span
         className={`whitespace-nowrap text-right font-extrabold ${getProfitClassName(sale.profit)}`}
       >
-        {formatOptionalMoney(sale.profit)}
+        {sale.paymentStatus === "UNPAID"
+          ? "-"
+          : formatOptionalMoney(sale.profit)}
       </span>
       <span className="whitespace-nowrap text-right text-xs font-semibold text-slate-400">
         {formatTime(sale.soldAt)}
@@ -120,7 +143,13 @@ function SaleDesktopRow({ sale }: { sale: DailySoldProductSale }) {
 
 function SaleCompactRow({ sale }: { sale: DailySoldProductSale }) {
   return (
-    <div className="border-t border-slate-100 px-4 py-3 first:border-t-0">
+    <div
+      className={`border-t px-4 py-3 first:border-t-0 ${
+        sale.paymentStatus === "UNPAID"
+          ? "border-amber-100 bg-amber-50/60"
+          : "border-slate-100"
+      }`}
+    >
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-extrabold text-slate-700">
@@ -128,6 +157,7 @@ function SaleCompactRow({ sale }: { sale: DailySoldProductSale }) {
           </p>
           <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-400">
             <SourceBadge source={sale.source} />
+            <PaymentStatusBadge status={sale.paymentStatus} />
             <span className="truncate">
               {sale.orderCode ?? "Không có mã đơn"}
             </span>
@@ -147,14 +177,23 @@ function SaleCompactRow({ sale }: { sale: DailySoldProductSale }) {
         <span className="whitespace-nowrap font-bold text-slate-600">
           {sale.quantity} × {formatMoney(sale.unitPrice)}
         </span>
-        <span className="whitespace-nowrap font-extrabold text-slate-800">
+        <span
+          className={`whitespace-nowrap font-extrabold ${
+            sale.paymentStatus === "UNPAID"
+              ? "text-amber-700"
+              : "text-slate-800"
+          }`}
+        >
           {formatMoney(sale.totalAmount)}
         </span>
       </div>
       <p
         className={`mt-1 text-right text-xs font-bold ${getProfitClassName(sale.profit)}`}
       >
-        Lợi nhuận: {formatOptionalMoney(sale.profit)}
+        Lợi nhuận:{" "}
+        {sale.paymentStatus === "UNPAID"
+          ? "-"
+          : formatOptionalMoney(sale.profit)}
       </p>
     </div>
   );
@@ -174,7 +213,11 @@ export function SoldProductGroupRow({
   return (
     <Collapsible open={open} onOpenChange={onOpenChange}>
       <article
-        className={`overflow-hidden rounded-2xl border bg-white transition-colors duration-150 ${
+        className={`overflow-hidden rounded-2xl border transition-colors duration-150 ${
+          group.pendingQuantity > 0
+            ? "border-amber-200 bg-amber-50/30"
+            : "bg-white"
+        } ${
           open ? "border-blue-200" : "border-slate-100 hover:border-slate-200"
         }`}
       >
@@ -195,9 +238,15 @@ export function SoldProductGroupRow({
                   {group.productName}
                 </p>
                 <p className="mt-1 truncate text-xs font-semibold text-slate-500">
-                  Đã bán {group.totalQuantity.toLocaleString("vi-VN")} ·{" "}
+                  Tổng số lượng {group.totalQuantity.toLocaleString("vi-VN")} ·{" "}
                   {group.saleCount.toLocaleString("vi-VN")} lượt bán
                 </p>
+                {group.pendingQuantity > 0 ? (
+                  <p className="mt-1 truncate text-xs font-bold text-amber-700">
+                    Chờ thanh toán{" "}
+                    {group.pendingQuantity.toLocaleString("vi-VN")} sản phẩm
+                  </p>
+                ) : null}
                 <p className="mt-1 truncate text-xs font-semibold text-slate-400">
                   Giá: {priceLabel}
                 </p>
@@ -229,6 +278,11 @@ export function SoldProductGroupRow({
                     {group.saleCount} lượt · {priceLabel} · LN:{" "}
                     {formatOptionalMoney(group.totalProfit)}
                   </p>
+                  {group.pendingQuantity > 0 ? (
+                    <p className="mt-1 truncate text-xs font-bold text-amber-700">
+                      Chờ thanh toán: {group.pendingQuantity} sản phẩm
+                    </p>
+                  ) : null}
                   <p className="mt-1 hidden truncate text-xs font-semibold text-slate-400 lg:block">
                     {group.categoryName ?? "Không phân loại"}
                     {group.variantCount > 1
