@@ -524,7 +524,13 @@ function OrderDetailDialog({
                 ? PAYMENT_METHOD_LABELS[order.paymentMethod]
                 : "Chưa có"}
             </p>
-            <p>Tổng tiền: {formatMoney(order.totalAmount)}</p>
+            <p>Tạm tính: {formatMoney(order.subtotal)}</p>
+            <p className="text-rose-600">
+              Giảm giá: -{formatMoney(order.discountAmount)}
+            </p>
+            <p className="font-extrabold text-slate-700">
+              Tổng tiền: {formatMoney(order.totalAmount)}
+            </p>
             <p>Lợi nhuận: {formatMoney(order.profit)}</p>
             {order.createdBy ? (
               <p>
