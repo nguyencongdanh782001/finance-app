@@ -22,7 +22,15 @@ export async function GET(
     select: {
       year: true,
       month: true,
-      days: { orderBy: { date: "asc" }, select: { id: true } },
+      totalExpense: true,
+      expenses: {
+        orderBy: { createdAt: "asc" },
+        select: { name: true, amount: true, createdAt: true },
+      },
+      days: {
+        orderBy: { date: "asc" },
+        select: { id: true, profitBank: true, profitCash: true },
+      },
     },
   });
   if (!monthly) {
@@ -61,16 +69,112 @@ export async function GET(
         a.product.localeCompare(b.product, "vi"),
     );
 
+  const totalRevenue = monthly.days.reduce(
+    (sum, day) =>
+      sum + Number(day.profitBank || 0) + Number(day.profitCash || 0),
+    0,
+  );
+  const totalExpense = Number(monthly.totalExpense || 0);
+  const remainingAmount = totalRevenue - totalExpense;
+
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Quỳnh Nhi Store";
   workbook.created = new Date();
+
+  const summarySheet = workbook.addWorksheet("Tổng hợp");
+  summarySheet.mergeCells("A1:B1");
+  summarySheet.getCell("A1").value =
+    `BÁO CÁO KẾT QUẢ KINH DOANH - ${monthly.year}/${String(monthly.month).padStart(2, "0")}`;
+  summarySheet.getCell("A1").font = {
+    bold: true,
+    size: 14,
+    color: { argb: "FFFFFFFF" },
+  };
+  summarySheet.getCell("A1").fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FFD96C8A" },
+  };
+  summarySheet.getCell("A1").alignment = { horizontal: "center" };
+  summarySheet.addRow([]);
+  const summaryHeader = summarySheet.addRow(["Chỉ tiêu", "Số tiền"]);
+  summaryHeader.font = { bold: true, color: { argb: "FFFFFFFF" } };
+  summaryHeader.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FFA43E5F" },
+  };
+  const summaryRows = [
+    ["Tổng doanh thu", totalRevenue],
+    ["Tổng chi phí", totalExpense],
+    ["Còn lại (doanh thu - chi phí)", remainingAmount],
+  ];
+  summaryRows.forEach(([label, amount]) => {
+    const row = summarySheet.addRow([label, amount]);
+    row.getCell(2).numFmt = moneyFormat;
+    if (label === "Còn lại (doanh thu - chi phí)") {
+      row.font = {
+        bold: true,
+        color: { argb: remainingAmount >= 0 ? "FF00876C" : "FFDC2626" },
+      };
+    }
+  });
+  summarySheet.getColumn(1).width = 32;
+  summarySheet.getColumn(2).width = 22;
+
+  const expenseSheet = workbook.addWorksheet("Chi phí");
+  expenseSheet.mergeCells("A1:C1");
+  expenseSheet.getCell("A1").value = "CHI PHÍ TRONG THÁNG";
+  expenseSheet.getCell("A1").font = {
+    bold: true,
+    size: 14,
+    color: { argb: "FFFFFFFF" },
+  };
+  expenseSheet.getCell("A1").fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FFF97316" },
+  };
+  expenseSheet.getCell("A1").alignment = { horizontal: "center" };
+  const expenseHeader = expenseSheet.addRow([
+    "Ngày ghi nhận",
+    "Mô tả chi phí",
+    "Số tiền",
+  ]);
+  expenseHeader.font = { bold: true, color: { argb: "FFFFFFFF" } };
+  expenseHeader.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FFEA580C" },
+  };
+  monthly.expenses.forEach((expense) => {
+    const row = expenseSheet.addRow([
+      expense.createdAt,
+      expense.name,
+      Number(expense.amount),
+    ]);
+    row.getCell(1).numFmt = "dd/mm/yyyy";
+    row.getCell(3).numFmt = moneyFormat;
+  });
+  const expenseTotalRow = expenseSheet.addRow([
+    "TỔNG CHI PHÍ",
+    "",
+    totalExpense,
+  ]);
+  expenseTotalRow.font = { bold: true };
+  expenseTotalRow.getCell(3).numFmt = moneyFormat;
+  expenseSheet.getColumn(1).width = 18;
+  expenseSheet.getColumn(2).width = 32;
+  expenseSheet.getColumn(3).width = 20;
+  expenseSheet.autoFilter = { from: "A2", to: "C2" };
+
   const sheet = workbook.addWorksheet("Sản phẩm bán", {
     views: [{ state: "frozen", ySplit: 4 }],
   });
 
   sheet.mergeCells("A1:J1");
   sheet.getCell("A1").value =
-    `BÁO CÁO SẢN PHẨM BÁN - ${monthly.year}/${String(monthly.month).padStart(2, "0")}`;
+    `SẢN PHẨM BÁN TRONG THÁNG - ${monthly.year}/${String(monthly.month).padStart(2, "0")}`;
   sheet.getCell("A1").font = {
     bold: true,
     size: 14,

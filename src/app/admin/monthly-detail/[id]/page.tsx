@@ -66,11 +66,13 @@ const MonthDetail = () => {
   const hasSoldProducts = soldProductsByDay.some(
     (day) => day.soldProducts.length > 0,
   );
+  const hasMonthlyData =
+    hasSoldProducts || (monthlyDetailData?.expenses.length ?? 0) > 0;
 
   const handleExportExcel = async () => {
-    if (!monthlyDetailData || !hasSoldProducts) {
+    if (!monthlyDetailData || !hasMonthlyData) {
       toast({
-        title: "Không có sản phẩm bán ra để xuất Excel",
+        title: "Không có dữ liệu trong tháng để xuất Excel",
         className: "bg-red-1 text-white text-sm font-medium w-fit",
         duration: 3000,
       });
@@ -88,7 +90,7 @@ const MonthDetail = () => {
       const link = document.createElement("a");
 
       link.href = downloadUrl;
-      link.download = `monthly-sold-products-${monthlyDetailData.year}-${String(monthlyDetailData.month).padStart(2, "0")}.xlsx`;
+      link.download = `monthly-report-${monthlyDetailData.year}-${String(monthlyDetailData.month).padStart(2, "0")}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -133,7 +135,7 @@ const MonthDetail = () => {
               type="button"
               variant="adminPrimary"
               onClick={handleExportExcel}
-              disabled={isExporting || !hasSoldProducts}
+              disabled={isExporting || !hasMonthlyData}
               className="h-10 rounded-lg px-4"
             >
               {isExporting ? (
@@ -141,7 +143,7 @@ const MonthDetail = () => {
               ) : (
                 <Download className="size-4" />
               )}
-              Xuất Excel sản phẩm bán
+              Xuất báo cáo tháng
             </Button>
           }
         />
