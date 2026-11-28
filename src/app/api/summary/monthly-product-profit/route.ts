@@ -42,21 +42,37 @@ export async function GET(req: Request) {
     : [];
 
   const profitByDay = new Map(
-    monthly?.days.map((day, index) => [
-      new Date(day.date).getDate(),
-      soldProductsByDay[index]?.items.reduce(
-        (sum, item) => sum + (item.profit ?? 0),
-        0,
-      ) ?? 0,
-    ]) ?? [],
+    monthly?.days.map((day, index) => {
+      const sourceProfit = (soldProductsByDay[index]?.items ?? []).reduce(
+        (summary, item) => {
+          const profit = item.profit ?? 0;
+
+          if (item.orderSource === "ONLINE") {
+            summary.onlineProfit += profit;
+          } else {
+            summary.offlineProfit += profit;
+          }
+
+          return summary;
+        },
+        { offlineProfit: 0, onlineProfit: 0 },
+      );
+
+      return [new Date(day.date).getDate(), sourceProfit] as const;
+    }) ?? [],
   );
   const data = Array.from({ length: daysInMonth }, (_, index) => {
     const dayNumber = index + 1;
+    const sourceProfit = profitByDay.get(dayNumber) ?? {
+      offlineProfit: 0,
+      onlineProfit: 0,
+    };
 
     return {
       day: dayNumber,
       date: new Date(year, month - 1, dayNumber),
-      profit: profitByDay.get(dayNumber) ?? 0,
+      ...sourceProfit,
+      profit: sourceProfit.offlineProfit + sourceProfit.onlineProfit,
     };
   });
 

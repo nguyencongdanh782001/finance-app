@@ -6,8 +6,8 @@ import { formatCurrencyVND } from "@/helper/convertCurrency";
 import { formatCompactNumber } from "@/helper/formatCompactNumber";
 import { MonthlyProductProfitResponse } from "@/interface/financeAPI";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import { useEffect, useState } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -131,9 +131,13 @@ export default function ChartMonthlyProductProfit() {
   );
   const axisWidth = estimatedWidth + 16;
   const chartConfig = {
-    profit: {
-      label: "Lợi nhuận",
+    offlineProfit: {
+      label: "Tại shop",
       color: "var(--color-green-2)",
+    },
+    onlineProfit: {
+      label: "Online",
+      color: "var(--color-blue-5)",
     },
   };
 
@@ -167,6 +171,16 @@ export default function ChartMonthlyProductProfit() {
                 <p className="mt-1 text-xs text-slate-500">
                   Tổng lợi nhuận trong tháng
                 </p>
+                <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="size-2.5 rounded-full bg-green-2" />
+                    Tại shop
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="size-2.5 rounded-full bg-blue-5" />
+                    Online
+                  </span>
+                </div>
               </div>
               <p className="shrink-0 text-xs font-medium text-slate-400 sm:text-sm">
                 Đơn vị: VND
@@ -224,30 +238,29 @@ export default function ChartMonthlyProductProfit() {
                                 ? `Ngày ${item.day}/${String(month).padStart(2, "0")}/${year}`
                                 : "";
                             }}
-                            formatter={(value) =>
-                              formatCompactNumber(Number(value))
-                            }
+                            formatter={(value, name) => [
+                              formatCompactNumber(Number(value)),
+                              name === "onlineProfit"
+                                ? "Lợi nhuận online"
+                                : "Lợi nhuận tại shop",
+                            ]}
                           />
                         }
                       />
                       <Bar
-                        dataKey="profit"
+                        dataKey="offlineProfit"
+                        stackId="profit"
+                        fill="var(--color-green-2)"
+                        radius={[0, 0, 0, 0]}
+                        maxBarSize={20}
+                      />
+                      <Bar
+                        dataKey="onlineProfit"
+                        stackId="profit"
+                        fill="var(--color-blue-5)"
                         radius={[10, 10, 0, 0]}
                         maxBarSize={20}
-                      >
-                        {chartData.map((item) => (
-                          <Cell
-                            key={`${item.day}-${item.date}`}
-                            fill={
-                              item.profit > 0
-                                ? "var(--color-green-2)"
-                                : item.profit < 0
-                                  ? "var(--color-red-1)"
-                                  : "var(--color-gray-8)"
-                            }
-                          />
-                        ))}
-                      </Bar>
+                      />
                     </BarChart>
                   </ChartContainer>
                 </div>

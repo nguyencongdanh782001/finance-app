@@ -90,6 +90,8 @@ export type DailyProductProfitItem = {
   day: number;
   date: string;
   profit: number;
+  offlineProfit: number;
+  onlineProfit: number;
 };
 
 export type MonthlyProductProfitResponse = {
