@@ -115,10 +115,7 @@ const mapOrderItem = (item: OrderSoldItem): SoldProductListItem => {
   const unitCost = toMoney(item.unitCost);
   const saleDate =
     item.order.source === "ONLINE"
-      ? (item.order.deliveredAt ??
-        item.order.completedAt ??
-        item.order.paidAt ??
-        item.order.placedAt)
+      ? item.order.placedAt
       : item.order.placedAt;
 
   return {
@@ -236,37 +233,10 @@ export async function getDailySoldProducts(
               status: {
                 in: ["DELIVERED", "COMPLETED"],
               },
-              OR: [
-                {
-                  deliveredAt: {
-                    gte: start,
-                    lt: end,
-                  },
-                },
-                {
-                  completedAt: {
-                    gte: start,
-                    lt: end,
-                  },
-                },
-                {
-                  deliveredAt: null,
-                  completedAt: null,
-                  paidAt: {
-                    gte: start,
-                    lt: end,
-                  },
-                },
-                {
-                  deliveredAt: null,
-                  completedAt: null,
-                  paidAt: null,
-                  placedAt: {
-                    gte: start,
-                    lt: end,
-                  },
-                },
-              ],
+              placedAt: {
+                gte: start,
+                lt: end,
+              },
             },
           ],
         },
