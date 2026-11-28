@@ -362,7 +362,7 @@ export default function FormProducts({
           <p className="mt-1 text-sm font-semibold text-slate-400">
             {hasFilters
               ? "Hãy thử từ khóa hoặc nguồn bán khác."
-              : "Sản phẩm sẽ xuất hiện khi có đơn tại shop hoặc đơn online đã giao."}
+              : "Sản phẩm sẽ xuất hiện khi có đơn tại shop hoặc đơn online đã giao và đã thanh toán."}
           </p>
         </div>
       ) : (

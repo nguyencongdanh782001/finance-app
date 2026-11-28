@@ -37,6 +37,7 @@ type OrderSoldItem = OrderItem & {
     status: OrderStatus;
     paymentStatus: PaymentStatus;
     placedAt: Date;
+    paidAt: Date | null;
     deliveredAt: Date | null;
     completedAt: Date | null;
   };
@@ -104,7 +105,8 @@ const mapOrderItem = (item: OrderSoldItem): SoldProductListItem => {
   const unitCost = toMoney(item.unitCost);
   const saleDate =
     item.order.source === "ONLINE"
-      ? (item.order.deliveredAt ??
+      ? (item.order.paidAt ??
+        item.order.deliveredAt ??
         item.order.completedAt ??
         item.order.placedAt)
       : item.order.placedAt;
@@ -220,20 +222,32 @@ export async function getDailySoldProducts(
             },
             {
               source: "ONLINE",
+              paymentStatus: "PAID",
               status: "DELIVERED",
               OR: [
                 {
-                  deliveredAt: {
+                  paidAt: {
                     gte: start,
                     lt: end,
                   },
                 },
                 {
-                  deliveredAt: null,
-                  completedAt: {
-                    gte: start,
-                    lt: end,
-                  },
+                  paidAt: null,
+                  OR: [
+                    {
+                      deliveredAt: {
+                        gte: start,
+                        lt: end,
+                      },
+                    },
+                    {
+                      deliveredAt: null,
+                      completedAt: {
+                        gte: start,
+                        lt: end,
+                      },
+                    },
+                  ],
                 },
               ],
             },
@@ -249,6 +263,7 @@ export async function getDailySoldProducts(
             status: true,
             paymentStatus: true,
             placedAt: true,
+            paidAt: true,
             deliveredAt: true,
             completedAt: true,
           },

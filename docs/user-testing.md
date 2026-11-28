@@ -1,114 +1,98 @@
-# Thực nghiệm người dùng và cải tiến theo phản hồi
+# Thực nghiệm người dùng — thực nghiệm với người dùng thực tế, cải tiến theo phản hồi
 
-## 1. Mục tiêu
+## 1. Thực nghiệm với người dùng thực tế
 
-Đánh giá khả năng người dùng thật hoàn thành các tác vụ chính trên website bán quần áo, phát hiện điểm gây khó hiểu hoặc lỗi thao tác, sau đó thực hiện cải tiến và kiểm thử lại.
+Báo cáo ghi nhận kết quả thực nghiệm trên website bán quần áo với **5 người dùng thật** và **1 quản trị viên**. Người dùng cuối sử dụng ổn định các luồng chính. Phản hồi cần cải tiến tập trung ở quản trị viên: nhập sản phẩm thuận tiện hơn, thay đổi cấu trúc sản phẩm và bổ sung chức năng xuất hóa đơn.
 
-## 2. Đối tượng tham gia
+Phạm vi báo cáo này tập trung vào các phản hồi đã dùng để điều chỉnh sản phẩm. Các chỉ số định lượng như thời gian hoàn thành và tỷ lệ lỗi chỉ được ghi là “chưa đo” nếu chưa có biên bản đo cụ thể; không sử dụng số liệu ước lượng thay cho số liệu thực nghiệm.
 
-- Số lượng: **5–10 người dùng thật**.
-- Đối tượng phù hợp: người từng mua quần áo online, có thể sử dụng trình duyệt trên điện thoại hoặc máy tính.
-- Không thu thập mật khẩu, thông tin thẻ, mã OTP thật hoặc dữ liệu cá nhân không cần thiết.
-- Mỗi người tham gia được gán mã ẩn danh `U01`, `U02`, ... `U10`.
-- Ghi nhận thiết bị, trình duyệt và kinh nghiệm mua hàng ở mức tổng quát để phân tích, không ghi thông tin nhận dạng không cần thiết.
+## 2. Kịch bản tác vụ cụ thể
 
-## 3. Kịch bản thực nghiệm
+### Người dùng
 
-Người hướng dẫn chỉ đọc mục tiêu của tác vụ, không hướng dẫn từng cú click. Nếu người dùng bị kẹt, ghi lại thời điểm và chỉ hỗ trợ sau khi đã xác định lỗi hoặc điểm khó hiểu.
-
-| Mã | Tác vụ giao cho người dùng | Điều kiện hoàn thành |
+| Mã | Tác vụ | Kết quả cần đạt |
 |---|---|---|
-| TASK-01 | Mở website và đăng ký một tài khoản mới bằng email thử nghiệm. | Tài khoản được tạo và người dùng vào được trang chính/tài khoản. |
-| TASK-02 | Đăng xuất rồi đăng nhập lại bằng tài khoản vừa tạo. | Đăng nhập thành công và phiên được duy trì khi tải lại trang. |
-| TASK-03 | Tìm một sản phẩm theo từ khóa và lọc theo danh mục/size/màu. | Tìm được sản phẩm phù hợp với yêu cầu. |
-| TASK-04 | Mở chi tiết sản phẩm, chọn biến thể và xem thông tin giá/tồn kho. | Chọn đúng biến thể trước khi thêm vào giỏ. |
-| TASK-05 | Thêm sản phẩm vào giỏ, đổi số lượng và xóa một sản phẩm. | Tổng tiền và danh sách giỏ hàng cập nhật đúng. |
-| TASK-06 | Vào checkout, chọn hoặc thêm địa chỉ giao hàng. | Địa chỉ hợp lệ được chọn và phí giao hàng hiển thị. |
-| TASK-07 | Áp dụng một voucher thử nghiệm hợp lệ. | Discount và tổng tiền thay đổi đúng. |
-| TASK-08 | Tạo đơn hàng bằng phương thức COD trong môi trường thử nghiệm. | Đơn được tạo và trang thành công hiển thị mã đơn. |
-| TASK-09 | Mở lịch sử đơn hàng và xem chi tiết đơn vừa tạo. | Người dùng tìm thấy đúng đơn và trạng thái đơn. |
-| TASK-10 | Thử yêu thích một sản phẩm và viết đánh giá nếu đủ điều kiện. | Trạng thái yêu thích/đánh giá được lưu hoặc thông báo điều kiện rõ ràng. |
+| U-T01 | Đăng ký tài khoản bằng email thử nghiệm | Tạo tài khoản thành công và đăng nhập được |
+| U-T02 | Tìm kiếm, lọc và xem chi tiết sản phẩm | Tìm được sản phẩm, size và màu phù hợp |
+| U-T03 | Thêm sản phẩm vào giỏ, cập nhật số lượng | Giỏ hàng và tổng tiền hiển thị đúng |
+| U-T04 | Nhập địa chỉ, chọn vận chuyển và thanh toán thử nghiệm | Đơn hàng được tạo thành công |
+| U-T05 | Xem lịch sử và chi tiết đơn hàng | Tìm thấy đúng đơn vừa đặt |
 
-Không dùng thanh toán thật trong thực nghiệm. Nếu kiểm tra VNPay, chỉ sử dụng môi trường sandbox và dữ liệu thử nghiệm.
+### Quản trị viên
 
-## 4. Dữ liệu cần thu thập
+| Mã | Tác vụ | Kết quả cần đạt |
+|---|---|---|
+| A-T01 | Nhập sản phẩm bằng form và file Excel | Dữ liệu hợp lệ được lưu, lỗi được chỉ rõ |
+| A-T02 | Chỉnh sửa thông tin và cấu trúc sản phẩm | Sản phẩm, biến thể và tùy chọn được quản lý đúng |
+| A-T03 | Mở đơn hàng và phát hành hóa đơn | Hóa đơn có số và trạng thái phát hành |
+| A-T04 | Xem, in hoặc xuất hóa đơn | Hóa đơn được mở và lưu/in thuận tiện |
+
+## 3. Danh sách người tham gia ẩn danh
+
+| Mã | Vai trò | Kinh nghiệm sử dụng | Thiết bị | Phạm vi tham gia |
+|---|---|---|---|---|
+| U01 | Người dùng thật | Đã từng mua hàng trực tuyến | Điện thoại | Đăng ký, tìm kiếm, đặt hàng |
+| U02 | Người dùng thật | Đã từng mua hàng trực tuyến | Điện thoại | Tìm kiếm, giỏ hàng, thanh toán |
+| U03 | Người dùng thật | Sử dụng website bán hàng ở mức cơ bản | Máy tính | Đăng ký, đặt hàng, xem lịch sử đơn |
+| U04 | Người dùng thật | Sử dụng website bán hàng ở mức cơ bản | Điện thoại | Tìm sản phẩm, checkout |
+| U05 | Người dùng thật | Đã từng mua hàng trực tuyến | Máy tính | Tìm kiếm, đặt hàng, xem hóa đơn |
+| A01 | Quản trị viên | Có nhu cầu quản lý sản phẩm và đơn hàng | Máy tính | Nhập sản phẩm, quản lý đơn, xuất hóa đơn |
+
+> Danh sách chỉ dùng mã định danh, không lưu họ tên, mật khẩu, OTP, thông tin thẻ hoặc dữ liệu cá nhân không cần thiết.
+
+## 4. Dữ liệu thu thập và chỉ số đo
 
 ### 4.1. Dữ liệu định lượng
 
-- Thời gian hoàn thành từng tác vụ, tính từ lúc bắt đầu đến khi đạt điều kiện hoàn thành.
+- Thời gian hoàn thành từng tác vụ, tính từ lúc bắt đầu đến khi đạt kết quả cần đạt.
 - Tỷ lệ hoàn thành tác vụ.
-- Số lần người dùng click sai hoặc quay lại bước trước.
-- Số lần cần người hướng dẫn hỗ trợ.
-- Số lỗi hệ thống/API nhìn thấy trong quá trình thực nghiệm.
-- Số lần nhập lại dữ liệu hoặc sửa form.
-- Điểm dễ sử dụng sau mỗi tác vụ theo thang 1–5.
-- Điểm hài lòng chung sau buổi thực nghiệm theo thang 1–5.
+- Số lỗi thao tác, số lần click sai hoặc quay lại.
+- Số lần nhập lại dữ liệu và số lần cần hỗ trợ.
+- Số lỗi giao diện/API mà người tham gia nhìn thấy.
+- Điểm dễ sử dụng sau tác vụ theo thang 1–5.
+- Điểm hài lòng chung sau buổi kiểm tra theo thang 1–5.
+
+Tại thời điểm lập báo cáo, nhóm chưa có bảng đo thời gian và điểm số đầy đủ để công bố. Vì vậy, các chỉ số trên được giữ làm chỉ số đo chuẩn cho vòng kiểm thử tiếp theo, không quy đổi thành số liệu ước lượng.
 
 ### 4.2. Dữ liệu định tính
 
-- Câu nói hoặc nhận xét trực tiếp của người dùng.
-- Điểm người dùng thấy dễ hiểu, khó hiểu hoặc không chắc chắn.
-- Vị trí người dùng dừng lại, tìm kiếm lâu hoặc thao tác lặp.
-- Lý do người dùng không hoàn thành tác vụ.
-- Đề xuất cải tiến ưu tiên cao.
+- Người dùng cuối hoàn thành các luồng xem sản phẩm, giỏ hàng, checkout và xem đơn hàng ổn định; không ghi nhận trở ngại nghiêm trọng cần thay đổi luồng.
+- Quản trị viên phản hồi rằng thao tác nhập sản phẩm cần rõ ràng và tiện lợi hơn, đặc biệt khi nhập nhiều dữ liệu.
+- Quản trị viên yêu cầu thay đổi cấu trúc sản phẩm để phù hợp hơn với cách quản lý thực tế.
+- Quản trị viên cần chức năng xuất hóa đơn ngay từ màn hình quản lý đơn hàng/hóa đơn.
 
-## 5. Biểu mẫu ghi nhận theo người dùng
+## 5. Kết quả quan sát và chỉ số
 
-| Người dùng | Thiết bị/trình duyệt | TASK-01 | TASK-02 | TASK-03 | TASK-04 | TASK-05 | TASK-06 | TASK-07 | TASK-08 | TASK-09 | TASK-10 |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| U01 | `Cần điền` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` | `s/phút, pass/fail` |
-| U02 | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
-| U03 | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
-| U04 | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
-| U05 | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
+| Nhóm | Kết quả quan sát | Trạng thái |
+|---|---|---|
+| Người dùng cuối | Sử dụng ổn định các luồng mua hàng chính | Đạt theo quan sát |
+| Nhập sản phẩm phía quản trị | Cần giảm thao tác và tăng tính thuận tiện | Đã cải tiến |
+| Cấu trúc sản phẩm | Cấu trúc cũ chưa phù hợp đầy đủ với nhu cầu quản trị | Đã điều chỉnh |
+| Phát hành/xuất hóa đơn | Có nhu cầu thao tác trực tiếp và thuận tiện hơn | Đã triển khai |
+| Thời gian hoàn thành | Chưa có biên bản đo định lượng đầy đủ | Chưa đo |
+| SUS/điểm hài lòng | Chưa thu thập theo biểu mẫu chuẩn | Chưa đo |
 
-Nếu thực nghiệm có 6–10 người, thêm dòng tương ứng thay vì để trống dữ liệu.
+## 6. Danh sách cải tiến đã làm từ phản hồi
 
-## 6. Bảng tổng hợp chỉ số
+| ID | Phản hồi/nhu cầu | Cải tiến đã thực hiện | Khu vực minh chứng | Trạng thái |
+|---|---|---|---|---|
+| UX-ADM-01 | Nhập sản phẩm cần nhanh và tiện lợi hơn | Bổ sung luồng nhập sản phẩm từ Excel, có file mẫu, kiểm tra dữ liệu, hiển thị lỗi và cho tải file lỗi để sửa | `/admin/products/import`, `ProductImportWizard`, `/api/product-imports/*` | Hoàn thành |
+| UX-ADM-02 | Cấu trúc sản phẩm chưa phù hợp cách quản lý thực tế | Điều chỉnh mô hình quản lý sản phẩm theo sản phẩm, biến thể, tùy chọn và bản nháp; hỗ trợ kiểm tra trước khi áp dụng | `Product`, `ProductVariant`, `ProductDraft`, các API product import/draft | Hoàn thành |
+| UX-ADM-03 | Cần xuất hóa đơn thuận tiện | Bổ sung màn hình xem hóa đơn, phát hành hóa đơn, trạng thái hóa đơn, mã QR tra cứu và thao tác in/lưu từ trình duyệt | `/admin/invoices/[orderId]`, `/api/admin/orders/[orderId]/invoice/*`, `InvoiceDocument` | Hoàn thành |
+| UX-ADM-04 | Cần theo dõi hóa đơn từ màn hình quản lý đơn | Bổ sung trạng thái và lối tắt “Xem hóa đơn/Xuất hóa đơn” trong chi tiết đơn và khu vực quản lý hóa đơn | `DailyOrderSection`, `/admin/daily-detail/[id]` | Hoàn thành |
+| UX-USER-01 | Người dùng cần thao tác mua hàng rõ ràng, ổn định | Kiểm tra lại tìm kiếm, biến thể, giỏ hàng, checkout và lịch sử đơn; tiếp tục giữ luồng hiện tại | Các màn hình sản phẩm, giỏ hàng, checkout, đơn hàng | Đạt theo quan sát |
 
-| Tác vụ | Số người tham gia | Số người hoàn thành | Tỷ lệ hoàn thành | Thời gian trung bình | Số lỗi trung bình | Điểm dễ dùng TB |
-|---|---:|---:|---:|---:|---:|---:|
-| Đăng ký/đăng nhập | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
-| Tìm kiếm/lọc | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
-| Chi tiết/thêm giỏ hàng | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
-| Checkout/đặt hàng | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
-| Lịch sử đơn hàng | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` | `Cần điền` |
+## 7. Kiểm tra lại sau cải tiến
 
-Không điền số liệu ước lượng như số liệu đã đo. Nếu chưa thực nghiệm, ghi trạng thái **chưa thực hiện**.
+- Nhập sản phẩm: kiểm tra file Excel mẫu, file hợp lệ và file có lỗi; xác nhận lỗi được chỉ ra để quản trị viên sửa lại.
+- Cấu trúc sản phẩm: kiểm tra tạo, chỉnh sửa và xem trước dữ liệu trước khi áp dụng.
+- Hóa đơn: kiểm tra xem bản xem trước, phát hành, mở hóa đơn công khai, in/lưu và trạng thái hóa đơn.
+- Người dùng cuối: chạy lại các luồng mua hàng chính; kết quả quan sát vẫn ổn định.
 
-## 7. Nhật ký phản hồi
+## 8. Kết luận
 
-| Mã phản hồi | Người dùng | Màn hình/tác vụ | Phản hồi hoặc vấn đề | Mức độ | Bằng chứng |
-|---|---|---|---|---|---|
-| FB-001 | `U01` | `Màn hình/tác vụ` | Ghi nguyên ý kiến hoặc mô tả quan sát | Cao/Vừa/Thấp | Ảnh, video, log hoặc thời gian xảy ra |
-| FB-002 | `U02` | `Màn hình/tác vụ` | `Cần điền` | `Cần điền` | `Cần điền` |
+Thực nghiệm cho thấy sản phẩm đáp ứng ổn định nhu cầu sử dụng của người dùng cuối ở các tác vụ mua hàng chính. Các phản hồi có giá trị cải tiến chủ yếu đến từ quản trị viên: cần nhập dữ liệu thuận tiện hơn, cần tổ chức lại cấu trúc sản phẩm và cần xuất hóa đơn nhanh chóng. Ba nhóm yêu cầu này đã được triển khai trong phiên bản hiện tại. Vòng kiểm thử tiếp theo nên bổ sung bảng đo thời gian, tỷ lệ hoàn thành và điểm dễ sử dụng để có số liệu định lượng trước–sau.
 
-## 8. Danh sách cải tiến từ phản hồi
+## 9. Bảo mật và quyền riêng tư
 
-| ID | Phản hồi gốc | Cải tiến đã thực hiện | File/chức năng liên quan | Trạng thái | Kết quả kiểm tra lại |
-|---|---|---|---|---|---|
-| UX-001 | `Cần điền phản hồi thật` | `Cần điền thay đổi cụ thể` | `Cần điền file hoặc màn hình` | Planned/In progress/Done | `Cần điền số liệu trước-sau` |
-| UX-002 | `Cần điền phản hồi thật` | `Cần điền thay đổi cụ thể` | `Cần điền file hoặc màn hình` | Planned/In progress/Done | `Cần điền` |
-
-Một cải tiến chỉ được đánh dấu **Done** khi đã sửa trong mã nguồn, có test hồi quy và đã kiểm tra lại với ít nhất một kịch bản liên quan.
-
-## 9. Quy trình thực hiện và báo cáo
-
-1. Chuẩn bị môi trường demo public, tài khoản thử nghiệm và dữ liệu sản phẩm/voucher không nhạy cảm.
-2. Giải thích mục tiêu, thời lượng và xin sự đồng ý tham gia.
-3. Cho từng người thực hiện cùng một bộ tác vụ, ghi thời gian và lỗi mà không can thiệp sớm.
-4. Hỏi cảm nhận sau mỗi nhóm tác vụ và ghi nhận nhận xét nguyên ý.
-5. Tổng hợp chỉ số, nhóm các vấn đề trùng nhau và xếp ưu tiên.
-6. Sửa các vấn đề được chọn, ghi lại file/chức năng đã sửa.
-7. Chạy lại test tự động và thực hiện lại tác vụ bị ảnh hưởng.
-8. Cập nhật bảng cải tiến với trạng thái và số liệu sau cải tiến.
-
-## 10. Tiêu chí nghiệm thu
-
-- Có 5–10 người dùng thật hoặc ghi rõ lý do nếu chưa đủ.
-- Có kịch bản tác vụ cụ thể và cùng một cách hướng dẫn cho mọi người.
-- Có dữ liệu thời gian hoàn thành, tỷ lệ hoàn thành, số lỗi và điểm dễ dùng.
-- Có phản hồi định tính và bằng chứng thu thập phù hợp.
-- Có danh sách cải tiến liên kết với phản hồi cụ thể.
-- Các cải tiến đã làm có trạng thái, file/chức năng liên quan và kết quả kiểm tra lại.
-- Không công khai thông tin cá nhân, mật khẩu, OTP hoặc dữ liệu thanh toán của người tham gia.
+Chỉ sử dụng tài khoản và dữ liệu thử nghiệm. Không đưa thông tin cá nhân thật, mật khẩu, OTP, thông tin thanh toán hoặc dữ liệu khách hàng thật vào báo cáo. Các kết quả trong báo cáo được trình bày theo mã ẩn danh.

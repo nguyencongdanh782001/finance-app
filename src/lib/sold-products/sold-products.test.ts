@@ -160,16 +160,36 @@ test("applies sold-order eligibility rules", () => {
     false,
   );
   assert.equal(
-    isSoldOrderEligible({ source: "ONLINE", status: "PENDING" }),
+    isSoldOrderEligible({
+      source: "ONLINE",
+      status: "PENDING",
+      paymentStatus: "UNPAID",
+    }),
     false,
   );
   assert.equal(
-    isSoldOrderEligible({ source: "ONLINE", status: "CONFIRMED" }),
+    isSoldOrderEligible({
+      source: "ONLINE",
+      status: "CONFIRMED",
+      paymentStatus: "PAID",
+    }),
     false,
   );
   assert.equal(
-    isSoldOrderEligible({ source: "ONLINE", status: "DELIVERED" }),
+    isSoldOrderEligible({
+      source: "ONLINE",
+      status: "DELIVERED",
+      paymentStatus: "PAID",
+    }),
     true,
+  );
+  assert.equal(
+    isSoldOrderEligible({
+      source: "ONLINE",
+      status: "DELIVERED",
+      paymentStatus: "REFUNDED",
+    }),
+    false,
   );
 });
 
