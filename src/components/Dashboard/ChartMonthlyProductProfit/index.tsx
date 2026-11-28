@@ -45,7 +45,7 @@ function RoundedProfitBar({
     return null;
   }
 
-  const radius = Math.min(10, width / 2, height / 2);
+  const radius = Math.min(10, width / 2, height);
   const shouldRoundTop =
     dataKey === "onlineProfit" || payload?.onlineProfit === 0;
   const right = x + width;
