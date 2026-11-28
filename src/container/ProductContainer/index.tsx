@@ -58,6 +58,16 @@ const DEFAULT_SORT: ProductSortValue = "createdAt-desc";
 const PRODUCT_LIST_RETURN_STATE = "admin-products-return-state";
 const PRICE_FILTER_DEBOUNCE_MS = 300;
 
+const formatPriceFilterValue = (value: string) => {
+  const digits = value.replace(/\D/g, "").replace(/^0+(?=\d)/, "");
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const parsePriceFilterValue = (value: string) => {
+  const digits = value.replace(/\D/g, "");
+  return digits ? Number(digits) : undefined;
+};
+
 const DEFAULT_FORM_VALUES: ProductFormValues = {
   title: "",
   categoryId: "",
@@ -115,8 +125,12 @@ export default function ProductContainer() {
   const [categoryFilter, setCategoryFilter] = useState(
     searchParams.get("categoryId") || "",
   );
-  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
-  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
+  const [minPrice, setMinPrice] = useState(
+    formatPriceFilterValue(searchParams.get("minPrice") || ""),
+  );
+  const [maxPrice, setMaxPrice] = useState(
+    formatPriceFilterValue(searchParams.get("maxPrice") || ""),
+  );
   const [stockFilter, setStockFilter] = useState(
     searchParams.get("stockStatus") || "",
   );
@@ -182,8 +196,8 @@ export default function ProductContainer() {
     const res = await financeAPI.getProductList({
       search: debouncedSearch || undefined,
       categoryId: categoryFilter ? Number(categoryFilter) : undefined,
-      minPrice: debouncedMinPrice ? Number(debouncedMinPrice) : undefined,
-      maxPrice: debouncedMaxPrice ? Number(debouncedMaxPrice) : undefined,
+      minPrice: parsePriceFilterValue(debouncedMinPrice),
+      maxPrice: parsePriceFilterValue(debouncedMaxPrice),
       stockStatus:
         stockFilter === "IN_STOCK" || stockFilter === "OUT_OF_STOCK"
           ? stockFilter
@@ -831,22 +845,26 @@ export default function ProductContainer() {
               />
               <div className="flex h-10 min-w-0 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2">
                 <input
-                  type="number"
+                  type="text"
                   min="0"
                   inputMode="numeric"
                   value={minPrice}
-                  onChange={(event) => setMinPrice(event.target.value)}
+                  onChange={(event) =>
+                    setMinPrice(formatPriceFilterValue(event.target.value))
+                  }
                   placeholder="Giá từ"
                   aria-label="Giá bán từ"
                   className="min-w-0 w-1/2 bg-transparent px-1 text-sm outline-none placeholder:text-(--admin-text-muted)"
                 />
                 <span className="text-slate-300">–</span>
                 <input
-                  type="number"
+                  type="text"
                   min="0"
                   inputMode="numeric"
                   value={maxPrice}
-                  onChange={(event) => setMaxPrice(event.target.value)}
+                  onChange={(event) =>
+                    setMaxPrice(formatPriceFilterValue(event.target.value))
+                  }
                   placeholder="Giá đến"
                   aria-label="Giá bán đến"
                   className="min-w-0 w-1/2 bg-transparent px-1 text-sm outline-none placeholder:text-(--admin-text-muted)"
