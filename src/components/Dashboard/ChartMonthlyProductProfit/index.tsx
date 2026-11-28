@@ -22,6 +22,42 @@ const CHART_HEIGHT_PX = 288;
 const CHART_PLOT_TOP = 8;
 const CHART_PLOT_BOTTOM = 36;
 
+type RoundedProfitBarProps = {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  fill?: string;
+  dataKey?: string;
+  payload?: { onlineProfit?: number };
+};
+
+function RoundedProfitBar({
+  x = 0,
+  y = 0,
+  width = 0,
+  height = 0,
+  fill = "currentColor",
+  dataKey,
+  payload,
+}: RoundedProfitBarProps) {
+  if (width <= 0 || height <= 0) {
+    return null;
+  }
+
+  const radius = Math.min(10, width / 2, height / 2);
+  const shouldRoundTop =
+    dataKey === "onlineProfit" || payload?.onlineProfit === 0;
+  const right = x + width;
+  const bottom = y + height;
+
+  const path = shouldRoundTop
+    ? `M ${x} ${bottom} L ${x} ${y + radius} Q ${x} ${y} ${x + radius} ${y} H ${right - radius} Q ${right} ${y} ${right} ${y + radius} L ${right} ${bottom} Z`
+    : `M ${x} ${y} H ${right} V ${bottom} H ${x} Z`;
+
+  return <path d={path} fill={fill} />;
+}
+
 function generateTicks(max: number, steps = 4) {
   return Array.from({ length: steps + 1 }, (_, i) => (max / steps) * i);
 }
@@ -251,14 +287,14 @@ export default function ChartMonthlyProductProfit() {
                         dataKey="offlineProfit"
                         stackId="profit"
                         fill="var(--color-green-2)"
-                        radius={[0, 0, 0, 0]}
+                        shape={<RoundedProfitBar />}
                         maxBarSize={20}
                       />
                       <Bar
                         dataKey="onlineProfit"
                         stackId="profit"
                         fill="var(--color-blue-5)"
-                        radius={[10, 10, 0, 0]}
+                        shape={<RoundedProfitBar />}
                         maxBarSize={20}
                       />
                     </BarChart>
