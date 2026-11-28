@@ -10,6 +10,7 @@ import { PaymentStatus, Prisma } from "@/app/generated/prisma/client";
 import type prisma from "@/lib/db";
 import { getVietnamDayRange } from "@/lib/orders/daily-orders";
 import { isSoldOrderEligible } from "./sold-order-eligibility";
+import { calculateNetOrderItemAmount } from "./order-item-revenue";
 
 type PrismaClientLike = typeof prisma | Prisma.TransactionClient;
 
@@ -38,6 +39,8 @@ type OrderSoldItem = OrderItem & {
     paymentStatus: PaymentStatus;
     placedAt: Date;
     paidAt: Date | null;
+    subtotal: Prisma.Decimal;
+    discountAmount: Prisma.Decimal;
     deliveredAt: Date | null;
     completedAt: Date | null;
   };
@@ -101,7 +104,14 @@ const getVariantName = (item: {
 }) => [item.size, item.color].filter(Boolean).join(" / ") || item.sku || null;
 
 const mapOrderItem = (item: OrderSoldItem): SoldProductListItem => {
-  const unitPrice = toMoney(item.unitPrice);
+  const lineSubtotal = toMoney(item.lineSubtotal || item.totalPrice);
+  const totalAmount = calculateNetOrderItemAmount({
+    lineSubtotal,
+    orderSubtotal: toMoney(item.order.subtotal),
+    discountAmount: toMoney(item.order.discountAmount),
+  });
+  const unitPrice =
+    item.quantity > 0 ? Math.round(totalAmount / item.quantity) : 0;
   const unitCost = toMoney(item.unitCost);
   const saleDate =
     item.order.source === "ONLINE"
@@ -131,9 +141,9 @@ const mapOrderItem = (item: OrderSoldItem): SoldProductListItem => {
     quantity: item.quantity,
     unitPrice,
     unitCost,
-    totalAmount: unitPrice * item.quantity,
+    totalAmount,
     totalCost: unitCost * item.quantity,
-    profit: (unitPrice - unitCost) * item.quantity,
+    profit: totalAmount - unitCost * item.quantity,
     orderId: item.order.id,
     orderCode: item.order.orderNumber,
     orderSource: item.order.source,
@@ -223,7 +233,9 @@ export async function getDailySoldProducts(
             {
               source: "ONLINE",
               paymentStatus: "PAID",
-              status: "DELIVERED",
+              status: {
+                in: ["DELIVERED", "COMPLETED"],
+              },
               OR: [
                 {
                   paidAt: {
@@ -264,6 +276,8 @@ export async function getDailySoldProducts(
             paymentStatus: true,
             placedAt: true,
             paidAt: true,
+            subtotal: true,
+            discountAmount: true,
             deliveredAt: true,
             completedAt: true,
           },

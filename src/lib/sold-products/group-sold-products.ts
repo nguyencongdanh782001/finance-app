@@ -44,7 +44,7 @@ export const getSoldProductSource = (
 
 export const getSoldProductGroupKey = (item: SoldProductListItem) => {
   if (item.productId !== null) {
-    return `product:${item.productId}`;
+    return `product:${item.productId}:${getSoldProductSource(item)}`;
   }
 
   const normalizedName = normalizeProductName(item.productName);

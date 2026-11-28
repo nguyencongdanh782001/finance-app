@@ -237,6 +237,11 @@ export function SoldProductGroupRow({
                 <p className="truncate text-sm font-extrabold text-slate-800">
                   {group.productName}
                 </p>
+                {group.sources[0] ? (
+                  <div className="mt-1">
+                    <SourceBadge source={group.sources[0]} />
+                  </div>
+                ) : null}
                 <p className="mt-1 truncate text-xs font-semibold text-slate-500">
                   Tổng số lượng {group.totalQuantity.toLocaleString("vi-VN")} ·{" "}
                   {group.saleCount.toLocaleString("vi-VN")} lượt bán
@@ -274,6 +279,11 @@ export function SoldProductGroupRow({
                   <p className="truncate text-sm font-extrabold text-slate-800">
                     {group.productName}
                   </p>
+                  {group.sources[0] ? (
+                    <div className="mt-1">
+                      <SourceBadge source={group.sources[0]} />
+                    </div>
+                  ) : null}
                   <p className="mt-1 truncate text-xs font-semibold text-slate-400 lg:hidden">
                     {group.saleCount} lượt · {priceLabel} · LN:{" "}
                     {formatOptionalMoney(group.totalProfit)}

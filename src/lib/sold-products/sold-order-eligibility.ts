@@ -11,5 +11,5 @@ export const isSoldOrderEligible = ({
 }: SoldOrderEligibilityInput) =>
   source === "OFFLINE"
     ? status !== "CANCELLED" && status !== "REFUNDED"
-    : status === "DELIVERED" &&
+    : (status === "DELIVERED" || status === "COMPLETED") &&
       paymentStatus === "PAID";

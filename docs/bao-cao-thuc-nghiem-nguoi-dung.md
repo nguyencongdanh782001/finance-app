@@ -72,6 +72,7 @@ Danh sách chỉ sử dụng mã ẩn danh, không ghi họ tên, mật khẩu, 
 | UX-ADM-04  | Cần theo dõi hóa đơn từ màn hình đơn hàng           | Bổ sung trạng thái và lối tắt “Xem hóa đơn/Xuất hóa đơn” trong khu vực quản lý đơn                  | Hoàn thành        |
 | UX-USER-01 | Người dùng cần luồng mua hàng rõ ràng và ổn định    | Kiểm tra lại đăng ký, tìm kiếm, biến thể, giỏ hàng, thanh toán và lịch sử đơn                       | Đạt theo quan sát |
 | BUG-DD-01  | Đơn online đã giao và đã thanh toán chưa được tính vào sản phẩm bán trong Daily Detail | Cập nhật điều kiện lấy sản phẩm bán theo trạng thái đơn `DELIVERED` và thanh toán `PAID`, dùng thời điểm thanh toán để xác định ngày và cập nhật nội dung hướng dẫn trên giao diện | Đã sửa |
+| BUG-DD-02  | Doanh thu sản phẩm chưa phản ánh tiền giảm giá và sản phẩm chưa tách theo nguồn bán | Phân bổ giảm giá của đơn vào doanh thu từng sản phẩm, nhận cả trạng thái hiển thị “Đã giao” (`DELIVERED/COMPLETED`) và tách nhóm sản phẩm theo `Tại shop`/`Online` | Đã sửa |
 
 ## 6. Kết luận
 

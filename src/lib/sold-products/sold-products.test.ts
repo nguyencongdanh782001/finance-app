@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import type { SoldProductListItem } from "./daily-sold-products.ts";
+import { calculateNetOrderItemAmount } from "./order-item-revenue.ts";
 import {
   filterSoldProductGroups,
   groupSoldProducts,
@@ -69,20 +70,24 @@ test("groups variants and prices by parent product without merging sale rows", (
     }),
   ]);
 
-  assert.equal(groups.length, 1);
-  assert.equal(groups[0].groupKey, "product:10");
-  assert.equal(groups[0].totalQuantity, 4);
-  assert.equal(groups[0].totalAmount, 220_000);
-  assert.equal(groups[0].totalCost, 120_000);
-  assert.equal(groups[0].totalProfit, 100_000);
-  assert.equal(groups[0].saleCount, 3);
-  assert.equal(groups[0].variantCount, 2);
+  assert.equal(groups.length, 3);
+  assert.equal(groups[0].groupKey, "product:10:OFFLINE");
+  assert.equal(groups[0].totalQuantity, 1);
+  assert.equal(groups[0].totalAmount, 50_000);
+  assert.equal(groups[0].totalCost, 30_000);
+  assert.equal(groups[0].totalProfit, 20_000);
+  assert.equal(groups[1].groupKey, "product:10:ONLINE");
+  assert.equal(groups[1].totalQuantity, 2);
+  assert.equal(groups[1].totalAmount, 110_000);
+  assert.equal(groups[1].totalCost, 60_000);
+  assert.equal(groups[1].totalProfit, 50_000);
+  assert.equal(groups[2].groupKey, "product:10:LEGACY_MANUAL");
+  assert.equal(groups[2].totalQuantity, 1);
+  assert.equal(groups[2].totalAmount, 60_000);
+  assert.equal(groups[2].totalCost, 30_000);
+  assert.equal(groups[2].totalProfit, 30_000);
   assert.equal(groups[0].minUnitPrice, 50_000);
-  assert.equal(groups[0].maxUnitPrice, 60_000);
-  assert.deepEqual(
-    groups[0].sales.map((sale) => sale.unitPrice).sort((a, b) => a - b),
-    [50_000, 55_000, 60_000],
-  );
+  assert.equal(groups[0].maxUnitPrice, 50_000);
 });
 
 test("keeps different products separate", () => {
@@ -93,7 +98,7 @@ test("keeps different products separate", () => {
 
   assert.deepEqual(
     groups.map((group) => group.groupKey),
-    ["product:10", "product:11"],
+    ["product:10:OFFLINE", "product:11:OFFLINE"],
   );
 });
 
@@ -145,9 +150,12 @@ test("source filter recalculates group totals and search keeps complete group", 
   assert.equal(onlineGroups[0].totalQuantity, 2);
   assert.equal(onlineGroups[0].totalAmount, 110_000);
 
-  const searchedGroups = filterSoldProductGroups(items, { search: "AT-TRANG-M" });
-  assert.equal(searchedGroups[0].sales.length, 2);
-  assert.equal(searchedGroups[0].totalAmount, 160_000);
+  const searchedGroups = filterSoldProductGroups(items, {
+    search: "AT-TRANG-M",
+  });
+  assert.equal(searchedGroups.length, 1);
+  assert.equal(searchedGroups[0].sales.length, 1);
+  assert.equal(searchedGroups[0].totalAmount, 110_000);
 });
 
 test("applies sold-order eligibility rules", () => {
@@ -186,6 +194,14 @@ test("applies sold-order eligibility rules", () => {
   assert.equal(
     isSoldOrderEligible({
       source: "ONLINE",
+      status: "COMPLETED",
+      paymentStatus: "PAID",
+    }),
+    true,
+  );
+  assert.equal(
+    isSoldOrderEligible({
+      source: "ONLINE",
       status: "DELIVERED",
       paymentStatus: "REFUNDED",
     }),
@@ -210,10 +226,29 @@ test("paginates complete product groups instead of individual sales", () => {
 test("supports multiple expanded groups with stable keys", () => {
   let expanded = new Set<string>();
 
-  expanded = updateExpandedGroupKeys(expanded, "product:10", true);
-  expanded = updateExpandedGroupKeys(expanded, "product:11", true);
-  assert.deepEqual([...expanded], ["product:10", "product:11"]);
+  expanded = updateExpandedGroupKeys(expanded, "product:10:OFFLINE", true);
+  expanded = updateExpandedGroupKeys(expanded, "product:11:ONLINE", true);
+  assert.deepEqual([...expanded], ["product:10:OFFLINE", "product:11:ONLINE"]);
 
-  expanded = updateExpandedGroupKeys(expanded, "product:10", false);
-  assert.deepEqual([...expanded], ["product:11"]);
+  expanded = updateExpandedGroupKeys(expanded, "product:10:OFFLINE", false);
+  assert.deepEqual([...expanded], ["product:11:ONLINE"]);
+});
+
+test("allocates order-level discount into product revenue", () => {
+  assert.equal(
+    calculateNetOrderItemAmount({
+      lineSubtotal: 150_000,
+      orderSubtotal: 300_000,
+      discountAmount: 60_000,
+    }),
+    120_000,
+  );
+  assert.equal(
+    calculateNetOrderItemAmount({
+      lineSubtotal: 150_000,
+      orderSubtotal: 300_000,
+      discountAmount: 0,
+    }),
+    150_000,
+  );
 });
